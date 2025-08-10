@@ -1,12 +1,12 @@
-import React, { useState, useEffect } from 'react';
-import axios from 'axios';
+import React, { useState, useEffect } from "react";
+import axios from "axios";
 
 const WeeklyResultsPage = () => {
   const [results, setResults] = useState([]);
 
   useEffect(() => {
     const fetchResults = async () => {
-      const { data } = await axios.get('/api/results/week?season=2025&week=1');
+      const { data } = await axios.get("/api/results/week?season=2025&week=1");
       setResults(data);
     };
     fetchResults();

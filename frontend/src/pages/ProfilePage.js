@@ -1,14 +1,14 @@
-import React, { useState, useEffect } from 'react';
-import axios from 'axios';
+import React, { useState, useEffect } from "react";
+import axios from "axios";
 
 const ProfilePage = () => {
   const [profile, setProfile] = useState({});
-  const [name, setName] = useState('');
-  const [address, setAddress] = useState('');
+  const [name, setName] = useState("");
+  const [address, setAddress] = useState("");
 
   useEffect(() => {
     const fetchProfile = async () => {
-      const { data } = await axios.get('/api/users/me');
+      const { data } = await axios.get("/api/users/me");
       setProfile(data);
       setName(data.Name);
       setAddress(data.Address);
@@ -18,9 +18,9 @@ const ProfilePage = () => {
 
   const handleUpdate = async () => {
     try {
-      await axios.put('/api/users/me/update', { name, address });
+      await axios.put("/api/users/me/update", { name, address });
     } catch (error) {
-      console.error('Failed to update profile', error);
+      console.error("Failed to update profile", error);
     }
   };
 

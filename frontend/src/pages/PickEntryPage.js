@@ -1,5 +1,5 @@
-import React, { useState, useEffect } from 'react';
-import axios from 'axios';
+import React, { useState, useEffect } from "react";
+import axios from "axios";
 
 const PickEntryPage = () => {
   const [games, setGames] = useState([]);
@@ -7,7 +7,7 @@ const PickEntryPage = () => {
 
   useEffect(() => {
     const fetchGames = async () => {
-      const { data } = await axios.get('/api/games?season=2025&week=1');
+      const { data } = await axios.get("/api/games?season=2025&week=1");
       setGames(data);
     };
     fetchGames();
@@ -25,7 +25,8 @@ const PickEntryPage = () => {
     const newPicks = {};
     const ranks = Array.from({ length: games.length }, (_, i) => i + 1);
     games.forEach((game) => {
-      const randomTeam = Math.random() > 0.5 ? game.FavoriteTeam : game.UnderdogTeam;
+      const randomTeam =
+        Math.random() > 0.5 ? game.FavoriteTeam : game.UnderdogTeam;
       const randomRankIndex = Math.floor(Math.random() * ranks.length);
       const randomRank = ranks.splice(randomRankIndex, 1)[0];
       newPicks[game.ID] = { team: randomTeam, rank: randomRank };
@@ -41,9 +42,9 @@ const PickEntryPage = () => {
         rank: parseInt(picks[gameId].rank),
         quick_pick: false, // TODO: determine if quick pick was used
       }));
-      await axios.post('/api/picks', picksToSubmit);
+      await axios.post("/api/picks", picksToSubmit);
     } catch (error) {
-      console.error('Failed to submit picks', error);
+      console.error("Failed to submit picks", error);
     }
   };
 
@@ -51,10 +52,17 @@ const PickEntryPage = () => {
     <div>
       <h1>Pick Entry</h1>
       <button onClick={handleQuickPick}>Quick Pick</button>
-      <form onSubmit={(e) => { e.preventDefault(); handleSubmit(); }}>
+      <form
+        onSubmit={(e) => {
+          e.preventDefault();
+          handleSubmit();
+        }}
+      >
         {games.map((game) => (
           <div key={game.ID}>
-            <h3>{game.FavoriteTeam} vs {game.UnderdogTeam} ({game.Spread})</h3>
+            <h3>
+              {game.FavoriteTeam} vs {game.UnderdogTeam} ({game.Spread})
+            </h3>
             <label>
               <input
                 type="radio"
@@ -80,7 +88,7 @@ const PickEntryPage = () => {
               min="1"
               max={games.length}
               placeholder="Rank"
-              value={picks[game.ID]?.rank || ''}
+              value={picks[game.ID]?.rank || ""}
               onChange={(e) => handleRankChange(game.ID, e.target.value)}
             />
           </div>

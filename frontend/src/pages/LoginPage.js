@@ -1,16 +1,16 @@
-import React, { useState } from 'react';
-import axios from 'axios';
+import React, { useState } from "react";
+import axios from "axios";
 
 const LoginPage = () => {
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
 
   const handleLogin = async () => {
     try {
-      await axios.post('/api/login', { email, password });
-      window.location.href = '/';
+      await axios.post("/api/login", { email, password });
+      window.location.href = "/";
     } catch (error) {
-      console.error('Login failed', error);
+      console.error("Login failed", error);
     }
   };
 
