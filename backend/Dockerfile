@@ -8,8 +8,6 @@ RUN go mod download
 
 COPY . .
 
-RUN go mod tidy
-
 RUN go build -o /football-pool ./cmd/main.go
 
 EXPOSE 8080

@@ -28,9 +28,10 @@ go.work.sum
 .env
 
 # Editor/IDE
-# .idea/
-# .vscode/
+.idea/
+.vscode/
 
 # Custom
 *.db
-./football-pool
+/server
+/football-pool
