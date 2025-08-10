@@ -40,11 +40,11 @@ type Pick struct {
 
 type Result struct {
 	gorm.Model
-	GameID         uint
-	Game           Game
-	FavoriteScore  int
-	UnderdogScore  int
-	Outcome        string
+	GameID        uint
+	Game          Game
+	FavoriteScore int
+	UnderdogScore int
+	Outcome       string
 }
 
 type SurvivorPick struct {

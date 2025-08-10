@@ -7,7 +7,6 @@ import (
 	"github.com/david/football-pool/internal/database"
 )
 
-
 func GetProfile(w http.ResponseWriter, r *http.Request) {
 	email := r.Context().Value("email").(string)
 
