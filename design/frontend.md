@@ -1,5 +1,9 @@
 # Frontend Design
 
+## Layout
+
+We will be using a single column layout.  There should be a collapsible navbar on the left side of the page and a header strip with the site name "Football Pool" and a link to the login page or player profile page depending on whether or not the player is logged in. 
+
 ## Libraries
 
 We want a react frontend for our app.  The site should require a login to use.  There will be two types of users, players and administrators.  The players should have limited permissions to interact with the player pages and the administrators should have all the player permissions plus special admin permissions to do administrative tasks for the site.
