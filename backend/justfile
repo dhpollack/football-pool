@@ -1,0 +1,14 @@
+@default:
+	@just -u -l
+
+build:
+	go build -o football-pool ./cmd/main.go
+
+run:
+	go run ./cmd/main.go
+
+lint:
+	golangci-lint run ./...
+
+format:
+	go fmt ./...
