@@ -36,6 +36,41 @@ go run cmd/main.go
 
 The backend server will start on `http://localhost:8080`.
 
+## Docker Compose
+
+To bring up the entire application using Docker Compose:
+
+```bash
+just docker-compose-up
+```
+
+To bring down the application:
+
+```bash
+just docker-compose-down
+```
+
+## Just Commands
+
+This project uses `just` for task automation. You can see available commands by running:
+
+```bash
+just
+```
+
+To run commands within specific modules (backend or frontend):
+
+```bash
+just mod backend <command>
+just mod frontend <command>
+```
+
+For example, to lint the backend code:
+
+```bash
+just mod backend lint
+```
+
 ## Frontend Setup and Running
 
 ### Prerequisites

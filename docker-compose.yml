@@ -4,7 +4,7 @@ services:
       context: ./backend
       dockerfile: Dockerfile
     ports:
-      - "8080:8080"
+      - "18080:8080"
     volumes:
       - ./backend:/app
 
@@ -13,7 +13,7 @@ services:
       context: ./frontend
       dockerfile: Dockerfile
     ports:
-      - "3000:3000"
+      - "13000:3000"
     volumes:
       - ./frontend:/app
     depends_on:
