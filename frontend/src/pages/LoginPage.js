@@ -1,15 +1,18 @@
 import React, { useState } from "react";
 import axios from "axios";
+import { TextField, Button, Alert } from "@mui/material";
 
 const LoginPage = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [error, setError] = useState("");
 
   const handleLogin = async () => {
     try {
       await axios.post("/api/login", { email, password });
       window.location.href = "/";
     } catch (error) {
+      setError("Invalid email or password");
       console.error("Login failed", error);
     }
   };
@@ -17,19 +20,24 @@ const LoginPage = () => {
   return (
     <div>
       <h1>Login</h1>
-      <input
+      {error && <Alert severity="error">{error}</Alert>}
+      <TextField
+        label="Email"
         type="email"
-        placeholder="Email"
         value={email}
         onChange={(e) => setEmail(e.target.value)}
+        fullWidth
+        margin="normal"
       />
-      <input
+      <TextField
+        label="Password"
         type="password"
-        placeholder="Password"
         value={password}
         onChange={(e) => setPassword(e.target.value)}
+        fullWidth
+        margin="normal"
       />
-      <button onClick={handleLogin}>Login</button>
+      <Button variant="contained" onClick={handleLogin}>Login</Button>
     </div>
   );
 };

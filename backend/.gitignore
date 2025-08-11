@@ -33,4 +33,4 @@ go.work.sum
 
 # Custom
 *.db
-./football-pool
+football-pool

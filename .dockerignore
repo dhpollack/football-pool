@@ -1,1 +1,6 @@
+# frontend
 **/node_modules/
+**/build
+
+# backend
+backend/football-pool

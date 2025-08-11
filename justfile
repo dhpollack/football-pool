@@ -2,7 +2,7 @@
   @just -u -l --list-submodules
 
 docker-compose-up:
-  docker compose up -d
+  docker compose up --build -d
 
 docker-compose-down:
   docker compose down

@@ -1,14 +1,33 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
+import {
+  Button,
+  Table,
+  TableBody,
+  TableCell,
+  TableContainer,
+  TableHead,
+  TableRow,
+  Paper,
+  TextField,
+  Alert,
+} from "@mui/material";
 
 const ResultEntryPage = () => {
   const [games, setGames] = useState([]);
   const [results, setResults] = useState({});
+  const [error, setError] = useState("");
+  const [success, setSuccess] = useState("");
 
   useEffect(() => {
     const fetchGames = async () => {
-      const { data } = await axios.get("/api/games?season=2025&week=1");
-      setGames(data);
+      try {
+        const { data } = await axios.get("/api/games?season=2025&week=1");
+        setGames(data);
+      } catch (error) {
+        setError("Failed to fetch games");
+        console.error("Failed to fetch games", error);
+      }
     };
     fetchGames();
   }, []);
@@ -20,7 +39,9 @@ const ResultEntryPage = () => {
   const handleSubmit = async (gameId) => {
     try {
       await axios.post("/api/results", { ...results[gameId], game_id: gameId });
+      setSuccess("Result submitted successfully");
     } catch (error) {
+      setError("Failed to submit result");
       console.error("Failed to submit result", error);
     }
   };
@@ -28,36 +49,58 @@ const ResultEntryPage = () => {
   return (
     <div>
       <h1>Result Entry</h1>
-      {games.map((game) => (
-        <div key={game.ID}>
-          <h3>
-            {game.FavoriteTeam} vs {game.UnderdogTeam}
-          </h3>
-          <input
-            type="number"
-            placeholder={`${game.FavoriteTeam} Score`}
-            onChange={(e) =>
-              handleScoreChange(
-                game.ID,
-                "favorite_score",
-                parseInt(e.target.value),
-              )
-            }
-          />
-          <input
-            type="number"
-            placeholder={`${game.UnderdogTeam} Score`}
-            onChange={(e) =>
-              handleScoreChange(
-                game.ID,
-                "underdog_score",
-                parseInt(e.target.value),
-              )
-            }
-          />
-          <button onClick={() => handleSubmit(game.ID)}>Submit</button>
-        </div>
-      ))}
+      {error && <Alert severity="error">{error}</Alert>}
+      {success && <Alert severity="success">{success}</Alert>}
+      <TableContainer component={Paper}>
+        <Table>
+          <TableHead>
+            <TableRow>
+              <TableCell>Game</TableCell>
+              <TableCell>Favorite Score</TableCell>
+              <TableCell>Underdog Score</TableCell>
+              <TableCell>Action</TableCell>
+            </TableRow>
+          </TableHead>
+          <TableBody>
+            {games.map((game) => (
+              <TableRow key={game.ID}>
+                <TableCell>
+                  {game.FavoriteTeam} vs {game.UnderdogTeam}
+                </TableCell>
+                <TableCell>
+                  <TextField
+                    type="number"
+                    onChange={(e) =>
+                      handleScoreChange(
+                        game.ID,
+                        "favorite_score",
+                        parseInt(e.target.value)
+                      )
+                    }
+                  />
+                </TableCell>
+                <TableCell>
+                  <TextField
+                    type="number"
+                    onChange={(e) =>
+                      handleScoreChange(
+                        game.ID,
+                        "underdog_score",
+                        parseInt(e.target.value)
+                      )
+                    }
+                  />
+                </TableCell>
+                <TableCell>
+                  <Button variant="contained" onClick={() => handleSubmit(game.ID)}>
+                    Submit
+                  </Button>
+                </TableCell>
+              </TableRow>
+            ))}
+          </TableBody>
+        </Table>
+      </TableContainer>
     </div>
   );
 };

@@ -1,17 +1,23 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
+import { TextField, Button, Alert } from "@mui/material";
 
 const ProfilePage = () => {
-  const [profile, setProfile] = useState({});
   const [name, setName] = useState("");
   const [address, setAddress] = useState("");
+  const [error, setError] = useState("");
+  const [success, setSuccess] = useState("");
 
   useEffect(() => {
     const fetchProfile = async () => {
-      const { data } = await axios.get("/api/users/me");
-      setProfile(data);
-      setName(data.Name);
-      setAddress(data.Address);
+      try {
+        const { data } = await axios.get("/api/users/me");
+        setName(data.Name);
+        setAddress(data.Address);
+      } catch (error) {
+        setError("Failed to fetch profile");
+        console.error("Failed to fetch profile", error);
+      }
     };
     fetchProfile();
   }, []);
@@ -19,7 +25,9 @@ const ProfilePage = () => {
   const handleUpdate = async () => {
     try {
       await axios.put("/api/users/me/update", { name, address });
+      setSuccess("Profile updated successfully");
     } catch (error) {
+      setError("Failed to update profile");
       console.error("Failed to update profile", error);
     }
   };
@@ -27,19 +35,25 @@ const ProfilePage = () => {
   return (
     <div>
       <h1>Profile</h1>
-      <input
+      {error && <Alert severity="error">{error}</Alert>}
+      {success && <Alert severity="success">{success}</Alert>}
+      <TextField
+        label="Name"
         type="text"
-        placeholder="Name"
         value={name}
         onChange={(e) => setName(e.target.value)}
+        fullWidth
+        margin="normal"
       />
-      <input
+      <TextField
+        label="Address"
         type="text"
-        placeholder="Address"
         value={address}
         onChange={(e) => setAddress(e.target.value)}
+        fullWidth
+        margin="normal"
       />
-      <button onClick={handleUpdate}>Update</button>
+      <Button variant="contained" onClick={handleUpdate}>Update</Button>
     </div>
   );
 };

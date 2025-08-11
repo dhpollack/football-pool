@@ -11,18 +11,18 @@ import {
   Alert,
 } from "@mui/material";
 
-const WeeklyResultsPage = () => {
+const OverallResultsPage = () => {
   const [results, setResults] = useState([]);
   const [error, setError] = useState("");
 
   useEffect(() => {
     const fetchResults = async () => {
       try {
-        const { data } = await axios.get("/api/results/week?season=2025&week=1");
+        const { data } = await axios.get("/api/results/season?season=2025");
         setResults(data);
       } catch (error) {
-        setError("Failed to fetch weekly results");
-        console.error("Failed to fetch weekly results", error);
+        setError("Failed to fetch overall results");
+        console.error("Failed to fetch overall results", error);
       }
     };
     fetchResults();
@@ -30,7 +30,7 @@ const WeeklyResultsPage = () => {
 
   return (
     <div>
-      <h1>Weekly Results</h1>
+      <h1>Overall Results</h1>
       {error && <Alert severity="error">{error}</Alert>}
       <TableContainer component={Paper}>
         <Table>
@@ -54,4 +54,4 @@ const WeeklyResultsPage = () => {
   );
 };
 
-export default WeeklyResultsPage;
+export default OverallResultsPage;
