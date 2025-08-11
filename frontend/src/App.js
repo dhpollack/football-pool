@@ -7,6 +7,7 @@ import ProfilePage from "./pages/ProfilePage";
 import ResultEntryPage from "./pages/ResultEntryPage";
 import WeeklyResultsPage from "./pages/WeeklyResultsPage";
 import OverallResultsPage from "./pages/OverallResultsPage";
+import RegisterPage from "./pages/RegisterPage";
 import Layout from "./components/Layout";
 
 function App() {
@@ -16,6 +17,7 @@ function App() {
         <Routes>
           <Route path="/" element={<HomePage />} />
           <Route path="/login" element={<LoginPage />} />
+          <Route path="/register" element={<RegisterPage />} />
           <Route path="/picks" element={<PickEntryPage />} />
           <Route path="/profile" element={<ProfilePage />} />
           <Route path="/admin/results" element={<ResultEntryPage />} />
