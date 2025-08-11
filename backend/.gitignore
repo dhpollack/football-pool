@@ -34,3 +34,4 @@ go.work.sum
 # Custom
 *.db
 football-pool
+seed/

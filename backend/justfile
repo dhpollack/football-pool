@@ -4,8 +4,14 @@
 build:
 	go build -o football-pool ./cmd/main.go
 
+tidy:
+  go mod tidy
+
 run:
 	go run ./cmd/main.go
+
+seed *args:
+  go run ./cmd/seed/main.go {{ args }}
 
 lint:
 	golangci-lint run ./...
