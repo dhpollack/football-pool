@@ -34,6 +34,11 @@ func Login(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	if creds.Password == "" {
+		w.WriteHeader(http.StatusBadRequest)
+		return
+	}
+
 	if err := bcrypt.CompareHashAndPassword([]byte(user.Password), []byte(creds.Password)); err != nil {
 		w.WriteHeader(http.StatusUnauthorized)
 		return
@@ -67,6 +72,12 @@ func Register(w http.ResponseWriter, r *http.Request) {
 		Password string `json:"password"`
 	}
 	if err := json.NewDecoder(r.Body).Decode(&creds); err != nil {
+		w.WriteHeader(http.StatusBadRequest)
+		return
+	}
+
+	var existingUser database.User
+	if database.DB.Where("email = ?", creds.Email).First(&existingUser).Error == nil {
 		w.WriteHeader(http.StatusBadRequest)
 		return
 	}

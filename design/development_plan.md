@@ -64,3 +64,20 @@ Based on the design documents, here is a plan to create the Football Pool web ap
 5.  [x] I will then build the frontend pages and components, connecting them to the backend API as I go.
 6.  [x] I will add the "Quick Pick" and survivor pool functionality.
 7.  [x] Finally, I will implement the admin-only features for entering results.
+
+### Test Coverage
+
+We will aim for high test coverage for both the backend and frontend to ensure code quality and reliability.
+
+*   **Backend Test Coverage:**
+    *   [ ] Use Go's built-in testing tools to generate coverage reports.
+    *   [ ] Achieve at least 80% statement coverage for all `internal` packages.
+    *   [ ] Prioritize testing critical business logic and API endpoints.
+        *   [ ] Add tests for error handling in `auth` package (e.g., invalid JSON, database errors).
+        *   [ ] Add tests for error handling in `handlers` package (e.g., invalid parameters, database errors).
+        *   [ ] Add tests for `internal/database` package (e.g., connection errors, migration errors).
+        *   [ ] Add integration tests for `internal/server` package.
+*   **Frontend Test Coverage:**
+    *   [ ] Use a testing framework like Jest and React Testing Library.
+    *   [ ] Achieve at least 80% statement coverage for all React components and utility functions.
+    *   [ ] Focus on testing user interactions and component rendering.
