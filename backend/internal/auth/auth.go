@@ -3,6 +3,7 @@ package auth
 import (
 	"context"
 	"encoding/json"
+	"errors"
 	"net/http"
 	"time"
 
@@ -124,7 +125,11 @@ func Middleware(next http.Handler) http.Handler {
 			return jwtKey, nil
 		})
 		if err != nil {
-			if err == jwt.ErrSignatureInvalid {
+			if errors.Is(err, jwt.ErrSignatureInvalid) {
+				w.WriteHeader(http.StatusUnauthorized)
+				return
+			}
+			if errors.Is(err, jwt.ErrTokenExpired) {
 				w.WriteHeader(http.StatusUnauthorized)
 				return
 			}

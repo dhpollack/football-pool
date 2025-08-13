@@ -210,3 +210,132 @@ func TestGetSeasonResults(t *testing.T) {
 		}
 	}
 }
+
+func TestGetWeeklyResultsErrors(t *testing.T) {
+	tests := []struct {
+		name           string
+		url            string
+		expectedStatus int
+	}{
+		{
+			name:           "Missing week",
+			url:            "/results/weekly?season=2023",
+			expectedStatus: http.StatusBadRequest,
+		},
+		{
+			name:           "Missing season",
+			url:            "/results/weekly?week=1",
+			expectedStatus: http.StatusBadRequest,
+		},
+		{
+			name:           "Invalid week",
+			url:            "/results/weekly?week=abc&season=2023",
+			expectedStatus: http.StatusBadRequest,
+		},
+		{
+			name:           "Invalid season",
+			url:            "/results/weekly?week=1&season=abc",
+			expectedStatus: http.StatusBadRequest,
+		},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			req, err := http.NewRequest("GET", tt.url, nil)
+			if err != nil {
+				t.Fatal(err)
+			}
+
+			rr := httptest.NewRecorder()
+			handler := http.HandlerFunc(GetWeeklyResults)
+
+			handler.ServeHTTP(rr, req)
+
+			if status := rr.Code; status != tt.expectedStatus {
+				t.Errorf("handler returned wrong status code: got %v want %v",
+					status, tt.expectedStatus)
+			}
+		})
+	}
+}
+
+func TestSubmitResultErrors(t *testing.T) {
+	admin := database.User{Email: "admin2@test.com", Password: "password", Role: "admin"}
+	database.DB.Create(&admin)
+
+	tests := []struct {
+		name           string
+		body           string
+		expectedStatus int
+	}{
+		{
+			name:           "Invalid JSON",
+			body:           `{`,
+			expectedStatus: http.StatusBadRequest,
+		},
+		{
+			name:           "Game not found",
+			body:           `{"game_id": 999}`,
+			expectedStatus: http.StatusNotFound,
+		},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			req, err := http.NewRequest("POST", "/results", bytes.NewBuffer([]byte(tt.body)))
+			if err != nil {
+				t.Fatal(err)
+			}
+			ctx := context.WithValue(req.Context(), "email", "admin2@test.com")
+			req = req.WithContext(ctx)
+
+			rr := httptest.NewRecorder()
+			handler := http.HandlerFunc(SubmitResult)
+
+			handler.ServeHTTP(rr, req)
+
+			if status := rr.Code; status != tt.expectedStatus {
+				t.Errorf("handler returned wrong status code: got %v want %v",
+					status, tt.expectedStatus)
+			}
+		})
+	}
+}
+
+func TestGetSeasonResultsErrors(t *testing.T) {
+	tests := []struct {
+		name           string
+		url            string
+		expectedStatus int
+	}{
+		{
+			name:           "Missing season",
+			url:            "/results/season",
+			expectedStatus: http.StatusBadRequest,
+		},
+		{
+			name:           "Invalid season",
+			url:            "/results/season?season=abc",
+			expectedStatus: http.StatusBadRequest,
+		},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			req, err := http.NewRequest("GET", tt.url, nil)
+			if err != nil {
+				t.Fatal(err)
+			}
+
+			rr := httptest.NewRecorder()
+			handler := http.HandlerFunc(GetSeasonResults)
+
+			handler.ServeHTTP(rr, req)
+
+			if status := rr.Code; status != tt.expectedStatus {
+				t.Errorf("handler returned wrong status code: got %v want %v",
+					status, tt.expectedStatus)
+			}
+		})
+	}
+}

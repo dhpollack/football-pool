@@ -98,3 +98,84 @@ func TestSubmitSurvivorPick(t *testing.T) {
 			dbPick.Team, "Packers")
 	}
 }
+
+func TestGetSurvivorPicksErrors(t *testing.T) {
+	tests := []struct {
+		name           string
+		email          string
+		expectedStatus int
+	}{
+		{
+			name:           "User not found",
+			email:          "notfound@test.com",
+			expectedStatus: http.StatusNotFound,
+		},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			req, err := http.NewRequest("GET", "/survivor", nil)
+			if err != nil {
+				t.Fatal(err)
+			}
+			ctx := context.WithValue(req.Context(), "email", tt.email)
+			req = req.WithContext(ctx)
+
+			rr := httptest.NewRecorder()
+			handler := http.HandlerFunc(GetSurvivorPicks)
+
+			handler.ServeHTTP(rr, req)
+
+			if status := rr.Code; status != tt.expectedStatus {
+				t.Errorf("handler returned wrong status code: got %v want %v",
+					status, tt.expectedStatus)
+			}
+		})
+	}
+}
+
+func TestSubmitSurvivorPickErrors(t *testing.T) {
+	user := database.User{Email: "survivor_user3@test.com", Password: "password"}
+	database.DB.Create(&user)
+
+	tests := []struct {
+		name           string
+		email          string
+		body           string
+		expectedStatus int
+	}{
+		{
+			name:           "User not found",
+			email:          "notfound@test.com",
+			body:           `{}`,
+			expectedStatus: http.StatusNotFound,
+		},
+		{
+			name:           "Invalid JSON",
+			email:          "survivor_user3@test.com",
+			body:           `{`,
+			expectedStatus: http.StatusBadRequest,
+		},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			req, err := http.NewRequest("POST", "/survivor", bytes.NewBuffer([]byte(tt.body)))
+			if err != nil {
+				t.Fatal(err)
+			}
+			ctx := context.WithValue(req.Context(), "email", tt.email)
+			req = req.WithContext(ctx)
+
+			rr := httptest.NewRecorder()
+			handler := http.HandlerFunc(SubmitSurvivorPick)
+
+			handler.ServeHTTP(rr, req)
+
+			if status := rr.Code; status != tt.expectedStatus {
+				t.Errorf("handler returned wrong status code: got %v want %v",
+					status, tt.expectedStatus)
+			}
+		})
+	}
+}

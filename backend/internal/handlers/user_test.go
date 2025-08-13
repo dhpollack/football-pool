@@ -99,3 +99,103 @@ func TestUpdateProfile(t *testing.T) {
 			dbPlayer.Name, "Updated User")
 	}
 }
+
+func TestGetProfileErrors(t *testing.T) {
+	user := database.User{Email: "profile_user3@test.com", Password: "password"}
+	database.DB.Create(&user)
+
+	tests := []struct {
+		name           string
+		email          string
+		expectedStatus int
+	}{
+		{
+			name:           "User not found",
+			email:          "notfound@test.com",
+			expectedStatus: http.StatusNotFound,
+		},
+		{
+			name:           "Player not found",
+			email:          "profile_user3@test.com",
+			expectedStatus: http.StatusNotFound,
+		},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			req, err := http.NewRequest("GET", "/profile", nil)
+			if err != nil {
+				t.Fatal(err)
+			}
+			ctx := context.WithValue(req.Context(), "email", tt.email)
+			req = req.WithContext(ctx)
+
+			rr := httptest.NewRecorder()
+			handler := http.HandlerFunc(GetProfile)
+
+			handler.ServeHTTP(rr, req)
+
+			if status := rr.Code; status != tt.expectedStatus {
+				t.Errorf("handler returned wrong status code: got %v want %v",
+					status, tt.expectedStatus)
+			}
+		})
+	}
+}
+
+func TestUpdateProfileErrors(t *testing.T) {
+	userWithPlayer := database.User{Email: "profile_user4@test.com", Password: "password"}
+	database.DB.Create(&userWithPlayer)
+	player := database.Player{UserID: userWithPlayer.ID, Name: "Test User", Address: "123 Test St"}
+	database.DB.Create(&player)
+
+	userWithoutPlayer := database.User{Email: "profile_user5@test.com", Password: "password"}
+	database.DB.Create(&userWithoutPlayer)
+
+	tests := []struct {
+		name           string
+		email          string
+		body           string
+		expectedStatus int
+	}{
+		{
+			name:           "User not found",
+			email:          "notfound@test.com",
+			body:           `{}`,
+			expectedStatus: http.StatusNotFound,
+		},
+		{
+			name:           "Player not found",
+			email:          "profile_user5@test.com",
+			body:           `{}`,
+			expectedStatus: http.StatusNotFound,
+		},
+		{
+			name:           "Invalid JSON",
+			email:          "profile_user4@test.com",
+			body:           `{`,
+			expectedStatus: http.StatusBadRequest,
+		},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			req, err := http.NewRequest("PUT", "/profile", bytes.NewBuffer([]byte(tt.body)))
+			if err != nil {
+				t.Fatal(err)
+			}
+			ctx := context.WithValue(req.Context(), "email", tt.email)
+			req = req.WithContext(ctx)
+
+			rr := httptest.NewRecorder()
+			handler := http.HandlerFunc(UpdateProfile)
+
+			handler.ServeHTTP(rr, req)
+
+			if status := rr.Code; status != tt.expectedStatus {
+				t.Errorf("handler returned wrong status code: got %v want %v",
+					status, tt.expectedStatus)
+			}
+		})
+	}
+}
