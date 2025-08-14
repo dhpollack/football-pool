@@ -1,9 +1,11 @@
-import { useState } from 'react';
-import { TextField, Button, Box, Typography } from '@mui/material';
+import { useState, useId } from "react";
+import { TextField, Button, Box, Typography } from "@mui/material";
 
 const LoginPage = () => {
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
+  const emailId = useId();
+  const passwordId = useId();
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
   const [error, setError] = useState(null);
 
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
@@ -11,20 +13,20 @@ const LoginPage = () => {
     setError(null);
 
     try {
-      const response = await fetch('http://localhost:8080/api/login', {
-        method: 'POST',
+      const response = await fetch("http://localhost:8080/api/login", {
+        method: "POST",
         headers: {
-          'Content-Type': 'application/json',
+          "Content-Type": "application/json",
         },
         body: JSON.stringify({ email, password }),
       });
 
       if (!response.ok) {
-        throw new Error('Login failed');
+        throw new Error("Login failed");
       }
 
       const data = await response.json();
-      localStorage.setItem('token', data.token);
+      localStorage.setItem("token", data.token);
       // Redirect to the profile page or homepage
     } catch (error: any) {
       setError(error.message);
@@ -34,11 +36,11 @@ const LoginPage = () => {
   return (
     <Box
       sx={{
-        display: 'flex',
-        flexDirection: 'column',
-        alignItems: 'center',
-        justifyContent: 'center',
-        height: '100vh',
+        display: "flex",
+        flexDirection: "column",
+        alignItems: "center",
+        justifyContent: "center",
+        height: "100vh",
       }}
     >
       <Typography variant="h4">Login</Typography>
@@ -48,7 +50,7 @@ const LoginPage = () => {
           margin="normal"
           required
           fullWidth
-          id="email"
+          id={emailId}
           label="Email Address"
           name="email"
           autoComplete="email"
@@ -63,7 +65,7 @@ const LoginPage = () => {
           name="password"
           label="Password"
           type="password"
-          id="password"
+          id={passwordId}
           autoComplete="current-password"
           value={password}
           onChange={(e) => setPassword(e.target.value)}

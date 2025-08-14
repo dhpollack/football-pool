@@ -1,5 +1,14 @@
-import { useState, useEffect } from 'react';
-import { Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper, Typography } from '@mui/material';
+import { useState, useEffect } from "react";
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableContainer,
+  TableHead,
+  TableRow,
+  Paper,
+  Typography,
+} from "@mui/material";
 
 interface OverallResult {
   player_name: string;
@@ -14,15 +23,18 @@ const OverallResultsPage = () => {
   useEffect(() => {
     const fetchOverallResults = async () => {
       try {
-        const token = localStorage.getItem('token');
-        const response = await fetch('http://localhost:8080/api/results/season', {
-          headers: {
-            'Authorization': `Bearer ${token}`,
+        const token = localStorage.getItem("token");
+        const response = await fetch(
+          "http://localhost:8080/api/results/season",
+          {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
           },
-        });
+        );
 
         if (!response.ok) {
-          throw new Error('Failed to fetch overall results');
+          throw new Error("Failed to fetch overall results");
         }
 
         const data = await response.json();
@@ -54,10 +66,10 @@ const OverallResultsPage = () => {
             </TableRow>
           </TableHead>
           <TableBody>
-            {results.map((row, index) => (
+            {results.map((row, _index) => (
               <TableRow
-                key={index}
-                sx={{ '&:last-child td, &:&:last-child th': { border: 0 } }}
+                key={row.player_name}
+                sx={{ "&:last-child td, &:&:last-child th": { border: 0 } }}
               >
                 <TableCell component="th" scope="row">
                   {row.player_name}

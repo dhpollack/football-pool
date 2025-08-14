@@ -1,5 +1,14 @@
-import { useState, useEffect } from 'react';
-import { Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper, Typography } from '@mui/material';
+import { useState, useEffect } from "react";
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableContainer,
+  TableHead,
+  TableRow,
+  Paper,
+  Typography,
+} from "@mui/material";
 
 interface WeeklyResult {
   player_name: string;
@@ -14,15 +23,15 @@ const WeeklyResultsPage = () => {
   useEffect(() => {
     const fetchWeeklyResults = async () => {
       try {
-        const token = localStorage.getItem('token');
-        const response = await fetch('http://localhost:8080/api/results/week', {
+        const token = localStorage.getItem("token");
+        const response = await fetch("http://localhost:8080/api/results/week", {
           headers: {
-            'Authorization': `Bearer ${token}`,
+            Authorization: `Bearer ${token}`,
           },
         });
 
         if (!response.ok) {
-          throw new Error('Failed to fetch weekly results');
+          throw new Error("Failed to fetch weekly results");
         }
 
         const data = await response.json();
@@ -54,10 +63,10 @@ const WeeklyResultsPage = () => {
             </TableRow>
           </TableHead>
           <TableBody>
-            {results.map((row, index) => (
+            {results.map((row, _index) => (
               <TableRow
-                key={index}
-                sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
+                key={row.player_name}
+                sx={{ "&:last-child td, &:last-child th": { border: 0 } }}
               >
                 <TableCell component="th" scope="row">
                   {row.player_name}

@@ -1,5 +1,13 @@
-import { useState, useEffect } from 'react';
-import { Button, Typography, Select, MenuItem, FormControl, InputLabel, Box } from '@mui/material';
+import { useState, useEffect, useId } from "react";
+import {
+  Button,
+  Typography,
+  Select,
+  MenuItem,
+  FormControl,
+  InputLabel,
+  Box,
+} from "@mui/material";
 
 interface Team {
   id: number;
@@ -7,24 +15,29 @@ interface Team {
 }
 
 const SurvivorPoolPage = () => {
+  const teamSelectLabelId = useId();
+  const teamSelectId = useId();
   const [availableTeams, setAvailableTeams] = useState<Team[]>([]);
-  const [selectedTeam, setSelectedTeam] = useState<string>('');
+  const [selectedTeam, setSelectedTeam] = useState<string>("");
   const [error, setError] = useState(null);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     const fetchAvailableTeams = async () => {
       try {
-        const token = localStorage.getItem('token');
+        const token = localStorage.getItem("token");
         // Assuming an API endpoint to get available teams for survivor pool
-        const response = await fetch('http://localhost:8080/api/survivor/teams', {
-          headers: {
-            'Authorization': `Bearer ${token}`,
+        const response = await fetch(
+          "http://localhost:8080/api/survivor/teams",
+          {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
           },
-        });
+        );
 
         if (!response.ok) {
-          throw new Error('Failed to fetch available teams');
+          throw new Error("Failed to fetch available teams");
         }
 
         const data = await response.json();
@@ -42,21 +55,21 @@ const SurvivorPoolPage = () => {
   const handleSubmitPick = async () => {
     setError(null);
     try {
-      const token = localStorage.getItem('token');
-      const response = await fetch('http://localhost:8080/api/survivor/picks', {
-        method: 'POST',
+      const token = localStorage.getItem("token");
+      const response = await fetch("http://localhost:8080/api/survivor/picks", {
+        method: "POST",
         headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${token}`,
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
         },
         body: JSON.stringify({ team: selectedTeam }),
       });
 
       if (!response.ok) {
-        throw new Error('Failed to submit survivor pick');
+        throw new Error("Failed to submit survivor pick");
       }
 
-      alert('Survivor pick submitted successfully!');
+      alert("Survivor pick submitted successfully!");
     } catch (error: any) {
       setError(error.message);
     }
@@ -71,10 +84,10 @@ const SurvivorPoolPage = () => {
       <Typography variant="h4">Survivor Pool</Typography>
       {error && <Typography color="error">{error}</Typography>}
       <FormControl fullWidth sx={{ my: 2 }}>
-        <InputLabel id="team-select-label">Select a Team</InputLabel>
+        <InputLabel id={teamSelectLabelId}>Select a Team</InputLabel>
         <Select
-          labelId="team-select-label"
-          id="team-select"
+          labelId={teamSelectLabelId}
+          id={teamSelectId}
           value={selectedTeam}
           label="Select a Team"
           onChange={(e) => setSelectedTeam(e.target.value as string)}
@@ -86,7 +99,11 @@ const SurvivorPoolPage = () => {
           ))}
         </Select>
       </FormControl>
-      <Button variant="contained" onClick={handleSubmitPick} disabled={!selectedTeam}>
+      <Button
+        variant="contained"
+        onClick={handleSubmitPick}
+        disabled={!selectedTeam}
+      >
         Submit Survivor Pick
       </Button>
     </Box>

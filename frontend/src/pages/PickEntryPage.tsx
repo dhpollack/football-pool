@@ -1,5 +1,19 @@
-import { useState, useEffect } from 'react';
-import { Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper, Button, Typography, Select, MenuItem, FormControl, InputLabel } from '@mui/material';
+import { useState, useEffect } from "react";
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableContainer,
+  TableHead,
+  TableRow,
+  Paper,
+  Button,
+  Typography,
+  Select,
+  MenuItem,
+  FormControl,
+  InputLabel,
+} from "@mui/material";
 
 interface Game {
   id: number;
@@ -21,21 +35,21 @@ const PickEntryPage = () => {
   useEffect(() => {
     const fetchGames = async () => {
       try {
-        const token = localStorage.getItem('token');
-        const response = await fetch('http://localhost:8080/api/games', {
+        const token = localStorage.getItem("token");
+        const response = await fetch("http://localhost:8080/api/games", {
           headers: {
-            'Authorization': `Bearer ${token}`,
+            Authorization: `Bearer ${token}`,
           },
         });
 
         if (!response.ok) {
-          throw new Error('Failed to fetch games');
+          throw new Error("Failed to fetch games");
         }
         const data = await response.json();
         setGames(data);
         const initialPicks: { [gameId: number]: Pick } = {};
         data.forEach((game: Game) => {
-          initialPicks[game.id] = { picked_team: '', rank: 0 };
+          initialPicks[game.id] = { picked_team: "", rank: 0 };
         });
         setPicks(initialPicks);
       } catch (error: any) {
@@ -48,12 +62,16 @@ const PickEntryPage = () => {
 
   const handleQuickPick = () => {
     const newPicks: { [gameId: number]: Pick } = {};
-    const availableRanks = Array.from({ length: games.length }, (_, i) => i + 1);
+    const availableRanks = Array.from(
+      { length: games.length },
+      (_, i) => i + 1,
+    );
     const shuffledRanks = availableRanks.sort(() => Math.random() - 0.5);
 
     games.forEach((game, index) => {
       const pickOptions = [game.favorite_team, game.underdog_team];
-      const pickedTeam = pickOptions[Math.floor(Math.random() * pickOptions.length)];
+      const pickedTeam =
+        pickOptions[Math.floor(Math.random() * pickOptions.length)];
       newPicks[game.id] = {
         picked_team: pickedTeam,
         rank: shuffledRanks[index],
@@ -79,27 +97,27 @@ const PickEntryPage = () => {
   const handleSubmitPicks = async () => {
     setError(null);
     try {
-      const token = localStorage.getItem('token');
+      const token = localStorage.getItem("token");
       const picksToSubmit = Object.keys(picks).map((gameId) => ({
-        game_id: parseInt(gameId),
-        picked_team: picks[parseInt(gameId)].picked_team,
-        rank: picks[parseInt(gameId)].rank,
+        game_id: parseInt(gameId, 10),
+        picked_team: picks[parseInt(gameId, 10)].picked_team,
+        rank: picks[parseInt(gameId, 10)].rank,
       }));
 
-      const response = await fetch('http://localhost:8080/api/picks', {
-        method: 'POST',
+      const response = await fetch("http://localhost:8080/api/picks", {
+        method: "POST",
         headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${token}`,
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
         },
         body: JSON.stringify(picksToSubmit),
       });
 
       if (!response.ok) {
-        throw new Error('Failed to submit picks');
+        throw new Error("Failed to submit picks");
       }
 
-      alert('Picks submitted successfully!');
+      alert("Picks submitted successfully!");
     } catch (error: any) {
       setError(error.message);
     }
@@ -108,8 +126,16 @@ const PickEntryPage = () => {
   return (
     <div>
       <Typography variant="h4">Pick Entry</Typography>
-      <Button variant="contained" sx={{ my: 2 }} onClick={handleQuickPick}>Quick Pick</Button>
-      <Button variant="contained" sx={{ my: 2, ml: 2 }} onClick={handleSubmitPicks}>Submit Picks</Button>
+      <Button variant="contained" sx={{ my: 2 }} onClick={handleQuickPick}>
+        Quick Pick
+      </Button>
+      <Button
+        variant="contained"
+        sx={{ my: 2, ml: 2 }}
+        onClick={handleSubmitPicks}
+      >
+        Submit Picks
+      </Button>
       {error && <Typography color="error">{error}</Typography>}
       <TableContainer component={Paper}>
         <Table sx={{ minWidth: 650 }} aria-label="simple table">
@@ -126,7 +152,7 @@ const PickEntryPage = () => {
             {games.map((game) => (
               <TableRow
                 key={game.id}
-                sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
+                sx={{ "&:last-child td, &:last-child th": { border: 0 } }}
               >
                 <TableCell component="th" scope="row">
                   {game.favorite_team}
@@ -137,12 +163,18 @@ const PickEntryPage = () => {
                   <FormControl fullWidth>
                     <InputLabel>Pick</InputLabel>
                     <Select
-                      value={picks[game.id]?.picked_team || ''}
+                      value={picks[game.id]?.picked_team || ""}
                       label="Pick"
-                      onChange={(e) => handlePickChange(game.id, e.target.value as string)}
+                      onChange={(e) =>
+                        handlePickChange(game.id, e.target.value as string)
+                      }
                     >
-                      <MenuItem value={game.favorite_team}>{game.favorite_team}</MenuItem>
-                      <MenuItem value={game.underdog_team}>{game.underdog_team}</MenuItem>
+                      <MenuItem value={game.favorite_team}>
+                        {game.favorite_team}
+                      </MenuItem>
+                      <MenuItem value={game.underdog_team}>
+                        {game.underdog_team}
+                      </MenuItem>
                     </Select>
                   </FormControl>
                 </TableCell>
@@ -152,10 +184,17 @@ const PickEntryPage = () => {
                     <Select
                       value={picks[game.id]?.rank || 0}
                       label="Rank"
-                      onChange={(e) => handleRankChange(game.id, e.target.value as number)}
+                      onChange={(e) =>
+                        handleRankChange(game.id, e.target.value as number)
+                      }
                     >
-                      {Array.from({ length: games.length }, (_, i) => i + 1).map((rank) => (
-                        <MenuItem key={rank} value={rank}>{rank}</MenuItem>
+                      {Array.from(
+                        { length: games.length },
+                        (_, i) => i + 1,
+                      ).map((rank) => (
+                        <MenuItem key={rank} value={rank}>
+                          {rank}
+                        </MenuItem>
                       ))}
                     </Select>
                   </FormControl>

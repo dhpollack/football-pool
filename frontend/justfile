@@ -1,0 +1,17 @@
+@default:
+	@just -u -l
+
+lint:
+	npm run lint
+
+format:
+	npm run format
+
+build:
+  npm run build
+
+dev:
+  npm run dev
+
+test *args="--coverage":
+  CI=true npm run test {{ args }}

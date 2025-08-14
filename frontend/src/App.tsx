@@ -1,14 +1,14 @@
-
-import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
-import Layout from './components/Layout';
-import HomePage from './pages/HomePage';
-import LoginPage from './pages/LoginPage';
-import RegisterPage from './pages/RegisterPage';
-import ProfilePage from './pages/ProfilePage';
-import PickEntryPage from './pages/PickEntryPage';
-import ResultEntryPage from './pages/ResultEntryPage';
-import WeeklyResultsPage from './pages/WeeklyResultsPage';
-import OverallResultsPage from './pages/OverallResultsPage';
+import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
+import Layout from "./components/Layout";
+import HomePage from "./pages/HomePage";
+import LoginPage from "./pages/LoginPage";
+import RegisterPage from "./pages/RegisterPage";
+import ProfilePage from "./pages/ProfilePage";
+import PickEntryPage from "./pages/PickEntryPage";
+import ResultEntryPage from "./pages/ResultEntryPage";
+import WeeklyResultsPage from "./pages/WeeklyResultsPage";
+import OverallResultsPage from "./pages/OverallResultsPage";
+import SurvivorPoolPage from "./pages/SurvivorPoolPage";
 
 function App() {
   return (
