@@ -23,6 +23,7 @@ function App() {
           <Route path="results" element={<ResultEntryPage />} />
           <Route path="weekly-results" element={<WeeklyResultsPage />} />
           <Route path="overall-results" element={<OverallResultsPage />} />
+          <Route path="survivor-pool" element={<SurvivorPoolPage />} />
         </Route>
       </Routes>
     </Router>

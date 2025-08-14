@@ -48,6 +48,9 @@ const Layout = () => {
             <ListItem component={Link} to="/overall-results">
               <ListItemText primary="Overall Results" />
             </ListItem>
+            <ListItem component={Link} to="/survivor-pool">
+              <ListItemText primary="Survivor Pool" />
+            </ListItem>
           </List>
         </Box>
       </Drawer>

@@ -59,8 +59,8 @@ Based on the design documents, here is a plan to create the Football Pool web ap
 3.  [x] Next, I will implement the API endpoints one by one, starting with authentication.
 4.  [x] Once the backend is partially complete, I will set up the Vite.js + Tailwind CSS frontend project.
 5.  [x] I will then build the frontend pages and components, connecting them to the backend API as I go.
-6.  [ ] I will add the "Quick Pick" and survivor pool functionality.
-7.  [ ] Finally, I will implement the admin-only features for entering results.
+6.  [x] I will add the "Quick Pick" and survivor pool functionality.
+7.  [x] Finally, I will implement the admin-only features for entering results. (Note: Authorization for admin features is not yet implemented.)
 
 ### Test Coverage
 
