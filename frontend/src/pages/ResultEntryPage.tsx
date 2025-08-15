@@ -149,6 +149,7 @@ const ResultEntryPage = () => {
                   <TableCell>
                     <TextField
                       type="number"
+                      name={`favorite_score_${game.id}`}
                       value={scores[game.id]?.favorite_score || ""}
                       onChange={(e) =>
                         handleScoreChange(
@@ -162,6 +163,7 @@ const ResultEntryPage = () => {
                   <TableCell>
                     <TextField
                       type="number"
+                      name={`underdog_score_${game.id}`}
                       value={scores[game.id]?.underdog_score || ""}
                       onChange={(e) =>
                         handleScoreChange(

@@ -7,7 +7,6 @@ const ProfilePage = () => {
   const [name, setName] = useState("");
   const [address, setAddress] = useState("");
   const [error, setError] = useState(null);
-  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     const fetchProfile = async () => {
@@ -28,8 +27,6 @@ const ProfilePage = () => {
         setAddress(data.address);
       } catch (error: any) {
         setError(error.message);
-      } finally {
-        setLoading(false);
       }
     };
 
@@ -60,10 +57,6 @@ const ProfilePage = () => {
       setError(error.message);
     }
   };
-
-  if (loading) {
-    return <Typography>Loading profile...</Typography>;
-  }
 
   return (
     <Box

@@ -49,7 +49,7 @@ const PickEntryPage = () => {
         setGames(data);
         const initialPicks: { [gameId: number]: Pick } = {};
         data.forEach((game: Game) => {
-          initialPicks[game.id] = { picked_team: "", rank: 0 };
+          initialPicks[game.id] = { picked_team: "", rank: "" };
         });
         setPicks(initialPicks);
       } catch (error: any) {
@@ -182,7 +182,7 @@ const PickEntryPage = () => {
                   <FormControl fullWidth>
                     <InputLabel>Rank</InputLabel>
                     <Select
-                      value={picks[game.id]?.rank || 0}
+                      value={picks[game.id]?.rank || ''}
                       label="Rank"
                       onChange={(e) =>
                         handleRankChange(game.id, e.target.value as number)
