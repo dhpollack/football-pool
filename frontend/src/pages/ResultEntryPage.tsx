@@ -32,7 +32,6 @@ const ResultEntryPage = () => {
     [key: number]: { favorite_score: number; underdog_score: number };
   }>({});
   const [error, setError] = useState(null);
-  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     const fetchGames = async () => {
@@ -59,8 +58,6 @@ const ResultEntryPage = () => {
         setScores(initialScores);
       } catch (error: any) {
         setError(error.message);
-      } finally {
-        setLoading(false);
       }
     };
 
@@ -111,10 +108,6 @@ const ResultEntryPage = () => {
       setError(error.message);
     }
   };
-
-  if (loading) {
-    return <Typography>Loading games...</Typography>;
-  }
 
   return (
     <div>

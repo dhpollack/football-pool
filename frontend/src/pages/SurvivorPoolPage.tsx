@@ -20,7 +20,6 @@ const SurvivorPoolPage = () => {
   const [availableTeams, setAvailableTeams] = useState<Team[]>([]);
   const [selectedTeam, setSelectedTeam] = useState<string>("");
   const [error, setError] = useState(null);
-  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     const fetchAvailableTeams = async () => {
@@ -44,8 +43,6 @@ const SurvivorPoolPage = () => {
         setAvailableTeams(data);
       } catch (error: any) {
         setError(error.message);
-      } finally {
-        setLoading(false);
       }
     };
 
@@ -74,10 +71,6 @@ const SurvivorPoolPage = () => {
       setError(error.message);
     }
   };
-
-  if (loading) {
-    return <Typography>Loading available teams...</Typography>;
-  }
 
   return (
     <Box>

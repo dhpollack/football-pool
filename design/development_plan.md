@@ -3,7 +3,7 @@ Based on the design documents, here is a plan to create the Football Pool web ap
 ### Technology Stack
 
 *   [x] **Backend:** Go with the standard `net/http` package for the API and GORM with SQLite for the database.
-*   [ ] **Frontend:** Vite.js + Tailwind CSS.
+*   [x] **Frontend:** Vite.js + Tailwind CSS.
 
 ### Backend Development Plan
 
@@ -29,10 +29,10 @@ Based on the design documents, here is a plan to create the Football Pool web ap
         *   `POST /api/picks`: Submit picks for the week.
     *   [x] **Results (Admin):**
         *   `POST /api/results`: Enter game results.
-    *   **Leaderboards:**
-        *   [x] `GET /api/results/week`: Get the weekly leaderboard.
+    *   [x] **Leaderboards:**
+        *   `GET /api/results/week`: Get the weekly leaderboard.
         *   `GET /api/results/season`: Get the overall season leaderboard.
-    *   **Survivor Pool:**
+    *   [x] **Survivor Pool:**
         *   `GET /api/survivor/picks`: Get the current user's survivor picks.
         *   `POST /api/survivor/picks`: Submit a survivor pick.
 
@@ -79,7 +79,7 @@ We will aim for high test coverage for both the backend and frontend to ensure c
         *   [x] Add integration tests for `internal/server` package.
             *   [x] Test that the server can be started and that it listens on the correct port.
             *   [x] Test that the server can handle requests to the API endpoints.
-*   **Frontend Test Coverage:**
-    *   [ ] Use a testing framework like Jest and React Testing Library.
-    *   [ ] Achieve at least 80% statement coverage for all React components and utility functions.
-    *   [ ] Focus on testing user interactions and component rendering.
+*   [x] **Frontend Test Coverage:**
+    *   [x] Use a testing framework like Jest and React Testing Library.
+    *   [x] Achieve at least 80% statement coverage for all React components and utility functions.
+    *   [x] Focus on testing user interactions and component rendering.

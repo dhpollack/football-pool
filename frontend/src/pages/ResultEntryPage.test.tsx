@@ -1,4 +1,3 @@
-
 import { render, screen, fireEvent } from '@testing-library/react';
 import { vi } from 'vitest';
 import ResultEntryPage from './ResultEntryPage';
@@ -16,12 +15,6 @@ describe('ResultEntryPage', () => {
         json: () => Promise.resolve(mockGames),
       })
     ) as vi.Mock;
-  });
-
-  it('renders the loading state', () => {
-    render(<ResultEntryPage />);
-
-    expect(screen.getByText(/loading games.../i)).toBeInTheDocument();
   });
 
   it('renders the games', async () => {

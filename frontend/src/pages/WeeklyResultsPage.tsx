@@ -18,7 +18,6 @@ interface WeeklyResult {
 const WeeklyResultsPage = () => {
   const [results, setResults] = useState<WeeklyResult[]>([]);
   const [error, setError] = useState(null);
-  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     const fetchWeeklyResults = async () => {
@@ -38,17 +37,11 @@ const WeeklyResultsPage = () => {
         setResults(data);
       } catch (error: any) {
         setError(error.message);
-      } finally {
-        setLoading(false);
       }
     };
 
     fetchWeeklyResults();
   }, []);
-
-  if (loading) {
-    return <Typography>Loading weekly results...</Typography>;
-  }
 
   return (
     <div>

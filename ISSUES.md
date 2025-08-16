@@ -1,0 +1,1 @@
+- 2025-08-16: https://github.com/google-gemini/gemini-cli/issues/6227
