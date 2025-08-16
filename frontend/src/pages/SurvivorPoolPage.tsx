@@ -19,7 +19,7 @@ const SurvivorPoolPage = () => {
   const teamSelectId = useId();
   const [availableTeams, setAvailableTeams] = useState<Team[]>([]);
   const [selectedTeam, setSelectedTeam] = useState<string>("");
-  const [error, setError] = useState(null);
+  const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
     const fetchAvailableTeams = async () => {
@@ -27,7 +27,7 @@ const SurvivorPoolPage = () => {
         const token = localStorage.getItem("token");
         // Assuming an API endpoint to get available teams for survivor pool
         const response = await fetch(
-          "http://localhost:8080/api/survivor/teams",
+          `${import.meta.env.VITE_BACKEND_URL}/api/survivor/teams`,
           {
             headers: {
               Authorization: `Bearer ${token}`,
@@ -41,8 +41,12 @@ const SurvivorPoolPage = () => {
 
         const data = await response.json();
         setAvailableTeams(data);
-      } catch (error: any) {
-        setError(error.message);
+      } catch (error: unknown) {
+        if (error instanceof Error) {
+          setError(error.message);
+        } else {
+          setError("An unknown error occurred");
+        }
       }
     };
 
@@ -53,22 +57,29 @@ const SurvivorPoolPage = () => {
     setError(null);
     try {
       const token = localStorage.getItem("token");
-      const response = await fetch("http://localhost:8080/api/survivor/picks", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`,
+      const response = await fetch(
+        `${import.meta.env.VITE_BACKEND_URL}/api/survivor/picks`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+          body: JSON.stringify({ team: selectedTeam }),
         },
-        body: JSON.stringify({ team: selectedTeam }),
-      });
+      );
 
       if (!response.ok) {
         throw new Error("Failed to submit survivor pick");
       }
 
       alert("Survivor pick submitted successfully!");
-    } catch (error: any) {
-      setError(error.message);
+    } catch (error: unknown) {
+      if (error instanceof Error) {
+        setError(error.message);
+      } else {
+        setError("An unknown error occurred");
+      }
     }
   };
 

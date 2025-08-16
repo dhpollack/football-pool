@@ -30,17 +30,20 @@ interface Pick {
 const PickEntryPage = () => {
   const [games, setGames] = useState<Game[]>([]);
   const [picks, setPicks] = useState<{ [gameId: number]: Pick }>({});
-  const [error, setError] = useState(null);
+  const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
     const fetchGames = async () => {
       try {
         const token = localStorage.getItem("token");
-        const response = await fetch("http://localhost:8080/api/games", {
-          headers: {
-            Authorization: `Bearer ${token}`,
+        const response = await fetch(
+          `${import.meta.env.VITE_BACKEND_URL}/api/games`,
+          {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
           },
-        });
+        );
 
         if (!response.ok) {
           throw new Error("Failed to fetch games");
@@ -49,11 +52,15 @@ const PickEntryPage = () => {
         setGames(data);
         const initialPicks: { [gameId: number]: Pick } = {};
         data.forEach((game: Game) => {
-          initialPicks[game.id] = { picked_team: "", rank: "" };
+          initialPicks[game.id] = { picked_team: "", rank: 0 };
         });
         setPicks(initialPicks);
-      } catch (error: any) {
-        setError(error.message);
+      } catch (error: unknown) {
+        if (error instanceof Error) {
+          setError(error.message);
+        } else {
+          setError("An unknown error occurred");
+        }
       }
     };
 
@@ -104,22 +111,29 @@ const PickEntryPage = () => {
         rank: picks[parseInt(gameId, 10)].rank,
       }));
 
-      const response = await fetch("http://localhost:8080/api/picks", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`,
+      const response = await fetch(
+        `${import.meta.env.VITE_BACKEND_URL}/api/picks`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+          body: JSON.stringify(picksToSubmit),
         },
-        body: JSON.stringify(picksToSubmit),
-      });
+      );
 
       if (!response.ok) {
         throw new Error("Failed to submit picks");
       }
 
       alert("Picks submitted successfully!");
-    } catch (error: any) {
-      setError(error.message);
+    } catch (error: unknown) {
+      if (error instanceof Error) {
+        setError(error.message);
+      } else {
+        setError("An unknown error occurred");
+      }
     }
   };
 
@@ -182,7 +196,7 @@ const PickEntryPage = () => {
                   <FormControl fullWidth>
                     <InputLabel>Rank</InputLabel>
                     <Select
-                      value={picks[game.id]?.rank || ''}
+                      value={picks[game.id]?.rank || ""}
                       label="Rank"
                       onChange={(e) =>
                         handleRankChange(game.id, e.target.value as number)

@@ -31,17 +31,20 @@ const ResultEntryPage = () => {
   const [scores, setScores] = useState<{
     [key: number]: { favorite_score: number; underdog_score: number };
   }>({});
-  const [error, setError] = useState(null);
+  const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
     const fetchGames = async () => {
       try {
         const token = localStorage.getItem("token");
-        const response = await fetch("http://localhost:8080/api/games", {
-          headers: {
-            Authorization: `Bearer ${token}`,
+        const response = await fetch(
+          `${import.meta.env.VITE_BACKEND_URL}/api/games`,
+          {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
           },
-        });
+        );
 
         if (!response.ok) {
           throw new Error("Failed to fetch games");
@@ -56,8 +59,12 @@ const ResultEntryPage = () => {
           initialScores[game.id] = { favorite_score: 0, underdog_score: 0 };
         });
         setScores(initialScores);
-      } catch (error: any) {
-        setError(error.message);
+      } catch (error: unknown) {
+        if (error instanceof Error) {
+          setError(error.message);
+        } else {
+          setError("An unknown error occurred");
+        }
       }
     };
 
@@ -90,22 +97,29 @@ const ResultEntryPage = () => {
         underdog_score: scores[game.id]?.underdog_score || 0,
       }));
 
-      const response = await fetch("http://localhost:8080/api/results", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`,
+      const response = await fetch(
+        `${import.meta.env.VITE_BACKEND_URL}/api/results`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+          body: JSON.stringify(resultsToSubmit),
         },
-        body: JSON.stringify(resultsToSubmit),
-      });
+      );
 
       if (!response.ok) {
         throw new Error("Failed to save results");
       }
 
       alert("Results saved successfully!");
-    } catch (error: any) {
-      setError(error.message);
+    } catch (error: unknown) {
+      if (error instanceof Error) {
+        setError(error.message);
+      } else {
+        setError("An unknown error occurred");
+      }
     }
   };
 

@@ -17,7 +17,7 @@ interface OverallResult {
 
 const OverallResultsPage = () => {
   const [results, setResults] = useState<OverallResult[]>([]);
-  const [error, setError] = useState(null);
+  const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -25,7 +25,7 @@ const OverallResultsPage = () => {
       try {
         const token = localStorage.getItem("token");
         const response = await fetch(
-          "http://localhost:8080/api/results/season",
+          `${import.meta.env.VITE_BACKEND_URL}/api/results/season`,
           {
             headers: {
               Authorization: `Bearer ${token}`,
@@ -39,8 +39,12 @@ const OverallResultsPage = () => {
 
         const data = await response.json();
         setResults(data);
-      } catch (error: any) {
-        setError(error.message);
+      } catch (error: unknown) {
+        if (error instanceof Error) {
+          setError(error.message);
+        } else {
+          setError("An unknown error occurred");
+        }
       } finally {
         setLoading(false);
       }

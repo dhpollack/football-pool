@@ -5,28 +5,36 @@ import (
 
 	"github.com/david/football-pool/internal/auth"
 	"github.com/david/football-pool/internal/handlers"
+	"github.com/rs/cors"
 )
 
 func Start() {
-	http.HandleFunc("/api/login", auth.Login)
-	http.HandleFunc("/api/logout", auth.Logout)
-	http.HandleFunc("/api/register", auth.Register)
+	c := cors.New(cors.Options{
+		AllowedOrigins:   []string{"http://localhost:13000"},
+		AllowCredentials: true,
+		AllowedHeaders:   []string{"Authorization", "Content-Type"},
+	})
 
-	http.Handle("/api/users/me", auth.Middleware(http.HandlerFunc(handlers.GetProfile)))
-	http.Handle("/api/users/me/update", auth.Middleware(http.HandlerFunc(handlers.UpdateProfile)))
+	mux := http.NewServeMux()
+	mux.HandleFunc("/api/login", auth.Login)
+	mux.HandleFunc("/api/logout", auth.Logout)
+	mux.HandleFunc("/api/register", auth.Register)
 
-	http.HandleFunc("/api/games", handlers.GetGames)
+	mux.Handle("/api/users/me", auth.Middleware(http.HandlerFunc(handlers.GetProfile)))
+	mux.Handle("/api/users/me/update", auth.Middleware(http.HandlerFunc(handlers.UpdateProfile)))
 
-	http.Handle("/api/picks", auth.Middleware(http.HandlerFunc(handlers.GetPicks)))
-	http.Handle("/api/picks/submit", auth.Middleware(http.HandlerFunc(handlers.SubmitPicks)))
+	mux.HandleFunc("/api/games", handlers.GetGames)
 
-	http.HandleFunc("/api/results/week", handlers.GetWeeklyResults)
-	http.HandleFunc("/api/results/season", handlers.GetSeasonResults)
+	mux.Handle("/api/picks", auth.Middleware(http.HandlerFunc(handlers.SubmitPicks)))
+	mux.Handle("/api/picks/submit", auth.Middleware(http.HandlerFunc(handlers.SubmitPicks)))
 
-	http.Handle("/api/results", auth.Middleware(auth.AdminMiddleware(http.HandlerFunc(handlers.SubmitResult))))
+	mux.HandleFunc("/api/results/week", handlers.GetWeeklyResults)
+	mux.HandleFunc("/api/results/season", handlers.GetSeasonResults)
 
-	http.Handle("/api/survivor/picks", auth.Middleware(http.HandlerFunc(handlers.GetSurvivorPicks)))
-	http.Handle("/api/survivor/picks/submit", auth.Middleware(http.HandlerFunc(handlers.SubmitSurvivorPick)))
+	mux.Handle("/api/results", auth.Middleware(auth.AdminMiddleware(http.HandlerFunc(handlers.SubmitResult))))
 
-	http.ListenAndServe(":8080", nil)
+	mux.Handle("/api/survivor/picks", auth.Middleware(http.HandlerFunc(handlers.GetSurvivorPicks)))
+	mux.Handle("/api/survivor/picks/submit", auth.Middleware(http.HandlerFunc(handlers.SubmitSurvivorPick)))
+
+	http.ListenAndServe(":8080", c.Handler(mux))
 }

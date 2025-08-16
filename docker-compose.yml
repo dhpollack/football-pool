@@ -13,8 +13,10 @@ services:
       context: ./frontend
       dockerfile: Dockerfile
     ports:
-      - "13000:3000"
+      - "13000:80"
     volumes:
       - ./frontend:/app
+    environment:
+      - VITE_BACKEND_URL=http://localhost:18080
     depends_on:
       - backend

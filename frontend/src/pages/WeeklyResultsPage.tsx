@@ -17,17 +17,20 @@ interface WeeklyResult {
 
 const WeeklyResultsPage = () => {
   const [results, setResults] = useState<WeeklyResult[]>([]);
-  const [error, setError] = useState(null);
+  const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
     const fetchWeeklyResults = async () => {
       try {
         const token = localStorage.getItem("token");
-        const response = await fetch("http://localhost:8080/api/results/week", {
-          headers: {
-            Authorization: `Bearer ${token}`,
+        const response = await fetch(
+          `${import.meta.env.VITE_BACKEND_URL}/api/results/week`,
+          {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
           },
-        });
+        );
 
         if (!response.ok) {
           throw new Error("Failed to fetch weekly results");
@@ -35,8 +38,12 @@ const WeeklyResultsPage = () => {
 
         const data = await response.json();
         setResults(data);
-      } catch (error: any) {
-        setError(error.message);
+      } catch (error: unknown) {
+        if (error instanceof Error) {
+          setError(error.message);
+        } else {
+          setError("An unknown error occurred");
+        }
       }
     };
 
