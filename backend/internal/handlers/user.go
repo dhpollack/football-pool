@@ -6,6 +6,7 @@ import (
 
 	"github.com/david/football-pool/internal/auth"
 	"github.com/david/football-pool/internal/database"
+	"log/slog"
 )
 
 func GetProfile(w http.ResponseWriter, r *http.Request) {
@@ -63,4 +64,33 @@ func UpdateProfile(w http.ResponseWriter, r *http.Request) {
 	if err := json.NewEncoder(w).Encode(player); err != nil {
 		w.WriteHeader(http.StatusInternalServerError)
 	}
+}
+
+func DebugGetUsers(w http.ResponseWriter, r *http.Request) {
+	var users []database.User
+	if result := database.DB.Find(&users); result.Error != nil {
+		w.WriteHeader(http.StatusInternalServerError)
+		return
+	}
+	if err := json.NewEncoder(w).Encode(users); err != nil {
+		w.WriteHeader(http.StatusInternalServerError)
+	}
+}
+
+func DebugDeleteUser(w http.ResponseWriter, r *http.Request) {
+	email := r.URL.Query().Get("email")
+	slog.Debug("Attempting to delete user:", "email", email)
+	if email == "" {
+		slog.Debug("Error: Email is empty for delete request.")
+		w.WriteHeader(http.StatusBadRequest)
+		return
+	}
+
+	if result := database.DB.Where("email = ?", email).Delete(&database.User{}); result.Error != nil {
+		slog.Debug("Error deleting user:", "email", email, "error", result.Error)
+		w.WriteHeader(http.StatusInternalServerError)
+		return
+	}
+	slog.Debug("User deleted successfully:", "email", email)
+	w.WriteHeader(http.StatusOK)
 }

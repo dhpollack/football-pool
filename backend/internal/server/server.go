@@ -36,6 +36,9 @@ func Start() {
 	mux.Handle("/api/survivor/picks", auth.Middleware(http.HandlerFunc(handlers.GetSurvivorPicks)))
 	mux.Handle("/api/survivor/picks/submit", auth.Middleware(http.HandlerFunc(handlers.SubmitSurvivorPick)))
 
+	mux.Handle("/api/debug/users", auth.Middleware(auth.AdminMiddleware(http.HandlerFunc(handlers.DebugGetUsers))))
+	mux.Handle("/api/debug/users/delete", auth.Middleware(auth.AdminMiddleware(http.HandlerFunc(handlers.DebugDeleteUser))))
+
 	if err := http.ListenAndServe(":8080", c.Handler(mux)); err != nil {
 		panic(err)
 	}

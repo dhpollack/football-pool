@@ -7,6 +7,7 @@ services:
       - "18080:8080"
     volumes:
       - ./backend:/app
+    env_file: ".env-dev"
 
   frontend:
     build:
@@ -20,3 +21,4 @@ services:
       - VITE_BACKEND_URL=http://localhost:18080
     depends_on:
       - backend
+

@@ -10,8 +10,15 @@ tidy:
 run:
 	go run ./cmd/main.go
 
+run-bin:
+  ./football-pool
+
 seed *args:
   go run ./cmd/seed/main.go {{ args }}
+
+seed-backend:
+  go build -o /seed ./cmd/seed/main.go
+  /seed --dsn "file::memory:?cache=shared" users /app/backend/seed/admin.json
 
 lint:
 	golangci-lint run ./...

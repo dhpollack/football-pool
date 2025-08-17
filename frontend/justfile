@@ -15,3 +15,18 @@ dev:
 
 test *args="--coverage":
   CI=true npm run test {{ args }}
+
+start-servers:
+  just -E ../.env-dev -f ../justfile docker-compose-up
+
+stop-servers:
+  just -f ../justfile docker-compose-down
+
+test-e2e:
+  #!/usr/bin/env bash
+  set -euxo pipefail
+  trap 'just stop-servers' EXIT
+  rm -f backend/football-pool.db || true # Remove the database file
+  just start-servers
+  sleep 10 # Give docker-compose time to start
+  CI=true npm run test tests/auth.puppeteer.test.ts || (docker compose logs backend && exit 1) # Run tests, if fails, get backend logs and exit with error

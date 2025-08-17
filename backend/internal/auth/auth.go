@@ -1,9 +1,12 @@
 package auth
 
 import (
+	"bytes"
 	"context"
 	"encoding/json"
 	"errors"
+	"io"
+	"log/slog"
 	"net/http"
 	"time"
 
@@ -29,8 +32,10 @@ func Login(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	slog.Debug("Login attempt for user:", "email", creds.Email)
 	var user database.User
 	if result := database.DB.Where("email = ?", creds.Email).First(&user); result.Error != nil {
+		slog.Debug("User not found:", "email", creds.Email, "error", result.Error)
 		w.WriteHeader(http.StatusUnauthorized)
 		return
 	}
@@ -40,10 +45,13 @@ func Login(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	slog.Debug("User found. Stored password hash:", "hash", user.Password)
 	if err := bcrypt.CompareHashAndPassword([]byte(user.Password), []byte(creds.Password)); err != nil {
+		slog.Debug("Password comparison failed for user:", "email", creds.Email, "error", err)
 		w.WriteHeader(http.StatusUnauthorized)
 		return
 	}
+	slog.Debug("Password comparison successful for user:", "email", creds.Email)
 
 	expirationTime := time.Now().Add(5 * time.Minute)
 	claims := &Claims{
@@ -69,10 +77,24 @@ func Login(w http.ResponseWriter, r *http.Request) {
 
 func Register(w http.ResponseWriter, r *http.Request) {
 	var creds struct {
+		Name     string `json:"name"`
 		Email    string `json:"email"`
 		Password string `json:"password"`
 	}
+	// Read the request body into a byte slice for logging
+	bodyBytes, err := io.ReadAll(r.Body)
+	if err != nil {
+		slog.Debug("Error reading request body:", "error", err)
+		w.WriteHeader(http.StatusInternalServerError)
+		return
+	}
+	// Restore the body for subsequent reads (json.NewDecoder)
+	r.Body = io.NopCloser(bytes.NewBuffer(bodyBytes))
+
+	slog.Debug("Register request body:", "body", string(bodyBytes))
+
 	if err := json.NewDecoder(r.Body).Decode(&creds); err != nil {
+		slog.Debug("Error decoding request body:", "error", err)
 		w.WriteHeader(http.StatusBadRequest)
 		return
 	}
@@ -83,18 +105,23 @@ func Register(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	slog.Debug("Registering user:", "email", creds.Email)
 	hashedPassword, err := bcrypt.GenerateFromPassword([]byte(creds.Password), 8)
 	if err != nil {
+		slog.Debug("Error hashing password:", "error", err)
 		w.WriteHeader(http.StatusInternalServerError)
 		return
 	}
 
-	user := database.User{Email: creds.Email, Password: string(hashedPassword), Role: "player"}
+	slog.Debug("Hashed password:", "hash", string(hashedPassword))
+	user := database.User{Name: creds.Name, Email: creds.Email, Password: string(hashedPassword), Role: "player"}
 	if result := database.DB.Create(&user); result.Error != nil {
+		slog.Debug("Error creating user:", "error", result.Error)
 		w.WriteHeader(http.StatusInternalServerError)
 		return
 	}
 
+	slog.Debug("User registered successfully:", "email", creds.Email)
 	w.WriteHeader(http.StatusCreated)
 }
 
