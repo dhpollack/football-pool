@@ -8,6 +8,7 @@ import (
 	"net/http/httptest"
 	"testing"
 
+	"github.com/david/football-pool/internal/auth"
 	"github.com/david/football-pool/internal/database"
 )
 
@@ -23,7 +24,7 @@ func TestGetProfile(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
-	ctx := context.WithValue(req.Context(), "email", "profile_user@test.com")
+	ctx := context.WithValue(req.Context(), auth.EmailKey, "profile_user@test.com")
 	req = req.WithContext(ctx)
 
 	// We create a ResponseRecorder (which satisfies http.ResponseWriter) to record the response.
@@ -74,7 +75,7 @@ func TestUpdateProfile(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
-	ctx := context.WithValue(req.Context(), "email", "profile_user2@test.com")
+	ctx := context.WithValue(req.Context(), auth.EmailKey, "profile_user2@test.com")
 	req = req.WithContext(ctx)
 
 	// We create a ResponseRecorder (which satisfies http.ResponseWriter) to record the response.
@@ -127,7 +128,7 @@ func TestGetProfileErrors(t *testing.T) {
 			if err != nil {
 				t.Fatal(err)
 			}
-			ctx := context.WithValue(req.Context(), "email", tt.email)
+			ctx := context.WithValue(req.Context(), auth.EmailKey, tt.email)
 			req = req.WithContext(ctx)
 
 			rr := httptest.NewRecorder()
@@ -184,7 +185,7 @@ func TestUpdateProfileErrors(t *testing.T) {
 			if err != nil {
 				t.Fatal(err)
 			}
-			ctx := context.WithValue(req.Context(), "email", tt.email)
+			ctx := context.WithValue(req.Context(), auth.EmailKey, tt.email)
 			req = req.WithContext(ctx)
 
 			rr := httptest.NewRecorder()

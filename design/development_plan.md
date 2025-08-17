@@ -83,3 +83,10 @@ We will aim for high test coverage for both the backend and frontend to ensure c
     *   [x] Use a testing framework like Jest and React Testing Library.
     *   [x] Achieve at least 80% statement coverage for all React components and utility functions.
     *   [x] Focus on testing user interactions and component rendering.
+*   **Integration Tests:**
+    *   [ ] Use Puppeteer to write end-to-end tests for the frontend.
+    *   [ ] Create tests for the following user flows:
+        *   [ ] User registration and login.
+        *   [ ] Submitting picks for a week.
+        *   [ ] Viewing weekly and season results.
+        *   [ ] Submitting survivor picks.

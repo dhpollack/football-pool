@@ -8,6 +8,7 @@ import (
 	"net/http/httptest"
 	"testing"
 
+	"github.com/david/football-pool/internal/auth"
 	"github.com/david/football-pool/internal/database"
 )
 
@@ -27,7 +28,7 @@ func TestGetPicks(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
-	ctx := context.WithValue(req.Context(), "email", "test@test.com")
+	ctx := context.WithValue(req.Context(), auth.EmailKey, "test@test.com")
 	req = req.WithContext(ctx)
 
 	// We create a ResponseRecorder (which satisfies http.ResponseWriter) to record the response.
@@ -79,7 +80,7 @@ func TestSubmitPicks(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
-	ctx := context.WithValue(req.Context(), "email", "test2@test.com")
+	ctx := context.WithValue(req.Context(), auth.EmailKey, "test2@test.com")
 	req = req.WithContext(ctx)
 
 	// We create a ResponseRecorder (which satisfies http.ResponseWriter) to record the response.
@@ -129,7 +130,7 @@ func TestGetPicksErrors(t *testing.T) {
 			if err != nil {
 				t.Fatal(err)
 			}
-			ctx := context.WithValue(req.Context(), "email", tt.email)
+			ctx := context.WithValue(req.Context(), auth.EmailKey, tt.email)
 			req = req.WithContext(ctx)
 
 			rr := httptest.NewRecorder()
@@ -175,7 +176,7 @@ func TestSubmitPicksErrors(t *testing.T) {
 			if err != nil {
 				t.Fatal(err)
 			}
-			ctx := context.WithValue(req.Context(), "email", tt.email)
+			ctx := context.WithValue(req.Context(), auth.EmailKey, tt.email)
 			req = req.WithContext(ctx)
 
 			rr := httptest.NewRecorder()

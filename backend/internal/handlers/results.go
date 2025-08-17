@@ -86,7 +86,9 @@ func GetWeeklyResults(w http.ResponseWriter, r *http.Request) {
 		weeklyResults = append(weeklyResults, WeeklyResult{PlayerID: userID, PlayerName: user.Name, Score: score})
 	}
 
-	json.NewEncoder(w).Encode(weeklyResults)
+	if err := json.NewEncoder(w).Encode(weeklyResults); err != nil {
+		w.WriteHeader(http.StatusInternalServerError)
+	}
 }
 
 func SubmitResult(w http.ResponseWriter, r *http.Request) {
@@ -189,5 +191,7 @@ func GetSeasonResults(w http.ResponseWriter, r *http.Request) {
 		seasonResults = append(seasonResults, SeasonResult{PlayerID: userID, PlayerName: user.Name, Score: score})
 	}
 
-	json.NewEncoder(w).Encode(seasonResults)
+	if err := json.NewEncoder(w).Encode(seasonResults); err != nil {
+		w.WriteHeader(http.StatusInternalServerError)
+	}
 }

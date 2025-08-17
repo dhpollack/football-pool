@@ -141,14 +141,14 @@ func Middleware(next http.Handler) http.Handler {
 			return
 		}
 
-		ctx := context.WithValue(r.Context(), "email", claims.Email)
+		ctx := context.WithValue(r.Context(), EmailKey, claims.Email)
 		next.ServeHTTP(w, r.WithContext(ctx))
 	})
 }
 
 func AdminMiddleware(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		email := r.Context().Value("email").(string)
+		email := r.Context().Value(EmailKey).(string)
 
 		var user database.User
 		if result := database.DB.Where("email = ?", email).First(&user); result.Error != nil {

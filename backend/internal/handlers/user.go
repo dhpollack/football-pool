@@ -4,11 +4,12 @@ import (
 	"encoding/json"
 	"net/http"
 
+	"github.com/david/football-pool/internal/auth"
 	"github.com/david/football-pool/internal/database"
 )
 
 func GetProfile(w http.ResponseWriter, r *http.Request) {
-	email := r.Context().Value("email").(string)
+	email := r.Context().Value(auth.EmailKey).(string)
 
 	var user database.User
 	if result := database.DB.Where("email = ?", email).First(&user); result.Error != nil {
@@ -22,11 +23,13 @@ func GetProfile(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	json.NewEncoder(w).Encode(player)
+	if err := json.NewEncoder(w).Encode(player); err != nil {
+		w.WriteHeader(http.StatusInternalServerError)
+	}
 }
 
 func UpdateProfile(w http.ResponseWriter, r *http.Request) {
-	email := r.Context().Value("email").(string)
+	email := r.Context().Value(auth.EmailKey).(string)
 
 	var user database.User
 	if result := database.DB.Where("email = ?", email).First(&user); result.Error != nil {
@@ -57,5 +60,7 @@ func UpdateProfile(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	json.NewEncoder(w).Encode(player)
+	if err := json.NewEncoder(w).Encode(player); err != nil {
+		w.WriteHeader(http.StatusInternalServerError)
+	}
 }

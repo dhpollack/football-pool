@@ -35,5 +35,7 @@ func GetGames(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	json.NewEncoder(w).Encode(games)
+	if err = json.NewEncoder(w).Encode(games); err != nil {
+		w.WriteHeader(http.StatusInternalServerError)
+	}
 }

@@ -8,6 +8,7 @@ import (
 	"net/http/httptest"
 	"testing"
 
+	"github.com/david/football-pool/internal/auth"
 	"github.com/david/football-pool/internal/database"
 )
 
@@ -27,7 +28,7 @@ func TestSubmitResult(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
-	ctx := context.WithValue(req.Context(), "email", "admin@test.com")
+	ctx := context.WithValue(req.Context(), auth.EmailKey, "admin@test.com")
 	req = req.WithContext(ctx)
 
 	// We create a ResponseRecorder (which satisfies http.ResponseWriter) to record the response.
@@ -286,7 +287,7 @@ func TestSubmitResultErrors(t *testing.T) {
 			if err != nil {
 				t.Fatal(err)
 			}
-			ctx := context.WithValue(req.Context(), "email", "admin2@test.com")
+			ctx := context.WithValue(req.Context(), auth.EmailKey, "admin2@test.com")
 			req = req.WithContext(ctx)
 
 			rr := httptest.NewRecorder()

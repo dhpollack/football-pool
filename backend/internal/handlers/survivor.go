@@ -4,11 +4,12 @@ import (
 	"encoding/json"
 	"net/http"
 
+	"github.com/david/football-pool/internal/auth"
 	"github.com/david/football-pool/internal/database"
 )
 
 func GetSurvivorPicks(w http.ResponseWriter, r *http.Request) {
-	email := r.Context().Value("email").(string)
+	email := r.Context().Value(auth.EmailKey).(string)
 
 	var user database.User
 	if result := database.DB.Where("email = ?", email).First(&user); result.Error != nil {
@@ -22,11 +23,13 @@ func GetSurvivorPicks(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	json.NewEncoder(w).Encode(survivorPicks)
+	if err := json.NewEncoder(w).Encode(survivorPicks); err != nil {
+		w.WriteHeader(http.StatusInternalServerError)
+	}
 }
 
 func SubmitSurvivorPick(w http.ResponseWriter, r *http.Request) {
-	email := r.Context().Value("email").(string)
+	email := r.Context().Value(auth.EmailKey).(string)
 
 	var user database.User
 	if result := database.DB.Where("email = ?", email).First(&user); result.Error != nil {

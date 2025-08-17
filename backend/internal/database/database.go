@@ -14,7 +14,10 @@ func Connect(dsn string) {
 	}
 
 	// Migrate the schema
-	database.AutoMigrate(&User{}, &Player{}, &Game{}, &Pick{}, &Result{}, &SurvivorPick{})
+	err = database.AutoMigrate(&User{}, &Player{}, &Game{}, &Pick{}, &Result{}, &SurvivorPick{})
+	if err != nil {
+		panic("failed to migrate database")
+	}
 
 	DB = database
 }
