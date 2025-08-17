@@ -14,7 +14,7 @@ import (
 )
 
 func TestMain(m *testing.M) {
-	database.ConnectTestDB()
+	database.Connect("file::memory:?cache=shared")
 	code := m.Run()
 	os.Exit(code)
 }

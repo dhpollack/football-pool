@@ -9,7 +9,7 @@ import (
 )
 
 func TestStart(t *testing.T) {
-	database.ConnectTestDB()
+	database.Connect("file::memory:?cache=shared")
 	go Start()
 
 	// Wait for the server to start

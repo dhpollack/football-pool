@@ -9,7 +9,7 @@ import (
 
 func main() {
 	slog.Info("Connecting to database")
-	database.Connect()
+	database.Connect("football-pool.db")
 	slog.Info("Starting server")
 	server.Start()
 }
