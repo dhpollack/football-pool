@@ -10,33 +10,31 @@ test("should allow a user to register", async () => {
     });
     const page = await browser.newPage();
 
-    page.on("console", (msg) => {
-      console.log(`[Browser Console] ${msg.text()}`);
+    // --- Direct backend API calls for setup/teardown ---
+    // Obtain admin token directly from backend
+    const adminLoginResponse = await fetch("http://localhost:18080/api/login", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ email: "admin@test.com", password: "adminpassword" }),
     });
+    const adminLoginData = await adminLoginResponse.json();
+    const adminToken = adminLoginData.token;
 
-    // --- Pre-test cleanup: Delete testuser if exists ---
-    console.log("Attempting to delete testuser@example.com if it exists...");
-    // Login as admin to get a token for the delete request
-    await page.goto("http://localhost:13000/login");
-    await page.type("input[name='email']", "admin@test.com");
-    await page.type("input[name='password']", "adminpassword");
-    await page.click("button[type='submit']");
-    await page.waitForSelector("h4", { timeout: 1000 }); // Wait for home page
-
-    // Now delete the test user
-    await page.evaluate(async () => {
-      await fetch(
-        "http://localhost:18080/api/debug/users/delete?email=testuser@example.com",
-        {
-          method: "DELETE",
+    // Delete testuser if exists
+    await fetch(
+      "http://localhost:18080/api/debug/users/delete?email=testuser@example.com",
+      {
+        method: "DELETE",
+        headers: {
+          Authorization: `Bearer ${adminToken}`,
         },
-      );
-    });
-    console.log("Finished attempting to delete testuser@example.com.");
-    // --- End of Pre-test cleanup ---
+      },
+    );
+    // --- End of Direct backend API calls ---
 
     // Register a new user
-    console.log("Navigating to register page...");
     await page.goto("http://localhost:13000/register");
     await page.type("input[name='name']", "Test User");
     await page.type("input[name='email']", "testuser@example.com");
@@ -46,29 +44,20 @@ test("should allow a user to register", async () => {
     // Wait for the login page to appear after registration
     await page.waitForSelector("input[name='email']", { timeout: 1000 });
 
-    // Login as admin to check database
-    console.log("Navigating to login page as admin...");
-    await page.goto("http://localhost:13000/login");
-    await page.type("input[name='email']", "admin@test.com");
-    await page.type("input[name='password']", "adminpassword");
-    await page.click("button[type='submit']");
-    await page.waitForSelector("h4", { timeout: 1000 }); // Wait for home page
-
-    // Fetch users from debug endpoint
-    console.log("Fetching users from debug endpoint...");
-    const users = await page.evaluate(async () => {
-      const response = await fetch("http://localhost:18080/api/debug/users");
-      return response.json();
+    // Fetch users from debug endpoint directly from Node.js environment
+    const usersResponse = await fetch("http://localhost:18080/api/debug/users", {
+      headers: {
+        Authorization: `Bearer ${adminToken}`,
+      },
     });
-    console.log("Users from debug endpoint:", users);
+    const users = await usersResponse.json();
 
     // Assert that testuser@example.com is present
-    const userExists = users.some(
-      (user: any) => user.email === "testuser@example.com",
-    );
+    const targetEmail = "testuser@example.com";
+    const userExists = users.some((user: any) => {
+      return user.Email === targetEmail;
+    });
     expect(userExists).toBe(true);
-
-    console.log("Test completed successfully!");
   } finally {
     if (browser) {
       await browser.close();

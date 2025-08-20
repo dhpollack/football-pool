@@ -200,3 +200,90 @@ func TestUpdateProfileErrors(t *testing.T) {
 		})
 	}
 }
+
+func TestDebugGetUsers(t *testing.T) {
+	// Clear existing users to ensure a clean state for this test
+	database.DB.Exec("DELETE FROM users")
+
+	// Create some dummy users
+	user1 := database.User{Email: "user1@test.com", Password: "pass1", Name: "User One", Role: "player"}
+	user2 := database.User{Email: "user2@test.com", Password: "pass2", Name: "User Two", Role: "player"}
+	adminUser := database.User{Email: "admin@test.com", Password: "adminpass", Name: "Admin User", Role: "admin"}
+	database.DB.Create(&user1)
+	database.DB.Create(&user2)
+	database.DB.Create(&adminUser)
+
+	// Create a request to the DebugGetUsers endpoint
+	req, err := http.NewRequest("GET", "/debug/users", nil)
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	// Create a ResponseRecorder
+	rr := httptest.NewRecorder()
+	handler := http.HandlerFunc(DebugGetUsers)
+
+	// Serve the request
+	handler.ServeHTTP(rr, req)
+
+	// Check the status code
+	if status := rr.Code; status != http.StatusOK {
+		t.Errorf("handler returned wrong status code: got %v want %v",
+			status, http.StatusOK)
+	}
+
+	// Check the response body
+	var users []database.User
+	if err := json.NewDecoder(rr.Body).Decode(&users); err != nil {
+		t.Fatalf("could not decode response: %v", err)
+	}
+
+	if len(users) != 3 {
+		t.Errorf("expected 3 users, got %d", len(users))
+	}
+
+	// Basic check for user data
+	foundUser1 := false
+	foundUser2 := false
+	foundAdmin := false
+	for _, u := range users {
+		if u.Email == user1.Email { foundUser1 = true }
+		if u.Email == user2.Email { foundUser2 = true }
+		if u.Email == adminUser.Email { foundAdmin = true }
+	}
+
+	if !foundUser1 || !foundUser2 || !foundAdmin {
+		t.Errorf("expected all created users to be in the response")
+	}
+}
+
+func TestDebugDeleteUser(t *testing.T) {
+	// Create a user to delete
+	userToDelete := database.User{Email: "delete_me@test.com", Password: "password", Name: "Delete User", Role: "player"}
+	database.DB.Create(&userToDelete)
+
+	// Create a request to the DebugDeleteUser endpoint
+	req, err := http.NewRequest("DELETE", "/debug/users/delete?email=delete_me@test.com", nil)
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	// Create a ResponseRecorder
+	rr := httptest.NewRecorder()
+	handler := http.HandlerFunc(DebugDeleteUser)
+
+	// Serve the request
+	handler.ServeHTTP(rr, req)
+
+	// Check the status code
+	if status := rr.Code; status != http.StatusOK {
+		t.Errorf("handler returned wrong status code: got %v want %v",
+			status, http.StatusOK)
+	}
+
+	// Verify the user is deleted from the database
+	var user database.User
+	if result := database.DB.Where("email = ?", "delete_me@test.com").First(&user); result.Error == nil {
+		t.Errorf("user was not deleted from the database")
+	}
+}

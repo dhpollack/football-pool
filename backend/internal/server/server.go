@@ -13,6 +13,7 @@ func Start() {
 		AllowedOrigins:   []string{"http://localhost:13000"},
 		AllowCredentials: true,
 		AllowedHeaders:   []string{"Authorization", "Content-Type"},
+		AllowedMethods:   []string{"GET", "POST", "PUT", "DELETE", "OPTIONS"},
 	})
 
 	mux := http.NewServeMux()

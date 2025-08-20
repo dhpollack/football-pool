@@ -29,6 +29,7 @@ const LoginPage = () => {
       }
 
       const data = await response.json();
+      console.log("Login data:", data);
       localStorage.setItem("token", data.token);
       window.location.href = "/";
     } catch (error: unknown) {

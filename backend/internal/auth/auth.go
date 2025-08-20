@@ -8,6 +8,7 @@ import (
 	"io"
 	"log/slog"
 	"net/http"
+	"strings"
 	"time"
 
 	"github.com/david/football-pool/internal/database"
@@ -73,6 +74,9 @@ func Login(w http.ResponseWriter, r *http.Request) {
 		Value:   tokenString,
 		Expires: expirationTime,
 	})
+
+	w.Header().Set("Content-Type", "application/json")
+	json.NewEncoder(w).Encode(map[string]string{"token": tokenString})
 }
 
 func Register(w http.ResponseWriter, r *http.Request) {
@@ -135,36 +139,59 @@ func Logout(w http.ResponseWriter, r *http.Request) {
 
 func Middleware(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		c, err := r.Cookie("token")
-		if err != nil {
-			if err == http.ErrNoCookie {
-				w.WriteHeader(http.StatusUnauthorized)
-				return
+		tknStr := ""
+
+		// Check for token in Authorization header first
+		authHeader := r.Header.Get("Authorization")
+		if authHeader != "" {
+			parts := strings.Split(authHeader, " ")
+			if len(parts) == 2 && parts[0] == "Bearer" {
+				tknStr = parts[1]
 			}
-			w.WriteHeader(http.StatusBadRequest)
-			return
 		}
 
-		tknStr := c.Value
+		// If not in Authorization header, check for token in cookie
+		if tknStr == "" {
+			c, err := r.Cookie("token")
+			if err != nil {
+				w.Header().Set("Content-Type", "application/json")
+				if err == http.ErrNoCookie {
+					w.WriteHeader(http.StatusUnauthorized)
+					json.NewEncoder(w).Encode(map[string]string{"error": "Unauthorized: No token provided"})
+					return
+				}
+				w.WriteHeader(http.StatusBadRequest)
+				json.NewEncoder(w).Encode(map[string]string{"error": "Bad Request: Invalid token cookie"})
+				return
+			}
+			tknStr = c.Value
+		}
+
 		claims := &Claims{}
 
 		tkn, err := jwt.ParseWithClaims(tknStr, claims, func(token *jwt.Token) (interface{}, error) {
 			return jwtKey, nil
 		})
 		if err != nil {
+			w.Header().Set("Content-Type", "application/json")
 			if errors.Is(err, jwt.ErrSignatureInvalid) {
 				w.WriteHeader(http.StatusUnauthorized)
+				json.NewEncoder(w).Encode(map[string]string{"error": "Unauthorized: Invalid token signature"})
 				return
 			}
 			if errors.Is(err, jwt.ErrTokenExpired) {
 				w.WriteHeader(http.StatusUnauthorized)
+				json.NewEncoder(w).Encode(map[string]string{"error": "Unauthorized: Token expired"})
 				return
 			}
 			w.WriteHeader(http.StatusBadRequest)
+			json.NewEncoder(w).Encode(map[string]string{"error": "Bad Request: Invalid token"})
 			return
 		}
 		if !tkn.Valid {
+			w.Header().Set("Content-Type", "application/json")
 			w.WriteHeader(http.StatusUnauthorized)
+			json.NewEncoder(w).Encode(map[string]string{"error": "Unauthorized: Invalid token"})
 			return
 		}
 
@@ -179,12 +206,16 @@ func AdminMiddleware(next http.Handler) http.Handler {
 
 		var user database.User
 		if result := database.DB.Where("email = ?", email).First(&user); result.Error != nil {
+			w.Header().Set("Content-Type", "application/json")
 			w.WriteHeader(http.StatusNotFound)
+			json.NewEncoder(w).Encode(map[string]string{"error": "Not Found: User not found"})
 			return
 		}
 
 		if user.Role != "admin" {
+			w.Header().Set("Content-Type", "application/json")
 			w.WriteHeader(http.StatusForbidden)
+			json.NewEncoder(w).Encode(map[string]string{"error": "Forbidden: User is not an admin"})
 			return
 		}
 
