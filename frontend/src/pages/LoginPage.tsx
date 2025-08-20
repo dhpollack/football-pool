@@ -30,7 +30,7 @@ const LoginPage = () => {
 
       const data = await response.json();
       localStorage.setItem("token", data.token);
-      // Redirect to the profile page or homepage
+      window.location.href = "/";
     } catch (error: unknown) {
       if (error instanceof Error) {
         setError(error.message);

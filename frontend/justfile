@@ -22,11 +22,11 @@ start-servers:
 stop-servers:
   just -f ../justfile docker-compose-down
 
-test-e2e:
+test-e2e path="tests/":
   #!/usr/bin/env bash
   set -euxo pipefail
   trap 'just stop-servers' EXIT
   rm -f backend/football-pool.db || true # Remove the database file
   just start-servers
-  sleep 10 # Give docker-compose time to start
-  CI=true npm run test tests/auth.puppeteer.test.ts || (docker compose logs backend && exit 1) # Run tests, if fails, get backend logs and exit with error
+  sleep 4 # Give docker-compose time to start
+  CI=true npm run test {{ path }} || (docker compose logs backend && exit 1) # Run tests, if fails, get backend logs and exit with error
