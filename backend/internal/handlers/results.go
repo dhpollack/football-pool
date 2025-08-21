@@ -64,7 +64,7 @@ func GetWeeklyResults(w http.ResponseWriter, r *http.Request) {
 			continue
 		}
 
-		if (pick.PickedTeam == "favorite" && result.Outcome == "favorite") || (pick.PickedTeam == "underdog" && result.Outcome == "underdog") {
+		if (pick.Picked == "favorite" && result.Outcome == "favorite") || (pick.Picked == "underdog" && result.Outcome == "underdog") {
 			playerScores[pick.UserID] += float32(pick.Rank)
 		} else if result.Outcome == "push" {
 			playerScores[pick.UserID] += float32(pick.Rank) / 2
@@ -169,7 +169,7 @@ func GetSeasonResults(w http.ResponseWriter, r *http.Request) {
 			continue
 		}
 
-		if (pick.PickedTeam == "favorite" && result.Outcome == "favorite") || (pick.PickedTeam == "underdog" && result.Outcome == "underdog") {
+		if (pick.Picked == "favorite" && result.Outcome == "favorite") || (pick.Picked == "underdog" && result.Outcome == "underdog") {
 			playerScores[pick.UserID] += float32(pick.Rank)
 		} else if result.Outcome == "push" {
 			playerScores[pick.UserID] += float32(pick.Rank) / 2

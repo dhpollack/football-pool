@@ -20,7 +20,7 @@ func TestGetPicks(t *testing.T) {
 	database.DB.Create(&game)
 
 	// Create a pick for the user
-	pick := database.Pick{UserID: user.ID, GameID: game.ID, PickedTeam: "Lions", Rank: 1}
+	pick := database.Pick{UserID: user.ID, GameID: game.ID, Picked: "favorite", Rank: 1}
 	database.DB.Create(&pick)
 
 	// Create a request with the user's email in the context
@@ -56,9 +56,9 @@ func TestGetPicks(t *testing.T) {
 			len(picks), 1)
 	}
 
-	if picks[0].PickedTeam != "Lions" {
+	if picks[0].Picked != "favorite" {
 		t.Errorf("handler returned unexpected body: got %v want %v",
-			picks[0].PickedTeam, "Lions")
+			picks[0].Picked, "favorite")
 	}
 }
 
@@ -71,7 +71,7 @@ func TestSubmitPicks(t *testing.T) {
 
 	// Create the picks to submit
 	picks := []database.Pick{
-		{GameID: game.ID, PickedTeam: "Packers", Rank: 1},
+		{GameID: game.ID, Picked: "favorite", Rank: 1},
 	}
 	jsonPicks, _ := json.Marshal(picks)
 
@@ -105,9 +105,9 @@ func TestSubmitPicks(t *testing.T) {
 			len(dbPicks), 1)
 	}
 
-	if dbPicks[0].PickedTeam != "Packers" {
+	if dbPicks[0].Picked != "favorite" {
 		t.Errorf("handler returned unexpected body: got %v want %v",
-			dbPicks[0].PickedTeam, "Packers")
+			dbPicks[0].Picked, "favorite")
 	}
 }
 

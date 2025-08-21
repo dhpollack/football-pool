@@ -33,7 +33,7 @@ type Pick struct {
 	User       User
 	GameID     uint
 	Game       Game
-	PickedTeam string
+	Picked     string
 	Rank       int
 	QuickPick  bool
 }

@@ -38,7 +38,7 @@ func SubmitPicks(w http.ResponseWriter, r *http.Request) {
 	}
 
 	var picks []database.Pick
-	if err := json.NewDecoder(r.Body).Decode(&picks); err != nil {
+	if err := json.NewDecoder(r.Body).Decode(&picks); err != nil || len(picks) == 0 {
 		w.WriteHeader(http.StatusBadRequest)
 		return
 	}

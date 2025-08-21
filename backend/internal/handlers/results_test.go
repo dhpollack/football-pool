@@ -66,13 +66,13 @@ func TestGetWeeklyResults(t *testing.T) {
 	game2 := database.Game{Week: 1, Season: 2023, FavoriteTeam: "Eagles", UnderdogTeam: "Patriots", Spread: 7.5}
 	database.DB.Create(&game2)
 
-	pick1 := database.Pick{UserID: user1.ID, GameID: game1.ID, PickedTeam: "favorite", Rank: 16}
+	pick1 := database.Pick{UserID: user1.ID, GameID: game1.ID, Picked: "favorite", Rank: 16}
 	database.DB.Create(&pick1)
-	pick2 := database.Pick{UserID: user1.ID, GameID: game2.ID, PickedTeam: "underdog", Rank: 1}
+	pick2 := database.Pick{UserID: user1.ID, GameID: game2.ID, Picked: "underdog", Rank: 1}
 	database.DB.Create(&pick2)
-	pick3 := database.Pick{UserID: user2.ID, GameID: game1.ID, PickedTeam: "underdog", Rank: 10}
+	pick3 := database.Pick{UserID: user2.ID, GameID: game1.ID, Picked: "underdog", Rank: 10}
 	database.DB.Create(&pick3)
-	pick4 := database.Pick{UserID: user2.ID, GameID: game2.ID, PickedTeam: "favorite", Rank: 5}
+	pick4 := database.Pick{UserID: user2.ID, GameID: game2.ID, Picked: "favorite", Rank: 5}
 	database.DB.Create(&pick4)
 
 	result1 := database.Result{GameID: game1.ID, FavoriteScore: 21, UnderdogScore: 17, Outcome: "favorite"}
@@ -145,13 +145,13 @@ func TestGetSeasonResults(t *testing.T) {
 	game2 := database.Game{Week: 2, Season: 2024, FavoriteTeam: "Eagles", UnderdogTeam: "Patriots", Spread: 7.5}
 	database.DB.Create(&game2)
 
-	pick1 := database.Pick{UserID: user1.ID, GameID: game1.ID, PickedTeam: "favorite", Rank: 16}
+	pick1 := database.Pick{UserID: user1.ID, GameID: game1.ID, Picked: "favorite", Rank: 16}
 	database.DB.Create(&pick1)
-	pick2 := database.Pick{UserID: user1.ID, GameID: game2.ID, PickedTeam: "underdog", Rank: 1}
+	pick2 := database.Pick{UserID: user1.ID, GameID: game2.ID, Picked: "underdog", Rank: 1}
 	database.DB.Create(&pick2)
-	pick3 := database.Pick{UserID: user2.ID, GameID: game1.ID, PickedTeam: "underdog", Rank: 10}
+	pick3 := database.Pick{UserID: user2.ID, GameID: game1.ID, Picked: "underdog", Rank: 10}
 	database.DB.Create(&pick3)
-	pick4 := database.Pick{UserID: user2.ID, GameID: game2.ID, PickedTeam: "favorite", Rank: 5}
+	pick4 := database.Pick{UserID: user2.ID, GameID: game2.ID, Picked: "favorite", Rank: 5}
 	database.DB.Create(&pick4)
 
 	result1 := database.Result{GameID: game1.ID, FavoriteScore: 21, UnderdogScore: 17, Outcome: "favorite"}
