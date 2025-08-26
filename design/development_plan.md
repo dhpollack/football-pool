@@ -84,6 +84,10 @@ We will aim for high test coverage for both the backend and frontend to ensure c
     *   [x] Achieve at least 80% statement coverage for all React components and utility functions.
     *   [x] Focus on testing user interactions and component rendering.
 *   **Integration Tests:**
+    *   [x] Create a backend integration test
+        *   [x] Start the backend server with an in-memory database
+        *   [x] Seed the database with users, games and picks using API calls
+        *   [x] Check to see if the data is available
     *   [ ] Use Puppeteer to write end-to-end tests for the frontend.
     *   [ ] Create tests for the following user flows:
         *   [ ] User registration and login.

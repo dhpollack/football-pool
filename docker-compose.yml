@@ -17,8 +17,8 @@ services:
         BUILDKIT_INLINE_CACHE: "1"
     ports:
       - "13000:80"
-    volumes:
-      - ./frontend:/app
+    #volumes:
+    #  - ./frontend:/app
     environment:
       - VITE_BACKEND_URL=http://localhost:18080
     depends_on:

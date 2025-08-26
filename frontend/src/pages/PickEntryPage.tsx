@@ -23,8 +23,9 @@ interface Game {
 }
 
 interface Pick {
-  picked_team: string;
+  picked: string;
   rank: number;
+  quick_pick?: boolean;
 }
 
 const PickEntryPage = () => {
@@ -37,7 +38,7 @@ const PickEntryPage = () => {
       try {
         const token = localStorage.getItem("token");
         const response = await fetch(
-          `${import.meta.env.VITE_BACKEND_URL}/api/games`,
+          `${import.meta.env.VITE_BACKEND_URL}/api/games?week=1&season=2025`,
           {
             headers: {
               Authorization: `Bearer ${token}`,
@@ -52,7 +53,7 @@ const PickEntryPage = () => {
         setGames(data);
         const initialPicks: { [gameId: number]: Pick } = {};
         data.forEach((game: Game) => {
-          initialPicks[game.id] = { picked_team: "", rank: 0 };
+          initialPicks[game.id] = { picked: "", rank: 0 };
         });
         setPicks(initialPicks);
       } catch (error: unknown) {
@@ -76,21 +77,22 @@ const PickEntryPage = () => {
     const shuffledRanks = availableRanks.sort(() => Math.random() - 0.5);
 
     games.forEach((game, index) => {
-      const pickOptions = [game.favorite_team, game.underdog_team];
-      const pickedTeam =
+      const pickOptions = ["favorite", "underdog"];
+      const picked =
         pickOptions[Math.floor(Math.random() * pickOptions.length)];
       newPicks[game.id] = {
-        picked_team: pickedTeam,
+        picked: picked,
         rank: shuffledRanks[index],
+        quick_pick: true,
       };
     });
     setPicks(newPicks);
   };
 
-  const handlePickChange = (gameId: number, pickedTeam: string) => {
+  const handlePickChange = (gameId: number, picked: string) => {
     setPicks((prevPicks) => ({
       ...prevPicks,
-      [gameId]: { ...prevPicks[gameId], picked_team: pickedTeam },
+      [gameId]: { ...prevPicks[gameId], picked: picked },
     }));
   };
 
@@ -107,8 +109,9 @@ const PickEntryPage = () => {
       const token = localStorage.getItem("token");
       const picksToSubmit = Object.keys(picks).map((gameId) => ({
         game_id: parseInt(gameId, 10),
-        picked_team: picks[parseInt(gameId, 10)].picked_team,
+        picked: picks[parseInt(gameId, 10)].picked,
         rank: picks[parseInt(gameId, 10)].rank,
+        quick_pick: picks[parseInt(gameId, 10)].quick_pick || false,
       }));
 
       const response = await fetch(
@@ -140,13 +143,19 @@ const PickEntryPage = () => {
   return (
     <div>
       <Typography variant="h4">Pick Entry</Typography>
-      <Button variant="contained" sx={{ my: 2 }} onClick={handleQuickPick}>
+      <Button
+        variant="contained"
+        sx={{ my: 2 }}
+        onClick={handleQuickPick}
+        id="quick-pick-button"
+      >
         Quick Pick
       </Button>
       <Button
         variant="contained"
         sx={{ my: 2, ml: 2 }}
         onClick={handleSubmitPicks}
+        id="submit-picks-button"
       >
         Submit Picks
       </Button>
@@ -177,18 +186,15 @@ const PickEntryPage = () => {
                   <FormControl fullWidth>
                     <InputLabel>Pick</InputLabel>
                     <Select
-                      value={picks[game.id]?.picked_team || ""}
+                      value={picks[game.id]?.picked || ""}
                       label="Pick"
                       onChange={(e) =>
                         handlePickChange(game.id, e.target.value as string)
                       }
+                      data-testid={`pick-select-${game.id}`}
                     >
-                      <MenuItem value={game.favorite_team}>
-                        {game.favorite_team}
-                      </MenuItem>
-                      <MenuItem value={game.underdog_team}>
-                        {game.underdog_team}
-                      </MenuItem>
+                      <MenuItem value="favorite">{game.favorite_team}</MenuItem>
+                      <MenuItem value="underdog">{game.underdog_team}</MenuItem>
                     </Select>
                   </FormControl>
                 </TableCell>
@@ -201,12 +207,17 @@ const PickEntryPage = () => {
                       onChange={(e) =>
                         handleRankChange(game.id, e.target.value as number)
                       }
+                      data-testid={`rank-select-${game.id}`}
                     >
                       {Array.from(
                         { length: games.length },
                         (_, i) => i + 1,
                       ).map((rank) => (
-                        <MenuItem key={rank} value={rank}>
+                        <MenuItem
+                          key={rank}
+                          value={rank}
+                          data-testid={`rank-option-${rank}`}
+                        >
                           {rank}
                         </MenuItem>
                       ))}

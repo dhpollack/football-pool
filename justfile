@@ -7,7 +7,12 @@ docker-compose-up:
 docker-compose-down:
   docker compose down
 
+_claude:
+  claude
+
+claude:
+  just -E .env-claude _claude
+
 mod backend 'backend/justfile'
 
 mod frontend 'frontend/justfile'
-

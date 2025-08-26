@@ -37,3 +37,4 @@ go.work.sum
 /football-pool
 /logs/
 *.pid
+summary.context

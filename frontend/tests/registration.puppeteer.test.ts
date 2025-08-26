@@ -17,7 +17,10 @@ test("should allow a user to register", async () => {
       headers: {
         "Content-Type": "application/json",
       },
-      body: JSON.stringify({ email: "admin@test.com", password: "adminpassword" }),
+      body: JSON.stringify({
+        email: "admin@test.com",
+        password: "adminpassword",
+      }),
     });
     const adminLoginData = await adminLoginResponse.json();
     const adminToken = adminLoginData.token;
@@ -45,11 +48,14 @@ test("should allow a user to register", async () => {
     await page.waitForSelector("input[name='email']", { timeout: 1000 });
 
     // Fetch users from debug endpoint directly from Node.js environment
-    const usersResponse = await fetch("http://localhost:18080/api/debug/users", {
-      headers: {
-        Authorization: `Bearer ${adminToken}`,
+    const usersResponse = await fetch(
+      `http://localhost:18080/api/debug/users?timestamp=${new Date().getTime()}`,
+      {
+        headers: {
+          Authorization: `Bearer ${adminToken}`,
+        },
       },
-    });
+    );
     const users = await usersResponse.json();
 
     // Assert that testuser@example.com is present
