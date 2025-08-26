@@ -13,11 +13,18 @@ import (
 )
 
 func TestGetProfile(t *testing.T) {
+	// Set up test database
+	db, err := database.New("file::memory:?cache=shared")
+	if err != nil {
+		t.Fatalf("Failed to connect to database: %v", err)
+	}
+	gormDB := db.GetDB()
+
 	// Create a user and a player
 	user := database.User{Email: "profile_user@test.com", Password: "password"}
-	database.DB.Create(&user)
+	gormDB.Create(&user)
 	player := database.Player{UserID: user.ID, Name: "Test User", Address: "123 Test St"}
-	database.DB.Create(&player)
+	gormDB.Create(&player)
 
 	// Create a request with the user's email in the context
 	req, err := http.NewRequest("GET", "/profile", nil)
@@ -29,7 +36,7 @@ func TestGetProfile(t *testing.T) {
 
 	// We create a ResponseRecorder (which satisfies http.ResponseWriter) to record the response.
 	rr := httptest.NewRecorder()
-	handler := http.HandlerFunc(GetProfile)
+	handler := GetProfile(gormDB)
 
 	// Our handlers satisfy http.Handler, so we can call their ServeHTTP method
 	// directly and pass in our Request and ResponseRecorder.
@@ -54,11 +61,18 @@ func TestGetProfile(t *testing.T) {
 }
 
 func TestUpdateProfile(t *testing.T) {
+	// Set up test database
+	db, err := database.New("file::memory:?cache=shared")
+	if err != nil {
+		t.Fatalf("Failed to connect to database: %v", err)
+	}
+	gormDB := db.GetDB()
+
 	// Create a user and a player
 	user := database.User{Email: "profile_user2@test.com", Password: "password"}
-	database.DB.Create(&user)
+	gormDB.Create(&user)
 	player := database.Player{UserID: user.ID, Name: "Test User", Address: "123 Test St"}
-	database.DB.Create(&player)
+	gormDB.Create(&player)
 
 	// Create the updated profile to submit
 	updates := struct {
@@ -80,7 +94,7 @@ func TestUpdateProfile(t *testing.T) {
 
 	// We create a ResponseRecorder (which satisfies http.ResponseWriter) to record the response.
 	rr := httptest.NewRecorder()
-	handler := http.HandlerFunc(UpdateProfile)
+	handler := UpdateProfile(gormDB)
 
 	// Our handlers satisfy http.Handler, so we can call their ServeHTTP method
 	// directly and pass in our Request and ResponseRecorder.
@@ -94,7 +108,7 @@ func TestUpdateProfile(t *testing.T) {
 
 	// Check that the player was updated in the database
 	var dbPlayer database.Player
-	database.DB.Where("user_id = ?", user.ID).First(&dbPlayer)
+	gormDB.Where("user_id = ?", user.ID).First(&dbPlayer)
 	if dbPlayer.Name != "Updated User" {
 		t.Errorf("handler returned unexpected body: got %v want %v",
 			dbPlayer.Name, "Updated User")
@@ -102,8 +116,15 @@ func TestUpdateProfile(t *testing.T) {
 }
 
 func TestGetProfileErrors(t *testing.T) {
+	// Set up test database
+	db, err := database.New("file::memory:?cache=shared")
+	if err != nil {
+		t.Fatalf("Failed to connect to database: %v", err)
+	}
+	gormDB := db.GetDB()
+
 	user := database.User{Email: "profile_user3@test.com", Password: "password"}
-	database.DB.Create(&user)
+	gormDB.Create(&user)
 
 	tests := []struct {
 		name           string
@@ -132,7 +153,7 @@ func TestGetProfileErrors(t *testing.T) {
 			req = req.WithContext(ctx)
 
 			rr := httptest.NewRecorder()
-			handler := http.HandlerFunc(GetProfile)
+			handler := GetProfile(gormDB)
 
 			handler.ServeHTTP(rr, req)
 
@@ -145,13 +166,20 @@ func TestGetProfileErrors(t *testing.T) {
 }
 
 func TestUpdateProfileErrors(t *testing.T) {
+	// Set up test database
+	db, err := database.New("file::memory:?cache=shared")
+	if err != nil {
+		t.Fatalf("Failed to connect to database: %v", err)
+	}
+	gormDB := db.GetDB()
+
 	userWithPlayer := database.User{Email: "profile_user4@test.com", Password: "password"}
-	database.DB.Create(&userWithPlayer)
+	gormDB.Create(&userWithPlayer)
 	player := database.Player{UserID: userWithPlayer.ID, Name: "Test User", Address: "123 Test St"}
-	database.DB.Create(&player)
+	gormDB.Create(&player)
 
 	userWithoutPlayer := database.User{Email: "profile_user5@test.com", Password: "password"}
-	database.DB.Create(&userWithoutPlayer)
+	gormDB.Create(&userWithoutPlayer)
 
 	tests := []struct {
 		name           string
@@ -189,7 +217,7 @@ func TestUpdateProfileErrors(t *testing.T) {
 			req = req.WithContext(ctx)
 
 			rr := httptest.NewRecorder()
-			handler := http.HandlerFunc(UpdateProfile)
+			handler := UpdateProfile(gormDB)
 
 			handler.ServeHTTP(rr, req)
 
@@ -202,16 +230,23 @@ func TestUpdateProfileErrors(t *testing.T) {
 }
 
 func TestDebugGetUsers(t *testing.T) {
+	// Set up test database
+	db, err := database.New("file::memory:?cache=shared")
+	if err != nil {
+		t.Fatalf("Failed to connect to database: %v", err)
+	}
+	gormDB := db.GetDB()
+
 	// Clear existing users to ensure a clean state for this test
-	database.DB.Exec("DELETE FROM users")
+	gormDB.Exec("DELETE FROM users")
 
 	// Create some dummy users
 	user1 := database.User{Email: "user1@test.com", Password: "pass1", Name: "User One", Role: "player"}
 	user2 := database.User{Email: "user2@test.com", Password: "pass2", Name: "User Two", Role: "player"}
 	adminUser := database.User{Email: "admin@test.com", Password: "adminpass", Name: "Admin User", Role: "admin"}
-	database.DB.Create(&user1)
-	database.DB.Create(&user2)
-	database.DB.Create(&adminUser)
+	gormDB.Create(&user1)
+	gormDB.Create(&user2)
+	gormDB.Create(&adminUser)
 
 	// Create a request to the DebugGetUsers endpoint
 	req, err := http.NewRequest("GET", "/debug/users", nil)
@@ -221,7 +256,7 @@ func TestDebugGetUsers(t *testing.T) {
 
 	// Create a ResponseRecorder
 	rr := httptest.NewRecorder()
-	handler := http.HandlerFunc(DebugGetUsers)
+	handler := DebugGetUsers(gormDB)
 
 	// Serve the request
 	handler.ServeHTTP(rr, req)
@@ -247,9 +282,15 @@ func TestDebugGetUsers(t *testing.T) {
 	foundUser2 := false
 	foundAdmin := false
 	for _, u := range users {
-		if u.Email == user1.Email { foundUser1 = true }
-		if u.Email == user2.Email { foundUser2 = true }
-		if u.Email == adminUser.Email { foundAdmin = true }
+		if u.Email == user1.Email {
+			foundUser1 = true
+		}
+		if u.Email == user2.Email {
+			foundUser2 = true
+		}
+		if u.Email == adminUser.Email {
+			foundAdmin = true
+		}
 	}
 
 	if !foundUser1 || !foundUser2 || !foundAdmin {
@@ -258,9 +299,16 @@ func TestDebugGetUsers(t *testing.T) {
 }
 
 func TestDebugDeleteUser(t *testing.T) {
+	// Set up test database
+	db, err := database.New("file::memory:?cache=shared")
+	if err != nil {
+		t.Fatalf("Failed to connect to database: %v", err)
+	}
+	gormDB := db.GetDB()
+
 	// Create a user to delete
 	userToDelete := database.User{Email: "delete_me@test.com", Password: "password", Name: "Delete User", Role: "player"}
-	database.DB.Create(&userToDelete)
+	gormDB.Create(&userToDelete)
 
 	// Create a request to the DebugDeleteUser endpoint
 	req, err := http.NewRequest("DELETE", "/debug/users/delete?email=delete_me@test.com", nil)
@@ -270,7 +318,7 @@ func TestDebugDeleteUser(t *testing.T) {
 
 	// Create a ResponseRecorder
 	rr := httptest.NewRecorder()
-	handler := http.HandlerFunc(DebugDeleteUser)
+	handler := DebugDeleteUser(gormDB)
 
 	// Serve the request
 	handler.ServeHTTP(rr, req)
@@ -283,7 +331,7 @@ func TestDebugDeleteUser(t *testing.T) {
 
 	// Verify the user is deleted from the database
 	var user database.User
-	if result := database.DB.Where("email = ?", "delete_me@test.com").First(&user); result.Error == nil {
+	if result := gormDB.Where("email = ?", "delete_me@test.com").First(&user); result.Error == nil {
 		t.Errorf("user was not deleted from the database")
 	}
 }

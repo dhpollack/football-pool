@@ -33,11 +33,15 @@ func main() {
 		dsn = dsnEnv
 	}
 	slog.Info("Connecting to database")
-	database.Connect(dsn)
+	db, err := database.New(dsn)
+	if err != nil {
+		slog.Error("Failed to connect to database", "error", err)
+		os.Exit(1)
+	}
 
 	// Check if admin user exists, if not, create it
 	var adminUser database.User
-	result := database.DB.Where("email = ?", "admin@test.com").First(&adminUser)
+	result := db.GetDB().Where("email = ?", "admin@test.com").First(&adminUser)
 	if result.Error != nil {
 		if result.Error.Error() == "record not found" {
 			slog.Info("Admin user not found, creating...")
@@ -52,7 +56,7 @@ func main() {
 				Password: string(hashedPassword),
 				Role:     "admin",
 			}
-			if createResult := database.DB.Create(&adminUser); createResult.Error != nil {
+			if createResult := db.GetDB().Create(&adminUser); createResult.Error != nil {
 				slog.Error("Failed to create admin user", "error", createResult.Error)
 				os.Exit(1)
 			}
@@ -66,5 +70,6 @@ func main() {
 	}
 
 	slog.Info("Starting server")
-	server.Start()
+	srv := server.NewServer(db)
+	srv.Start()
 }

@@ -13,15 +13,22 @@ import (
 )
 
 func TestGetPicks(t *testing.T) {
+	// Set up test database
+	db, err := database.New("file::memory:?cache=shared")
+	if err != nil {
+		t.Fatalf("Failed to connect to database: %v", err)
+	}
+	gormDB := db.GetDB()
+
 	// Create a user and a game
 	user := database.User{Email: "test@test.com", Password: "password"}
-	database.DB.Create(&user)
+	gormDB.Create(&user)
 	game := database.Game{Week: 1, Season: 2023, FavoriteTeam: "Lions", UnderdogTeam: "Chiefs"}
-	database.DB.Create(&game)
+	gormDB.Create(&game)
 
 	// Create a pick for the user
 	pick := database.Pick{UserID: user.ID, GameID: game.ID, Picked: "favorite", Rank: 1}
-	database.DB.Create(&pick)
+	gormDB.Create(&pick)
 
 	// Create a request with the user's email in the context
 	req, err := http.NewRequest("GET", "/picks", nil)
@@ -31,21 +38,20 @@ func TestGetPicks(t *testing.T) {
 	ctx := context.WithValue(req.Context(), auth.EmailKey, "test@test.com")
 	req = req.WithContext(ctx)
 
-	// We create a ResponseRecorder (which satisfies http.ResponseWriter) to record the response.
+	// Create a ResponseRecorder
 	rr := httptest.NewRecorder()
-	handler := http.HandlerFunc(GetPicks)
+	handler := GetPicks(gormDB)
 
-	// Our handlers satisfy http.Handler, so we can call their ServeHTTP method
-	// directly and pass in our Request and ResponseRecorder.
+	// Call the handler
 	handler.ServeHTTP(rr, req)
 
-	// Check the status code is what we expect.
+	// Check the status code
 	if status := rr.Code; status != http.StatusOK {
 		t.Errorf("handler returned wrong status code: got %v want %v",
 			status, http.StatusOK)
 	}
 
-	// Check the response body is what we expect.
+	// Check the response body
 	var picks []database.Pick
 	if err := json.NewDecoder(rr.Body).Decode(&picks); err != nil {
 		t.Fatal(err)
@@ -63,11 +69,18 @@ func TestGetPicks(t *testing.T) {
 }
 
 func TestSubmitPicks(t *testing.T) {
+	// Set up test database
+	db, err := database.New("file::memory:?cache=shared")
+	if err != nil {
+		t.Fatalf("Failed to connect to database: %v", err)
+	}
+	gormDB := db.GetDB()
+
 	// Create a user and a game
 	user := database.User{Email: "test2@test.com", Password: "password"}
-	database.DB.Create(&user)
+	gormDB.Create(&user)
 	game := database.Game{Week: 1, Season: 2023, FavoriteTeam: "Packers", UnderdogTeam: "Bears"}
-	database.DB.Create(&game)
+	gormDB.Create(&game)
 
 	// Create the picks to submit
 	picks := []database.Pick{
@@ -83,15 +96,14 @@ func TestSubmitPicks(t *testing.T) {
 	ctx := context.WithValue(req.Context(), auth.EmailKey, "test2@test.com")
 	req = req.WithContext(ctx)
 
-	// We create a ResponseRecorder (which satisfies http.ResponseWriter) to record the response.
+	// Create a ResponseRecorder
 	rr := httptest.NewRecorder()
-	handler := http.HandlerFunc(SubmitPicks)
+	handler := SubmitPicks(gormDB)
 
-	// Our handlers satisfy http.Handler, so we can call their ServeHTTP method
-	// directly and pass in our Request and ResponseRecorder.
+	// Call the handler
 	handler.ServeHTTP(rr, req)
 
-	// Check the status code is what we expect.
+	// Check the status code
 	if status := rr.Code; status != http.StatusCreated {
 		t.Errorf("handler returned wrong status code: got %v want %v",
 			status, http.StatusCreated)
@@ -99,7 +111,7 @@ func TestSubmitPicks(t *testing.T) {
 
 	// Check that the picks were created in the database
 	var dbPicks []database.Pick
-	database.DB.Where("user_id = ?", user.ID).Find(&dbPicks)
+	gormDB.Where("user_id = ?", user.ID).Find(&dbPicks)
 	if len(dbPicks) != 1 {
 		t.Errorf("handler returned unexpected body: got %v want %v",
 			len(dbPicks), 1)
@@ -112,6 +124,13 @@ func TestSubmitPicks(t *testing.T) {
 }
 
 func TestGetPicksErrors(t *testing.T) {
+	// Set up test database
+	db, err := database.New("file::memory:?cache=shared")
+	if err != nil {
+		t.Fatalf("Failed to connect to database: %v", err)
+	}
+	gormDB := db.GetDB()
+
 	tests := []struct {
 		name           string
 		email          string
@@ -134,7 +153,7 @@ func TestGetPicksErrors(t *testing.T) {
 			req = req.WithContext(ctx)
 
 			rr := httptest.NewRecorder()
-			handler := http.HandlerFunc(GetPicks)
+			handler := GetPicks(gormDB)
 
 			handler.ServeHTTP(rr, req)
 
@@ -147,8 +166,15 @@ func TestGetPicksErrors(t *testing.T) {
 }
 
 func TestSubmitPicksErrors(t *testing.T) {
+	// Set up test database
+	db, err := database.New("file::memory:?cache=shared")
+	if err != nil {
+		t.Fatalf("Failed to connect to database: %v", err)
+	}
+	gormDB := db.GetDB()
+
 	user := database.User{Email: "test3@test.com", Password: "password"}
-	database.DB.Create(&user)
+	gormDB.Create(&user)
 
 	tests := []struct {
 		name           string
@@ -180,7 +206,7 @@ func TestSubmitPicksErrors(t *testing.T) {
 			req = req.WithContext(ctx)
 
 			rr := httptest.NewRecorder()
-			handler := http.HandlerFunc(SubmitPicks)
+			handler := SubmitPicks(gormDB)
 
 			handler.ServeHTTP(rr, req)
 

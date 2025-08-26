@@ -13,13 +13,20 @@ import (
 )
 
 func TestGetSurvivorPicks(t *testing.T) {
+	// Set up test database
+	db, err := database.New("file::memory:?cache=shared")
+	if err != nil {
+		t.Fatalf("Failed to connect to database: %v", err)
+	}
+	gormDB := db.GetDB()
+
 	// Create a user
 	user := database.User{Email: "survivor_user@test.com", Password: "password"}
-	database.DB.Create(&user)
+	gormDB.Create(&user)
 
 	// Create a survivor pick for the user
 	pick := database.SurvivorPick{UserID: user.ID, Week: 1, Team: "Lions"}
-	database.DB.Create(&pick)
+	gormDB.Create(&pick)
 
 	// Create a request with the user's email in the context
 	req, err := http.NewRequest("GET", "/survivor", nil)
@@ -31,7 +38,7 @@ func TestGetSurvivorPicks(t *testing.T) {
 
 	// We create a ResponseRecorder (which satisfies http.ResponseWriter) to record the response.
 	rr := httptest.NewRecorder()
-	handler := http.HandlerFunc(GetSurvivorPicks)
+	handler := GetSurvivorPicks(gormDB)
 
 	// Our handlers satisfy http.Handler, so we can call their ServeHTTP method
 	// directly and pass in our Request and ResponseRecorder.
@@ -61,9 +68,16 @@ func TestGetSurvivorPicks(t *testing.T) {
 }
 
 func TestSubmitSurvivorPick(t *testing.T) {
+	// Set up test database
+	db, err := database.New("file::memory:?cache=shared")
+	if err != nil {
+		t.Fatalf("Failed to connect to database: %v", err)
+	}
+	gormDB := db.GetDB()
+
 	// Create a user
 	user := database.User{Email: "survivor_user2@test.com", Password: "password"}
-	database.DB.Create(&user)
+	gormDB.Create(&user)
 
 	// Create the pick to submit
 	pick := database.SurvivorPick{Week: 1, Team: "Packers"}
@@ -79,7 +93,7 @@ func TestSubmitSurvivorPick(t *testing.T) {
 
 	// We create a ResponseRecorder (which satisfies http.ResponseWriter) to record the response.
 	rr := httptest.NewRecorder()
-	handler := http.HandlerFunc(SubmitSurvivorPick)
+	handler := SubmitSurvivorPick(gormDB)
 
 	// Our handlers satisfy http.Handler, so we can call their ServeHTTP method
 	// directly and pass in our Request and ResponseRecorder.
@@ -93,7 +107,7 @@ func TestSubmitSurvivorPick(t *testing.T) {
 
 	// Check that the pick was created in the database
 	var dbPick database.SurvivorPick
-	database.DB.Where("user_id = ?", user.ID).First(&dbPick)
+	gormDB.Where("user_id = ?", user.ID).First(&dbPick)
 	if dbPick.Team != "Packers" {
 		t.Errorf("handler returned unexpected body: got %v want %v",
 			dbPick.Team, "Packers")
@@ -101,6 +115,13 @@ func TestSubmitSurvivorPick(t *testing.T) {
 }
 
 func TestGetSurvivorPicksErrors(t *testing.T) {
+	// Set up test database
+	db, err := database.New("file::memory:?cache=shared")
+	if err != nil {
+		t.Fatalf("Failed to connect to database: %v", err)
+	}
+	gormDB := db.GetDB()
+
 	tests := []struct {
 		name           string
 		email          string
@@ -123,7 +144,7 @@ func TestGetSurvivorPicksErrors(t *testing.T) {
 			req = req.WithContext(ctx)
 
 			rr := httptest.NewRecorder()
-			handler := http.HandlerFunc(GetSurvivorPicks)
+			handler := GetSurvivorPicks(gormDB)
 
 			handler.ServeHTTP(rr, req)
 
@@ -136,8 +157,15 @@ func TestGetSurvivorPicksErrors(t *testing.T) {
 }
 
 func TestSubmitSurvivorPickErrors(t *testing.T) {
+	// Set up test database
+	db, err := database.New("file::memory:?cache=shared")
+	if err != nil {
+		t.Fatalf("Failed to connect to database: %v", err)
+	}
+	gormDB := db.GetDB()
+
 	user := database.User{Email: "survivor_user3@test.com", Password: "password"}
-	database.DB.Create(&user)
+	gormDB.Create(&user)
 
 	tests := []struct {
 		name           string
@@ -169,7 +197,7 @@ func TestSubmitSurvivorPickErrors(t *testing.T) {
 			req = req.WithContext(ctx)
 
 			rr := httptest.NewRecorder()
-			handler := http.HandlerFunc(SubmitSurvivorPick)
+			handler := SubmitSurvivorPick(gormDB)
 
 			handler.ServeHTTP(rr, req)
 

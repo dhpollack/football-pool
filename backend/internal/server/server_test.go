@@ -9,8 +9,12 @@ import (
 )
 
 func TestStart(t *testing.T) {
-	database.Connect("file::memory:?cache=shared")
-	go Start()
+	db, err := database.New("file::memory:?cache=shared")
+	if err != nil {
+		t.Fatalf("Failed to connect to database: %v", err)
+	}
+	server := NewServer(db)
+	go server.Start()
 
 	// Wait for the server to start
 	time.Sleep(1 * time.Second)

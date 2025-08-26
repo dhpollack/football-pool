@@ -16,7 +16,12 @@ var seedUsersCmd = &cobra.Command{
 	Short: "Seed the users table",
 	Args:  cobra.ExactArgs(1),
 	Run: func(cmd *cobra.Command, args []string) {
-		database.Connect(dsn)
+		db, err := database.New(dsn)
+		if err != nil {
+			fmt.Printf("Error connecting to database: %v\n", err)
+			return
+		}
+		gormDB := db.GetDB()
 
 		jsonFilePath := args[0]
 		jsonFile, err := os.Open(jsonFilePath)
@@ -41,7 +46,7 @@ var seedUsersCmd = &cobra.Command{
 
 		for _, user := range users {
 			var existingUser database.User
-			result := database.DB.Where("email = ?", user.Email).First(&existingUser)
+			result := gormDB.Where("email = ?", user.Email).First(&existingUser)
 
 			if result.Error == nil {
 				fmt.Printf("User with email %s already exists. Skipping.\n", user.Email)
@@ -57,7 +62,7 @@ var seedUsersCmd = &cobra.Command{
 				continue
 			}
 			newUser := database.User{Name: user.Name, Email: user.Email, Password: string(hashedPassword), Role: user.Role}
-			if result := database.DB.Create(&newUser); result.Error != nil {
+			if result := gormDB.Create(&newUser); result.Error != nil {
 				fmt.Printf("Error seeding user %s: %v\n", user.Email, result.Error)
 			}
 		}

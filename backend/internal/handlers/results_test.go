@@ -13,11 +13,18 @@ import (
 )
 
 func TestSubmitResult(t *testing.T) {
+	// Set up test database
+	db, err := database.New("file::memory:?cache=shared")
+	if err != nil {
+		t.Fatalf("Failed to connect to database: %v", err)
+	}
+	gormDB := db.GetDB()
+
 	// Create an admin user and a game
 	admin := database.User{Email: "admin@test.com", Password: "password", Role: "admin"}
-	database.DB.Create(&admin)
+	gormDB.Create(&admin)
 	game := database.Game{Week: 1, Season: 2023, FavoriteTeam: "Lions", UnderdogTeam: "Chiefs", Spread: 3.5}
-	database.DB.Create(&game)
+	gormDB.Create(&game)
 
 	// Create the result to submit
 	result := database.Result{GameID: game.ID, FavoriteScore: 21, UnderdogScore: 17}
@@ -31,15 +38,14 @@ func TestSubmitResult(t *testing.T) {
 	ctx := context.WithValue(req.Context(), auth.EmailKey, "admin@test.com")
 	req = req.WithContext(ctx)
 
-	// We create a ResponseRecorder (which satisfies http.ResponseWriter) to record the response.
+	// Create a ResponseRecorder
 	rr := httptest.NewRecorder()
-	handler := http.HandlerFunc(SubmitResult)
+	handler := SubmitResult(gormDB)
 
-	// Our handlers satisfy http.Handler, so we can call their ServeHTTP method
-	// directly and pass in our Request and ResponseRecorder.
+	// Call the handler
 	handler.ServeHTTP(rr, req)
 
-	// Check the status code is what we expect.
+	// Check the status code
 	if status := rr.Code; status != http.StatusCreated {
 		t.Errorf("handler returned wrong status code: got %v want %v",
 			status, http.StatusCreated)
@@ -47,7 +53,7 @@ func TestSubmitResult(t *testing.T) {
 
 	// Check that the result was created in the database
 	var dbResult database.Result
-	database.DB.Where("game_id = ?", game.ID).First(&dbResult)
+	gormDB.Where("game_id = ?", game.ID).First(&dbResult)
 	if dbResult.Outcome != "favorite" {
 		t.Errorf("handler returned unexpected body: got %v want %v",
 			dbResult.Outcome, "favorite")
@@ -55,30 +61,37 @@ func TestSubmitResult(t *testing.T) {
 }
 
 func TestGetWeeklyResults(t *testing.T) {
+	// Set up test database
+	db, err := database.New("file::memory:?cache=shared")
+	if err != nil {
+		t.Fatalf("Failed to connect to database: %v", err)
+	}
+	gormDB := db.GetDB()
+
 	// Create users, games, picks, and results
 	user1 := database.User{Name: "User 1", Email: "user1@test.com", Password: "password"}
-	database.DB.Create(&user1)
+	gormDB.Create(&user1)
 	user2 := database.User{Name: "User 2", Email: "user2@test.com", Password: "password"}
-	database.DB.Create(&user2)
+	gormDB.Create(&user2)
 
 	game1 := database.Game{Week: 1, Season: 2023, FavoriteTeam: "Lions", UnderdogTeam: "Chiefs", Spread: 3.5}
-	database.DB.Create(&game1)
+	gormDB.Create(&game1)
 	game2 := database.Game{Week: 1, Season: 2023, FavoriteTeam: "Eagles", UnderdogTeam: "Patriots", Spread: 7.5}
-	database.DB.Create(&game2)
+	gormDB.Create(&game2)
 
 	pick1 := database.Pick{UserID: user1.ID, GameID: game1.ID, Picked: "favorite", Rank: 16}
-	database.DB.Create(&pick1)
+	gormDB.Create(&pick1)
 	pick2 := database.Pick{UserID: user1.ID, GameID: game2.ID, Picked: "underdog", Rank: 1}
-	database.DB.Create(&pick2)
+	gormDB.Create(&pick2)
 	pick3 := database.Pick{UserID: user2.ID, GameID: game1.ID, Picked: "underdog", Rank: 10}
-	database.DB.Create(&pick3)
+	gormDB.Create(&pick3)
 	pick4 := database.Pick{UserID: user2.ID, GameID: game2.ID, Picked: "favorite", Rank: 5}
-	database.DB.Create(&pick4)
+	gormDB.Create(&pick4)
 
 	result1 := database.Result{GameID: game1.ID, FavoriteScore: 21, UnderdogScore: 17, Outcome: "favorite"}
-	database.DB.Create(&result1)
+	gormDB.Create(&result1)
 	result2 := database.Result{GameID: game2.ID, FavoriteScore: 34, UnderdogScore: 10, Outcome: "favorite"}
-	database.DB.Create(&result2)
+	gormDB.Create(&result2)
 
 	// Create a request with the week and season as query parameters
 	req, err := http.NewRequest("GET", "/results/weekly?week=1&season=2023", nil)
@@ -86,21 +99,20 @@ func TestGetWeeklyResults(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	// We create a ResponseRecorder (which satisfies http.ResponseWriter) to record the response.
+	// Create a ResponseRecorder
 	rr := httptest.NewRecorder()
-	handler := http.HandlerFunc(GetWeeklyResults)
+	handler := GetWeeklyResults(gormDB)
 
-	// Our handlers satisfy http.Handler, so we can call their ServeHTTP method
-	// directly and pass in our Request and ResponseRecorder.
+	// Call the handler
 	handler.ServeHTTP(rr, req)
 
-	// Check the status code is what we expect.
+	// Check the status code
 	if status := rr.Code; status != http.StatusOK {
 		t.Errorf("handler returned wrong status code: got %v want %v",
 			status, http.StatusOK)
 	}
 
-	// Check the response body is what we expect.
+	// Check the response body
 	type WeeklyResult struct {
 		PlayerID   uint    `json:"player_id"`
 		PlayerName string  `json:"player_name"`
@@ -134,30 +146,37 @@ func TestGetWeeklyResults(t *testing.T) {
 }
 
 func TestGetSeasonResults(t *testing.T) {
+	// Set up test database
+	db, err := database.New("file::memory:?cache=shared")
+	if err != nil {
+		t.Fatalf("Failed to connect to database: %v", err)
+	}
+	gormDB := db.GetDB()
+
 	// Create users, games, picks, and results
 	user1 := database.User{Name: "User 1", Email: "user3@test.com", Password: "password"}
-	database.DB.Create(&user1)
+	gormDB.Create(&user1)
 	user2 := database.User{Name: "User 2", Email: "user4@test.com", Password: "password"}
-	database.DB.Create(&user2)
+	gormDB.Create(&user2)
 
 	game1 := database.Game{Week: 1, Season: 2024, FavoriteTeam: "Lions", UnderdogTeam: "Chiefs", Spread: 3.5}
-	database.DB.Create(&game1)
+	gormDB.Create(&game1)
 	game2 := database.Game{Week: 2, Season: 2024, FavoriteTeam: "Eagles", UnderdogTeam: "Patriots", Spread: 7.5}
-	database.DB.Create(&game2)
+	gormDB.Create(&game2)
 
 	pick1 := database.Pick{UserID: user1.ID, GameID: game1.ID, Picked: "favorite", Rank: 16}
-	database.DB.Create(&pick1)
+	gormDB.Create(&pick1)
 	pick2 := database.Pick{UserID: user1.ID, GameID: game2.ID, Picked: "underdog", Rank: 1}
-	database.DB.Create(&pick2)
+	gormDB.Create(&pick2)
 	pick3 := database.Pick{UserID: user2.ID, GameID: game1.ID, Picked: "underdog", Rank: 10}
-	database.DB.Create(&pick3)
+	gormDB.Create(&pick3)
 	pick4 := database.Pick{UserID: user2.ID, GameID: game2.ID, Picked: "favorite", Rank: 5}
-	database.DB.Create(&pick4)
+	gormDB.Create(&pick4)
 
 	result1 := database.Result{GameID: game1.ID, FavoriteScore: 21, UnderdogScore: 17, Outcome: "favorite"}
-	database.DB.Create(&result1)
+	gormDB.Create(&result1)
 	result2 := database.Result{GameID: game2.ID, FavoriteScore: 34, UnderdogScore: 10, Outcome: "favorite"}
-	database.DB.Create(&result2)
+	gormDB.Create(&result2)
 
 	// Create a request with the season as query parameters
 	req, err := http.NewRequest("GET", "/results/season?season=2024", nil)
@@ -167,7 +186,7 @@ func TestGetSeasonResults(t *testing.T) {
 
 	// We create a ResponseRecorder (which satisfies http.ResponseWriter) to record the response.
 	rr := httptest.NewRecorder()
-	handler := http.HandlerFunc(GetSeasonResults)
+	handler := GetSeasonResults(gormDB)
 
 	// Our handlers satisfy http.Handler, so we can call their ServeHTTP method
 	// directly and pass in our Request and ResponseRecorder.
@@ -213,6 +232,13 @@ func TestGetSeasonResults(t *testing.T) {
 }
 
 func TestGetWeeklyResultsErrors(t *testing.T) {
+	// Set up test database
+	db, err := database.New("file::memory:?cache=shared")
+	if err != nil {
+		t.Fatalf("Failed to connect to database: %v", err)
+	}
+	gormDB := db.GetDB()
+
 	tests := []struct {
 		name           string
 		url            string
@@ -248,7 +274,7 @@ func TestGetWeeklyResultsErrors(t *testing.T) {
 			}
 
 			rr := httptest.NewRecorder()
-			handler := http.HandlerFunc(GetWeeklyResults)
+			handler := GetWeeklyResults(gormDB)
 
 			handler.ServeHTTP(rr, req)
 
@@ -261,8 +287,15 @@ func TestGetWeeklyResultsErrors(t *testing.T) {
 }
 
 func TestSubmitResultErrors(t *testing.T) {
+	// Set up test database
+	db, err := database.New("file::memory:?cache=shared")
+	if err != nil {
+		t.Fatalf("Failed to connect to database: %v", err)
+	}
+	gormDB := db.GetDB()
+
 	admin := database.User{Email: "admin2@test.com", Password: "password", Role: "admin"}
-	database.DB.Create(&admin)
+	gormDB.Create(&admin)
 
 	tests := []struct {
 		name           string
@@ -291,7 +324,7 @@ func TestSubmitResultErrors(t *testing.T) {
 			req = req.WithContext(ctx)
 
 			rr := httptest.NewRecorder()
-			handler := http.HandlerFunc(SubmitResult)
+			handler := SubmitResult(gormDB)
 
 			handler.ServeHTTP(rr, req)
 
@@ -304,6 +337,13 @@ func TestSubmitResultErrors(t *testing.T) {
 }
 
 func TestGetSeasonResultsErrors(t *testing.T) {
+	// Set up test database
+	db, err := database.New("file::memory:?cache=shared")
+	if err != nil {
+		t.Fatalf("Failed to connect to database: %v", err)
+	}
+	gormDB := db.GetDB()
+
 	tests := []struct {
 		name           string
 		url            string
@@ -329,7 +369,7 @@ func TestGetSeasonResultsErrors(t *testing.T) {
 			}
 
 			rr := httptest.NewRecorder()
-			handler := http.HandlerFunc(GetSeasonResults)
+			handler := GetSeasonResults(gormDB)
 
 			handler.ServeHTTP(rr, req)
 

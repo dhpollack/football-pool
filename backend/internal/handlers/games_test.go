@@ -11,15 +11,22 @@ import (
 )
 
 func TestMain(m *testing.M) {
-	database.Connect("file::memory:?cache=shared")
+	// Database setup is now handled in individual tests
 	code := m.Run()
 	os.Exit(code)
 }
 
 func TestGetGames(t *testing.T) {
+	// Set up test database
+	db, err := database.New("file::memory:?cache=shared")
+	if err != nil {
+		t.Fatalf("Failed to connect to database: %v", err)
+	}
+	gormDB := db.GetDB()
+
 	// Seed the database with some games
 	game := database.Game{Week: 1, Season: 2023, FavoriteTeam: "Lions", UnderdogTeam: "Chiefs"}
-	database.DB.Create(&game)
+	gormDB.Create(&game)
 
 	// Create a request to pass to our handler.
 	req, err := http.NewRequest("GET", "/games?week=1&season=2023", nil)
@@ -27,21 +34,20 @@ func TestGetGames(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	// We create a ResponseRecorder (which satisfies http.ResponseWriter) to record the response.
+	// We create a ResponseRecorder to record the response.
 	rr := httptest.NewRecorder()
-	handler := http.HandlerFunc(GetGames)
+	handler := GetGames(gormDB)
 
-	// Our handlers satisfy http.Handler, so we can call their ServeHTTP method
-	// directly and pass in our Request and ResponseRecorder.
+	// Call the handler
 	handler.ServeHTTP(rr, req)
 
-	// Check the status code is what we expect.
+	// Check the status code
 	if status := rr.Code; status != http.StatusOK {
 		t.Errorf("handler returned wrong status code: got %v want %v",
 			status, http.StatusOK)
 	}
 
-	// Check the response body is what we expect.
+	// Check the response body
 	var games []database.Game
 	if err := json.NewDecoder(rr.Body).Decode(&games); err != nil {
 		t.Fatal(err)
@@ -59,6 +65,13 @@ func TestGetGames(t *testing.T) {
 }
 
 func TestGetGamesErrors(t *testing.T) {
+	// Set up test database
+	db, err := database.New("file::memory:?cache=shared")
+	if err != nil {
+		t.Fatalf("Failed to connect to database: %v", err)
+	}
+	gormDB := db.GetDB()
+
 	tests := []struct {
 		name           string
 		url            string
@@ -94,7 +107,7 @@ func TestGetGamesErrors(t *testing.T) {
 			}
 
 			rr := httptest.NewRecorder()
-			handler := http.HandlerFunc(GetGames)
+			handler := GetGames(gormDB)
 
 			handler.ServeHTTP(rr, req)
 

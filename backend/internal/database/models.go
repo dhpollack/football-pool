@@ -8,7 +8,7 @@ type User struct {
 	gorm.Model
 	Name     string `json:"name"`
 	Email    string `json:"email" gorm:"unique"`
-	Password string `json:"password"`
+	Password string `json:"-"`
 	Role     string `json:"role"`
 }
 
@@ -16,7 +16,7 @@ type User struct {
 // swagger:model
 type Player struct {
 	gorm.Model
-	UserID  uint   `json:"user_id"`
+	UserID  uint   `json:"user_id" gorm:"unique"`
 	User    User   `json:"user"`
 	Name    string `json:"name"`
 	Address string `json:"address"`
@@ -26,8 +26,8 @@ type Player struct {
 // swagger:model
 type Game struct {
 	gorm.Model
-	Week         int     `json:"week"`
-	Season       int     `json:"season"`
+	Week         int     `json:"week" gorm:"index:idx_week_season"`
+	Season       int     `json:"season" gorm:"index:idx_week_season"`
 	FavoriteTeam string  `json:"favorite_team"`
 	UnderdogTeam string  `json:"underdog_team"`
 	Spread       float32 `json:"spread"`
@@ -37,9 +37,9 @@ type Game struct {
 // swagger:model
 type Pick struct {
 	gorm.Model
-	UserID    uint   `json:"user_id"`
+	UserID    uint   `json:"user_id" gorm:"index:idx_user_game,unique"`
 	User      User   `json:"user"`
-	GameID    uint   `json:"game_id"`
+	GameID    uint   `json:"game_id" gorm:"index:idx_user_game,unique"`
 	Game      Game   `json:"game"`
 	Picked    string `json:"picked"`
 	Rank      int    `json:"rank"`
@@ -50,10 +50,10 @@ type Pick struct {
 // swagger:model
 type Result struct {
 	gorm.Model
-	GameID        uint `json:"game_id"`
-	Game          Game `json:"game"`
-	FavoriteScore int  `json:"favorite_score"`
-	UnderdogScore int  `json:"underdog_score"`
+	GameID        uint   `json:"game_id" gorm:"unique"`
+	Game          Game   `json:"game"`
+	FavoriteScore int    `json:"favorite_score"`
+	UnderdogScore int    `json:"underdog_score"`
 	Outcome       string `json:"outcome"`
 }
 
@@ -61,8 +61,8 @@ type Result struct {
 // swagger:model
 type SurvivorPick struct {
 	gorm.Model
-	UserID uint   `json:"user_id"`
+	UserID uint   `json:"user_id" gorm:"index:idx_user_week,unique"`
 	User   User   `json:"user"`
-	Week   int    `json:"week"`
+	Week   int    `json:"week" gorm:"index:idx_user_week,unique"`
 	Team   string `json:"team"`
 }

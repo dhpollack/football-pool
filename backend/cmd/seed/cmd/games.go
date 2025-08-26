@@ -15,7 +15,12 @@ var seedGamesCmd = &cobra.Command{
 	Short: "Seed the games table",
 	Args:  cobra.ExactArgs(1),
 	Run: func(cmd *cobra.Command, args []string) {
-		database.Connect(dsn)
+		db, err := database.New(dsn)
+		if err != nil {
+			fmt.Printf("Error connecting to database: %v\n", err)
+			return
+		}
+		gormDB := db.GetDB()
 
 		jsonFilePath := args[0]
 		jsonFile, err := os.Open(jsonFilePath)
@@ -35,7 +40,7 @@ var seedGamesCmd = &cobra.Command{
 
 		for _, game := range games {
 			var existingGame database.Game
-			result := database.DB.Where("week = ? AND season = ? AND favorite_team = ? AND underdog_team = ?",
+			result := gormDB.Where("week = ? AND season = ? AND favorite_team = ? AND underdog_team = ?",
 				game.Week, game.Season, game.FavoriteTeam, game.UnderdogTeam).First(&existingGame)
 
 			if result.Error == nil {
@@ -46,7 +51,7 @@ var seedGamesCmd = &cobra.Command{
 				continue
 			}
 
-			if result := database.DB.Create(&game); result.Error != nil {
+			if result := gormDB.Create(&game); result.Error != nil {
 				fmt.Printf("Error seeding game: %v\n", result.Error)
 			}
 		}

@@ -14,28 +14,33 @@ import (
 )
 
 func TestMain(m *testing.M) {
-	database.Connect("file::memory:?cache=shared")
+	// Database setup is now handled in individual tests
 	code := m.Run()
 	os.Exit(code)
 }
 
 func TestRegister(t *testing.T) {
-	// Create a request to pass to our handler. We don't have any query parameters for now, so we'll
-	// pass 'nil' as the third parameter.
+	// Set up test database
+	db, err := database.New("file::memory:?cache=shared")
+	if err != nil {
+		t.Fatalf("Failed to connect to database: %v", err)
+	}
+	auth := NewAuth(db)
+
+	// Create a request to pass to our handler.
 	req, err := http.NewRequest("POST", "/register", strings.NewReader(`{"email":"test@test.com", "password":"password"}`))
 	if err != nil {
 		t.Fatal(err)
 	}
 
-	// We create a ResponseRecorder (which satisfies http.ResponseWriter) to record the response.
+	// We create a ResponseRecorder to record the response.
 	rr := httptest.NewRecorder()
-	handler := http.HandlerFunc(Register)
+	handler := http.HandlerFunc(auth.Register)
 
-	// Our handlers satisfy http.Handler, so we can call their ServeHTTP method
-	// directly and pass in our Request and ResponseRecorder.
+	// Call the handler
 	handler.ServeHTTP(rr, req)
 
-	// Check the status code is what we expect.
+	// Check the status code
 	if status := rr.Code; status != http.StatusCreated {
 		t.Errorf("handler returned wrong status code: got %v want %v",
 			status, http.StatusCreated)
@@ -43,7 +48,7 @@ func TestRegister(t *testing.T) {
 
 	// Check the user was created in the database
 	var user database.User
-	database.DB.Where("email = ?", "test@test.com").First(&user)
+	db.GetDB().Where("email = ?", "test@test.com").First(&user)
 	if user.Email != "test@test.com" {
 		t.Errorf("user not created in database")
 	}
@@ -55,10 +60,17 @@ func TestRegister(t *testing.T) {
 }
 
 func TestLogin(t *testing.T) {
+	// Set up test database
+	db, err := database.New("file::memory:?cache=shared")
+	if err != nil {
+		t.Fatalf("Failed to connect to database: %v", err)
+	}
+	auth := NewAuth(db)
+
 	// Create a user to login with
 	hashedPassword, _ := bcrypt.GenerateFromPassword([]byte("password"), 8)
 	user := database.User{Email: "test2@test.com", Password: string(hashedPassword)}
-	database.DB.Create(&user)
+	db.GetDB().Create(&user)
 
 	req, err := http.NewRequest("POST", "/login", strings.NewReader(`{"email":"test2@test.com", "password":"password"}`))
 	if err != nil {
@@ -66,7 +78,7 @@ func TestLogin(t *testing.T) {
 	}
 
 	rr := httptest.NewRecorder()
-	handler := http.HandlerFunc(Login)
+	handler := http.HandlerFunc(auth.Login)
 
 	handler.ServeHTTP(rr, req)
 
@@ -98,6 +110,13 @@ func TestLogin(t *testing.T) {
 }
 
 func TestMiddleware(t *testing.T) {
+	// Set up test database
+	db, err := database.New("file::memory:?cache=shared")
+	if err != nil {
+		t.Fatalf("Failed to connect to database: %v", err)
+	}
+	auth := NewAuth(db)
+
 	// Create a handler to be protected by the middleware
 	protectedHandler := http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		w.WriteHeader(http.StatusOK)
@@ -124,7 +143,7 @@ func TestMiddleware(t *testing.T) {
 	rr := httptest.NewRecorder()
 
 	// Create the middleware handler
-	middlewareHandler := Middleware(protectedHandler)
+	middlewareHandler := auth.Middleware(protectedHandler)
 
 	// Serve the request
 	middlewareHandler.ServeHTTP(rr, req)
@@ -137,6 +156,13 @@ func TestMiddleware(t *testing.T) {
 }
 
 func TestAdminMiddleware(t *testing.T) {
+	// Set up test database
+	db, err := database.New("file::memory:?cache=shared")
+	if err != nil {
+		t.Fatalf("Failed to connect to database: %v", err)
+	}
+	auth := NewAuth(db)
+
 	// Create a handler to be protected by the middleware
 	protectedHandler := http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		w.WriteHeader(http.StatusOK)
@@ -144,7 +170,7 @@ func TestAdminMiddleware(t *testing.T) {
 
 	// Create a user with admin role
 	user := database.User{Email: "admin@test.com", Password: "password", Role: "admin"}
-	database.DB.Create(&user)
+	db.GetDB().Create(&user)
 
 	// Create a request with a valid token for the admin user
 	expirationTime := time.Now().Add(5 * time.Minute)
@@ -167,7 +193,7 @@ func TestAdminMiddleware(t *testing.T) {
 	rr := httptest.NewRecorder()
 
 	// Create the middleware chain
-	finalHandler := Middleware(AdminMiddleware(protectedHandler))
+	finalHandler := auth.Middleware(auth.AdminMiddleware(protectedHandler))
 
 	// Serve the request
 	finalHandler.ServeHTTP(rr, req)
@@ -180,10 +206,17 @@ func TestAdminMiddleware(t *testing.T) {
 }
 
 func TestLoginErrors(t *testing.T) {
+	// Set up test database
+	db, err := database.New("file::memory:?cache=shared")
+	if err != nil {
+		t.Fatalf("Failed to connect to database: %v", err)
+	}
+	auth := NewAuth(db)
+
 	// Create a user to login with
 	hashedPassword, _ := bcrypt.GenerateFromPassword([]byte("password"), 8)
 	user := database.User{Email: "test3@test.com", Password: string(hashedPassword)}
-	database.DB.Create(&user)
+	db.GetDB().Create(&user)
 
 	tests := []struct {
 		name           string
@@ -220,7 +253,7 @@ func TestLoginErrors(t *testing.T) {
 			}
 
 			rr := httptest.NewRecorder()
-			handler := http.HandlerFunc(Login)
+			handler := http.HandlerFunc(auth.Login)
 
 			handler.ServeHTTP(rr, req)
 
@@ -233,9 +266,16 @@ func TestLoginErrors(t *testing.T) {
 }
 
 func TestRegisterErrors(t *testing.T) {
+	// Set up test database
+	db, err := database.New("file::memory:?cache=shared")
+	if err != nil {
+		t.Fatalf("Failed to connect to database: %v", err)
+	}
+	auth := NewAuth(db)
+
 	// Create a user to conflict with
 	user := database.User{Email: "test4@test.com", Password: "password"}
-	database.DB.Create(&user)
+	db.GetDB().Create(&user)
 
 	tests := []struct {
 		name           string
@@ -262,7 +302,7 @@ func TestRegisterErrors(t *testing.T) {
 			}
 
 			rr := httptest.NewRecorder()
-			handler := http.HandlerFunc(Register)
+			handler := http.HandlerFunc(auth.Register)
 
 			handler.ServeHTTP(rr, req)
 
@@ -275,13 +315,20 @@ func TestRegisterErrors(t *testing.T) {
 }
 
 func TestLogout(t *testing.T) {
+	// Set up test database
+	db, err := database.New("file::memory:?cache=shared")
+	if err != nil {
+		t.Fatalf("Failed to connect to database: %v", err)
+	}
+	auth := NewAuth(db)
+
 	req, err := http.NewRequest("POST", "/logout", nil)
 	if err != nil {
 		t.Fatal(err)
 	}
 
 	rr := httptest.NewRecorder()
-	handler := http.HandlerFunc(Logout)
+	handler := http.HandlerFunc(auth.Logout)
 
 	handler.ServeHTTP(rr, req)
 
@@ -300,6 +347,13 @@ func TestLogout(t *testing.T) {
 }
 
 func TestMiddlewareErrors(t *testing.T) {
+	// Set up test database
+	db, err := database.New("file::memory:?cache=shared")
+	if err != nil {
+		t.Fatalf("Failed to connect to database: %v", err)
+	}
+	auth := NewAuth(db)
+
 	// Create a handler to be protected by the middleware
 	protectedHandler := http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		w.WriteHeader(http.StatusOK)
@@ -355,7 +409,7 @@ func TestMiddlewareErrors(t *testing.T) {
 			}
 
 			rr := httptest.NewRecorder()
-			middlewareHandler := Middleware(protectedHandler)
+			middlewareHandler := auth.Middleware(protectedHandler)
 			middlewareHandler.ServeHTTP(rr, req)
 
 			if status := rr.Code; status != tt.expectedStatus {
@@ -367,6 +421,13 @@ func TestMiddlewareErrors(t *testing.T) {
 }
 
 func TestAdminMiddlewareErrors(t *testing.T) {
+	// Set up test database
+	db, err := database.New("file::memory:?cache=shared")
+	if err != nil {
+		t.Fatalf("Failed to connect to database: %v", err)
+	}
+	auth := NewAuth(db)
+
 	// Create a handler to be protected by the middleware
 	protectedHandler := http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		w.WriteHeader(http.StatusOK)
@@ -374,7 +435,7 @@ func TestAdminMiddlewareErrors(t *testing.T) {
 
 	// Create a user with player role
 	user := database.User{Email: "player@test.com", Password: "password", Role: "player"}
-	database.DB.Create(&user)
+	db.GetDB().Create(&user)
 
 	tests := []struct {
 		name           string
@@ -416,7 +477,7 @@ func TestAdminMiddlewareErrors(t *testing.T) {
 			rr := httptest.NewRecorder()
 
 			// Create the middleware chain
-			finalHandler := Middleware(AdminMiddleware(protectedHandler))
+			finalHandler := auth.Middleware(auth.AdminMiddleware(protectedHandler))
 
 			// Serve the request
 			finalHandler.ServeHTTP(rr, req)

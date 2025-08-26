@@ -3,6 +3,7 @@ package main
 import (
 	"bytes"
 	"encoding/json"
+	"io"
 	"net/http"
 	"net/http/httptest"
 	"testing"
@@ -10,23 +11,17 @@ import (
 	"github.com/david/football-pool/internal/database"
 	"github.com/david/football-pool/internal/server"
 	"github.com/stretchr/testify/assert"
-	"gorm.io/driver/sqlite"
-	"gorm.io/gorm"
 )
 
 func TestIntegration(t *testing.T) {
 	// Set up the test database
-	db, err := gorm.Open(sqlite.Open("file::memory:?cache=shared"), &gorm.Config{})
-	assert.NoError(t, err)
-
-	database.DB = db
-
-	// Migrate the database
-	err = db.AutoMigrate(&database.User{}, &database.Game{}, &database.Pick{})
-	assert.NoError(t, err)
-
-	// Set up the router
-	router := server.NewRouter()
+	db, err := database.New("file::memory:?cache=shared")
+	if err != nil {
+		t.Fatalf("Failed to connect to database: %v", err)
+	}
+	// Set up the server with database
+	srv := server.NewServer(db)
+	router := srv.NewRouter()
 
 	// Create a new test server
 	ts := httptest.NewServer(router)
@@ -65,11 +60,11 @@ func TestIntegration(t *testing.T) {
 }
 
 func createUser(t *testing.T, ts *httptest.Server, name, email, password, role string) {
-	user := database.User{
-		Name:     name,
-		Email:    email,
-		Password: password,
-		Role:     role,
+	user := map[string]string{
+		"name":     name,
+		"email":    email,
+		"password": password,
+		"role":     role,
 	}
 	body, _ := json.Marshal(user)
 	req, _ := http.NewRequest("POST", ts.URL+"/api/register", bytes.NewBuffer(body))
@@ -78,6 +73,15 @@ func createUser(t *testing.T, ts *httptest.Server, name, email, password, role s
 	client := &http.Client{}
 	resp, err := client.Do(req)
 	assert.NoError(t, err)
+
+	// Print response status and body for debugging
+	t.Logf("Create user status: %d", resp.StatusCode)
+	if resp.StatusCode != http.StatusCreated {
+		bodyBytes, _ := io.ReadAll(resp.Body)
+		t.Logf("Create user response: %s", string(bodyBytes))
+		resp.Body.Close()
+	}
+
 	assert.Equal(t, http.StatusCreated, resp.StatusCode)
 }
 
@@ -96,7 +100,10 @@ func loginUser(t *testing.T, ts *httptest.Server, email, password string) string
 	assert.Equal(t, http.StatusOK, resp.StatusCode)
 
 	var tokenMap map[string]string
-	json.NewDecoder(resp.Body).Decode(&tokenMap)
+	err = json.NewDecoder(resp.Body).Decode(&tokenMap)
+	if err != nil {
+		t.Fatalf("Failed to decode login response: %v", err)
+	}
 	return tokenMap["token"]
 }
 

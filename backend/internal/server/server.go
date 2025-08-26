@@ -4,11 +4,24 @@ import (
 	"net/http"
 
 	"github.com/david/football-pool/internal/auth"
+	"github.com/david/football-pool/internal/database"
 	"github.com/david/football-pool/internal/handlers"
 	"github.com/rs/cors"
 )
 
-func NewRouter() http.Handler {
+type Server struct {
+	db   *database.Database
+	auth *auth.Auth
+}
+
+func NewServer(db *database.Database) *Server {
+	return &Server{
+		db:   db,
+		auth: auth.NewAuth(db),
+	}
+}
+
+func (s *Server) NewRouter() http.Handler {
 	c := cors.New(cors.Options{
 		AllowedOrigins:   []string{"http://localhost:13000"},
 		AllowCredentials: true,
@@ -17,36 +30,36 @@ func NewRouter() http.Handler {
 	})
 
 	mux := http.NewServeMux()
-	mux.HandleFunc("/api/login", auth.Login)
-	mux.HandleFunc("/api/logout", auth.Logout)
-	mux.HandleFunc("/api/register", auth.Register)
+	mux.HandleFunc("/api/login", s.auth.Login)
+	mux.HandleFunc("/api/logout", s.auth.Logout)
+	mux.HandleFunc("/api/register", s.auth.Register)
 
-	mux.Handle("/api/users/me", auth.Middleware(http.HandlerFunc(handlers.GetProfile)))
-	mux.Handle("/api/users/me/update", auth.Middleware(http.HandlerFunc(handlers.UpdateProfile)))
+	mux.Handle("/api/users/me", s.auth.Middleware(handlers.GetProfile(s.db.GetDB())))
+	mux.Handle("/api/users/me/update", s.auth.Middleware(handlers.UpdateProfile(s.db.GetDB())))
 
-	mux.HandleFunc("/api/games", handlers.GetGames)
-	mux.Handle("/api/games/create", auth.Middleware(auth.AdminMiddleware(http.HandlerFunc(handlers.CreateGame))))
+	mux.HandleFunc("/api/games", handlers.GetGames(s.db.GetDB()))
+	mux.Handle("/api/games/create", s.auth.Middleware(s.auth.AdminMiddleware(handlers.CreateGame(s.db.GetDB()))))
 
-	mux.Handle("/api/picks", auth.Middleware(http.HandlerFunc(handlers.SubmitPicks)))
-	mux.Handle("/api/picks/submit", auth.Middleware(http.HandlerFunc(handlers.SubmitPicks)))
-	mux.Handle("/api/admin/picks/submit", auth.Middleware(auth.AdminMiddleware(http.HandlerFunc(handlers.AdminSubmitPicks))))
+	mux.Handle("/api/picks", s.auth.Middleware(handlers.GetPicks(s.db.GetDB())))
+	mux.Handle("/api/picks/submit", s.auth.Middleware(handlers.SubmitPicks(s.db.GetDB())))
+	mux.Handle("/api/admin/picks/submit", s.auth.Middleware(s.auth.AdminMiddleware(handlers.AdminSubmitPicks(s.db.GetDB()))))
 
-	mux.HandleFunc("/api/results/week", handlers.GetWeeklyResults)
-	mux.HandleFunc("/api/results/season", handlers.GetSeasonResults)
+	mux.HandleFunc("/api/results/week", handlers.GetWeeklyResults(s.db.GetDB()))
+	mux.HandleFunc("/api/results/season", handlers.GetSeasonResults(s.db.GetDB()))
 
-	mux.Handle("/api/results", auth.Middleware(auth.AdminMiddleware(http.HandlerFunc(handlers.SubmitResult))))
+	mux.Handle("/api/results", s.auth.Middleware(s.auth.AdminMiddleware(handlers.SubmitResult(s.db.GetDB()))))
 
-	mux.Handle("/api/survivor/picks", auth.Middleware(http.HandlerFunc(handlers.GetSurvivorPicks)))
-	mux.Handle("/api/survivor/picks/submit", auth.Middleware(http.HandlerFunc(handlers.SubmitSurvivorPick)))
+	mux.Handle("/api/survivor/picks", s.auth.Middleware(handlers.GetSurvivorPicks(s.db.GetDB())))
+	mux.Handle("/api/survivor/picks/submit", s.auth.Middleware(handlers.SubmitSurvivorPick(s.db.GetDB())))
 
-	mux.Handle("/api/debug/users", auth.Middleware(auth.AdminMiddleware(http.HandlerFunc(handlers.DebugGetUsers))))
-	mux.Handle("/api/debug/users/delete", auth.Middleware(auth.AdminMiddleware(http.HandlerFunc(handlers.DebugDeleteUser))))
+	mux.Handle("/api/debug/users", s.auth.Middleware(s.auth.AdminMiddleware(handlers.DebugGetUsers(s.db.GetDB()))))
+	mux.Handle("/api/debug/users/delete", s.auth.Middleware(s.auth.AdminMiddleware(handlers.DebugDeleteUser(s.db.GetDB()))))
 
 	return c.Handler(mux)
 }
 
-func Start() {
-	if err := http.ListenAndServe(":8080", NewRouter()); err != nil {
+func (s *Server) Start() {
+	if err := http.ListenAndServe(":8080", s.NewRouter()); err != nil {
 		panic(err)
 	}
 }
