@@ -9,6 +9,11 @@ import (
 var DB *gorm.DB
 
 func Connect(dsn string) {
+	if DB != nil {
+		slog.Debug("Database already connected. Skipping connection.")
+		return
+	}
+
 	slog.Debug("Attempting to connect to database with DSN:", "dsn", dsn)
 	database, err := gorm.Open(sqlite.Open(dsn), &gorm.Config{})
 	if err != nil {

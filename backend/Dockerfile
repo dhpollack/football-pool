@@ -9,7 +9,7 @@ RUN go mod download
 COPY . .
 
 RUN go build -o /football-pool ./cmd/main.go
-RUN go build -o /seed ./cmd/seed/main.go # Add this line
+RUN go build -o /seed ./cmd/seed/main.go
 
 EXPOSE 8080
 

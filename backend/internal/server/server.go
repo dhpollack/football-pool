@@ -8,7 +8,7 @@ import (
 	"github.com/rs/cors"
 )
 
-func Start() {
+func NewRouter() http.Handler {
 	c := cors.New(cors.Options{
 		AllowedOrigins:   []string{"http://localhost:13000"},
 		AllowCredentials: true,
@@ -25,9 +25,11 @@ func Start() {
 	mux.Handle("/api/users/me/update", auth.Middleware(http.HandlerFunc(handlers.UpdateProfile)))
 
 	mux.HandleFunc("/api/games", handlers.GetGames)
+	mux.Handle("/api/games/create", auth.Middleware(auth.AdminMiddleware(http.HandlerFunc(handlers.CreateGame))))
 
 	mux.Handle("/api/picks", auth.Middleware(http.HandlerFunc(handlers.SubmitPicks)))
 	mux.Handle("/api/picks/submit", auth.Middleware(http.HandlerFunc(handlers.SubmitPicks)))
+	mux.Handle("/api/admin/picks/submit", auth.Middleware(auth.AdminMiddleware(http.HandlerFunc(handlers.AdminSubmitPicks))))
 
 	mux.HandleFunc("/api/results/week", handlers.GetWeeklyResults)
 	mux.HandleFunc("/api/results/season", handlers.GetSeasonResults)
@@ -40,7 +42,11 @@ func Start() {
 	mux.Handle("/api/debug/users", auth.Middleware(auth.AdminMiddleware(http.HandlerFunc(handlers.DebugGetUsers))))
 	mux.Handle("/api/debug/users/delete", auth.Middleware(auth.AdminMiddleware(http.HandlerFunc(handlers.DebugDeleteUser))))
 
-	if err := http.ListenAndServe(":8080", c.Handler(mux)); err != nil {
+	return c.Handler(mux)
+}
+
+func Start() {
+	if err := http.ListenAndServe(":8080", NewRouter()); err != nil {
 		panic(err)
 	}
 }

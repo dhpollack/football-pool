@@ -8,6 +8,21 @@ import (
 	"github.com/david/football-pool/internal/database"
 )
 
+func CreateGame(w http.ResponseWriter, r *http.Request) {
+	var games []database.Game
+	if err := json.NewDecoder(r.Body).Decode(&games); err != nil {
+		w.WriteHeader(http.StatusBadRequest)
+		return
+	}
+
+	if result := database.DB.Create(&games); result.Error != nil {
+		w.WriteHeader(http.StatusInternalServerError)
+		return
+	}
+
+	w.WriteHeader(http.StatusCreated)
+}
+
 func GetGames(w http.ResponseWriter, r *http.Request) {
 	weekStr := r.URL.Query().Get("week")
 	seasonStr := r.URL.Query().Get("season")

@@ -28,7 +28,7 @@ func main() {
 		Level: level,
 	})))
 
-	dsn := "file::memory:?cache=shared"
+	dsn := "football-pool.db"
 	if dsnEnv, ok := os.LookupEnv("FOOTBALL_POOL_DSN"); ok {
 		dsn = dsnEnv
 	}

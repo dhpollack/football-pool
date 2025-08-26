@@ -84,6 +84,7 @@ func Register(w http.ResponseWriter, r *http.Request) {
 		Name     string `json:"name"`
 		Email    string `json:"email"`
 		Password string `json:"password"`
+		Role     string `json:"role"`
 	}
 	// Read the request body into a byte slice for logging
 	bodyBytes, err := io.ReadAll(r.Body)
@@ -117,8 +118,12 @@ func Register(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	if creds.Role == "" {
+		creds.Role = "player"
+	}
+
 	slog.Debug("Hashed password:", "hash", string(hashedPassword))
-	user := database.User{Name: creds.Name, Email: creds.Email, Password: string(hashedPassword), Role: "player"}
+	user := database.User{Name: creds.Name, Email: creds.Email, Password: string(hashedPassword), Role: creds.Role}
 	if result := database.DB.Create(&user); result.Error != nil {
 		slog.Debug("Error creating user:", "error", result.Error)
 		w.WriteHeader(http.StatusInternalServerError)

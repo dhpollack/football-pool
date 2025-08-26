@@ -54,3 +54,18 @@ func SubmitPicks(w http.ResponseWriter, r *http.Request) {
 
 	w.WriteHeader(http.StatusCreated)
 }
+
+func AdminSubmitPicks(w http.ResponseWriter, r *http.Request) {
+	var picks []database.Pick
+	if err := json.NewDecoder(r.Body).Decode(&picks); err != nil || len(picks) == 0 {
+		w.WriteHeader(http.StatusBadRequest)
+		return
+	}
+
+	if result := database.DB.Create(&picks); result.Error != nil {
+		w.WriteHeader(http.StatusInternalServerError)
+		return
+	}
+
+	w.WriteHeader(http.StatusCreated)
+}
