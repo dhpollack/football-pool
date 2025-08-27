@@ -4,7 +4,7 @@ import { E2E_CONFIG } from './e2e.config';
 // Test user credentials
 const TEST_USER = {
   name: 'Test User',
-  email: `testuser-${Date.now()}@example.com`,
+  email: `testuser-${Date.now()}-${Math.floor(Math.random() * 10000)}@example.com`,
   password: 'password123',
 };
 

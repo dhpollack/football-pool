@@ -1,7 +1,7 @@
 // E2E Test Configuration
 export const E2E_CONFIG = {
   // Base URLs
-  FRONTEND_URL: "http://localhost:13000",
+  FRONTEND_URL: "http://localhost:5173",
   BACKEND_URL: "http://localhost:18080",
   
   // Test credentials

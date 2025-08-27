@@ -1,9 +1,11 @@
 import { useState, useId } from "react";
+import { useNavigate } from "react-router-dom";
 import { TextField, Button, Box, Typography } from "@mui/material";
 import { useAuth } from "../contexts/AuthContext";
 
 const LoginPage = () => {
   const { login } = useAuth();
+  const navigate = useNavigate();
   const emailId = useId();
   const passwordId = useId();
   const [email, setEmail] = useState("");
@@ -47,7 +49,7 @@ const LoginPage = () => {
 
     try {
       await login(email, password);
-      window.location.href = "/";
+      navigate("/");
     } catch (error: unknown) {
       if (error instanceof Error) {
         setError(error.message);
@@ -70,7 +72,7 @@ const LoginPage = () => {
       }}
     >
       <Typography variant="h4">Login</Typography>
-      {error && <Typography color="error">{error}</Typography>}
+      {error && <Typography color="error" data-testid="error-message">{error}</Typography>}
       <Box component="form" onSubmit={handleSubmit} sx={{ mt: 1 }}>
         <TextField
           margin="normal"

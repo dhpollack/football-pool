@@ -24,6 +24,8 @@ docker-compose.yml
 **/pnpm-debug.log*
 **/lerna-debug.log*
 **/*.local
+**/playwright-report/
+**/test-results/
 
 # backend
 backend/football-pool

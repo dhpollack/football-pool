@@ -57,11 +57,13 @@ const RegisterPage = () => {
     setLoading(true);
 
     try {
+      console.log("Sending registration request...");
       await api.post("/api/register", { name, email, password });
-
+      console.log("Registration successful, redirecting to login");
       // Redirect to the login page with success message
       navigate("/login", { state: { message: "Registration successful! Please log in." } });
     } catch (error: unknown) {
+      console.error("Registration error:", error);
       if (error instanceof Error) {
         setError(error.message);
       } else {

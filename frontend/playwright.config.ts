@@ -28,6 +28,29 @@ export default defineConfig({
   // Reporter to use
   reporter: 'html',
   
+  // Configure web servers to start automatically
+  webServer: [
+    {
+      command: 'just -f ../backend/justfile run',
+      url: E2E_CONFIG.BACKEND_URL + '/api/health',
+      timeout: 60000,
+      reuseExistingServer: !process.env.CI,
+      env: {
+        FOOTBALL_POOL_DSN: 'file::memory:?cache=shared',
+        FOOTBALL_POOL_PORT: '18080'
+      }
+    },
+    {
+      command: 'npm run dev',
+      url: E2E_CONFIG.FRONTEND_URL,
+      timeout: 60000,
+      reuseExistingServer: !process.env.CI,
+      env: {
+        VITE_BACKEND_URL: E2E_CONFIG.BACKEND_URL
+      }
+    }
+  ],
+  
   // Shared settings for all projects
   use: {
     // Base URL to use in actions like `await page.goto('/')`
@@ -78,11 +101,5 @@ export default defineConfig({
     },
   ],
   
-  // Web server to run before tests
-  webServer: {
-    command: 'npm run dev',
-    url: E2E_CONFIG.FRONTEND_URL,
-    reuseExistingServer: !process.env.CI,
-    timeout: 120000,
-  },
+  // No web server configuration - we're starting servers manually
 });

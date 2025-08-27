@@ -1,31 +1,20 @@
 @default:
-	@just -u -l
+    @just -u -l
 
 lint:
-	npm run lint
+    npm run lint
 
 format:
-	npm run format
+    npm run format
 
 build:
-  npm run build
+    npm run build
 
 dev:
-  npm run dev
+    npm run dev
 
 test *args="--coverage":
-  CI=true npm run test {{ args }}
+    CI=true npm run test {{ args }}
 
-start-servers:
-  just -E ../.env-dev -f ../justfile docker-compose-up
-  sleep 4 # Give docker-compose time to start
-
-stop-servers:
-  just -f ../justfile docker-compose-down
-
-test-e2e path="tests/":
-  #!/usr/bin/env bash
-  set -euxo pipefail
-  trap 'just stop-servers' EXIT
-  just start-servers
-  CI=true npm run test {{ path }} || (docker compose logs backend && exit 1) # Run tests, if fails, get backend logs and exit with error
+test-e2e *args:
+    CI=true npm run test:e2e {{ args }}

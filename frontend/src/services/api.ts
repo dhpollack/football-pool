@@ -45,6 +45,8 @@ export class ApiError extends Error {
 
 export const api = {
   async request<T>(endpoint: string, options: RequestInit = {}): Promise<T> {
+    console.log('API_BASE_URL:', API_BASE_URL);
+    console.log('Making request to:', `${API_BASE_URL}${endpoint}`);
     const url = `${API_BASE_URL}${endpoint}`;
 
     // Add CSRF token for non-GET requests

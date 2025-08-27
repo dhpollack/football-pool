@@ -1,13 +1,16 @@
 import { render, screen } from "@testing-library/react";
+import { MemoryRouter } from "react-router-dom";
 import { AuthProvider } from "../contexts/AuthContext";
 import LoginPage from "./LoginPage";
 
 describe("LoginPage", () => {
   it("renders the login form", () => {
     render(
-      <AuthProvider>
-        <LoginPage />
-      </AuthProvider>,
+      <MemoryRouter>
+        <AuthProvider>
+          <LoginPage />
+        </AuthProvider>
+      </MemoryRouter>,
     );
 
     expect(screen.getByLabelText(/email address/i)).toBeInTheDocument();

@@ -35,6 +35,8 @@ Based on the design documents, here is a plan to create the Football Pool web ap
     *   [x] **Survivor Pool:**
         *   `GET /api/survivor/picks`: Get the current user's survivor picks.
         *   `POST /api/survivor/picks`: Submit a survivor pick.
+    *   [x] **Health Check:**
+        *   `GET /api/health`: Check the health of the server and database.
 
 ### Frontend Development Plan
 

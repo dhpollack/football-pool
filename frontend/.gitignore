@@ -23,5 +23,12 @@ dist-ssr
 *.sln
 *.sw?
 
+# tests
+coverage/
+
 # Custom
 screenshots/
+
+# Playwright
+/playwright-report/
+/test-results/
