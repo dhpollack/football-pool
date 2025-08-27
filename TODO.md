@@ -1,82 +1,63 @@
-# Frontend Security and Code Quality Improvements
+# Playwright E2E Test Migration Plan
 
-## Critical Security Issues
+## Migration Overview
+Migrating from Puppeteer to Playwright for end-to-end testing with local execution (no Docker).
 
-### 1. Authentication & Token Management
-- [ ] Replace localStorage with httpOnly cookies for JWT storage
-- [ ] Implement proper token refresh mechanism
-- [ ] Add CSRF protection
-- [ ] Create authentication context/provider
-- [ ] Add token expiration handling and auto-logout
-- [ ] Implement proper logout functionality
+## ✅ Current Status
+- [ ] Playwright installed and configured
+- [ ] Existing Puppeteer tests migrated
+- [ ] Docker dependency removed
+- [ ] All E2E tests passing with Playwright
 
-### 2. Data Exposure
-- [ ] Remove all console.log statements exposing sensitive data
-- [ ] Add environment-based logging (dev vs prod)
-- [ ] Implement proper error handling without exposing internal details
+## Phase 1: Setup and Installation
+1. [ ] Install Playwright dependencies
+   ```bash
+   npm install -D @playwright/test
+   npx playwright install
+   ```
+2. [ ] Create Playwright configuration (playwright.config.ts)
+3. [ ] Set up test environment for local execution
+4. [ ] Remove Docker-compose dependencies from test scripts
 
-## Code Quality Improvements
+## Phase 2: Test Migration
+1. [ ] Migrate `tests/auth-flow.e2e.test.ts` to Playwright
+2. [ ] Migrate `tests/registration.puppeteer.test.ts` to Playwright
+3. [ ] Migrate `tests/auth.puppeteer.test.ts` to Playwright
+4. [ ] Update test helpers and utilities for Playwright API
+5. [ ] Remove Puppeteer-specific dependencies
 
-### 1. React Best Practices
-- [ ] Replace hardcoded IDs with useId() hook
-- [ ] Fix template literals instead of string concatenation
-- [ ] Remove any types from TypeScript code
-- [ ] Add proper TypeScript interfaces
+## Phase 3: Configuration and Optimization
+1. [ ] Configure Playwright for headless/local execution
+2. [ ] Set up proper timeouts and retries
+3. [ ] Configure browser contexts and fixtures
+4. [ ] Add Playwright-specific best practices
+5. [ ] Update test scripts in package.json
 
-### 2. Authentication Flow
-- [ ] Fix registration page redirect after success
-- [ ] Add loading states for all async operations
-- [ ] Implement proper error boundaries
-- [ ] Add input validation on all forms
+## Phase 4: Validation
+1. [ ] Run all migrated tests to ensure they pass
+2. [ ] Verify test reliability and performance
+3. [ ] Ensure proper cleanup and teardown
+4. [ ] Test cross-browser compatibility (if needed)
 
-### 3. API Integration
-- [ ] Create centralized API client with error handling
-- [ ] Add request/response interceptors for auth
-- [ ] Implement retry logic for failed requests
-- [ ] Add proper loading states
+## Files to Create/Modify
+- [ ] `playwright.config.ts` - Playwright configuration
+- [ ] `tests/auth.spec.ts` - Migrated auth tests
+- [ ] `tests/registration.spec.ts` - Migrated registration tests
+- [ ] `tests/auth-flow.spec.ts` - Migrated comprehensive auth flow
+- [ ] Update `package.json` scripts for Playwright
+- [ ] Remove Docker-compose test dependencies
 
-## Implementation Priority
+## Benefits of Playwright Migration
+- ✅ Better cross-browser support
+- ✅ Built-in auto-waiting and retries
+- ✅ Faster test execution
+- ✅ More reliable element selectors
+- ✅ No Docker dependency for local testing
+- ✅ Modern API with better developer experience
 
-### Phase 1: Critical Security (High Priority)
-1. Remove sensitive console.log statements
-2. Implement auth context with proper token management
-3. Add httpOnly cookie storage for tokens
-4. Implement CSRF protection
-
-### Phase 2: Authentication Flow (Medium Priority)
-1. Fix registration redirect
-2. Add token refresh mechanism
-3. Implement auto-logout on token expiration
-4. Add proper error handling
-
-### Phase 3: Code Quality (Low Priority)
-1. Fix template literals
-2. Replace hardcoded IDs
-3. Remove any types
-4. Add proper TypeScript interfaces
-
-## Files to Modify
-
-- `src/pages/PickEntryPage.tsx` - Remove console.log, fix template literals, hardcoded IDs
-- `src/pages/LoginPage.tsx` - Implement proper token handling
-- `src/pages/RegisterPage.tsx` - Add redirect after registration
-- Create `src/contexts/AuthContext.tsx` - Centralized auth management
-- Create `src/services/api.ts` - Centralized API client
-
-## Testing Requirements
-
-- [ ] Add tests for auth context
-- [ ] Test token refresh functionality
-- [ ] Test error handling
-- [ ] Test CSRF protection
-- [ ] Test localStorage removal
-
-## Security Checklist
-
-- [ ] No sensitive data in console logs
-- [ ] Tokens stored securely (httpOnly cookies)
-- [ ] CSRF tokens implemented
-- [ ] Input validation on all forms
-- [ ] Proper error handling without information disclosure
-- [ ] Token expiration handling
-- [ ] Auto-logout functionality
+## Next Steps
+1. Install Playwright dependencies
+2. Create basic configuration
+3. Start migrating simplest test first
+4. Gradually migrate all test suites
+5. Remove Puppeteer and Docker dependencies

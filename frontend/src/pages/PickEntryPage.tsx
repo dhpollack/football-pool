@@ -1,4 +1,5 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useId } from "react";
+import { api } from "../services/api";
 import {
   Table,
   TableBody,
@@ -29,27 +30,18 @@ interface Pick {
 }
 
 const PickEntryPage = () => {
+  const quickPickId = useId();
+  const submitPicksId = useId();
   const [games, setGames] = useState<Game[]>([]);
   const [picks, setPicks] = useState<{ [gameId: number]: Pick }>({});
   const [error, setError] = useState<string | null>(null);
+  const [loading, setLoading] = useState(true);
+  const [submitting, setSubmitting] = useState(false);
 
   useEffect(() => {
     const fetchGames = async () => {
       try {
-        const token = localStorage.getItem("token");
-        const response = await fetch(
-          `${import.meta.env.VITE_BACKEND_URL}/api/games?week=1&season=2025`,
-          {
-            headers: {
-              Authorization: `Bearer ${token}`,
-            },
-          },
-        );
-
-        if (!response.ok) {
-          throw new Error("Failed to fetch games");
-        }
-        const data = await response.json();
+        const data = await api.get<Game[]>("/api/games?week=1&season=2025");
         setGames(data);
         const initialPicks: { [gameId: number]: Pick } = {};
         data.forEach((game: Game) => {
@@ -62,6 +54,8 @@ const PickEntryPage = () => {
         } else {
           setError("An unknown error occurred");
         }
+      } finally {
+        setLoading(false);
       }
     };
 
@@ -105,8 +99,8 @@ const PickEntryPage = () => {
 
   const handleSubmitPicks = async () => {
     setError(null);
+    setSubmitting(true);
     try {
-      const token = localStorage.getItem("token");
       const picksToSubmit = Object.keys(picks).map((gameId) => ({
         game_id: parseInt(gameId, 10),
         picked: picks[parseInt(gameId, 10)].picked,
@@ -114,22 +108,7 @@ const PickEntryPage = () => {
         quick_pick: picks[parseInt(gameId, 10)].quick_pick || false,
       }));
 
-      const response = await fetch(
-        `${import.meta.env.VITE_BACKEND_URL}/api/picks`,
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${token}`,
-          },
-          body: JSON.stringify(picksToSubmit),
-        },
-      );
-
-      if (!response.ok) {
-        throw new Error("Failed to submit picks");
-      }
-
+      await api.post("/api/picks", picksToSubmit);
       alert("Picks submitted successfully!");
     } catch (error: unknown) {
       if (error instanceof Error) {
@@ -137,8 +116,19 @@ const PickEntryPage = () => {
       } else {
         setError("An unknown error occurred");
       }
+    } finally {
+      setSubmitting(false);
     }
   };
+
+  if (loading) {
+    return (
+      <div>
+        <Typography variant="h4">Pick Entry</Typography>
+        <Typography>Loading games...</Typography>
+      </div>
+    );
+  }
 
   return (
     <div>
@@ -147,7 +137,7 @@ const PickEntryPage = () => {
         variant="contained"
         sx={{ my: 2 }}
         onClick={handleQuickPick}
-        id="quick-pick-button"
+        id={quickPickId}
       >
         Quick Pick
       </Button>
@@ -155,9 +145,10 @@ const PickEntryPage = () => {
         variant="contained"
         sx={{ my: 2, ml: 2 }}
         onClick={handleSubmitPicks}
-        id="submit-picks-button"
+        id={submitPicksId}
+        disabled={submitting}
       >
-        Submit Picks
+        {submitting ? "Submitting..." : "Submit Picks"}
       </Button>
       {error && <Typography color="error">{error}</Typography>}
       <TableContainer component={Paper}>

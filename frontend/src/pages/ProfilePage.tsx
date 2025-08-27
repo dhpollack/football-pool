@@ -7,6 +7,9 @@ const ProfilePage = () => {
   const [name, setName] = useState("");
   const [address, setAddress] = useState("");
   const [error, setError] = useState<string | null>(null);
+  const [formErrors, setFormErrors] = useState<{
+    name?: string;
+  }>({});
 
   useEffect(() => {
     const fetchProfile = async () => {
@@ -40,9 +43,26 @@ const ProfilePage = () => {
     fetchProfile();
   }, []);
 
+  const validateForm = () => {
+    const errors: {
+      name?: string;
+    } = {};
+
+    if (!name.trim()) {
+      errors.name = "Name is required";
+    }
+
+    setFormErrors(errors);
+    return Object.keys(errors).length === 0;
+  };
+
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     setError(null);
+    
+    if (!validateForm()) {
+      return;
+    }
 
     try {
       const token = localStorage.getItem("token");
@@ -95,7 +115,14 @@ const ProfilePage = () => {
           autoComplete="name"
           autoFocus
           value={name}
-          onChange={(e) => setName(e.target.value)}
+          onChange={(e) => {
+            setName(e.target.value);
+            if (formErrors.name) {
+              setFormErrors({ ...formErrors, name: undefined });
+            }
+          }}
+          error={!!formErrors.name}
+          helperText={formErrors.name}
         />
         <TextField
           margin="normal"

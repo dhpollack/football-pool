@@ -60,7 +60,7 @@ test("should allow a user to register", async () => {
 
     // Assert that testuser@example.com is present
     const targetEmail = "testuser@example.com";
-    const userExists = users.some((user: any) => {
+    const userExists = users.some((user: { Email: string }) => {
       return user.Email === targetEmail;
     });
     expect(userExists).toBe(true);

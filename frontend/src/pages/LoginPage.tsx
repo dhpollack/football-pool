@@ -1,36 +1,52 @@
 import { useState, useId } from "react";
 import { TextField, Button, Box, Typography } from "@mui/material";
+import { useAuth } from "../contexts/AuthContext";
 
 const LoginPage = () => {
+  const { login } = useAuth();
   const emailId = useId();
   const passwordId = useId();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState<string | null>(null);
+  const [loading, setLoading] = useState(false);
+  const [formErrors, setFormErrors] = useState<{
+    email?: string;
+    password?: string;
+  }>({});
+
+  const validateForm = () => {
+    const errors: {
+      email?: string;
+      password?: string;
+    } = {};
+
+    if (!email.trim()) {
+      errors.email = "Email is required";
+    } else if (!/\S+@\S+\.\S+/.test(email)) {
+      errors.email = "Email is invalid";
+    }
+
+    if (!password) {
+      errors.password = "Password is required";
+    }
+
+    setFormErrors(errors);
+    return Object.keys(errors).length === 0;
+  };
 
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     setError(null);
+    
+    if (!validateForm()) {
+      return;
+    }
+
+    setLoading(true);
 
     try {
-      const response = await fetch(
-        `${import.meta.env.VITE_BACKEND_URL}/api/login`,
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({ email, password }),
-        },
-      );
-
-      if (!response.ok) {
-        throw new Error("Login failed");
-      }
-
-      const data = await response.json();
-      console.log("Login data:", data);
-      localStorage.setItem("token", data.token);
+      await login(email, password);
       window.location.href = "/";
     } catch (error: unknown) {
       if (error instanceof Error) {
@@ -38,6 +54,8 @@ const LoginPage = () => {
       } else {
         setError("An unknown error occurred");
       }
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -64,7 +82,14 @@ const LoginPage = () => {
           autoComplete="email"
           autoFocus
           value={email}
-          onChange={(e) => setEmail(e.target.value)}
+          onChange={(e) => {
+            setEmail(e.target.value);
+            if (formErrors.email) {
+              setFormErrors({ ...formErrors, email: undefined });
+            }
+          }}
+          error={!!formErrors.email}
+          helperText={formErrors.email}
         />
         <TextField
           margin="normal"
@@ -76,15 +101,23 @@ const LoginPage = () => {
           id={passwordId}
           autoComplete="current-password"
           value={password}
-          onChange={(e) => setPassword(e.target.value)}
+          onChange={(e) => {
+            setPassword(e.target.value);
+            if (formErrors.password) {
+              setFormErrors({ ...formErrors, password: undefined });
+            }
+          }}
+          error={!!formErrors.password}
+          helperText={formErrors.password}
         />
         <Button
           type="submit"
           fullWidth
           variant="contained"
           sx={{ mt: 3, mb: 2 }}
+          disabled={loading}
         >
-          Sign In
+          {loading ? "Signing In..." : "Sign In"}
         </Button>
       </Box>
     </Box>

@@ -1,9 +1,14 @@
 import { render, screen } from "@testing-library/react";
+import { AuthProvider } from "../contexts/AuthContext";
 import LoginPage from "./LoginPage";
 
 describe("LoginPage", () => {
   it("renders the login form", () => {
-    render(<LoginPage />);
+    render(
+      <AuthProvider>
+        <LoginPage />
+      </AuthProvider>,
+    );
 
     expect(screen.getByLabelText(/email address/i)).toBeInTheDocument();
     expect(screen.getByLabelText(/password/i)).toBeInTheDocument();
