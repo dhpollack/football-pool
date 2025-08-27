@@ -143,7 +143,13 @@ func (a *Auth) Register(w http.ResponseWriter, r *http.Request) {
 	}
 
 	slog.Debug("User registered successfully:", "email", creds.Email)
+	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(http.StatusCreated)
+	if err := json.NewEncoder(w).Encode(map[string]string{"message": "User registered successfully"}); err != nil {
+		slog.Debug("Error encoding registration response:", "error", err)
+		w.WriteHeader(http.StatusInternalServerError)
+		return
+	}
 }
 
 func (a *Auth) Logout(w http.ResponseWriter, r *http.Request) {

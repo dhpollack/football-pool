@@ -26,6 +26,7 @@ func GetProfile(db *gorm.DB) http.HandlerFunc {
 			return
 		}
 
+		w.Header().Set("Content-Type", "application/json")
 		if err := json.NewEncoder(w).Encode(player); err != nil {
 			w.WriteHeader(http.StatusInternalServerError)
 		}
@@ -65,6 +66,7 @@ func UpdateProfile(db *gorm.DB) http.HandlerFunc {
 			return
 		}
 
+		w.Header().Set("Content-Type", "application/json")
 		if err := json.NewEncoder(w).Encode(player); err != nil {
 			w.WriteHeader(http.StatusInternalServerError)
 		}
@@ -82,6 +84,7 @@ func DebugGetUsers(db *gorm.DB) http.HandlerFunc {
 		for _, user := range users {
 			slog.Debug("User:", "email", user.Email)
 		}
+		w.Header().Set("Content-Type", "application/json")
 		if err := json.NewEncoder(w).Encode(users); err != nil {
 			w.WriteHeader(http.StatusInternalServerError)
 		}

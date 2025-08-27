@@ -57,6 +57,18 @@ func TestRegister(t *testing.T) {
 	if err := bcrypt.CompareHashAndPassword([]byte(user.Password), []byte("password")); err != nil {
 		t.Errorf("password not hashed correctly")
 	}
+
+	// Check the JSON response content
+	expectedResponse := `{"message":"User registered successfully"}`
+	if strings.TrimSpace(rr.Body.String()) != expectedResponse {
+		t.Errorf("handler returned unexpected body: got %v want %v",
+			rr.Body.String(), expectedResponse)
+	}
+
+	// Check the Content-Type header
+	if ct := rr.Header().Get("Content-Type"); ct != "application/json" {
+		t.Errorf("Content-Type header not set correctly: got %v want %v", ct, "application/json")
+	}
 }
 
 func TestLogin(t *testing.T) {

@@ -2,6 +2,8 @@ package server
 
 import (
 	"net/http"
+	"os"
+
 
 	"github.com/david/football-pool/internal/auth"
 	"github.com/david/football-pool/internal/database"
@@ -23,7 +25,7 @@ func NewServer(db *database.Database) *Server {
 
 func (s *Server) NewRouter() http.Handler {
 	c := cors.New(cors.Options{
-		AllowedOrigins:   []string{"http://localhost:13000"},
+		AllowedOrigins:   []string{"http://localhost:13000", "http://localhost:5173", "http://localhost:5174"},
 		AllowCredentials: true,
 		AllowedHeaders:   []string{"Authorization", "Content-Type"},
 		AllowedMethods:   []string{"GET", "POST", "PUT", "DELETE", "OPTIONS"},
@@ -33,6 +35,7 @@ func (s *Server) NewRouter() http.Handler {
 	mux.HandleFunc("/api/login", s.auth.Login)
 	mux.HandleFunc("/api/logout", s.auth.Logout)
 	mux.HandleFunc("/api/register", s.auth.Register)
+	mux.HandleFunc("/api/health", handlers.HealthCheck(s.db.GetDB()))
 
 	mux.Handle("/api/users/me", s.auth.Middleware(handlers.GetProfile(s.db.GetDB())))
 	mux.Handle("/api/users/me/update", s.auth.Middleware(handlers.UpdateProfile(s.db.GetDB())))
@@ -59,7 +62,13 @@ func (s *Server) NewRouter() http.Handler {
 }
 
 func (s *Server) Start() {
-	if err := http.ListenAndServe(":8080", s.NewRouter()); err != nil {
+	port := os.Getenv("FOOTBALL_POOL_PORT")
+	if port == "" {
+		port = "8080"
+	}
+
+	addr := ":" + port
+	if err := http.ListenAndServe(addr, s.NewRouter()); err != nil {
 		panic(err)
 	}
 }
