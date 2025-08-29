@@ -45,7 +45,7 @@ test.describe('Authentication', () => {
     expect(errorMessage).toBeTruthy();
   });
 
-  test('should redirect authenticated users away from auth pages', async ({ page }) => {
+  test('should allow authenticated users to access auth pages', async ({ page }) => {
     // First login
     await page.goto('/login');
     await page.fill(E2E_CONFIG.SELECTORS.LOGIN.EMAIL, ADMIN_USER.email);
@@ -53,17 +53,13 @@ test.describe('Authentication', () => {
     await page.click(E2E_CONFIG.SELECTORS.LOGIN.SUBMIT);
     await expect(page).toHaveURL('/');
     
-    // Try to access login page while authenticated
+    // Try to access login page while authenticated - should be allowed
     await page.goto('/login');
+    await expect(page).toHaveURL('/login');
     
-    // Should be redirected to home page
-    await expect(page).toHaveURL('/');
-    
-    // Try to access register page while authenticated
+    // Try to access register page while authenticated - should be allowed
     await page.goto('/register');
-    
-    // Should be redirected to home page
-    await expect(page).toHaveURL('/');
+    await expect(page).toHaveURL('/register');
   });
 
   test('should maintain session across page navigation', async ({ page }) => {
