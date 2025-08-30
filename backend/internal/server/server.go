@@ -59,6 +59,19 @@ func (s *Server) NewRouter() http.Handler {
 	mux.Handle("/api/picks", s.auth.Middleware(handlers.GetPicks(s.db.GetDB())))
 	mux.Handle("/api/picks/submit", s.auth.Middleware(handlers.SubmitPicks(s.db.GetDB())))
 	mux.Handle("/api/admin/picks/submit", s.auth.Middleware(s.auth.AdminMiddleware(handlers.AdminSubmitPicks(s.db.GetDB()))))
+	
+	// Admin pick management endpoints
+	mux.Handle("/api/admin/picks", s.auth.Middleware(s.auth.AdminMiddleware(handlers.AdminListPicks(s.db.GetDB()))))
+	mux.Handle("/api/admin/picks/week/", s.auth.Middleware(s.auth.AdminMiddleware(handlers.AdminGetPicksByWeek(s.db.GetDB()))))
+	mux.Handle("/api/admin/picks/user/", s.auth.Middleware(s.auth.AdminMiddleware(handlers.AdminGetPicksByUser(s.db.GetDB()))))
+	mux.Handle("/api/admin/picks/", s.auth.Middleware(s.auth.AdminMiddleware(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		switch r.Method {
+		case "DELETE":
+			handlers.AdminDeletePick(s.db.GetDB())(w, r)
+		default:
+			w.WriteHeader(http.StatusMethodNotAllowed)
+		}
+	}))))
 
 	mux.HandleFunc("/api/results/week", handlers.GetWeeklyResults(s.db.GetDB()))
 	mux.HandleFunc("/api/results/season", handlers.GetSeasonResults(s.db.GetDB()))
