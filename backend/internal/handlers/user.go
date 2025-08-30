@@ -6,6 +6,7 @@ import (
 	"strconv"
 	"strings"
 
+	"github.com/david/football-pool/internal/api"
 	"github.com/david/football-pool/internal/auth"
 	"github.com/david/football-pool/internal/database"
 	"gorm.io/gorm"
@@ -14,92 +15,113 @@ import (
 
 func GetProfile(db *gorm.DB) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
+		w.Header().Set("Content-Type", "application/json")
 		email := r.Context().Value(auth.EmailKey).(string)
 
 		var user database.User
 		if result := db.Where("email = ?", email).First(&user); result.Error != nil {
 			w.WriteHeader(http.StatusNotFound)
+			json.NewEncoder(w).Encode(api.ErrorResponse{Error: "User not found"})
 			return
 		}
 
 		var player database.Player
 		if result := db.Where("user_id = ?", user.ID).First(&player); result.Error != nil {
 			w.WriteHeader(http.StatusNotFound)
+			json.NewEncoder(w).Encode(api.ErrorResponse{Error: "Player profile not found"})
 			return
 		}
 
-		w.Header().Set("Content-Type", "application/json")
-		if err := json.NewEncoder(w).Encode(player); err != nil {
+		// Convert to API response
+		response := api.PlayerToResponse(player)
+		if err := json.NewEncoder(w).Encode(response); err != nil {
 			w.WriteHeader(http.StatusInternalServerError)
+			json.NewEncoder(w).Encode(api.ErrorResponse{Error: "Failed to encode response"})
 		}
 	}
 }
 
 func UpdateProfile(db *gorm.DB) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
+		w.Header().Set("Content-Type", "application/json")
 		email := r.Context().Value(auth.EmailKey).(string)
 
 		var user database.User
 		if result := db.Where("email = ?", email).First(&user); result.Error != nil {
 			w.WriteHeader(http.StatusNotFound)
+			json.NewEncoder(w).Encode(api.ErrorResponse{Error: "User not found"})
 			return
 		}
 
 		var player database.Player
 		if result := db.Where("user_id = ?", user.ID).First(&player); result.Error != nil {
 			w.WriteHeader(http.StatusNotFound)
+			json.NewEncoder(w).Encode(api.ErrorResponse{Error: "Player profile not found"})
 			return
 		}
 
-		var updates struct {
-			Name    string `json:"name"`
-			Address string `json:"address"`
-		}
-		if err := json.NewDecoder(r.Body).Decode(&updates); err != nil {
+		var updateRequest api.PlayerRequest
+		if err := json.NewDecoder(r.Body).Decode(&updateRequest); err != nil {
 			w.WriteHeader(http.StatusBadRequest)
+			json.NewEncoder(w).Encode(api.ErrorResponse{Error: "Invalid request body"})
 			return
 		}
 
-		player.Name = updates.Name
-		player.Address = updates.Address
+		player.Name = updateRequest.Name
+		player.Address = updateRequest.Address
 
 		if result := db.Save(&player); result.Error != nil {
 			w.WriteHeader(http.StatusInternalServerError)
+			json.NewEncoder(w).Encode(api.ErrorResponse{Error: "Failed to update profile"})
 			return
 		}
 
-		w.Header().Set("Content-Type", "application/json")
-		if err := json.NewEncoder(w).Encode(player); err != nil {
+		// Convert to API response
+		response := api.PlayerToResponse(player)
+		if err := json.NewEncoder(w).Encode(response); err != nil {
 			w.WriteHeader(http.StatusInternalServerError)
+			json.NewEncoder(w).Encode(api.ErrorResponse{Error: "Failed to encode response"})
 		}
 	}
 }
 
 func DebugGetUsers(db *gorm.DB) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
+		w.Header().Set("Content-Type", "application/json")
+
 		var users []database.User
 		if result := db.Find(&users); result.Error != nil {
 			w.WriteHeader(http.StatusInternalServerError)
+			json.NewEncoder(w).Encode(api.ErrorResponse{Error: "Database error"})
 			return
 		}
 		slog.Debug("Found users:", "count", len(users))
 		for _, user := range users {
 			slog.Debug("User:", "email", user.Email)
 		}
-		w.Header().Set("Content-Type", "application/json")
-		if err := json.NewEncoder(w).Encode(users); err != nil {
+
+		// Convert to API response
+		response := make([]api.UserResponse, len(users))
+		for i, user := range users {
+			response[i] = api.UserToResponse(user)
+		}
+
+		if err := json.NewEncoder(w).Encode(response); err != nil {
 			w.WriteHeader(http.StatusInternalServerError)
+			json.NewEncoder(w).Encode(api.ErrorResponse{Error: "Failed to encode response"})
 		}
 	}
 }
 
 func DeleteUser(db *gorm.DB) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
+		w.Header().Set("Content-Type", "application/json")
 		email := r.URL.Query().Get("email")
 		slog.Debug("Attempting to delete user:", "email", email)
 		if email == "" {
 			slog.Debug("Error: Email is empty for delete request.")
 			w.WriteHeader(http.StatusBadRequest)
+			json.NewEncoder(w).Encode(api.ErrorResponse{Error: "Email parameter is required"})
 			return
 		}
 
@@ -108,6 +130,7 @@ func DeleteUser(db *gorm.DB) http.HandlerFunc {
 		if result := db.Where("email = ?", email).First(&user); result.Error != nil {
 			slog.Debug("User not found:", "email", email, "error", result.Error)
 			w.WriteHeader(http.StatusNotFound)
+			json.NewEncoder(w).Encode(api.ErrorResponse{Error: "User not found"})
 			return
 		}
 
@@ -121,10 +144,11 @@ func DeleteUser(db *gorm.DB) http.HandlerFunc {
 		if result := db.Unscoped().Where("email = ?", email).Delete(&database.User{}); result.Error != nil {
 			slog.Debug("Error deleting user:", "email", email, "error", result.Error)
 			w.WriteHeader(http.StatusInternalServerError)
+			json.NewEncoder(w).Encode(api.ErrorResponse{Error: "Failed to delete user"})
 			return
 		}
 		slog.Debug("User and associated player deleted successfully:", "email", email)
-		w.WriteHeader(http.StatusOK)
+		w.WriteHeader(http.StatusNoContent)
 	}
 }
 
@@ -168,6 +192,7 @@ func AdminListUsers(db *gorm.DB) http.HandlerFunc {
 		var total int64
 		if err := query.Count(&total).Error; err != nil {
 			w.WriteHeader(http.StatusInternalServerError)
+			json.NewEncoder(w).Encode(api.ErrorResponse{Error: "Database error"})
 			return
 		}
 		
@@ -175,22 +200,38 @@ func AdminListUsers(db *gorm.DB) http.HandlerFunc {
 		var users []database.User
 		if err := query.Offset(offset).Limit(limit).Order("created_at DESC").Find(&users).Error; err != nil {
 			w.WriteHeader(http.StatusInternalServerError)
+			json.NewEncoder(w).Encode(api.ErrorResponse{Error: "Database error"})
 			return
 		}
 		
-		// Response with pagination metadata
-		result := map[string]interface{}{
-			"users": users,
-			"pagination": map[string]interface{}{
-				"page":  page,
-				"limit": limit,
-				"total": total,
-				"pages": (total + int64(limit) - 1) / int64(limit),
+		// Calculate stats for each user and convert to API response
+		usersWithStats := make([]api.UserWithStats, len(users))
+		for i, user := range users {
+			// Get pick count and wins for this user
+			var pickCount, totalWins int64
+			db.Model(&database.Pick{}).Where("user_id = ?", user.ID).Count(&pickCount)
+			db.Table("picks").
+				Joins("JOIN results ON picks.game_id = results.game_id").
+				Where("picks.user_id = ? AND picks.picked = results.outcome", user.ID).
+				Count(&totalWins)
+			
+			usersWithStats[i] = api.UserWithStatsFromUser(user, int(pickCount), int(totalWins))
+		}
+		
+		// Create structured response
+		response := api.UserListResponse{
+			Users: usersWithStats,
+			Pagination: api.PaginationResponse{
+				Page:  page,
+				Limit: limit,
+				Total: total,
+				Pages: (total + int64(limit) - 1) / int64(limit),
 			},
 		}
 		
-		if err := json.NewEncoder(w).Encode(result); err != nil {
+		if err := json.NewEncoder(w).Encode(response); err != nil {
 			w.WriteHeader(http.StatusInternalServerError)
+			json.NewEncoder(w).Encode(api.ErrorResponse{Error: "Failed to encode response"})
 		}
 	}
 }
@@ -207,7 +248,7 @@ func AdminGetUser(db *gorm.DB) http.HandlerFunc {
 		id, err := strconv.ParseUint(idStr, 10, 32)
 		if err != nil {
 			w.WriteHeader(http.StatusBadRequest)
-			json.NewEncoder(w).Encode(map[string]string{"error": "Invalid user ID"})
+			json.NewEncoder(w).Encode(api.ErrorResponse{Error: "Invalid user ID"})
 			return
 		}
 		
@@ -216,10 +257,10 @@ func AdminGetUser(db *gorm.DB) http.HandlerFunc {
 		if err := db.Preload("Player").First(&user, id).Error; err != nil {
 			if err == gorm.ErrRecordNotFound {
 				w.WriteHeader(http.StatusNotFound)
-				json.NewEncoder(w).Encode(map[string]string{"error": "User not found"})
+				json.NewEncoder(w).Encode(api.ErrorResponse{Error: "User not found"})
 			} else {
 				w.WriteHeader(http.StatusInternalServerError)
-				json.NewEncoder(w).Encode(map[string]string{"error": "Database error"})
+				json.NewEncoder(w).Encode(api.ErrorResponse{Error: "Database error"})
 			}
 			return
 		}
@@ -234,15 +275,12 @@ func AdminGetUser(db *gorm.DB) http.HandlerFunc {
 			Where("picks.user_id = ? AND picks.picked = results.outcome", id).
 			Count(&totalWins)
 		
-		// Response with user details and stats
-		response := map[string]interface{}{
-			"user":       user,
-			"pick_count": pickCount,
-			"total_wins": totalWins,
-		}
+		// Convert to API response
+		response := api.UserWithStatsFromUser(user, int(pickCount), int(totalWins))
 		
 		if err := json.NewEncoder(w).Encode(response); err != nil {
 			w.WriteHeader(http.StatusInternalServerError)
+			json.NewEncoder(w).Encode(api.ErrorResponse{Error: "Failed to encode response"})
 		}
 	}
 }
@@ -259,7 +297,7 @@ func AdminUpdateUser(db *gorm.DB) http.HandlerFunc {
 		id, err := strconv.ParseUint(idStr, 10, 32)
 		if err != nil {
 			w.WriteHeader(http.StatusBadRequest)
-			json.NewEncoder(w).Encode(map[string]string{"error": "Invalid user ID"})
+			json.NewEncoder(w).Encode(api.ErrorResponse{Error: "Invalid user ID"})
 			return
 		}
 		
@@ -268,15 +306,15 @@ func AdminUpdateUser(db *gorm.DB) http.HandlerFunc {
 		if err := db.First(&existingUser, id).Error; err != nil {
 			if err == gorm.ErrRecordNotFound {
 				w.WriteHeader(http.StatusNotFound)
-				json.NewEncoder(w).Encode(map[string]string{"error": "User not found"})
+				json.NewEncoder(w).Encode(api.ErrorResponse{Error: "User not found"})
 			} else {
 				w.WriteHeader(http.StatusInternalServerError)
-				json.NewEncoder(w).Encode(map[string]string{"error": "Database error"})
+				json.NewEncoder(w).Encode(api.ErrorResponse{Error: "Database error"})
 			}
 			return
 		}
 		
-		// Parse update data
+		// Parse update data with both user and player fields
 		var updateData struct {
 			Name    string `json:"name,omitempty"`
 			Email   string `json:"email,omitempty"`
@@ -287,7 +325,7 @@ func AdminUpdateUser(db *gorm.DB) http.HandlerFunc {
 		
 		if err := json.NewDecoder(r.Body).Decode(&updateData); err != nil {
 			w.WriteHeader(http.StatusBadRequest)
-			json.NewEncoder(w).Encode(map[string]string{"error": "Invalid JSON"})
+			json.NewEncoder(w).Encode(api.ErrorResponse{Error: "Invalid JSON"})
 			return
 		}
 		
@@ -305,7 +343,7 @@ func AdminUpdateUser(db *gorm.DB) http.HandlerFunc {
 		// Save user updates
 		if err := db.Save(&existingUser).Error; err != nil {
 			w.WriteHeader(http.StatusInternalServerError)
-			json.NewEncoder(w).Encode(map[string]string{"error": "Failed to update user"})
+			json.NewEncoder(w).Encode(api.ErrorResponse{Error: "Failed to update user"})
 			return
 		}
 		
@@ -332,10 +370,12 @@ func AdminUpdateUser(db *gorm.DB) http.HandlerFunc {
 			}
 		}
 		
-		// Return updated user
+		// Return updated user as API response
 		db.Preload("Player").First(&existingUser, id)
-		if err := json.NewEncoder(w).Encode(existingUser); err != nil {
+		response := api.UserToResponse(existingUser)
+		if err := json.NewEncoder(w).Encode(response); err != nil {
 			w.WriteHeader(http.StatusInternalServerError)
+			json.NewEncoder(w).Encode(api.ErrorResponse{Error: "Failed to encode response"})
 		}
 	}
 }

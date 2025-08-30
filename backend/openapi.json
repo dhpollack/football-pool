@@ -23,17 +23,31 @@
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/Login"
+                "$ref": "#/components/schemas/LoginRequest"
               }
             }
           }
         },
         "responses": {
           "200": {
-            "description": "OK"
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/UserResponse"
+                }
+              }
+            }
           },
           "401": {
-            "description": "Unauthorized"
+            "description": "Unauthorized",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
           }
         }
       }
@@ -48,7 +62,14 @@
             "description": "OK"
           },
           "400": {
-            "description": "Bad Request"
+            "description": "Bad Request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
           }
         }
       }
@@ -62,17 +83,31 @@
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/Register"
+                "$ref": "#/components/schemas/RegisterRequest"
               }
             }
           }
         },
         "responses": {
           "201": {
-            "description": "Created"
+            "description": "Created",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/UserResponse"
+                }
+              }
+            }
           },
           "400": {
-            "description": "Bad Request"
+            "description": "Bad Request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
           }
         }
       }
@@ -87,7 +122,14 @@
             "description": "OK"
           },
           "400": {
-            "description": "Bad Request"
+            "description": "Bad Request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
           }
         }
       }
@@ -107,13 +149,20 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/Player"
+                  "$ref": "#/components/schemas/UserResponse"
                 }
               }
             }
           },
           "401": {
-            "description": "Unauthorized"
+            "description": "Unauthorized",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
           }
         }
       }
@@ -131,17 +180,31 @@
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/UpdateProfile"
+                "$ref": "#/components/schemas/PlayerRequest"
               }
             }
           }
         },
         "responses": {
           "200": {
-            "description": "OK"
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/UserResponse"
+                }
+              }
+            }
           },
           "401": {
-            "description": "Unauthorized"
+            "description": "Unauthorized",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
           }
         }
       }
@@ -179,16 +242,20 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/Game"
-                  }
+                  "$ref": "#/components/schemas/GameListResponse"
                 }
               }
             }
           },
           "401": {
-            "description": "Unauthorized"
+            "description": "Unauthorized",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
           }
         }
       }
@@ -208,7 +275,7 @@
               "schema": {
                 "type": "array",
                 "items": {
-                  "$ref": "#/components/schemas/Game"
+                  "$ref": "#/components/schemas/GameRequest"
                 }
               }
             }
@@ -216,10 +283,27 @@
         },
         "responses": {
           "201": {
-            "description": "Created"
+            "description": "Created",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/GameResponse"
+                  }
+                }
+              }
+            }
           },
           "401": {
-            "description": "Unauthorized"
+            "description": "Unauthorized",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
           }
         }
       }
@@ -239,16 +323,20 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/Pick"
-                  }
+                  "$ref": "#/components/schemas/PickListResponse"
                 }
               }
             }
           },
           "401": {
-            "description": "Unauthorized"
+            "description": "Unauthorized",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
           }
         }
       }
@@ -268,7 +356,7 @@
               "schema": {
                 "type": "array",
                 "items": {
-                  "$ref": "#/components/schemas/Pick"
+                  "$ref": "#/components/schemas/PickRequest"
                 }
               }
             }
@@ -276,10 +364,27 @@
         },
         "responses": {
           "201": {
-            "description": "Created"
+            "description": "Created",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/PickResponse"
+                  }
+                }
+              }
+            }
           },
           "401": {
-            "description": "Unauthorized"
+            "description": "Unauthorized",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
           }
         }
       }
@@ -299,7 +404,7 @@
               "schema": {
                 "type": "array",
                 "items": {
-                  "$ref": "#/components/schemas/Pick"
+                  "$ref": "#/components/schemas/PickRequest"
                 }
               }
             }
@@ -307,10 +412,27 @@
         },
         "responses": {
           "201": {
-            "description": "Created"
+            "description": "Created",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/PickResponse"
+                  }
+                }
+              }
+            }
           },
           "401": {
-            "description": "Unauthorized"
+            "description": "Unauthorized",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
           }
         }
       }
@@ -344,10 +466,27 @@
         ],
         "responses": {
           "200": {
-            "description": "OK"
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/ResultResponse"
+                  }
+                }
+              }
+            }
           },
           "401": {
-            "description": "Unauthorized"
+            "description": "Unauthorized",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
           }
         }
       }
@@ -373,10 +512,27 @@
         ],
         "responses": {
           "200": {
-            "description": "OK"
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/ResultResponse"
+                  }
+                }
+              }
+            }
           },
           "401": {
-            "description": "Unauthorized"
+            "description": "Unauthorized",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
           }
         }
       }
@@ -394,17 +550,31 @@
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/Result"
+                "$ref": "#/components/schemas/ResultRequest"
               }
             }
           }
         },
         "responses": {
           "201": {
-            "description": "Created"
+            "description": "Created",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ResultResponse"
+                }
+              }
+            }
           },
           "401": {
-            "description": "Unauthorized"
+            "description": "Unauthorized",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
           }
         }
       }
@@ -426,14 +596,21 @@
                 "schema": {
                   "type": "array",
                   "items": {
-                    "$ref": "#/components/schemas/SurvivorPick"
+                    "$ref": "#/components/schemas/SurvivorPickResponse"
                   }
                 }
               }
             }
           },
           "401": {
-            "description": "Unauthorized"
+            "description": "Unauthorized",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
           }
         }
       }
@@ -451,17 +628,31 @@
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/SurvivorPick"
+                "$ref": "#/components/schemas/SurvivorPickRequest"
               }
             }
           }
         },
         "responses": {
           "201": {
-            "description": "Created"
+            "description": "Created",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SurvivorPickResponse"
+                }
+              }
+            }
           },
           "401": {
-            "description": "Unauthorized"
+            "description": "Unauthorized",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
           }
         }
       }
@@ -477,10 +668,24 @@
         ],
         "responses": {
           "200": {
-            "description": "OK"
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/UserListResponse"
+                }
+              }
+            }
           },
           "401": {
-            "description": "Unauthorized"
+            "description": "Unauthorized",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
           }
         }
       }
@@ -509,7 +714,420 @@
             "description": "OK"
           },
           "401": {
-            "description": "Unauthorized"
+            "description": "Unauthorized",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/admin/games": {
+      "get": {
+        "summary": "Admin list games",
+        "operationId": "adminListGames",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GameListResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/admin/games/{id}": {
+      "put": {
+        "summary": "Update game",
+        "operationId": "updateGame",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "uint"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/GameRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GameResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "summary": "Delete game",
+        "operationId": "deleteGame",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "uint"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/admin/picks": {
+      "get": {
+        "summary": "Admin list picks",
+        "operationId": "adminListPicks",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PickListResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/admin/picks/week/{week}": {
+      "get": {
+        "summary": "Admin get picks by week",
+        "operationId": "adminGetPicksByWeek",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "week",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PickListResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/admin/picks/user/{userId}": {
+      "get": {
+        "summary": "Admin get picks by user",
+        "operationId": "adminGetPicksByUser",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "userId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "uint"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PickListResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/admin/picks/{id}": {
+      "delete": {
+        "summary": "Admin delete pick",
+        "operationId": "adminDeletePick",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "uint"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/admin/users": {
+      "get": {
+        "summary": "Admin list users",
+        "operationId": "adminListUsers",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/UserListResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/admin/users/{id}": {
+      "get": {
+        "summary": "Admin get user",
+        "operationId": "adminGetUser",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "uint"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/UserResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      },
+      "put": {
+        "summary": "Admin update user",
+        "operationId": "adminUpdateUser",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "uint"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UserRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/UserResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
           }
         }
       }
@@ -517,11 +1135,13 @@
   },
   "components": {
     "schemas": {
-      "User": {
+      "UserResponse": {
         "type": "object",
+        "required": ["id", "name", "email", "role", "created_at", "updated_at"],
         "properties": {
-          "ID": {
-            "type": "integer"
+          "id": {
+            "type": "integer",
+            "format": "uint"
           },
           "name": {
             "type": "string"
@@ -531,20 +1151,113 @@
           },
           "role": {
             "type": "string"
+          },
+          "player": {
+            "$ref": "#/components/schemas/PlayerResponse"
+          },
+          "created_at": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "updated_at": {
+            "type": "string",
+            "format": "date-time"
           }
         }
       },
-      "Player": {
+      
+      "UserListResponse": {
         "type": "object",
+        "required": ["users", "pagination"],
         "properties": {
-          "ID": {
+          "users": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/UserWithStats"
+            }
+          },
+          "pagination": {
+            "$ref": "#/components/schemas/PaginationResponse"
+          }
+        }
+      },
+      "GameListResponse": {
+        "type": "object",
+        "required": ["games", "pagination"],
+        "properties": {
+          "games": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/GameResponse"
+            }
+          },
+          "pagination": {
+            "$ref": "#/components/schemas/PaginationResponse"
+          }
+        }
+      },
+      "PickListResponse": {
+        "type": "object",
+        "required": ["picks", "pagination"],
+        "properties": {
+          "picks": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/PickResponse"
+            }
+          },
+          "pagination": {
+            "$ref": "#/components/schemas/PaginationResponse"
+          }
+        }
+      },
+      "UserWithStats": {
+        "type": "object",
+        "required": ["id", "name", "email", "role", "pick_count", "total_wins", "created_at", "updated_at"],
+        "properties": {
+          "id": {
+            "type": "integer",
+            "format": "uint"
+          },
+          "name": {
+            "type": "string"
+          },
+          "email": {
+            "type": "string"
+          },
+          "role": {
+            "type": "string"
+          },
+          "player": {
+            "$ref": "#/components/schemas/PlayerResponse"
+          },
+          "pick_count": {
             "type": "integer"
+          },
+          "total_wins": {
+            "type": "integer"
+          },
+          "created_at": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "updated_at": {
+            "type": "string",
+            "format": "date-time"
+          }
+        }
+      },
+      "PlayerResponse": {
+        "type": "object",
+        "required": ["id", "user_id", "name", "address"],
+        "properties": {
+          "id": {
+            "type": "integer",
+            "format": "uint"
           },
           "user_id": {
-            "type": "integer"
-          },
-          "user": {
-            "$ref": "#/components/schemas/User"
+            "type": "integer",
+            "format": "uint"
           },
           "name": {
             "type": "string"
@@ -554,11 +1267,25 @@
           }
         }
       },
-      "Game": {
+      "PlayerRequest": {
         "type": "object",
+        "required": ["name", "address"],
         "properties": {
-          "ID": {
-            "type": "integer"
+          "name": {
+            "type": "string"
+          },
+          "address": {
+            "type": "string"
+          }
+        }
+      },
+      "GameResponse": {
+        "type": "object",
+        "required": ["id", "week", "season", "favorite_team", "underdog_team", "spread", "created_at", "updated_at"],
+        "properties": {
+          "id": {
+            "type": "integer",
+            "format": "uint"
           },
           "week": {
             "type": "integer"
@@ -573,27 +1300,93 @@
             "type": "string"
           },
           "spread": {
-            "type": "number"
+            "type": "number",
+            "format": "float"
+          },
+          "created_at": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "updated_at": {
+            "type": "string",
+            "format": "date-time"
           }
         }
       },
-      "Pick": {
+      "GameRequest": {
         "type": "object",
+        "required": ["week", "season", "favorite_team", "underdog_team", "spread"],
         "properties": {
-          "ID": {
+          "week": {
             "type": "integer"
+          },
+          "season": {
+            "type": "integer"
+          },
+          "favorite_team": {
+            "type": "string"
+          },
+          "underdog_team": {
+            "type": "string"
+          },
+          "spread": {
+            "type": "number",
+            "format": "float"
+          }
+        }
+      },
+      "PickResponse": {
+        "type": "object",
+        "required": ["id", "user_id", "game_id", "picked", "rank", "quick_pick", "created_at", "updated_at"],
+        "properties": {
+          "id": {
+            "type": "integer",
+            "format": "uint"
           },
           "user_id": {
-            "type": "integer"
+            "type": "integer",
+            "format": "uint"
           },
           "user": {
-            "$ref": "#/components/schemas/User"
+            "$ref": "#/components/schemas/UserResponse"
           },
           "game_id": {
-            "type": "integer"
+            "type": "integer",
+            "format": "uint"
           },
           "game": {
-            "$ref": "#/components/schemas/Game"
+            "$ref": "#/components/schemas/GameResponse"
+          },
+          "picked": {
+            "type": "string"
+          },
+          "rank": {
+            "type": "integer"
+          },
+          "quick_pick": {
+            "type": "boolean"
+          },
+          "created_at": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "updated_at": {
+            "type": "string",
+            "format": "date-time"
+          }
+        }
+      },
+      "PickRequest": {
+        "type": "object",
+        "required": ["game_id", "picked", "rank", "quick_pick"],
+        "properties": {
+          "user_id": {
+            "type": "integer",
+            "format": "uint"
+          },
+          "game_id": {
+            "type": "integer",
+            "format": "uint"
           },
           "picked": {
             "type": "string"
@@ -606,17 +1399,47 @@
           }
         }
       },
-      "Result": {
+      "ResultResponse": {
         "type": "object",
+        "required": ["id", "game_id", "favorite_score", "underdog_score", "outcome", "created_at", "updated_at"],
         "properties": {
-          "ID": {
-            "type": "integer"
+          "id": {
+            "type": "integer",
+            "format": "uint"
           },
           "game_id": {
-            "type": "integer"
+            "type": "integer",
+            "format": "uint"
           },
           "game": {
-            "$ref": "#/components/schemas/Game"
+            "$ref": "#/components/schemas/GameResponse"
+          },
+          "favorite_score": {
+            "type": "integer"
+          },
+          "underdog_score": {
+            "type": "integer"
+          },
+          "outcome": {
+            "type": "string"
+          },
+          "created_at": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "updated_at": {
+            "type": "string",
+            "format": "date-time"
+          }
+        }
+      },
+      "ResultRequest": {
+        "type": "object",
+        "required": ["game_id", "favorite_score", "underdog_score", "outcome"],
+        "properties": {
+          "game_id": {
+            "type": "integer",
+            "format": "uint"
           },
           "favorite_score": {
             "type": "integer"
@@ -629,17 +1452,44 @@
           }
         }
       },
-      "SurvivorPick": {
+      "SurvivorPickResponse": {
         "type": "object",
+        "required": ["id", "user_id", "week", "team", "created_at", "updated_at"],
         "properties": {
-          "ID": {
-            "type": "integer"
+          "id": {
+            "type": "integer",
+            "format": "uint"
           },
           "user_id": {
-            "type": "integer"
+            "type": "integer",
+            "format": "uint"
           },
           "user": {
-            "$ref": "#/components/schemas/User"
+            "$ref": "#/components/schemas/UserResponse"
+          },
+          "week": {
+            "type": "integer"
+          },
+          "team": {
+            "type": "string"
+          },
+          "created_at": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "updated_at": {
+            "type": "string",
+            "format": "date-time"
+          }
+        }
+      },
+      "SurvivorPickRequest": {
+        "type": "object",
+        "required": ["week", "team"],
+        "properties": {
+          "user_id": {
+            "type": "integer",
+            "format": "uint"
           },
           "week": {
             "type": "integer"
@@ -649,8 +1499,41 @@
           }
         }
       },
-      "Login": {
+      "PaginationResponse": {
         "type": "object",
+        "required": ["page", "limit", "total", "pages"],
+        "properties": {
+          "page": {
+            "type": "integer"
+          },
+          "limit": {
+            "type": "integer"
+          },
+          "total": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "pages": {
+            "type": "integer",
+            "format": "int64"
+          }
+        }
+      },
+      "ErrorResponse": {
+        "type": "object",
+        "required": ["error"],
+        "properties": {
+          "error": {
+            "type": "string"
+          },
+          "message": {
+            "type": "string"
+          }
+        }
+      },
+      "LoginRequest": {
+        "type": "object",
+        "required": ["email", "password"],
         "properties": {
           "email": {
             "type": "string"
@@ -660,8 +1543,9 @@
           }
         }
       },
-      "Register": {
+      "RegisterRequest": {
         "type": "object",
+        "required": ["name", "email", "password"],
         "properties": {
           "name": {
             "type": "string"
@@ -677,13 +1561,20 @@
           }
         }
       },
-      "UpdateProfile": {
+      "UserRequest": {
         "type": "object",
+        "required": ["name", "email", "role"],
         "properties": {
           "name": {
             "type": "string"
           },
-          "address": {
+          "email": {
+            "type": "string"
+          },
+          "password": {
+            "type": "string"
+          },
+          "role": {
             "type": "string"
           }
         }

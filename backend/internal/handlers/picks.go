@@ -6,6 +6,7 @@ import (
 	"strconv"
 	"strings"
 
+	"github.com/david/football-pool/internal/api"
 	"github.com/david/football-pool/internal/auth"
 	"github.com/david/football-pool/internal/database"
 	"gorm.io/gorm"
@@ -13,48 +14,64 @@ import (
 
 func GetPicks(db *gorm.DB) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
+		w.Header().Set("Content-Type", "application/json")
 		email := r.Context().Value(auth.EmailKey).(string)
 
 		var user database.User
 		if result := db.Where("email = ?", email).First(&user); result.Error != nil {
 			w.WriteHeader(http.StatusNotFound)
+			json.NewEncoder(w).Encode(api.ErrorResponse{Error: "User not found"})
 			return
 		}
 
 		var picks []database.Pick
 		if result := db.Where("user_id = ?", user.ID).Find(&picks); result.Error != nil {
 			w.WriteHeader(http.StatusInternalServerError)
+			json.NewEncoder(w).Encode(api.ErrorResponse{Error: "Database error"})
 			return
 		}
 
-		if err := json.NewEncoder(w).Encode(picks); err != nil {
+		// Convert to API response
+		response := make([]api.PickResponse, len(picks))
+		for i, pick := range picks {
+			response[i] = api.PickToResponse(pick)
+		}
+
+		if err := json.NewEncoder(w).Encode(response); err != nil {
 			w.WriteHeader(http.StatusInternalServerError)
+			json.NewEncoder(w).Encode(api.ErrorResponse{Error: "Failed to encode response"})
 		}
 	}
 }
 
 func SubmitPicks(db *gorm.DB) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
+		w.Header().Set("Content-Type", "application/json")
 		email := r.Context().Value(auth.EmailKey).(string)
 
 		var user database.User
 		if result := db.Where("email = ?", email).First(&user); result.Error != nil {
 			w.WriteHeader(http.StatusNotFound)
+			json.NewEncoder(w).Encode(api.ErrorResponse{Error: "User not found"})
 			return
 		}
 
-		var picks []database.Pick
-		if err := json.NewDecoder(r.Body).Decode(&picks); err != nil || len(picks) == 0 {
+		var pickRequests []api.PickRequest
+		if err := json.NewDecoder(r.Body).Decode(&pickRequests); err != nil || len(pickRequests) == 0 {
 			w.WriteHeader(http.StatusBadRequest)
+			json.NewEncoder(w).Encode(api.ErrorResponse{Error: "Invalid request body"})
 			return
 		}
 
+		// Convert to database models and set user ID
+		picks := api.PicksFromRequest(pickRequests)
 		for i := range picks {
 			picks[i].UserID = user.ID
 		}
 
 		if result := db.Create(&picks); result.Error != nil {
 			w.WriteHeader(http.StatusInternalServerError)
+			json.NewEncoder(w).Encode(api.ErrorResponse{Error: "Failed to create picks"})
 			return
 		}
 
@@ -64,14 +81,21 @@ func SubmitPicks(db *gorm.DB) http.HandlerFunc {
 
 func AdminSubmitPicks(db *gorm.DB) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
-		var picks []database.Pick
-		if err := json.NewDecoder(r.Body).Decode(&picks); err != nil || len(picks) == 0 {
+		w.Header().Set("Content-Type", "application/json")
+
+		var pickRequests []api.PickRequest
+		if err := json.NewDecoder(r.Body).Decode(&pickRequests); err != nil || len(pickRequests) == 0 {
 			w.WriteHeader(http.StatusBadRequest)
+			json.NewEncoder(w).Encode(api.ErrorResponse{Error: "Invalid request body"})
 			return
 		}
 
+		// Convert to database models
+		picks := api.PicksFromRequest(pickRequests)
+
 		if result := db.Create(&picks); result.Error != nil {
 			w.WriteHeader(http.StatusInternalServerError)
+			json.NewEncoder(w).Encode(api.ErrorResponse{Error: "Failed to create picks"})
 			return
 		}
 
@@ -137,6 +161,7 @@ func AdminListPicks(db *gorm.DB) http.HandlerFunc {
 		var total int64
 		if err := query.Count(&total).Error; err != nil {
 			w.WriteHeader(http.StatusInternalServerError)
+			json.NewEncoder(w).Encode(api.ErrorResponse{Error: "Database error"})
 			return
 		}
 		
@@ -144,22 +169,30 @@ func AdminListPicks(db *gorm.DB) http.HandlerFunc {
 		var picks []database.Pick
 		if err := query.Offset(offset).Limit(limit).Order("picks.created_at DESC").Find(&picks).Error; err != nil {
 			w.WriteHeader(http.StatusInternalServerError)
+			json.NewEncoder(w).Encode(api.ErrorResponse{Error: "Database error"})
 			return
 		}
 		
-		// Response with pagination metadata
-		response := map[string]interface{}{
-			"picks": picks,
-			"pagination": map[string]interface{}{
-				"page":  page,
-				"limit": limit,
-				"total": total,
-				"pages": (total + int64(limit) - 1) / int64(limit),
+		// Convert to API response
+		pickResponses := make([]api.PickResponse, len(picks))
+		for i, pick := range picks {
+			pickResponses[i] = api.PickToResponse(pick)
+		}
+		
+		// Create structured response
+		response := api.PickListResponse{
+			Picks: pickResponses,
+			Pagination: api.PaginationResponse{
+				Page:  page,
+				Limit: limit,
+				Total: total,
+				Pages: (total + int64(limit) - 1) / int64(limit),
 			},
 		}
 		
 		if err := json.NewEncoder(w).Encode(response); err != nil {
 			w.WriteHeader(http.StatusInternalServerError)
+			json.NewEncoder(w).Encode(api.ErrorResponse{Error: "Failed to encode response"})
 		}
 	}
 }
@@ -176,7 +209,7 @@ func AdminGetPicksByWeek(db *gorm.DB) http.HandlerFunc {
 		week, err := strconv.Atoi(weekStr)
 		if err != nil {
 			w.WriteHeader(http.StatusBadRequest)
-			json.NewEncoder(w).Encode(map[string]string{"error": "Invalid week"})
+			json.NewEncoder(w).Encode(api.ErrorResponse{Error: "Invalid week"})
 			return
 		}
 		
@@ -196,11 +229,19 @@ func AdminGetPicksByWeek(db *gorm.DB) http.HandlerFunc {
 			Order("picks.user_id, games.id").
 			Find(&picks).Error; err != nil {
 			w.WriteHeader(http.StatusInternalServerError)
+			json.NewEncoder(w).Encode(api.ErrorResponse{Error: "Database error"})
 			return
 		}
 		
-		if err := json.NewEncoder(w).Encode(picks); err != nil {
+		// Convert to API response
+		response := make([]api.PickResponse, len(picks))
+		for i, pick := range picks {
+			response[i] = api.PickToResponse(pick)
+		}
+		
+		if err := json.NewEncoder(w).Encode(response); err != nil {
 			w.WriteHeader(http.StatusInternalServerError)
+			json.NewEncoder(w).Encode(api.ErrorResponse{Error: "Failed to encode response"})
 		}
 	}
 }
@@ -217,7 +258,7 @@ func AdminGetPicksByUser(db *gorm.DB) http.HandlerFunc {
 		userID, err := strconv.ParseUint(userIDStr, 10, 32)
 		if err != nil {
 			w.WriteHeader(http.StatusBadRequest)
-			json.NewEncoder(w).Encode(map[string]string{"error": "Invalid user ID"})
+			json.NewEncoder(w).Encode(api.ErrorResponse{Error: "Invalid user ID"})
 			return
 		}
 		
@@ -232,11 +273,19 @@ func AdminGetPicksByUser(db *gorm.DB) http.HandlerFunc {
 		var picks []database.Pick
 		if err := query.Order("created_at DESC").Find(&picks).Error; err != nil {
 			w.WriteHeader(http.StatusInternalServerError)
+			json.NewEncoder(w).Encode(api.ErrorResponse{Error: "Database error"})
 			return
 		}
 		
-		if err := json.NewEncoder(w).Encode(picks); err != nil {
+		// Convert to API response
+		response := make([]api.PickResponse, len(picks))
+		for i, pick := range picks {
+			response[i] = api.PickToResponse(pick)
+		}
+		
+		if err := json.NewEncoder(w).Encode(response); err != nil {
 			w.WriteHeader(http.StatusInternalServerError)
+			json.NewEncoder(w).Encode(api.ErrorResponse{Error: "Failed to encode response"})
 		}
 	}
 }
@@ -253,7 +302,7 @@ func AdminDeletePick(db *gorm.DB) http.HandlerFunc {
 		id, err := strconv.ParseUint(idStr, 10, 32)
 		if err != nil {
 			w.WriteHeader(http.StatusBadRequest)
-			json.NewEncoder(w).Encode(map[string]string{"error": "Invalid pick ID"})
+			json.NewEncoder(w).Encode(api.ErrorResponse{Error: "Invalid pick ID"})
 			return
 		}
 		
@@ -262,10 +311,10 @@ func AdminDeletePick(db *gorm.DB) http.HandlerFunc {
 		if err := db.First(&pick, id).Error; err != nil {
 			if err == gorm.ErrRecordNotFound {
 				w.WriteHeader(http.StatusNotFound)
-				json.NewEncoder(w).Encode(map[string]string{"error": "Pick not found"})
+				json.NewEncoder(w).Encode(api.ErrorResponse{Error: "Pick not found"})
 			} else {
 				w.WriteHeader(http.StatusInternalServerError)
-				json.NewEncoder(w).Encode(map[string]string{"error": "Database error"})
+				json.NewEncoder(w).Encode(api.ErrorResponse{Error: "Database error"})
 			}
 			return
 		}
@@ -273,7 +322,7 @@ func AdminDeletePick(db *gorm.DB) http.HandlerFunc {
 		// Delete the pick
 		if err := db.Delete(&pick).Error; err != nil {
 			w.WriteHeader(http.StatusInternalServerError)
-			json.NewEncoder(w).Encode(map[string]string{"error": "Failed to delete pick"})
+			json.NewEncoder(w).Encode(api.ErrorResponse{Error: "Failed to delete pick"})
 			return
 		}
 		

@@ -328,10 +328,10 @@ func TestDeleteUser(t *testing.T) {
 	// Serve the request
 	handler.ServeHTTP(rr, req)
 
-	// Check the status code
-	if status := rr.Code; status != http.StatusOK {
+	// Check the status code (DeleteUser returns NoContent for successful deletion)
+	if status := rr.Code; status != http.StatusNoContent {
 		t.Errorf("handler returned wrong status code: got %v want %v",
-			status, http.StatusOK)
+			status, http.StatusNoContent)
 	}
 
 	// Verify the user is deleted from the database
@@ -367,7 +367,7 @@ func TestDeleteUserEdgeCases(t *testing.T) {
 			email:          "no_player@test.com", 
 			setupUser:      true,
 			setupPlayer:    false,
-			expectedStatus: http.StatusOK,
+			expectedStatus: http.StatusNoContent,
 		},
 		{
 			name:           "Delete non-existent user",
@@ -422,7 +422,7 @@ func TestDeleteUserEdgeCases(t *testing.T) {
 			}
 
 			// If deletion was successful, verify cleanup
-			if tt.expectedStatus == http.StatusOK && tt.setupUser {
+			if tt.expectedStatus == http.StatusNoContent && tt.setupUser {
 				var user database.User
 				if result := gormDB.Where("email = ?", tt.email).First(&user); result.Error == nil {
 					t.Errorf("user was not deleted from the database")
@@ -508,9 +508,8 @@ func TestAdminGetUser(t *testing.T) {
 
 		var response map[string]interface{}
 		json.NewDecoder(rr.Body).Decode(&response)
-		userData := response["user"].(map[string]interface{})
-		if userData["email"] != user.Email {
-			t.Errorf("expected user email %s, got %s", user.Email, userData["Email"])
+		if response["email"] != user.Email {
+			t.Errorf("expected user email %s, got %s", user.Email, response["email"])
 		}
 	})
 

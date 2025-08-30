@@ -6,20 +6,31 @@ import (
 	"strconv"
 	"strings"
 
+	"github.com/david/football-pool/internal/api"
 	"github.com/david/football-pool/internal/database"
 	"gorm.io/gorm"
 )
 
 func CreateGame(db *gorm.DB) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
-		var games []database.Game
-		if err := json.NewDecoder(r.Body).Decode(&games); err != nil {
+		w.Header().Set("Content-Type", "application/json")
+
+		var gameRequests []api.GameRequest
+		if err := json.NewDecoder(r.Body).Decode(&gameRequests); err != nil {
 			w.WriteHeader(http.StatusBadRequest)
+			json.NewEncoder(w).Encode(api.ErrorResponse{Error: "Invalid request body"})
 			return
+		}
+
+		// Convert to database models
+		games := make([]database.Game, len(gameRequests))
+		for i, req := range gameRequests {
+			games[i] = api.GameFromRequest(req)
 		}
 
 		if result := db.Create(&games); result.Error != nil {
 			w.WriteHeader(http.StatusInternalServerError)
+			json.NewEncoder(w).Encode(api.ErrorResponse{Error: "Failed to create games"})
 			return
 		}
 
@@ -29,34 +40,46 @@ func CreateGame(db *gorm.DB) http.HandlerFunc {
 
 func GetGames(db *gorm.DB) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
+		w.Header().Set("Content-Type", "application/json")
 		weekStr := r.URL.Query().Get("week")
 		seasonStr := r.URL.Query().Get("season")
 
 		if weekStr == "" || seasonStr == "" {
 			w.WriteHeader(http.StatusBadRequest)
+			json.NewEncoder(w).Encode(api.ErrorResponse{Error: "Week and season parameters are required"})
 			return
 		}
 
 		week, err := strconv.Atoi(weekStr)
 		if err != nil {
 			w.WriteHeader(http.StatusBadRequest)
+			json.NewEncoder(w).Encode(api.ErrorResponse{Error: "Invalid week parameter"})
 			return
 		}
 
 		season, err := strconv.Atoi(seasonStr)
 		if err != nil {
 			w.WriteHeader(http.StatusBadRequest)
+			json.NewEncoder(w).Encode(api.ErrorResponse{Error: "Invalid season parameter"})
 			return
 		}
 
 		var games []database.Game
 		if result := db.Where("week = ? AND season = ?", week, season).Find(&games); result.Error != nil {
 			w.WriteHeader(http.StatusInternalServerError)
+			json.NewEncoder(w).Encode(api.ErrorResponse{Error: "Database error"})
 			return
 		}
 
-		if err = json.NewEncoder(w).Encode(games); err != nil {
+		// Convert to API response
+		response := make([]api.GameResponse, len(games))
+		for i, game := range games {
+			response[i] = api.GameToResponse(game)
+		}
+
+		if err = json.NewEncoder(w).Encode(response); err != nil {
 			w.WriteHeader(http.StatusInternalServerError)
+			json.NewEncoder(w).Encode(api.ErrorResponse{Error: "Failed to encode response"})
 		}
 	}
 }
@@ -105,6 +128,7 @@ func AdminListGames(db *gorm.DB) http.HandlerFunc {
 		var total int64
 		if err := query.Count(&total).Error; err != nil {
 			w.WriteHeader(http.StatusInternalServerError)
+			json.NewEncoder(w).Encode(api.ErrorResponse{Error: "Database error"})
 			return
 		}
 		
@@ -112,22 +136,30 @@ func AdminListGames(db *gorm.DB) http.HandlerFunc {
 		var games []database.Game
 		if err := query.Offset(offset).Limit(limit).Order("season DESC, week DESC, id DESC").Find(&games).Error; err != nil {
 			w.WriteHeader(http.StatusInternalServerError)
+			json.NewEncoder(w).Encode(api.ErrorResponse{Error: "Database error"})
 			return
 		}
 		
-		// Response with pagination metadata
-		response := map[string]interface{}{
-			"games": games,
-			"pagination": map[string]interface{}{
-				"page":  page,
-				"limit": limit,
-				"total": total,
-				"pages": (total + int64(limit) - 1) / int64(limit),
+		// Convert to API response
+		gameResponses := make([]api.GameResponse, len(games))
+		for i, game := range games {
+			gameResponses[i] = api.GameToResponse(game)
+		}
+		
+		// Create structured response
+		response := api.GameListResponse{
+			Games: gameResponses,
+			Pagination: api.PaginationResponse{
+				Page:  page,
+				Limit: limit,
+				Total: total,
+				Pages: (total + int64(limit) - 1) / int64(limit),
 			},
 		}
 		
 		if err := json.NewEncoder(w).Encode(response); err != nil {
 			w.WriteHeader(http.StatusInternalServerError)
+			json.NewEncoder(w).Encode(api.ErrorResponse{Error: "Failed to encode response"})
 		}
 	}
 }
@@ -144,7 +176,7 @@ func UpdateGame(db *gorm.DB) http.HandlerFunc {
 		id, err := strconv.ParseUint(idStr, 10, 32)
 		if err != nil {
 			w.WriteHeader(http.StatusBadRequest)
-			json.NewEncoder(w).Encode(map[string]string{"error": "Invalid game ID"})
+			json.NewEncoder(w).Encode(api.ErrorResponse{Error: "Invalid game ID"})
 			return
 		}
 		
@@ -153,32 +185,37 @@ func UpdateGame(db *gorm.DB) http.HandlerFunc {
 		if err := db.First(&existingGame, id).Error; err != nil {
 			if err == gorm.ErrRecordNotFound {
 				w.WriteHeader(http.StatusNotFound)
-				json.NewEncoder(w).Encode(map[string]string{"error": "Game not found"})
+				json.NewEncoder(w).Encode(api.ErrorResponse{Error: "Game not found"})
 			} else {
 				w.WriteHeader(http.StatusInternalServerError)
-				json.NewEncoder(w).Encode(map[string]string{"error": "Database error"})
+				json.NewEncoder(w).Encode(api.ErrorResponse{Error: "Database error"})
 			}
 			return
 		}
 		
 		// Parse updated game data
-		var updateData database.Game
-		if err := json.NewDecoder(r.Body).Decode(&updateData); err != nil {
+		var updateRequest api.GameRequest
+		if err := json.NewDecoder(r.Body).Decode(&updateRequest); err != nil {
 			w.WriteHeader(http.StatusBadRequest)
-			json.NewEncoder(w).Encode(map[string]string{"error": "Invalid JSON"})
+			json.NewEncoder(w).Encode(api.ErrorResponse{Error: "Invalid JSON"})
 			return
 		}
+		
+		// Convert to database model
+		updateData := api.GameFromRequest(updateRequest)
 		
 		// Update the game
 		if err := db.Model(&existingGame).Updates(updateData).Error; err != nil {
 			w.WriteHeader(http.StatusInternalServerError)
-			json.NewEncoder(w).Encode(map[string]string{"error": "Failed to update game"})
+			json.NewEncoder(w).Encode(api.ErrorResponse{Error: "Failed to update game"})
 			return
 		}
 		
-		// Return updated game
-		if err := json.NewEncoder(w).Encode(existingGame); err != nil {
+		// Return updated game as API response
+		response := api.GameToResponse(existingGame)
+		if err := json.NewEncoder(w).Encode(response); err != nil {
 			w.WriteHeader(http.StatusInternalServerError)
+			json.NewEncoder(w).Encode(api.ErrorResponse{Error: "Failed to encode response"})
 		}
 	}
 }
@@ -195,7 +232,7 @@ func DeleteGame(db *gorm.DB) http.HandlerFunc {
 		id, err := strconv.ParseUint(idStr, 10, 32)
 		if err != nil {
 			w.WriteHeader(http.StatusBadRequest)
-			json.NewEncoder(w).Encode(map[string]string{"error": "Invalid game ID"})
+			json.NewEncoder(w).Encode(api.ErrorResponse{Error: "Invalid game ID"})
 			return
 		}
 		
@@ -204,10 +241,10 @@ func DeleteGame(db *gorm.DB) http.HandlerFunc {
 		if err := db.First(&game, id).Error; err != nil {
 			if err == gorm.ErrRecordNotFound {
 				w.WriteHeader(http.StatusNotFound)
-				json.NewEncoder(w).Encode(map[string]string{"error": "Game not found"})
+				json.NewEncoder(w).Encode(api.ErrorResponse{Error: "Game not found"})
 			} else {
 				w.WriteHeader(http.StatusInternalServerError)
-				json.NewEncoder(w).Encode(map[string]string{"error": "Database error"})
+				json.NewEncoder(w).Encode(api.ErrorResponse{Error: "Database error"})
 			}
 			return
 		}
@@ -219,8 +256,8 @@ func DeleteGame(db *gorm.DB) http.HandlerFunc {
 		
 		if pickCount > 0 || resultCount > 0 {
 			w.WriteHeader(http.StatusConflict)
-			json.NewEncoder(w).Encode(map[string]string{
-				"error": "Cannot delete game with associated picks or results",
+			json.NewEncoder(w).Encode(api.ErrorResponse{
+				Error: "Cannot delete game with associated picks or results",
 			})
 			return
 		}
@@ -228,7 +265,7 @@ func DeleteGame(db *gorm.DB) http.HandlerFunc {
 		// Delete the game
 		if err := db.Delete(&game).Error; err != nil {
 			w.WriteHeader(http.StatusInternalServerError)
-			json.NewEncoder(w).Encode(map[string]string{"error": "Failed to delete game"})
+			json.NewEncoder(w).Encode(api.ErrorResponse{Error: "Failed to delete game"})
 			return
 		}
 		
