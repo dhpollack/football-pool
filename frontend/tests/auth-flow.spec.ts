@@ -242,10 +242,14 @@ test.describe("Authentication Flow", () => {
       email: `session-expiration-${Date.now()}-${Math.floor(Math.random() * 100000)}@example.com`,
       password: "SessionExpirationPassword123!",
     };
-    
+
     // Register and login
     await AuthFlowHelpers.registerUser(page, sessionUser, true);
-    await AuthFlowHelpers.loginUser(page, sessionUser.email, sessionUser.password);
+    await AuthFlowHelpers.loginUser(
+      page,
+      sessionUser.email,
+      sessionUser.password,
+    );
 
     // Clear cookies to simulate expired session
     await page.context().clearCookies();

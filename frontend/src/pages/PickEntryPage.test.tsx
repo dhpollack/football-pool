@@ -1,24 +1,59 @@
 import { render, screen, fireEvent } from "@testing-library/react";
 import { vi } from "vitest";
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import PickEntryPage from "./PickEntryPage";
 
-describe("PickEntryPage", () => {
-  const mockGames = [
+// Mock the React Query hooks
+const mockGamesData = {
+  games: [
     { id: 1, favorite_team: "Team A", underdog_team: "Team B", spread: 3 },
     { id: 2, favorite_team: "Team C", underdog_team: "Team D", spread: 7 },
-  ];
+  ]
+};
+
+const mockSubmitPicks = vi.fn();
+vi.mock("../services/api/default/default", () => ({
+  useGetGames: () => ({
+    data: mockGamesData,
+    isLoading: false,
+    error: null,
+  }),
+  useSubmitPicks: () => ({
+    mutateAsync: mockSubmitPicks,
+    isPending: false,
+  }),
+}));
+
+// Mock alert
+global.alert = vi.fn();
+
+describe("PickEntryPage", () => {
+  let queryClient: QueryClient;
 
   beforeEach(() => {
-    global.fetch = vi.fn(() =>
-      Promise.resolve({
-        ok: true,
-        json: () => Promise.resolve(mockGames),
-      }),
-    ) as vi.Mock;
+    queryClient = new QueryClient({
+      defaultOptions: {
+        queries: { retry: false },
+        mutations: { retry: false },
+      },
+    });
+    mockSubmitPicks.mockResolvedValue({});
   });
 
+  afterEach(() => {
+    vi.clearAllMocks();
+  });
+
+  const renderWithProviders = () => {
+    return render(
+      <QueryClientProvider client={queryClient}>
+        <PickEntryPage />
+      </QueryClientProvider>
+    );
+  };
+
   it("renders the games", async () => {
-    render(<PickEntryPage />);
+    renderWithProviders();
 
     expect(await screen.findByText(/team a/i)).toBeInTheDocument();
     expect(await screen.findByText(/team b/i)).toBeInTheDocument();
@@ -27,7 +62,7 @@ describe("PickEntryPage", () => {
   });
 
   it("handles quick pick", async () => {
-    render(<PickEntryPage />);
+    renderWithProviders();
 
     await screen.findByText(/team a/i);
 
@@ -41,15 +76,26 @@ describe("PickEntryPage", () => {
   });
 
   it("submits picks", async () => {
-    render(<PickEntryPage />);
+    renderWithProviders();
 
     await screen.findByText(/team a/i);
 
     fireEvent.click(screen.getByText(/submit picks/i));
 
-    expect(global.fetch).toHaveBeenCalledWith(
-      "http://localhost:8080/api/picks",
-      expect.any(Object),
-    );
+    // Wait for the async operation to complete
+    await vi.waitFor(() => {
+      expect(mockSubmitPicks).toHaveBeenCalledWith({
+        data: expect.arrayContaining([
+          expect.objectContaining({
+            game_id: expect.any(Number),
+            picked: expect.any(String),
+            rank: expect.any(Number),
+            quick_pick: expect.any(Boolean),
+          }),
+        ]),
+      });
+    });
+
+    expect(global.alert).toHaveBeenCalledWith("Picks submitted successfully!");
   });
 });

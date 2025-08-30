@@ -1,8 +1,8 @@
 import { render, screen, fireEvent } from "@testing-library/react";
 import { BrowserRouter as Router } from "react-router-dom";
 import { vi } from "vitest";
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import RegisterPage from "./RegisterPage";
-import { api } from "../services/api";
 
 // Mock the useNavigate hook
 const mockNavigate = vi.fn();
@@ -14,11 +14,26 @@ vi.mock("react-router-dom", async () => {
   };
 });
 
-vi.mock("../services/api");
+// Mock the React Query hook
+const mockRegisterUser = vi.fn();
+vi.mock("../services/api/default/default", () => ({
+  useRegisterUser: () => ({
+    mutateAsync: mockRegisterUser,
+    isPending: false,
+  }),
+}));
 
 describe("RegisterPage", () => {
+  let queryClient: QueryClient;
+
   beforeEach(() => {
-    vi.mocked(api.post).mockResolvedValue({});
+    queryClient = new QueryClient({
+      defaultOptions: {
+        queries: { retry: false },
+        mutations: { retry: false },
+      },
+    });
+    mockRegisterUser.mockResolvedValue({});
   });
 
   afterEach(() => {
@@ -26,12 +41,18 @@ describe("RegisterPage", () => {
     mockNavigate.mockClear();
   });
 
-  it("renders the registration form", () => {
-    render(
-      <Router>
-        <RegisterPage />
-      </Router>,
+  const renderWithProviders = () => {
+    return render(
+      <QueryClientProvider client={queryClient}>
+        <Router>
+          <RegisterPage />
+        </Router>
+      </QueryClientProvider>
     );
+  };
+
+  it("renders the registration form", () => {
+    renderWithProviders();
 
     expect(screen.getByLabelText(/name/i)).toBeInTheDocument();
     expect(screen.getByLabelText(/email address/i)).toBeInTheDocument();
@@ -42,11 +63,7 @@ describe("RegisterPage", () => {
   });
 
   it("submits the form", async () => {
-    render(
-      <Router>
-        <RegisterPage />
-      </Router>,
-    );
+    renderWithProviders();
 
     fireEvent.change(screen.getByLabelText(/name/i), {
       target: { value: "John Doe" },
@@ -62,10 +79,12 @@ describe("RegisterPage", () => {
 
     // Wait for the async operation to complete
     await vi.waitFor(() => {
-      expect(api.post).toHaveBeenCalledWith("/api/register", {
-        name: "John Doe",
-        email: "john@example.com",
-        password: "password",
+      expect(mockRegisterUser).toHaveBeenCalledWith({
+        data: {
+          name: "John Doe",
+          email: "john@example.com",
+          password: "password",
+        },
       });
     });
 

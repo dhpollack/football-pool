@@ -1,7 +1,5 @@
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
-import { useEffect } from "react";
 import { AuthProvider } from "./contexts/AuthContext";
-import { api } from "./services/api";
 import Layout from "./components/Layout";
 import ErrorBoundary from "./components/ErrorBoundary";
 import HomePage from "./pages/HomePage";
@@ -15,12 +13,6 @@ import OverallResultsPage from "./pages/OverallResultsPage";
 import SurvivorPoolPage from "./pages/SurvivorPoolPage";
 
 function App() {
-  useEffect(() => {
-    // Initialize CSRF token
-    api.initialize().catch((error) => {
-      console.warn("Failed to initialize CSRF token:", error);
-    });
-  }, []);
   return (
     <ErrorBoundary>
       <AuthProvider>

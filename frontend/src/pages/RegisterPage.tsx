@@ -1,7 +1,9 @@
 import { useState, useId } from "react";
 import { useNavigate } from "react-router-dom";
 import { TextField, Button, Box, Typography } from "@mui/material";
-import { api } from "../services/api";
+import { useRegisterUser } from "../services/api/default/default";
+import type { RegisterRequest } from "../services/model";
+import axios from "axios";
 
 const RegisterPage = () => {
   const navigate = useNavigate();
@@ -12,7 +14,8 @@ const RegisterPage = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState<string | null>(null);
-  const [loading, setLoading] = useState(false);
+  const { mutateAsync: registerUser, isPending: isRegistering } =
+    useRegisterUser();
   const [formErrors, setFormErrors] = useState<{
     name?: string;
     email?: string;
@@ -54,25 +57,20 @@ const RegisterPage = () => {
       return;
     }
 
-    setLoading(true);
-
     try {
-      console.log("Sending registration request...");
-      await api.post("/api/register", { name, email, password });
-      console.log("Registration successful, redirecting to login");
-      // Redirect to the login page with success message
+      const registerData: RegisterRequest = { name, email, password };
+      await registerUser({ data: registerData });
       navigate("/login", {
         state: { message: "Registration successful! Please log in." },
       });
     } catch (error: unknown) {
-      console.error("Registration error:", error);
-      if (error instanceof Error) {
+      if (axios.isAxiosError(error)) {
+        setError(error.response?.data?.message || error.message);
+      } else if (error instanceof Error) {
         setError(error.message);
       } else {
         setError("An unknown error occurred");
       }
-    } finally {
-      setLoading(false);
     }
   };
 
@@ -150,9 +148,9 @@ const RegisterPage = () => {
           fullWidth
           variant="contained"
           sx={{ mt: 3, mb: 2 }}
-          disabled={loading}
+          disabled={isRegistering}
         >
-          {loading ? "Registering..." : "Register"}
+          {isRegistering ? "Registering..." : "Register"}
         </Button>
       </Box>
     </Box>

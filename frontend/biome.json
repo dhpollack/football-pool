@@ -23,5 +23,13 @@
     "useIgnoreFile": true,
     "clientKind": "git",
     "root": ".."
-  }
+  },
+  "overrides": [
+    {
+      "includes": ["src/services/api/**/*.msw.ts"],
+      "linter": {
+        "enabled": false
+      }
+    }
+  ]
 }

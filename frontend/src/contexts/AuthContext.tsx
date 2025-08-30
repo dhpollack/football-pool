@@ -5,14 +5,17 @@ import {
   useEffect,
   type ReactNode,
 } from "react";
-import { api } from "../services/api";
-import { ApiError } from "../services/api";
+import { useQueryClient } from "@tanstack/react-query";
+import {
+  useLoginUser,
+  useLogoutUser,
+  useGetProfile,
+} from "../services/api/default/default";
+import type { UserResponse } from "../services/model";
+import axios from "axios";
 
-interface User {
-  id: number;
-  name: string;
-  email: string;
-}
+// Use the generated UserResponse type directly
+type User = UserResponse;
 
 interface AuthContextType {
   user: User | null;
@@ -41,31 +44,43 @@ interface AuthProviderProps {
 export const AuthProvider = ({ children }: AuthProviderProps) => {
   const [user, setUser] = useState<User | null>(null);
   const [loading, setLoading] = useState(true);
+  const queryClient = useQueryClient();
 
-  const handleAuthError = (error: unknown) => {
-    if (error instanceof ApiError && error.status === 401) {
-      // Auto-logout on authentication errors
-      setUser(null);
-      // Only redirect if we're not already on the login page
-      if (window.location.pathname !== "/login") {
-        window.location.href = "/login";
-      }
-    }
-    // Don't throw error during initialization
-  };
+  // React Query mutations
+  const { mutateAsync: loginMutation } = useLoginUser();
+  const { mutateAsync: logoutMutation } = useLogoutUser();
+  const { refetch: refetchProfile } = useGetProfile({
+    query: {
+      enabled: false, // Don't fetch automatically
+    },
+  });
 
   useEffect(() => {
     let isMounted = true;
 
+    const handleAuthError = (error: unknown) => {
+      if (axios.isAxiosError(error) && error.response?.status === 401) {
+        // Auto-logout on authentication errors
+        if (isMounted) {
+          setUser(null);
+        }
+        // Only redirect if we're not already on the login page
+        if (window.location.pathname !== "/login") {
+          window.location.href = "/login";
+        }
+      }
+      // Don't throw error during initialization
+    };
+
     // Check authentication status on mount
     const checkAuthStatus = async () => {
       try {
-        const userData = await api.get<User>("/api/users/me");
-        if (isMounted) {
-          setUser(userData);
+        const userData = await refetchProfile();
+        if (isMounted && userData.data) {
+          setUser(userData.data);
         }
       } catch (error) {
-        if (error instanceof ApiError && error.status === 401) {
+        if (axios.isAxiosError(error) && error.response?.status === 401) {
           // Not authenticated, clear user state
           if (isMounted) {
             setUser(null);
@@ -84,9 +99,9 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
     // Set up periodic token check (every 5 minutes)
     const tokenCheckInterval = setInterval(
       () => {
-        // Only check if we think we have a user (based on current state at time of setup)
-        api.get("/api/users/me").catch((error) => {
-          if (error instanceof ApiError && error.status === 401) {
+        // Only check if we think we have a user
+        refetchProfile().catch((error) => {
+          if (axios.isAxiosError(error) && error.response?.status === 401) {
             handleAuthError(error);
           }
         });
@@ -98,20 +113,19 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
       isMounted = false;
       clearInterval(tokenCheckInterval);
     };
-  }, [handleAuthError]); // Include handleAuthError in dependency array
+  }, [refetchProfile]); // Include refetchProfile in dependency array
 
   const login = async (email: string, password: string) => {
     try {
-      // Login and get JWT token
-      await api.post("/api/login", {
-        email,
-        password,
-      });
+      // Login using React Query mutation
+      await loginMutation({ data: { email, password } });
 
       // Try to get user data after login
       try {
-        const userData = await api.get<User>("/api/users/me");
-        setUser(userData);
+        const userData = await refetchProfile();
+        if (userData.data) {
+          setUser(userData.data);
+        }
       } catch (profileError) {
         console.log("Profile fetch failed after login:", profileError);
         // If profile fetch fails, still set user as authenticated
@@ -120,7 +134,7 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
           id: 0,
           name: "",
           email: email,
-        });
+        } as User);
       }
     } catch (error) {
       throw new Error(error instanceof Error ? error.message : "Login failed");
@@ -129,11 +143,12 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
 
   const logout = async () => {
     try {
-      await api.post("/api/logout");
+      await logoutMutation();
     } catch (error) {
       console.error("Logout error:", error);
     } finally {
       setUser(null);
+      queryClient.clear(); // Clear all React Query cache on logout
       window.location.href = "/login";
     }
   };

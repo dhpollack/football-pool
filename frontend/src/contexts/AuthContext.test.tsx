@@ -1,10 +1,20 @@
-import { render, act } from "@testing-library/react";
+import { render } from "@testing-library/react";
 import { vi } from "vitest";
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { AuthProvider, useAuth } from "./AuthContext";
-import { api } from "../services/api";
-
-// Mock the API service
-vi.mock("../services/api");
+// Mock React Query hooks using orval generated mocks
+vi.mock("../services/api/default/default", () => ({
+  useLoginUser: () => ({
+    mutateAsync: vi.fn(),
+  }),
+  useLogoutUser: () => ({
+    mutateAsync: vi.fn(),
+  }),
+  useGetProfile: () => ({
+    data: null,
+    refetch: vi.fn().mockResolvedValue({ data: null }),
+  }),
+}));
 
 const TestComponent = () => {
   const { user, isAuthenticated, loading } = useAuth();
@@ -19,18 +29,26 @@ const TestComponent = () => {
   );
 };
 
+const createWrapper = () => {
+  const queryClient = new QueryClient();
+
+  return ({ children }: { children: React.ReactNode }) => (
+    <QueryClientProvider client={queryClient}>{children}</QueryClientProvider>
+  );
+};
+
 describe("AuthContext", () => {
   beforeEach(() => {
     vi.clearAllMocks();
   });
 
   it("provides initial null user state", async () => {
-    vi.mocked(api.get).mockRejectedValue(new Error("Not authenticated"));
-
+    const wrapper = createWrapper();
     const { getByTestId } = render(
       <AuthProvider>
         <TestComponent />
       </AuthProvider>,
+      { wrapper },
     );
 
     // Wait for initial auth check to complete
@@ -43,13 +61,12 @@ describe("AuthContext", () => {
   });
 
   it("handles successful authentication", async () => {
-    const mockUser = { id: 1, name: "Test User", email: "test@example.com" };
-    vi.mocked(api.get).mockRejectedValue(new Error("Not authenticated"));
-
+    const wrapper = createWrapper();
     const { getByTestId } = render(
       <AuthProvider>
         <TestComponent />
       </AuthProvider>,
+      { wrapper },
     );
 
     // Wait for loading to complete
@@ -63,12 +80,12 @@ describe("AuthContext", () => {
   });
 
   it("handles authentication failure", async () => {
-    vi.mocked(api.get).mockRejectedValue(new Error("Not authenticated"));
-
+    const wrapper = createWrapper();
     const { getByTestId } = render(
       <AuthProvider>
         <TestComponent />
       </AuthProvider>,
+      { wrapper },
     );
 
     // Wait for loading to complete
@@ -81,8 +98,7 @@ describe("AuthContext", () => {
   });
 
   it("provides login and logout functions", async () => {
-    vi.mocked(api.get).mockRejectedValue(new Error("Not authenticated"));
-
+    const wrapper = createWrapper();
     const TestAuthComponent = () => {
       const { login, logout } = useAuth();
       return (
@@ -97,6 +113,7 @@ describe("AuthContext", () => {
       <AuthProvider>
         <TestAuthComponent />
       </AuthProvider>,
+      { wrapper },
     );
 
     // Wait for initial auth check to complete
