@@ -95,8 +95,8 @@ To run the frontend development server:
 
 ```bash
 cd frontend
-npm start
+npm run dev
 ```
 
-The frontend application will open in your browser, usually at `http://localhost:3000`.
+The frontend application will open in your browser, usually at `http://localhost:5173`.
 
