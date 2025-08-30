@@ -22,7 +22,7 @@ interface AuthContextType {
   loading: boolean;
 }
 
-const AuthContext = createContext<AuthContextType | undefined>(undefined);
+export const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
 export const useAuth = () => {
   const context = useContext(AuthContext);
@@ -43,22 +43,21 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
   useEffect(() => {
     let isMounted = true;
 
-    const initializeAuth = async () => {
+    // Check authentication status on mount
+    const checkAuthStatus = async () => {
       try {
-        // Verify if user is authenticated by making a protected request
-        const userData = await api.get<User>("/api/profile");
+        const userData = await api.get<User>("/api/users/me");
         if (isMounted) {
           setUser(userData);
         }
       } catch (error) {
-        // Not authenticated or token expired, clear any stale data
-        if (isMounted) {
-          setUser(null);
-        }
-        // Handle auth errors (auto-logout on 401)
         if (error instanceof ApiError && error.status === 401) {
-          handleAuthError(error);
+          // Not authenticated, clear user state
+          if (isMounted) {
+            setUser(null);
+          }
         }
+        // Other errors can be ignored for initialization
       } finally {
         if (isMounted) {
           setLoading(false);
@@ -66,33 +65,46 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
       }
     };
 
-    initializeAuth();
+    checkAuthStatus();
 
     // Set up periodic token check (every 5 minutes)
     const tokenCheckInterval = setInterval(() => {
-      if (user) {
-        api.get("/api/profile").catch((error) => {
-          if (error instanceof ApiError && error.status === 401) {
-            handleAuthError(error);
-          }
-        });
-      }
+      // Only check if we think we have a user (based on current state at time of setup)
+      api.get("/api/users/me").catch((error) => {
+        if (error instanceof ApiError && error.status === 401) {
+          handleAuthError(error);
+        }
+      });
     }, 5 * 60 * 1000);
 
     return () => {
       isMounted = false;
       clearInterval(tokenCheckInterval);
     };
-  }, [user]);
+  }, []); // Empty dependency array - only run once on mount
 
   const login = async (email: string, password: string) => {
     try {
-      const response = await api.post<{ user: User }>("/api/login", {
+      // Login and get JWT token
+      await api.post("/api/login", {
         email,
         password,
       });
 
-      setUser(response.user);
+      // Try to get user data after login
+      try {
+        const userData = await api.get<User>("/api/users/me");
+        setUser(userData);
+      } catch (profileError) {
+        console.log("Profile fetch failed after login:", profileError);
+        // If profile fetch fails, still set user as authenticated
+        // This handles the case where user exists but no player profile
+        setUser({
+          id: 0,
+          name: "", 
+          email: email
+        });
+      }
     } catch (error) {
       throw new Error(error instanceof Error ? error.message : "Login failed");
     }
@@ -102,9 +114,12 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
     if (error instanceof ApiError && error.status === 401) {
       // Auto-logout on authentication errors
       setUser(null);
-      window.location.href = "/login";
+      // Only redirect if we're not already on the login page
+      if (window.location.pathname !== "/login") {
+        window.location.href = "/login";
+      }
     }
-    throw error;
+    // Don't throw error during initialization
   };
 
   const logout = async () => {

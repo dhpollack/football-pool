@@ -31,6 +31,7 @@ export const E2E_CONFIG = {
       PASSWORD: "input[name='password']",
       SUBMIT: "button[type='submit']",
       ERROR: "[data-testid='error-message']",
+      BUTTON: "[data-testid='login-button']", // Login button in header
     },
     REGISTER: {
       NAME: "input[name='name']",
@@ -38,6 +39,12 @@ export const E2E_CONFIG = {
       PASSWORD: "input[name='password']",
       SUBMIT: "button[type='submit']",
       ERROR: ".MuiFormHelperText-root",
+    },
+    USER_MENU: {
+      BUTTON: "[data-testid='user-menu-button']",
+      MENU: "[data-testid='user-menu']",
+      PROFILE_LINK: "[data-testid='profile-link']",
+      LOGOUT_BUTTON: "[data-testid='logout-button']",
     },
     COMMON: {
       LOADING: "[data-testid='loading']",

@@ -1,5 +1,6 @@
 import { useState, useEffect, useId } from "react";
 import { TextField, Button, Box, Typography } from "@mui/material";
+import { api, ApiError } from "../services/api";
 
 const ProfilePage = () => {
   const nameId = useId();
@@ -14,25 +15,14 @@ const ProfilePage = () => {
   useEffect(() => {
     const fetchProfile = async () => {
       try {
-        const token = localStorage.getItem("token");
-        const response = await fetch(
-          `${import.meta.env.VITE_BACKEND_URL}/api/users/me`,
-          {
-            headers: {
-              Authorization: `Bearer ${token}`,
-            },
-          },
-        );
-
-        if (!response.ok) {
-          throw new Error("Failed to fetch profile");
-        }
-
-        const data = await response.json();
+        const data = await api.get("/api/users/me");
         setName(data.name);
         setAddress(data.address);
       } catch (error: unknown) {
-        if (error instanceof Error) {
+        if (error instanceof ApiError && error.status === 401) {
+          // Authentication error - redirect will be handled by AuthContext
+          setError("Please log in to view your profile");
+        } else if (error instanceof Error) {
           setError(error.message);
         } else {
           setError("An unknown error occurred");
@@ -65,26 +55,13 @@ const ProfilePage = () => {
     }
 
     try {
-      const token = localStorage.getItem("token");
-      const response = await fetch(
-        `${import.meta.env.VITE_BACKEND_URL}/api/users/me`,
-        {
-          method: "PUT",
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${token}`,
-          },
-          body: JSON.stringify({ name, address }),
-        },
-      );
-
-      if (!response.ok) {
-        throw new Error("Failed to update profile");
-      }
-
+      await api.put("/api/users/me", { name, address });
       alert("Profile updated successfully!");
     } catch (error: unknown) {
-      if (error instanceof Error) {
+      if (error instanceof ApiError && error.status === 401) {
+        // Authentication error - redirect will be handled by AuthContext
+        setError("Please log in to update your profile");
+      } else if (error instanceof Error) {
         setError(error.message);
       } else {
         setError("An unknown error occurred");

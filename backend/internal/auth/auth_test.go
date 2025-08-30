@@ -58,6 +58,20 @@ func TestRegister(t *testing.T) {
 		t.Errorf("password not hashed correctly")
 	}
 
+	// Check that a player record was also created
+	var player database.Player
+	if result := db.GetDB().Where("user_id = ?", user.ID).First(&player); result.Error != nil {
+		t.Errorf("player record not created during registration: %v", result.Error)
+	}
+
+	// Verify player details match the registration
+	if player.UserID != user.ID {
+		t.Errorf("player UserID mismatch: got %v want %v", player.UserID, user.ID)
+	}
+	if player.Address != "" {
+		t.Errorf("player should have empty address by default: got %v", player.Address)
+	}
+
 	// Check the JSON response content
 	expectedResponse := `{"message":"User registered successfully"}`
 	if strings.TrimSpace(rr.Body.String()) != expectedResponse {

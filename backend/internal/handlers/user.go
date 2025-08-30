@@ -91,7 +91,7 @@ func DebugGetUsers(db *gorm.DB) http.HandlerFunc {
 	}
 }
 
-func DebugDeleteUser(db *gorm.DB) http.HandlerFunc {
+func DeleteUser(db *gorm.DB) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		email := r.URL.Query().Get("email")
 		slog.Debug("Attempting to delete user:", "email", email)
@@ -101,12 +101,27 @@ func DebugDeleteUser(db *gorm.DB) http.HandlerFunc {
 			return
 		}
 
+		// First, find the user to get their ID
+		var user database.User
+		if result := db.Where("email = ?", email).First(&user); result.Error != nil {
+			slog.Debug("User not found:", "email", email, "error", result.Error)
+			w.WriteHeader(http.StatusNotFound)
+			return
+		}
+
+		// Delete associated player record first (due to foreign key constraints)
+		if result := db.Unscoped().Where("user_id = ?", user.ID).Delete(&database.Player{}); result.Error != nil {
+			slog.Debug("Error deleting player:", "email", email, "error", result.Error)
+			// Continue with user deletion even if player deletion fails
+		}
+
+		// Delete the user record
 		if result := db.Unscoped().Where("email = ?", email).Delete(&database.User{}); result.Error != nil {
 			slog.Debug("Error deleting user:", "email", email, "error", result.Error)
 			w.WriteHeader(http.StatusInternalServerError)
 			return
 		}
-		slog.Debug("User deleted successfully:", "email", email)
+		slog.Debug("User and associated player deleted successfully:", "email", email)
 		w.WriteHeader(http.StatusOK)
 	}
 }

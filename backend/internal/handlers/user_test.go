@@ -298,7 +298,7 @@ func TestDebugGetUsers(t *testing.T) {
 	}
 }
 
-func TestDebugDeleteUser(t *testing.T) {
+func TestDeleteUser(t *testing.T) {
 	// Set up test database
 	db, err := database.New("file::memory:?cache=shared")
 	if err != nil {
@@ -310,15 +310,19 @@ func TestDebugDeleteUser(t *testing.T) {
 	userToDelete := database.User{Email: "delete_me@test.com", Password: "password", Name: "Delete User", Role: "player"}
 	gormDB.Create(&userToDelete)
 
-	// Create a request to the DebugDeleteUser endpoint
-	req, err := http.NewRequest("DELETE", "/debug/users/delete?email=delete_me@test.com", nil)
+	// Create associated player record
+	playerToDelete := database.Player{UserID: userToDelete.ID, Name: "Delete Player", Address: "123 Delete St"}
+	gormDB.Create(&playerToDelete)
+
+	// Create a request to the DeleteUser endpoint
+	req, err := http.NewRequest("DELETE", "/admin/users/delete?email=delete_me@test.com", nil)
 	if err != nil {
 		t.Fatal(err)
 	}
 
 	// Create a ResponseRecorder
 	rr := httptest.NewRecorder()
-	handler := DebugDeleteUser(gormDB)
+	handler := DeleteUser(gormDB)
 
 	// Serve the request
 	handler.ServeHTTP(rr, req)
@@ -333,5 +337,103 @@ func TestDebugDeleteUser(t *testing.T) {
 	var user database.User
 	if result := gormDB.Where("email = ?", "delete_me@test.com").First(&user); result.Error == nil {
 		t.Errorf("user was not deleted from the database")
+	}
+
+	// Verify the associated player is also deleted from the database
+	var player database.Player
+	if result := gormDB.Where("user_id = ?", userToDelete.ID).First(&player); result.Error == nil {
+		t.Errorf("associated player was not deleted from the database")
+	}
+}
+
+func TestDeleteUserEdgeCases(t *testing.T) {
+	// Set up test database
+	db, err := database.New("file::memory:?cache=shared")
+	if err != nil {
+		t.Fatalf("Failed to connect to database: %v", err)
+	}
+	gormDB := db.GetDB()
+
+	tests := []struct {
+		name           string
+		email          string
+		setupUser      bool
+		setupPlayer    bool
+		expectedStatus int
+	}{
+		{
+			name:           "Delete user without player",
+			email:          "no_player@test.com", 
+			setupUser:      true,
+			setupPlayer:    false,
+			expectedStatus: http.StatusOK,
+		},
+		{
+			name:           "Delete non-existent user",
+			email:          "nonexistent@test.com",
+			setupUser:      false,
+			setupPlayer:    false,
+			expectedStatus: http.StatusNotFound,
+		},
+		{
+			name:           "Empty email parameter",
+			email:          "",
+			setupUser:      false,
+			setupPlayer:    false,
+			expectedStatus: http.StatusBadRequest,
+		},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			var userToDelete database.User
+			if tt.setupUser {
+				userToDelete = database.User{Email: tt.email, Password: "password", Name: "Test User", Role: "player"}
+				gormDB.Create(&userToDelete)
+				
+				if tt.setupPlayer {
+					player := database.Player{UserID: userToDelete.ID, Name: "Test Player", Address: "123 Test St"}
+					gormDB.Create(&player)
+				}
+			}
+
+			// Create a request to the DeleteUser endpoint
+			url := "/admin/users/delete"
+			if tt.email != "" {
+				url += "?email=" + tt.email
+			}
+			req, err := http.NewRequest("DELETE", url, nil)
+			if err != nil {
+				t.Fatal(err)
+			}
+
+			// Create a ResponseRecorder
+			rr := httptest.NewRecorder()
+			handler := DeleteUser(gormDB)
+
+			// Serve the request
+			handler.ServeHTTP(rr, req)
+
+			// Check the status code
+			if status := rr.Code; status != tt.expectedStatus {
+				t.Errorf("handler returned wrong status code: got %v want %v",
+					status, tt.expectedStatus)
+			}
+
+			// If deletion was successful, verify cleanup
+			if tt.expectedStatus == http.StatusOK && tt.setupUser {
+				var user database.User
+				if result := gormDB.Where("email = ?", tt.email).First(&user); result.Error == nil {
+					t.Errorf("user was not deleted from the database")
+				}
+				
+				if tt.setupPlayer {
+					var player database.Player
+					if result := gormDB.Where("user_id = ?", userToDelete.ID).First(&player); result.Error == nil {
+						t.Errorf("associated player was not deleted from the database")
+					}
+				}
+			}
+		})
 	}
 }

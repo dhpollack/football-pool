@@ -27,7 +27,7 @@ async function cleanupTestUser(email: string) {
 
       // Delete test user
       await fetch(
-        `${E2E_CONFIG.BACKEND_URL}/api/debug/users/delete?email=${encodeURIComponent(email)}`,
+        `${E2E_CONFIG.BACKEND_URL}/api/admin/users/delete?email=${encodeURIComponent(email)}`,
         {
           method: 'DELETE',
           headers: { Authorization: `Bearer ${adminToken}` },

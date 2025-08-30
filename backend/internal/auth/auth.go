@@ -142,7 +142,21 @@ func (a *Auth) Register(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	slog.Debug("User registered successfully:", "email", creds.Email)
+	// Create associated Player record for the new user
+	player := database.Player{
+		UserID:  user.ID,
+		Name:    creds.Name,
+		Address: "", // Default empty address
+	}
+	if result := a.db.GetDB().Create(&player); result.Error != nil {
+		slog.Debug("Error creating player:", "error", result.Error)
+		// If player creation fails, clean up the user record
+		a.db.GetDB().Delete(&user)
+		w.WriteHeader(http.StatusInternalServerError)
+		return
+	}
+
+	slog.Debug("User and player registered successfully:", "email", creds.Email)
 	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(http.StatusCreated)
 	if err := json.NewEncoder(w).Encode(map[string]string{"message": "User registered successfully"}); err != nil {
