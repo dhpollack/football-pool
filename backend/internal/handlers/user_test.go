@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"context"
 	"encoding/json"
+	"fmt"
 	"net/http"
 	"net/http/httptest"
 	"testing"
@@ -14,7 +15,7 @@ import (
 
 func TestGetProfile(t *testing.T) {
 	// Set up test database
-	db, err := database.New("file::memory:?cache=shared")
+	db, err := database.New("file::memory:")
 	if err != nil {
 		t.Fatalf("Failed to connect to database: %v", err)
 	}
@@ -62,7 +63,7 @@ func TestGetProfile(t *testing.T) {
 
 func TestUpdateProfile(t *testing.T) {
 	// Set up test database
-	db, err := database.New("file::memory:?cache=shared")
+	db, err := database.New("file::memory:")
 	if err != nil {
 		t.Fatalf("Failed to connect to database: %v", err)
 	}
@@ -117,7 +118,7 @@ func TestUpdateProfile(t *testing.T) {
 
 func TestGetProfileErrors(t *testing.T) {
 	// Set up test database
-	db, err := database.New("file::memory:?cache=shared")
+	db, err := database.New("file::memory:")
 	if err != nil {
 		t.Fatalf("Failed to connect to database: %v", err)
 	}
@@ -167,7 +168,7 @@ func TestGetProfileErrors(t *testing.T) {
 
 func TestUpdateProfileErrors(t *testing.T) {
 	// Set up test database
-	db, err := database.New("file::memory:?cache=shared")
+	db, err := database.New("file::memory:")
 	if err != nil {
 		t.Fatalf("Failed to connect to database: %v", err)
 	}
@@ -231,7 +232,7 @@ func TestUpdateProfileErrors(t *testing.T) {
 
 func TestDebugGetUsers(t *testing.T) {
 	// Set up test database
-	db, err := database.New("file::memory:?cache=shared")
+	db, err := database.New("file::memory:")
 	if err != nil {
 		t.Fatalf("Failed to connect to database: %v", err)
 	}
@@ -300,7 +301,7 @@ func TestDebugGetUsers(t *testing.T) {
 
 func TestDeleteUser(t *testing.T) {
 	// Set up test database
-	db, err := database.New("file::memory:?cache=shared")
+	db, err := database.New("file::memory:")
 	if err != nil {
 		t.Fatalf("Failed to connect to database: %v", err)
 	}
@@ -348,7 +349,7 @@ func TestDeleteUser(t *testing.T) {
 
 func TestDeleteUserEdgeCases(t *testing.T) {
 	// Set up test database
-	db, err := database.New("file::memory:?cache=shared")
+	db, err := database.New("file::memory:")
 	if err != nil {
 		t.Fatalf("Failed to connect to database: %v", err)
 	}
@@ -436,4 +437,123 @@ func TestDeleteUserEdgeCases(t *testing.T) {
 			}
 		})
 	}
+}
+
+func TestAdminListUsers(t *testing.T) {
+	db, err := database.New("file::memory:")
+	if err != nil {
+		t.Fatalf("Failed to connect to database: %v", err)
+	}
+	gormDB := db.GetDB()
+
+	// Seed data
+	user1 := database.User{Name: "Admin User", Email: "admin@test.com", Role: "admin"}
+	user2 := database.User{Name: "Player User", Email: "player@test.com", Role: "user"}
+	gormDB.Create(&user1)
+	gormDB.Create(&user2)
+
+	handler := AdminListUsers(gormDB)
+
+	t.Run("list all users", func(t *testing.T) {
+		req, _ := http.NewRequest("GET", "/api/admin/users", nil)
+		rr := httptest.NewRecorder()
+		handler.ServeHTTP(rr, req)
+
+		if status := rr.Code; status != http.StatusOK {
+			t.Errorf("handler returned wrong status code: got %v want %v", status, http.StatusOK)
+		}
+
+		var response map[string]interface{}
+		json.NewDecoder(rr.Body).Decode(&response)
+		users := response["users"].([]interface{})
+		if len(users) != 2 {
+			t.Errorf("expected 2 users, got %d", len(users))
+		}
+	})
+
+	t.Run("filter by role", func(t *testing.T) {
+		req, _ := http.NewRequest("GET", "/api/admin/users?role=admin", nil)
+		rr := httptest.NewRecorder()
+		handler.ServeHTTP(rr, req)
+
+		var response map[string]interface{}
+		json.NewDecoder(rr.Body).Decode(&response)
+		users := response["users"].([]interface{})
+		if len(users) != 1 {
+			t.Errorf("expected 1 user, got %d", len(users))
+		}
+	})
+}
+
+func TestAdminGetUser(t *testing.T) {
+	db, err := database.New("file::memory:")
+	if err != nil {
+		t.Fatalf("Failed to connect to database: %v", err)
+	}
+	gormDB := db.GetDB()
+
+	user := database.User{Name: "Test User", Email: "test@test.com", Role: "user"}
+	gormDB.Create(&user)
+
+	handler := AdminGetUser(gormDB)
+
+	t.Run("get existing user", func(t *testing.T) {
+		req, _ := http.NewRequest("GET", fmt.Sprintf("/api/admin/users/%d", user.ID), nil)
+		rr := httptest.NewRecorder()
+		handler.ServeHTTP(rr, req)
+
+		if status := rr.Code; status != http.StatusOK {
+			t.Errorf("handler returned wrong status code: got %v want %v", status, http.StatusOK)
+		}
+
+		var response map[string]interface{}
+		json.NewDecoder(rr.Body).Decode(&response)
+		userData := response["user"].(map[string]interface{})
+		if userData["email"] != user.Email {
+			t.Errorf("expected user email %s, got %s", user.Email, userData["Email"])
+		}
+	})
+
+	t.Run("user not found", func(t *testing.T) {
+		req, _ := http.NewRequest("GET", "/api/admin/users/999", nil)
+		rr := httptest.NewRecorder()
+		handler.ServeHTTP(rr, req)
+
+		if status := rr.Code; status != http.StatusNotFound {
+			t.Errorf("handler returned wrong status code: got %v want %v", status, http.StatusNotFound)
+		}
+	})
+}
+
+func TestAdminUpdateUser(t *testing.T) {
+	db, err := database.New("file::memory:")
+	if err != nil {
+		t.Fatalf("Failed to connect to database: %v", err)
+	}
+	gormDB := db.GetDB()
+
+	user := database.User{Name: "Original Name", Email: "original@test.com", Role: "user"}
+	gormDB.Create(&user)
+
+	handler := AdminUpdateUser(gormDB)
+
+	t.Run("update existing user", func(t *testing.T) {
+		updatePayload := []byte(`{"name": "Updated Name", "role": "admin"}`)
+		req, _ := http.NewRequest("PUT", fmt.Sprintf("/api/admin/users/%d", user.ID), bytes.NewBuffer(updatePayload))
+		rr := httptest.NewRecorder()
+		handler.ServeHTTP(rr, req)
+
+		if status := rr.Code; status != http.StatusOK {
+			t.Errorf("handler returned wrong status code: got %v want %v", status, http.StatusOK)
+		}
+
+		var updatedUser database.User
+		gormDB.First(&updatedUser, user.ID)
+		if updatedUser.Name != "Updated Name" {
+			t.Errorf("expected user name to be updated, got %s", updatedUser.Name)
+		}
+		if updatedUser.Role != "admin" {
+			t.Errorf("expected user role to be updated, got %s", updatedUser.Role)
+		}
+	})
 }

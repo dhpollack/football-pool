@@ -178,30 +178,9 @@ func AdminListUsers(db *gorm.DB) http.HandlerFunc {
 			return
 		}
 		
-		// Create response with user details including player info
-		type UserResponse struct {
-			database.User
-			PlayerName    string `json:"player_name,omitempty"`
-			PlayerAddress string `json:"player_address,omitempty"`
-		}
-		
-		var response []UserResponse
-		for _, user := range users {
-			userResp := UserResponse{User: user}
-			
-			// Get player info if exists
-			var player database.Player
-			if err := db.Where("user_id = ?", user.ID).First(&player).Error; err == nil {
-				userResp.PlayerName = player.Name
-				userResp.PlayerAddress = player.Address
-			}
-			
-			response = append(response, userResp)
-		}
-		
 		// Response with pagination metadata
 		result := map[string]interface{}{
-			"users": response,
+			"users": users,
 			"pagination": map[string]interface{}{
 				"page":  page,
 				"limit": limit,

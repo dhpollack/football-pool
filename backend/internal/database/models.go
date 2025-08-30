@@ -10,6 +10,7 @@ type User struct {
 	Email    string `json:"email" gorm:"unique"`
 	Password string `json:"-"`
 	Role     string `json:"role"`
+	Player   Player `json:"player,omitempty"`
 }
 
 // Player represents a player in the football pool
@@ -17,7 +18,7 @@ type User struct {
 type Player struct {
 	gorm.Model
 	UserID  uint   `json:"user_id" gorm:"unique"`
-	User    User   `json:"user"`
+	
 	Name    string `json:"name"`
 	Address string `json:"address"`
 }
