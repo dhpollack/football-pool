@@ -1,5 +1,5 @@
-import { useState } from 'react';
-import { Link } from 'react-router-dom';
+import { useState } from "react";
+import { Link } from "react-router-dom";
 import {
   IconButton,
   Avatar,
@@ -8,13 +8,13 @@ import {
   ListItemIcon,
   ListItemText,
   Divider,
-} from '@mui/material';
+} from "@mui/material";
 import {
   Person as PersonIcon,
   AccountCircle as AccountCircleIcon,
   Logout as LogoutIcon,
-} from '@mui/icons-material';
-import { useAuth } from '../contexts/AuthContext';
+} from "@mui/icons-material";
+import { useAuth } from "../contexts/AuthContext";
 
 const UserMenu = () => {
   const { user, logout } = useAuth();
@@ -41,11 +41,11 @@ const UserMenu = () => {
         size="small"
         data-testid="user-menu-button"
         sx={{ ml: 2 }}
-        aria-controls={open ? 'user-menu' : undefined}
+        aria-controls={open ? "user-menu" : undefined}
         aria-haspopup="true"
-        aria-expanded={open ? 'true' : undefined}
+        aria-expanded={open ? "true" : undefined}
       >
-        <Avatar sx={{ width: 32, height: 32, bgcolor: 'primary.main' }}>
+        <Avatar sx={{ width: 32, height: 32, bgcolor: "primary.main" }}>
           <PersonIcon fontSize="small" />
         </Avatar>
       </IconButton>
@@ -59,39 +59,39 @@ const UserMenu = () => {
         PaperProps={{
           elevation: 0,
           sx: {
-            overflow: 'visible',
-            filter: 'drop-shadow(0px 2px 8px rgba(0,0,0,0.32))',
+            overflow: "visible",
+            filter: "drop-shadow(0px 2px 8px rgba(0,0,0,0.32))",
             mt: 1.5,
-            '& .MuiAvatar-root': {
+            "& .MuiAvatar-root": {
               width: 32,
               height: 32,
               ml: -0.5,
               mr: 1,
             },
-            '&:before': {
+            "&:before": {
               content: '""',
-              display: 'block',
-              position: 'absolute',
+              display: "block",
+              position: "absolute",
               top: 0,
               right: 14,
               width: 10,
               height: 10,
-              bgcolor: 'background.paper',
-              transform: 'translateY(-50%) rotate(45deg)',
+              bgcolor: "background.paper",
+              transform: "translateY(-50%) rotate(45deg)",
               zIndex: 0,
             },
           },
         }}
-        transformOrigin={{ horizontal: 'right', vertical: 'top' }}
-        anchorOrigin={{ horizontal: 'right', vertical: 'bottom' }}
+        transformOrigin={{ horizontal: "right", vertical: "top" }}
+        anchorOrigin={{ horizontal: "right", vertical: "bottom" }}
       >
         <MenuItem disabled sx={{ opacity: 0.7 }}>
           <Avatar />
-          <ListItemText 
-            primary={user?.name} 
+          <ListItemText
+            primary={user?.name}
             secondary={user?.email}
-            primaryTypographyProps={{ fontSize: '0.875rem' }}
-            secondaryTypographyProps={{ fontSize: '0.75rem' }}
+            primaryTypographyProps={{ fontSize: "0.875rem" }}
+            secondaryTypographyProps={{ fontSize: "0.75rem" }}
           />
         </MenuItem>
         <Divider />

@@ -40,7 +40,7 @@ const LoginPage = () => {
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     setError(null);
-    
+
     if (!validateForm()) {
       return;
     }
@@ -72,7 +72,11 @@ const LoginPage = () => {
       }}
     >
       <Typography variant="h4">Login</Typography>
-      {error && <Typography color="error" data-testid="error-message">{error}</Typography>}
+      {error && (
+        <Typography color="error" data-testid="error-message">
+          {error}
+        </Typography>
+      )}
       <Box component="form" onSubmit={handleSubmit} sx={{ mt: 1 }}>
         <TextField
           margin="normal"

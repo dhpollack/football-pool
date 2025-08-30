@@ -1,11 +1,11 @@
-import { render, screen, fireEvent, waitFor } from '@testing-library/react';
-import { vi } from 'vitest';
-import { BrowserRouter } from 'react-router-dom';
-import UserMenu from './UserMenu';
-import { AuthContext } from '../contexts/AuthContext';
+import { render, screen, fireEvent, waitFor } from "@testing-library/react";
+import { vi } from "vitest";
+import { BrowserRouter } from "react-router-dom";
+import UserMenu from "./UserMenu";
+import { AuthContext } from "../contexts/AuthContext";
 
 // Mock the API module
-vi.mock('../services/api', () => ({
+vi.mock("../services/api", () => ({
   api: {
     post: vi.fn(),
     get: vi.fn(),
@@ -15,12 +15,18 @@ vi.mock('../services/api', () => ({
 // Mock user data
 const mockUser = {
   id: 1,
-  name: 'Test User',
-  email: 'test@example.com',
+  name: "Test User",
+  email: "test@example.com",
 };
 
 // Helper component to provide context
-const TestWrapper = ({ children, user = mockUser }: { children: React.ReactNode; user?: any }) => {
+const TestWrapper = ({
+  children,
+  user = mockUser,
+}: {
+  children: React.ReactNode;
+  user?: any;
+}) => {
   // Mock AuthContext value
   const mockAuthContext = {
     user,
@@ -39,45 +45,45 @@ const TestWrapper = ({ children, user = mockUser }: { children: React.ReactNode;
   );
 };
 
-describe('UserMenu', () => {
+describe("UserMenu", () => {
   beforeEach(() => {
     vi.clearAllMocks();
   });
 
-  it('renders user menu button when user is authenticated', () => {
+  it("renders user menu button when user is authenticated", () => {
     render(
       <TestWrapper>
         <UserMenu />
-      </TestWrapper>
+      </TestWrapper>,
     );
 
-    const userMenuButton = screen.getByTestId('user-menu-button');
+    const userMenuButton = screen.getByTestId("user-menu-button");
     expect(userMenuButton).toBeInTheDocument();
   });
 
-  it('opens menu when user menu button is clicked', async () => {
+  it("opens menu when user menu button is clicked", async () => {
     render(
       <TestWrapper>
         <UserMenu />
-      </TestWrapper>
+      </TestWrapper>,
     );
 
-    const userMenuButton = screen.getByTestId('user-menu-button');
+    const userMenuButton = screen.getByTestId("user-menu-button");
     fireEvent.click(userMenuButton);
 
     await waitFor(() => {
-      expect(screen.getByTestId('user-menu')).toBeVisible();
+      expect(screen.getByTestId("user-menu")).toBeVisible();
     });
   });
 
-  it('displays user information in the menu', async () => {
+  it("displays user information in the menu", async () => {
     render(
       <TestWrapper>
         <UserMenu />
-      </TestWrapper>
+      </TestWrapper>,
     );
 
-    const userMenuButton = screen.getByTestId('user-menu-button');
+    const userMenuButton = screen.getByTestId("user-menu-button");
     fireEvent.click(userMenuButton);
 
     await waitFor(() => {
@@ -86,33 +92,33 @@ describe('UserMenu', () => {
     });
   });
 
-  it('shows profile link in the menu', async () => {
+  it("shows profile link in the menu", async () => {
     render(
       <TestWrapper>
         <UserMenu />
-      </TestWrapper>
+      </TestWrapper>,
     );
 
-    const userMenuButton = screen.getByTestId('user-menu-button');
+    const userMenuButton = screen.getByTestId("user-menu-button");
     fireEvent.click(userMenuButton);
 
     await waitFor(() => {
-      expect(screen.getByTestId('profile-link')).toBeInTheDocument();
+      expect(screen.getByTestId("profile-link")).toBeInTheDocument();
     });
   });
 
-  it('shows logout button in the menu', async () => {
+  it("shows logout button in the menu", async () => {
     render(
       <TestWrapper>
         <UserMenu />
-      </TestWrapper>
+      </TestWrapper>,
     );
 
-    const userMenuButton = screen.getByTestId('user-menu-button');
+    const userMenuButton = screen.getByTestId("user-menu-button");
     fireEvent.click(userMenuButton);
 
     await waitFor(() => {
-      expect(screen.getByTestId('logout-button')).toBeInTheDocument();
+      expect(screen.getByTestId("logout-button")).toBeInTheDocument();
     });
   });
 });

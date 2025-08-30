@@ -22,7 +22,9 @@ interface AuthContextType {
   loading: boolean;
 }
 
-export const AuthContext = createContext<AuthContextType | undefined>(undefined);
+export const AuthContext = createContext<AuthContextType | undefined>(
+  undefined,
+);
 
 export const useAuth = () => {
   const context = useContext(AuthContext);
@@ -39,6 +41,18 @@ interface AuthProviderProps {
 export const AuthProvider = ({ children }: AuthProviderProps) => {
   const [user, setUser] = useState<User | null>(null);
   const [loading, setLoading] = useState(true);
+
+  const handleAuthError = (error: unknown) => {
+    if (error instanceof ApiError && error.status === 401) {
+      // Auto-logout on authentication errors
+      setUser(null);
+      // Only redirect if we're not already on the login page
+      if (window.location.pathname !== "/login") {
+        window.location.href = "/login";
+      }
+    }
+    // Don't throw error during initialization
+  };
 
   useEffect(() => {
     let isMounted = true;
@@ -68,20 +82,23 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
     checkAuthStatus();
 
     // Set up periodic token check (every 5 minutes)
-    const tokenCheckInterval = setInterval(() => {
-      // Only check if we think we have a user (based on current state at time of setup)
-      api.get("/api/users/me").catch((error) => {
-        if (error instanceof ApiError && error.status === 401) {
-          handleAuthError(error);
-        }
-      });
-    }, 5 * 60 * 1000);
+    const tokenCheckInterval = setInterval(
+      () => {
+        // Only check if we think we have a user (based on current state at time of setup)
+        api.get("/api/users/me").catch((error) => {
+          if (error instanceof ApiError && error.status === 401) {
+            handleAuthError(error);
+          }
+        });
+      },
+      5 * 60 * 1000,
+    );
 
     return () => {
       isMounted = false;
       clearInterval(tokenCheckInterval);
     };
-  }, []); // Empty dependency array - only run once on mount
+  }, [handleAuthError]); // Include handleAuthError in dependency array
 
   const login = async (email: string, password: string) => {
     try {
@@ -101,25 +118,13 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
         // This handles the case where user exists but no player profile
         setUser({
           id: 0,
-          name: "", 
-          email: email
+          name: "",
+          email: email,
         });
       }
     } catch (error) {
       throw new Error(error instanceof Error ? error.message : "Login failed");
     }
-  };
-
-  const handleAuthError = (error: unknown) => {
-    if (error instanceof ApiError && error.status === 401) {
-      // Auto-logout on authentication errors
-      setUser(null);
-      // Only redirect if we're not already on the login page
-      if (window.location.pathname !== "/login") {
-        window.location.href = "/login";
-      }
-    }
-    // Don't throw error during initialization
   };
 
   const logout = async () => {

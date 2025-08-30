@@ -49,7 +49,7 @@ const RegisterPage = () => {
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     setError(null);
-    
+
     if (!validateForm()) {
       return;
     }
@@ -61,7 +61,9 @@ const RegisterPage = () => {
       await api.post("/api/register", { name, email, password });
       console.log("Registration successful, redirecting to login");
       // Redirect to the login page with success message
-      navigate("/login", { state: { message: "Registration successful! Please log in." } });
+      navigate("/login", {
+        state: { message: "Registration successful! Please log in." },
+      });
     } catch (error: unknown) {
       console.error("Registration error:", error);
       if (error instanceof Error) {

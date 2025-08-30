@@ -3,27 +3,27 @@ export const E2E_CONFIG = {
   // Base URLs
   FRONTEND_URL: "http://localhost:5173",
   BACKEND_URL: "http://localhost:18080",
-  
+
   // Test credentials
   ADMIN_CREDENTIALS: {
     email: "admin@test.com",
     password: "adminpassword",
   },
-  
+
   // Test user template
   TEST_USER_TEMPLATE: {
     name: "E2E Test User",
     password: "SecurePassword123!",
   },
-  
-  // Timeouts
+
+  // Timeouts - optimized for speed
   TIMEOUTS: {
-    PAGE_LOAD: 10000,
-    ACTION: 5000,
-    NAVIGATION: 3000,
-    ASSERTION: 3000,
+    PAGE_LOAD: 5000,
+    ACTION: 3000,
+    NAVIGATION: 2000,
+    ASSERTION: 2000,
   },
-  
+
   // Selectors
   SELECTORS: {
     LOGIN: {
@@ -52,7 +52,7 @@ export const E2E_CONFIG = {
       HEADING: "h4",
     },
   },
-  
+
   // Routes
   ROUTES: {
     HOME: "/",

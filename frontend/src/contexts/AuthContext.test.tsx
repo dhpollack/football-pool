@@ -11,7 +11,9 @@ const TestComponent = () => {
   return (
     <div>
       <div data-testid="user">{user ? user.name : "null"}</div>
-      <div data-testid="authenticated">{isAuthenticated ? "true" : "false"}</div>
+      <div data-testid="authenticated">
+        {isAuthenticated ? "true" : "false"}
+      </div>
       <div data-testid="loading">{loading ? "true" : "false"}</div>
     </div>
   );
@@ -28,7 +30,7 @@ describe("AuthContext", () => {
     const { getByTestId } = render(
       <AuthProvider>
         <TestComponent />
-      </AuthProvider>
+      </AuthProvider>,
     );
 
     // Wait for initial auth check to complete
@@ -47,7 +49,7 @@ describe("AuthContext", () => {
     const { getByTestId } = render(
       <AuthProvider>
         <TestComponent />
-      </AuthProvider>
+      </AuthProvider>,
     );
 
     // Wait for loading to complete
@@ -66,7 +68,7 @@ describe("AuthContext", () => {
     const { getByTestId } = render(
       <AuthProvider>
         <TestComponent />
-      </AuthProvider>
+      </AuthProvider>,
     );
 
     // Wait for loading to complete
@@ -80,7 +82,7 @@ describe("AuthContext", () => {
 
   it("provides login and logout functions", async () => {
     vi.mocked(api.get).mockRejectedValue(new Error("Not authenticated"));
-    
+
     const TestAuthComponent = () => {
       const { login, logout } = useAuth();
       return (
@@ -94,7 +96,7 @@ describe("AuthContext", () => {
     const { getByTestId } = render(
       <AuthProvider>
         <TestAuthComponent />
-      </AuthProvider>
+      </AuthProvider>,
     );
 
     // Wait for initial auth check to complete

@@ -28,7 +28,7 @@ describe("API Service", () => {
         "http://localhost:8080/api/csrf-token",
         {
           credentials: "include",
-        }
+        },
       );
     });
 
@@ -65,7 +65,7 @@ describe("API Service", () => {
           headers: expect.objectContaining({
             "X-CSRF-Token": "test-csrf-token",
           }),
-        })
+        }),
       );
     });
 
@@ -82,10 +82,11 @@ describe("API Service", () => {
       mockFetch.mockResolvedValueOnce({
         ok: false,
         status: 403,
-        json: () => Promise.resolve({ 
-          code: "csrf_token_invalid",
-          error: "CSRF token invalid" 
-        }),
+        json: () =>
+          Promise.resolve({
+            code: "csrf_token_invalid",
+            error: "CSRF token invalid",
+          }),
       });
 
       // Second CSRF token fetch
@@ -112,10 +113,11 @@ describe("API Service", () => {
       mockFetch.mockResolvedValueOnce({
         ok: false,
         status: 401,
-        json: () => Promise.resolve({ 
-          code: "token_expired",
-          error: "Token expired" 
-        }),
+        json: () =>
+          Promise.resolve({
+            code: "token_expired",
+            error: "Token expired",
+          }),
       });
 
       // Mock refresh token request
@@ -153,9 +155,7 @@ describe("API Service", () => {
         json: () => Promise.reject(new Error("JSON parse error")),
       });
 
-      await expect(api.get("/api/not-found"))
-        .rejects
-        .toThrow(ApiError);
+      await expect(api.get("/api/not-found")).rejects.toThrow(ApiError);
     });
 
     it("includes status code in ApiError", async () => {

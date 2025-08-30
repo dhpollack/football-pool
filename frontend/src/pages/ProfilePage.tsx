@@ -49,7 +49,7 @@ const ProfilePage = () => {
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     setError(null);
-    
+
     if (!validateForm()) {
       return;
     }

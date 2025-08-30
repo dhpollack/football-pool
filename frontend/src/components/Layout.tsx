@@ -28,16 +28,16 @@ const Layout = () => {
           <Typography variant="h6" noWrap component="div" sx={{ flexGrow: 1 }}>
             Football Pool
           </Typography>
-          <Box sx={{ display: 'flex', alignItems: 'center' }}>
+          <Box sx={{ display: "flex", alignItems: "center" }}>
             {loading ? (
               // Show nothing while loading to avoid flash
               <Box sx={{ width: 80 }} />
             ) : isAuthenticated ? (
               <UserMenu />
             ) : (
-              <Button 
-                color="inherit" 
-                component={Link} 
+              <Button
+                color="inherit"
+                component={Link}
                 to="/login"
                 data-testid="login-button"
               >

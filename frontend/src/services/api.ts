@@ -8,7 +8,7 @@ async function fetchCsrfToken(): Promise<void> {
     const response = await fetch(`${API_BASE_URL}/api/csrf-token`, {
       credentials: "include",
     });
-    
+
     if (response.ok) {
       const data = await response.json();
       csrfToken = data.token || data.csrfToken;
@@ -30,12 +30,8 @@ export type ApiData = Record<string, unknown> | unknown[];
 export class ApiError extends Error {
   status?: number;
   details?: ApiErrorDetails;
-  
-  constructor(
-    message: string,
-    status?: number,
-    details?: ApiErrorDetails,
-  ) {
+
+  constructor(message: string, status?: number, details?: ApiErrorDetails) {
     super(message);
     this.status = status;
     this.details = details;
@@ -45,8 +41,6 @@ export class ApiError extends Error {
 
 export const api = {
   async request<T>(endpoint: string, options: RequestInit = {}): Promise<T> {
-    console.log('API_BASE_URL:', API_BASE_URL);
-    console.log('Making request to:', `${API_BASE_URL}${endpoint}`);
     const url = `${API_BASE_URL}${endpoint}`;
 
     // Add CSRF token for non-GET requests
@@ -88,7 +82,7 @@ export const api = {
       if (!response.ok) {
         let errorMessage = `HTTP error ${response.status}`;
         let errorData: ApiErrorDetails;
-        
+
         try {
           errorData = await response.json();
           errorMessage = errorData.error || errorData.message || errorMessage;
@@ -98,7 +92,10 @@ export const api = {
         }
 
         // Handle CSRF token errors by fetching a new token and retrying
-        if (response.status === 403 && errorData?.code === "csrf_token_invalid") {
+        if (
+          response.status === 403 &&
+          errorData?.code === "csrf_token_invalid"
+        ) {
           await fetchCsrfToken();
           // Retry the request with new CSRF token
           return this.request<T>(endpoint, options);

@@ -30,7 +30,7 @@ describe("RegisterPage", () => {
     render(
       <Router>
         <RegisterPage />
-      </Router>
+      </Router>,
     );
 
     expect(screen.getByLabelText(/name/i)).toBeInTheDocument();
@@ -45,7 +45,7 @@ describe("RegisterPage", () => {
     render(
       <Router>
         <RegisterPage />
-      </Router>
+      </Router>,
     );
 
     fireEvent.change(screen.getByLabelText(/name/i), {
@@ -70,7 +70,7 @@ describe("RegisterPage", () => {
     });
 
     expect(mockNavigate).toHaveBeenCalledWith("/login", {
-      state: { message: "Registration successful! Please log in." }
+      state: { message: "Registration successful! Please log in." },
     });
   });
 });
