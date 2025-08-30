@@ -18,7 +18,7 @@ func TestMain(m *testing.M) {
 
 func TestGetGames(t *testing.T) {
 	// Set up test database
-	db, err := database.New("file::memory:?cache=shared")
+	db, err := database.New("file::memory:")
 	if err != nil {
 		t.Fatalf("Failed to connect to database: %v", err)
 	}
@@ -66,7 +66,7 @@ func TestGetGames(t *testing.T) {
 
 func TestGetGamesErrors(t *testing.T) {
 	// Set up test database
-	db, err := database.New("file::memory:?cache=shared")
+	db, err := database.New("file::memory:")
 	if err != nil {
 		t.Fatalf("Failed to connect to database: %v", err)
 	}

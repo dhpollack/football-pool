@@ -42,6 +42,19 @@ func (s *Server) NewRouter() http.Handler {
 
 	mux.HandleFunc("/api/games", handlers.GetGames(s.db.GetDB()))
 	mux.Handle("/api/games/create", s.auth.Middleware(s.auth.AdminMiddleware(handlers.CreateGame(s.db.GetDB()))))
+	
+	// Admin game management endpoints
+	mux.Handle("/api/admin/games", s.auth.Middleware(s.auth.AdminMiddleware(handlers.AdminListGames(s.db.GetDB()))))
+	mux.Handle("/api/admin/games/", s.auth.Middleware(s.auth.AdminMiddleware(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		switch r.Method {
+		case "PUT":
+			handlers.UpdateGame(s.db.GetDB())(w, r)
+		case "DELETE":
+			handlers.DeleteGame(s.db.GetDB())(w, r)
+		default:
+			w.WriteHeader(http.StatusMethodNotAllowed)
+		}
+	}))))
 
 	mux.Handle("/api/picks", s.auth.Middleware(handlers.GetPicks(s.db.GetDB())))
 	mux.Handle("/api/picks/submit", s.auth.Middleware(handlers.SubmitPicks(s.db.GetDB())))
@@ -57,6 +70,19 @@ func (s *Server) NewRouter() http.Handler {
 
 	mux.Handle("/api/debug/users", s.auth.Middleware(s.auth.AdminMiddleware(handlers.DebugGetUsers(s.db.GetDB()))))
 	mux.Handle("/api/admin/users/delete", s.auth.Middleware(s.auth.AdminMiddleware(handlers.DeleteUser(s.db.GetDB()))))
+	
+	// Admin user management endpoints
+	mux.Handle("/api/admin/users", s.auth.Middleware(s.auth.AdminMiddleware(handlers.AdminListUsers(s.db.GetDB()))))
+	mux.Handle("/api/admin/users/", s.auth.Middleware(s.auth.AdminMiddleware(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		switch r.Method {
+		case "GET":
+			handlers.AdminGetUser(s.db.GetDB())(w, r)
+		case "PUT":
+			handlers.AdminUpdateUser(s.db.GetDB())(w, r)
+		default:
+			w.WriteHeader(http.StatusMethodNotAllowed)
+		}
+	}))))
 
 	return c.Handler(mux)
 }
