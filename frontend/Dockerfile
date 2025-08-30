@@ -1,13 +1,13 @@
 # build stage
-FROM node:20-alpine AS build-stage
+FROM node:22-alpine AS build-stage
 
-#ARG VITE_BACKEND_URL
-#ENV VITE_BACKEND_URL=$VITE_BACKEND_URL
+ARG VITE_BACKEND_URL
+ENV VITE_BACKEND_URL=$VITE_BACKEND_URL
 
 WORKDIR /app
 
 COPY package*.json ./
-RUN npm ci --omit=dev
+RUN npm ci
 
 COPY . .
 RUN npm run build

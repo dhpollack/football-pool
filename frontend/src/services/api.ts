@@ -81,11 +81,11 @@ export const api = {
 
       if (!response.ok) {
         let errorMessage = `HTTP error ${response.status}`;
-        let errorData: ApiErrorDetails;
+        let errorData: ApiErrorDetails | undefined;
 
         try {
           errorData = await response.json();
-          errorMessage = errorData.error || errorData.message || errorMessage;
+          errorMessage = errorData?.error || errorData?.message || errorMessage;
         } catch {
           // If we can't parse JSON, use the status text
           errorMessage = response.statusText || errorMessage;

@@ -15,7 +15,7 @@ const ProfilePage = () => {
   useEffect(() => {
     const fetchProfile = async () => {
       try {
-        const data = await api.get("/api/users/me");
+        const data = await api.get<{ name: string; address: string }>("/api/users/me");
         setName(data.name);
         setAddress(data.address);
       } catch (error: unknown) {
