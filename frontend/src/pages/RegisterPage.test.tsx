@@ -47,7 +47,7 @@ describe("RegisterPage", () => {
         <Router>
           <RegisterPage />
         </Router>
-      </QueryClientProvider>
+      </QueryClientProvider>,
     );
   };
 

@@ -2,15 +2,13 @@ import { render, screen, fireEvent, waitFor } from "@testing-library/react";
 import { vi } from "vitest";
 import { BrowserRouter } from "react-router-dom";
 import UserMenu from "./UserMenu";
-import { AuthContext } from "../contexts/AuthContext";
 
-// Mock the API module
-vi.mock("../services/api", () => ({
-  api: {
-    post: vi.fn(),
-    get: vi.fn(),
-  },
+// Mock the useAuth hook
+vi.mock("../hooks/useAuth", () => ({
+  useAuth: vi.fn(),
 }));
+
+import { useAuth } from "../hooks/useAuth";
 
 // Mock user data
 const mockUser = {
@@ -19,7 +17,7 @@ const mockUser = {
   email: "test@example.com",
 };
 
-// Helper component to provide context
+// Helper component to mock auth state
 const TestWrapper = ({
   children,
   user = mockUser,
@@ -27,22 +25,15 @@ const TestWrapper = ({
   children: React.ReactNode;
   user?: any;
 }) => {
-  // Mock AuthContext value
-  const mockAuthContext = {
+  (useAuth as jest.Mock).mockReturnValue({
     user,
     login: vi.fn(),
     logout: vi.fn(),
     isAuthenticated: !!user,
     loading: false,
-  };
+  });
 
-  return (
-    <BrowserRouter>
-      <AuthContext.Provider value={mockAuthContext}>
-        {children}
-      </AuthContext.Provider>
-    </BrowserRouter>
-  );
+  return <BrowserRouter>{children}</BrowserRouter>;
 };
 
 describe("UserMenu", () => {

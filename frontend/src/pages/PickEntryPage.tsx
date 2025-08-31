@@ -59,7 +59,11 @@ const PickEntryPage = () => {
   React.useEffect(() => {
     if (gamesError) {
       if (axios.isAxiosError(gamesError)) {
-        setError(gamesError.response?.data?.message || gamesError.message || "Failed to load games");
+        setError(
+          gamesError.response?.data?.message ||
+            gamesError.message ||
+            "Failed to load games",
+        );
       } else if (gamesError instanceof Error) {
         setError(gamesError.message);
       } else {

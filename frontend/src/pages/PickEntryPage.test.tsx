@@ -1,6 +1,6 @@
-import { render, screen, fireEvent } from "@testing-library/react";
+import { render, screen, fireEvent, waitFor } from "@testing-library/react";
 import { vi } from "vitest";
-import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import { render } from "../test-utils";
 import PickEntryPage from "./PickEntryPage";
 
 // Mock the React Query hooks
@@ -8,7 +8,7 @@ const mockGamesData = {
   games: [
     { id: 1, favorite_team: "Team A", underdog_team: "Team B", spread: 3 },
     { id: 2, favorite_team: "Team C", underdog_team: "Team D", spread: 7 },
-  ]
+  ],
 };
 
 const mockSubmitPicks = vi.fn();
@@ -28,15 +28,7 @@ vi.mock("../services/api/default/default", () => ({
 global.alert = vi.fn();
 
 describe("PickEntryPage", () => {
-  let queryClient: QueryClient;
-
   beforeEach(() => {
-    queryClient = new QueryClient({
-      defaultOptions: {
-        queries: { retry: false },
-        mutations: { retry: false },
-      },
-    });
     mockSubmitPicks.mockResolvedValue({});
   });
 
@@ -44,16 +36,8 @@ describe("PickEntryPage", () => {
     vi.clearAllMocks();
   });
 
-  const renderWithProviders = () => {
-    return render(
-      <QueryClientProvider client={queryClient}>
-        <PickEntryPage />
-      </QueryClientProvider>
-    );
-  };
-
   it("renders the games", async () => {
-    renderWithProviders();
+    render(<PickEntryPage />);
 
     expect(await screen.findByText(/team a/i)).toBeInTheDocument();
     expect(await screen.findByText(/team b/i)).toBeInTheDocument();
@@ -62,7 +46,7 @@ describe("PickEntryPage", () => {
   });
 
   it("handles quick pick", async () => {
-    renderWithProviders();
+    render(<PickEntryPage />);
 
     await screen.findByText(/team a/i);
 
@@ -76,14 +60,14 @@ describe("PickEntryPage", () => {
   });
 
   it("submits picks", async () => {
-    renderWithProviders();
+    render(<PickEntryPage />);
 
     await screen.findByText(/team a/i);
 
     fireEvent.click(screen.getByText(/submit picks/i));
 
     // Wait for the async operation to complete
-    await vi.waitFor(() => {
+    await waitFor(() => {
       expect(mockSubmitPicks).toHaveBeenCalledWith({
         data: expect.arrayContaining([
           expect.objectContaining({

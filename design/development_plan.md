@@ -5,6 +5,10 @@ Based on the design documents, here is a plan to create the Football Pool web ap
 *   [x] **Backend:** Go with the standard `net/http` package for the API and GORM with SQLite for the database.
 *   [x] **Frontend:** Vite.js + Tailwind CSS.
 
+### Data Sources
+
+*   **Game and schedule data**: MySportsFeeds will be used to source NFL game schedules and results.
+
 ### Backend Development Plan
 
 1.  [x] **Database Schema:** I will design the database schema based on the requirements. This will include tables for:

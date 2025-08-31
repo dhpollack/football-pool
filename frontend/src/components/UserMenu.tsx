@@ -14,7 +14,7 @@ import {
   AccountCircle as AccountCircleIcon,
   Logout as LogoutIcon,
 } from "@mui/icons-material";
-import { useAuth } from "../contexts/AuthContext";
+import { useAuth } from "../hooks/useAuth";
 
 const UserMenu = () => {
   const { user, logout } = useAuth();

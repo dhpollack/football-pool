@@ -1,10 +1,13 @@
 import { useState, useId } from "react";
 import { useNavigate } from "react-router-dom";
 import { TextField, Button, Box, Typography } from "@mui/material";
-import { useAuth } from "../contexts/AuthContext";
+import { useMutation } from "@tanstack/react-query";
+import useSignIn from 'react-auth-kit/hooks/useSignIn';
+import { loginUser } from "../services/api/default/default";
+import { LoginRequest } from "../services/model";
 
 const LoginPage = () => {
-  const { login } = useAuth();
+  const signIn = useSignIn();
   const navigate = useNavigate();
   const emailId = useId();
   const passwordId = useId();
@@ -16,6 +19,33 @@ const LoginPage = () => {
     email?: string;
     password?: string;
   }>({});
+
+  const loginMutation = useMutation({
+    mutationFn: (loginData: LoginRequest) => loginUser(loginData),
+    onMutate: () => {
+      setLoading(true);
+    },
+    onSuccess: (userData) => {
+      // Store the authentication state using react-auth-kit
+      if (signIn({
+        auth: {
+          token: userData.id.toString(), // Using user ID as token for now
+          type: 'Bearer',
+        },
+        userState: userData,
+      })) {
+        navigate("/");
+      } else {
+        setError("Failed to sign in");
+      }
+    },
+    onError: (error: Error) => {
+      setError(error.message);
+    },
+    onSettled: () => {
+      setLoading(false);
+    },
+  });
 
   const validateForm = () => {
     const errors: {
@@ -45,19 +75,14 @@ const LoginPage = () => {
       return;
     }
 
-    setLoading(true);
-
     try {
-      await login(email, password);
-      navigate("/");
+      await loginMutation.mutateAsync({ email, password });
     } catch (error: unknown) {
       if (error instanceof Error) {
         setError(error.message);
       } else {
         setError("An unknown error occurred");
       }
-    } finally {
-      setLoading(false);
     }
   };
 

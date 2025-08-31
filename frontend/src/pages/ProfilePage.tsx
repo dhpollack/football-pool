@@ -37,7 +37,10 @@ const ProfilePage = () => {
   // Handle profile fetch error
   useEffect(() => {
     if (profileError) {
-      if (axios.isAxiosError(profileError) && profileError.response?.status === 401) {
+      if (
+        axios.isAxiosError(profileError) &&
+        profileError.response?.status === 401
+      ) {
         setError("Please log in to view your profile");
       } else if (profileError instanceof Error) {
         setError(profileError.message);

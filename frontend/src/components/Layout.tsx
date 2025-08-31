@@ -10,7 +10,7 @@ import {
   Box,
   Button,
 } from "@mui/material";
-import { useAuth } from "../contexts/AuthContext";
+import { useAuth } from "../hooks/useAuth";
 import UserMenu from "./UserMenu";
 
 const drawerWidth = 240;

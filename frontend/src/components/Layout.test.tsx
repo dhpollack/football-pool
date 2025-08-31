@@ -2,15 +2,13 @@ import { render, screen, waitFor } from "@testing-library/react";
 import { vi } from "vitest";
 import { BrowserRouter } from "react-router-dom";
 import Layout from "./Layout";
-import { AuthContext } from "../contexts/AuthContext";
 
-// Mock the API module
-vi.mock("../services/api", () => ({
-  api: {
-    post: vi.fn(),
-    get: vi.fn(),
-  },
+// Mock the useAuth hook
+vi.mock("../hooks/useAuth", () => ({
+  useAuth: vi.fn(),
 }));
+
+import { useAuth } from "../hooks/useAuth";
 
 // Mock user data
 const mockUser = {
@@ -19,45 +17,24 @@ const mockUser = {
   email: "test@example.com",
 };
 
-// Helper component to provide auth context
-const TestWrapper = ({
-  children,
-  user = null,
-  loading = false,
-  isAuthenticated = false,
-}: {
-  children: React.ReactNode;
-  user?: any;
-  loading?: boolean;
-  isAuthenticated?: boolean;
-}) => {
-  const mockAuthContext = {
-    user,
-    login: vi.fn(),
-    logout: vi.fn(),
-    isAuthenticated,
-    loading,
-  };
-
-  return (
-    <BrowserRouter>
-      <AuthContext.Provider value={mockAuthContext}>
-        {children}
-      </AuthContext.Provider>
-    </BrowserRouter>
-  );
-};
-
 describe("Layout", () => {
   beforeEach(() => {
     vi.clearAllMocks();
   });
 
   it("shows login button when user is not authenticated", async () => {
+    vi.mocked(useAuth).mockReturnValue({
+      user: null,
+      login: vi.fn(),
+      logout: vi.fn(),
+      isAuthenticated: false,
+      loading: false,
+    });
+
     render(
-      <TestWrapper user={null} loading={false} isAuthenticated={false}>
+      <BrowserRouter>
         <Layout />
-      </TestWrapper>,
+      </BrowserRouter>,
     );
 
     await waitFor(() => {
@@ -66,10 +43,18 @@ describe("Layout", () => {
   });
 
   it("shows user menu when user is authenticated", async () => {
+    vi.mocked(useAuth).mockReturnValue({
+      user: mockUser,
+      login: vi.fn(),
+      logout: vi.fn(),
+      isAuthenticated: true,
+      loading: false,
+    });
+
     render(
-      <TestWrapper user={mockUser} loading={false} isAuthenticated={true}>
+      <BrowserRouter>
         <Layout />
-      </TestWrapper>,
+      </BrowserRouter>,
     );
 
     await waitFor(() => {
@@ -78,10 +63,18 @@ describe("Layout", () => {
   });
 
   it("shows loading state properly", () => {
+    vi.mocked(useAuth).mockReturnValue({
+      user: null,
+      login: vi.fn(),
+      logout: vi.fn(),
+      isAuthenticated: false,
+      loading: true,
+    });
+
     render(
-      <TestWrapper user={null} loading={true} isAuthenticated={false}>
+      <BrowserRouter>
         <Layout />
-      </TestWrapper>,
+      </BrowserRouter>,
     );
 
     // Should not show login button or user menu while loading
@@ -90,10 +83,18 @@ describe("Layout", () => {
   });
 
   it("shows register link in sidebar when not authenticated", async () => {
+    vi.mocked(useAuth).mockReturnValue({
+      user: null,
+      login: vi.fn(),
+      logout: vi.fn(),
+      isAuthenticated: false,
+      loading: false,
+    });
+
     render(
-      <TestWrapper user={null} loading={false} isAuthenticated={false}>
+      <BrowserRouter>
         <Layout />
-      </TestWrapper>,
+      </BrowserRouter>,
     );
 
     await waitFor(() => {
@@ -102,10 +103,18 @@ describe("Layout", () => {
   });
 
   it("shows protected navigation items when authenticated", async () => {
+    vi.mocked(useAuth).mockReturnValue({
+      user: mockUser,
+      login: vi.fn(),
+      logout: vi.fn(),
+      isAuthenticated: true,
+      loading: false,
+    });
+
     render(
-      <TestWrapper user={mockUser} loading={false} isAuthenticated={true}>
+      <BrowserRouter>
         <Layout />
-      </TestWrapper>,
+      </BrowserRouter>,
     );
 
     await waitFor(() => {
@@ -118,10 +127,18 @@ describe("Layout", () => {
   });
 
   it("hides register link when authenticated", async () => {
+    vi.mocked(useAuth).mockReturnValue({
+      user: mockUser,
+      login: vi.fn(),
+      logout: vi.fn(),
+      isAuthenticated: true,
+      loading: false,
+    });
+
     render(
-      <TestWrapper user={mockUser} loading={false} isAuthenticated={true}>
+      <BrowserRouter>
         <Layout />
-      </TestWrapper>,
+      </BrowserRouter>,
     );
 
     await waitFor(() => {

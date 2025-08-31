@@ -5,7 +5,7 @@ import ProfilePage from "./ProfilePage";
 
 // Mock the React Query hooks
 const mockProfileData = {
-  player: { name: "John Doe", address: "123 Main St" }
+  player: { name: "John Doe", address: "123 Main St" },
 };
 
 const mockUpdateProfile = vi.fn();
@@ -45,7 +45,7 @@ describe("ProfilePage", () => {
     return render(
       <QueryClientProvider client={queryClient}>
         <ProfilePage />
-      </QueryClientProvider>
+      </QueryClientProvider>,
     );
   };
 

@@ -1,4 +1,5 @@
-import { useState, useEffect } from "react";
+import type React from "react";
+import { useState, useEffect, useMemo } from "react";
 import {
   Table,
   TableBody,
@@ -12,64 +13,62 @@ import {
   TextField,
   Box,
 } from "@mui/material";
-
-interface Game {
-  id: number;
-  favorite_team: string;
-  underdog_team: string;
-  spread: number;
-}
+import { useGetGames, useSubmitResult } from "../services/api/default/default";
+import type { GameResponse, ResultRequest } from "../services/model";
+import axios from "axios";
 
 interface ScoreEntry {
-  game_id: number;
   favorite_score: number;
   underdog_score: number;
 }
 
 const ResultEntryPage = () => {
-  const [games, setGames] = useState<Game[]>([]);
   const [scores, setScores] = useState<{
-    [key: number]: { favorite_score: number; underdog_score: number };
+    [key: number]: ScoreEntry;
   }>({});
   const [error, setError] = useState<string | null>(null);
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
+  // React Query hooks
+  const {
+    data: gamesData,
+    isLoading,
+    error: gamesError,
+  } = useGetGames({
+    week: 1,
+    season: 2025,
+  });
+  const { mutateAsync: submitResult } = useSubmitResult();
+
+  const games = useMemo(() => gamesData?.games || [], [gamesData]);
+
+  // Initialize scores when games load
   useEffect(() => {
-    const fetchGames = async () => {
-      try {
-        const token = localStorage.getItem("token");
-        const response = await fetch(
-          `${import.meta.env.VITE_BACKEND_URL}/api/games`,
-          {
-            headers: {
-              Authorization: `Bearer ${token}`,
-            },
-          },
+    if (games.length > 0) {
+      const initialScores: { [key: number]: ScoreEntry } = {};
+      games.forEach((game: GameResponse) => {
+        initialScores[game.id] = { favorite_score: 0, underdog_score: 0 };
+      });
+      setScores(initialScores);
+    }
+  }, [games]);
+
+  // Handle games fetch error
+  useEffect(() => {
+    if (gamesError) {
+      if (axios.isAxiosError(gamesError)) {
+        setError(
+          gamesError.response?.data?.message ||
+            gamesError.message ||
+            "Failed to load games",
         );
-
-        if (!response.ok) {
-          throw new Error("Failed to fetch games");
-        }
-
-        const data = await response.json();
-        setGames(data);
-        const initialScores: {
-          [key: number]: { favorite_score: number; underdog_score: number };
-        } = {};
-        data.forEach((game: Game) => {
-          initialScores[game.id] = { favorite_score: 0, underdog_score: 0 };
-        });
-        setScores(initialScores);
-      } catch (error: unknown) {
-        if (error instanceof Error) {
-          setError(error.message);
-        } else {
-          setError("An unknown error occurred");
-        }
+      } else if (gamesError instanceof Error) {
+        setError(gamesError.message);
+      } else {
+        setError("An unknown error occurred");
       }
-    };
-
-    fetchGames();
-  }, []);
+    }
+  }, [gamesError]);
 
   const handleScoreChange = (
     gameId: number,
@@ -85,51 +84,81 @@ const ResultEntryPage = () => {
     }));
   };
 
+  const determineOutcome = (
+    favoriteScore: number,
+    underdogScore: number,
+    spread: number,
+  ): string => {
+    const adjustedUnderdogScore = underdogScore + spread;
+    if (favoriteScore > adjustedUnderdogScore) {
+      return "favorite";
+    } else if (favoriteScore < adjustedUnderdogScore) {
+      return "underdog";
+    } else {
+      return "push";
+    }
+  };
+
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     setError(null);
+    setIsSubmitting(true);
 
     try {
-      const token = localStorage.getItem("token");
-      const resultsToSubmit: ScoreEntry[] = games.map((game) => ({
-        game_id: game.id,
-        favorite_score: scores[game.id]?.favorite_score || 0,
-        underdog_score: scores[game.id]?.underdog_score || 0,
-      }));
+      // Submit results for each game individually
+      const promises = games.map(async (game) => {
+        const gameScores = scores[game.id];
+        if (!gameScores) return;
 
-      const response = await fetch(
-        `${import.meta.env.VITE_BACKEND_URL}/api/results`,
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${token}`,
-          },
-          body: JSON.stringify(resultsToSubmit),
-        },
-      );
+        const favoriteScore = gameScores.favorite_score;
+        const underdogScore = gameScores.underdog_score;
+        const outcome = determineOutcome(
+          favoriteScore,
+          underdogScore,
+          game.spread,
+        );
 
-      if (!response.ok) {
-        throw new Error("Failed to save results");
-      }
+        const resultData: ResultRequest = {
+          game_id: game.id,
+          favorite_score: favoriteScore,
+          underdog_score: underdogScore,
+          outcome: outcome,
+        };
 
+        return submitResult({ data: resultData });
+      });
+
+      await Promise.all(promises.filter(Boolean));
       alert("Results saved successfully!");
     } catch (error: unknown) {
-      if (error instanceof Error) {
+      if (axios.isAxiosError(error)) {
+        setError(error.response?.data?.message || error.message);
+      } else if (error instanceof Error) {
         setError(error.message);
       } else {
         setError("An unknown error occurred");
       }
+    } finally {
+      setIsSubmitting(false);
     }
   };
+
+  if (isLoading) {
+    return <Typography>Loading games...</Typography>;
+  }
 
   return (
     <div>
       <Typography variant="h4">Result Entry</Typography>
       {error && <Typography color="error">{error}</Typography>}
       <Box component="form" onSubmit={handleSubmit}>
-        <Button type="submit" variant="contained" sx={{ my: 2 }}>
-          Save Results
+        <Button
+          type="submit"
+          variant="contained"
+          sx={{ my: 2 }}
+          disabled={isSubmitting}
+        >
+          {isSubmitting ? "Saving Results..." : "Save Results"}
         </Button>
         <TableContainer component={Paper}>
           <Table sx={{ minWidth: 650 }} aria-label="simple table">
