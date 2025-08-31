@@ -15,6 +15,14 @@ const mockUser = {
   id: 1,
   name: "Test User",
   email: "test@example.com",
+  role: "player",
+};
+
+const mockAdminUser = {
+  id: 2,
+  name: "Admin User",
+  email: "admin@example.com",
+  role: "admin",
 };
 
 describe("Layout", () => {
@@ -28,6 +36,7 @@ describe("Layout", () => {
       login: vi.fn(),
       logout: vi.fn(),
       isAuthenticated: false,
+      isAdmin: false,
       loading: false,
     });
 
@@ -48,6 +57,7 @@ describe("Layout", () => {
       login: vi.fn(),
       logout: vi.fn(),
       isAuthenticated: true,
+      isAdmin: false,
       loading: false,
     });
 
@@ -68,6 +78,7 @@ describe("Layout", () => {
       login: vi.fn(),
       logout: vi.fn(),
       isAuthenticated: false,
+      isAdmin: false,
       loading: true,
     });
 
@@ -88,6 +99,7 @@ describe("Layout", () => {
       login: vi.fn(),
       logout: vi.fn(),
       isAuthenticated: false,
+      isAdmin: false,
       loading: false,
     });
 
@@ -102,12 +114,13 @@ describe("Layout", () => {
     });
   });
 
-  it("shows protected navigation items when authenticated", async () => {
+  it("shows protected navigation items when authenticated as admin", async () => {
     vi.mocked(useAuth).mockReturnValue({
-      user: mockUser,
+      user: mockAdminUser,
       login: vi.fn(),
       logout: vi.fn(),
       isAuthenticated: true,
+      isAdmin: true,
       loading: false,
     });
 
@@ -126,12 +139,38 @@ describe("Layout", () => {
     });
   });
 
+  it("hides results link when authenticated as regular user", async () => {
+    vi.mocked(useAuth).mockReturnValue({
+      user: mockUser,
+      login: vi.fn(),
+      logout: vi.fn(),
+      isAuthenticated: true,
+      isAdmin: false,
+      loading: false,
+    });
+
+    render(
+      <BrowserRouter>
+        <Layout />
+      </BrowserRouter>,
+    );
+
+    await waitFor(() => {
+      expect(screen.getByText("Picks")).toBeInTheDocument();
+      expect(screen.queryByText("Results")).not.toBeInTheDocument();
+      expect(screen.getByText("Weekly Results")).toBeInTheDocument();
+      expect(screen.getByText("Overall Results")).toBeInTheDocument();
+      expect(screen.getByText("Survivor Pool")).toBeInTheDocument();
+    });
+  });
+
   it("hides register link when authenticated", async () => {
     vi.mocked(useAuth).mockReturnValue({
       user: mockUser,
       login: vi.fn(),
       logout: vi.fn(),
       isAuthenticated: true,
+      isAdmin: false,
       loading: false,
     });
 

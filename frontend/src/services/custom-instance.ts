@@ -1,6 +1,6 @@
 import Axios, { AxiosRequestConfig } from "axios";
 
-const API_BASE_URL = process.env.VITE_BACKEND_URL;
+const API_BASE_URL = import.meta.env.VITE_BACKEND_URL;
 export const AXIOS_INSTANCE = Axios.create({ baseURL: API_BASE_URL });
 
 export const customInstance = async <T>(

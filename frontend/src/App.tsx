@@ -18,7 +18,7 @@ function App() {
   return (
     <ErrorBoundary>
       <QueryErrorBoundary>
-        <AuthProvider store={authStore} fallbackPath="/login">
+        <AuthProvider store={authStore} fallbackPath="/">
           <Router>
             <Routes>
               <Route path="/" element={<Layout />}>

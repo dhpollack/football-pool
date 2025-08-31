@@ -22,6 +22,7 @@ export const useAuth = () => {
       signOut();
     },
     isAuthenticated: !!user,
+    isAdmin: user?.role === 'admin',
     loading: false, // react-auth-kit handles loading state internally
   };
 };

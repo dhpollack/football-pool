@@ -36,12 +36,12 @@ export default defineConfig({
       timeout: 60000,
       reuseExistingServer: !process.env.CI,
       env: {
-        FOOTBALL_POOL_DSN: "file::memory:?cache=shared",
+        FOOTBALL_POOL_DSN: "file::memory:",
         FOOTBALL_POOL_PORT: "18080",
       },
     },
     {
-      command: "npm run dev",
+      command: "npm run dev -- --strictPort",
       url: E2E_CONFIG.FRONTEND_URL,
       timeout: 60000,
       reuseExistingServer: !process.env.CI,
