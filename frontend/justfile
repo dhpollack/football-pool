@@ -18,3 +18,6 @@ test *args="src/":
 
 test-e2e *args:
     CI=true npm run test:e2e {{ args }}
+
+npm *args:
+    npm {{ args }}

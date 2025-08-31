@@ -11,4 +11,5 @@ export interface GameRequest {
   favorite_team: string;
   underdog_team: string;
   spread: number;
+  start_time: string;
 }

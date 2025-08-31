@@ -7,14 +7,14 @@ Based on the design documents, here is a plan to create the Football Pool web ap
 
 ### Data Sources
 
-*   **Game and schedule data**: MySportsFeeds will be used to source NFL game schedules and results.
+*   **Game and schedule data**: ESPN's unofficial API will be used to source NFL game schedules and results. The `backend/scripts/fetch_games.sh` script can be used to fetch the data.
 
 ### Backend Development Plan
 
 1.  [x] **Database Schema:** I will design the database schema based on the requirements. This will include tables for:
     *   `users` (id, name, email, password_hash, role)
     *   `players` (id, user_id, name, address)
-    *   `games` (id, week, season, favorite_team, underdog_team, spread)
+    *   `games` (id, week, season, favorite_team, underdog_team, spread, start_time)
     *   `picks` (id, user_id, game_id, picked_team, rank, quick_pick)
     *   `results` (id, game_id, favorite_score, underdog_score, outcome)
     *   `survivor_picks` (id, user_id, week, team)

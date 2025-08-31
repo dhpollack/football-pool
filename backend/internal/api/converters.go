@@ -79,6 +79,7 @@ func GameToResponse(game database.Game) GameResponse {
 		FavoriteTeam: game.FavoriteTeam,
 		UnderdogTeam: game.UnderdogTeam,
 		Spread:       game.Spread,
+		StartTime:    game.StartTime,
 		CreatedAt:    game.CreatedAt,
 		UpdatedAt:    game.UpdatedAt,
 	}
@@ -92,6 +93,7 @@ func GameFromRequest(req GameRequest) database.Game {
 		FavoriteTeam: req.FavoriteTeam,
 		UnderdogTeam: req.UnderdogTeam,
 		Spread:       req.Spread,
+		StartTime:    req.StartTime,
 	}
 }
 

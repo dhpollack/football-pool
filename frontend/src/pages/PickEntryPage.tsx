@@ -43,17 +43,23 @@ const PickEntryPage = () => {
     useSubmitPicks();
 
   const games = gamesData?.games || [];
+  const sortedGames = React.useMemo(() => 
+    [...games].sort((a, b) => 
+      new Date(a.start_time).getTime() - new Date(b.start_time).getTime()
+    ),
+    [games]
+  );
 
   // Initialize picks when games load
   React.useEffect(() => {
     if (games.length > 0) {
       const initialPicks: { [gameId: number]: Pick } = {};
-      games.forEach((game: GameResponse) => {
+      sortedGames.forEach((game: GameResponse) => {
         initialPicks[game.id] = { picked: "", rank: 0 };
       });
       setPicks(initialPicks);
     }
-  }, [games]);
+  }, [sortedGames]);
 
   // Handle games fetch error
   React.useEffect(() => {
@@ -80,7 +86,7 @@ const PickEntryPage = () => {
     );
     const shuffledRanks = availableRanks.sort(() => Math.random() - 0.5);
 
-    games.forEach((game, index) => {
+    sortedGames.forEach((game, index) => {
       const pickOptions = ["favorite", "underdog"];
       const picked =
         pickOptions[Math.floor(Math.random() * pickOptions.length)];
@@ -172,7 +178,7 @@ const PickEntryPage = () => {
             </TableRow>
           </TableHead>
           <TableBody>
-            {games.map((game) => (
+            {sortedGames.map((game) => (
               <TableRow
                 key={game.id}
                 sx={{ "&:last-child td, &:last-child th": { border: 0 } }}
@@ -210,7 +216,7 @@ const PickEntryPage = () => {
                       data-testid={`rank-select-${game.id}`}
                     >
                       {Array.from(
-                        { length: games.length },
+                        { length: sortedGames.length },
                         (_, i) => i + 1,
                       ).map((rank) => (
                         <MenuItem

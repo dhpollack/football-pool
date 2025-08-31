@@ -1281,7 +1281,7 @@
       },
       "GameResponse": {
         "type": "object",
-        "required": ["id", "week", "season", "favorite_team", "underdog_team", "spread", "created_at", "updated_at"],
+        "required": ["id", "week", "season", "favorite_team", "underdog_team", "spread", "start_time", "created_at", "updated_at"],
         "properties": {
           "id": {
             "type": "integer",
@@ -1303,6 +1303,10 @@
             "type": "number",
             "format": "float"
           },
+          "start_time": {
+            "type": "string",
+            "format": "date-time"
+          },
           "created_at": {
             "type": "string",
             "format": "date-time"
@@ -1315,7 +1319,7 @@
       },
       "GameRequest": {
         "type": "object",
-        "required": ["week", "season", "favorite_team", "underdog_team", "spread"],
+        "required": ["week", "season", "favorite_team", "underdog_team", "spread", "start_time"],
         "properties": {
           "week": {
             "type": "integer"
@@ -1332,6 +1336,10 @@
           "spread": {
             "type": "number",
             "format": "float"
+          },
+          "start_time": {
+            "type": "string",
+            "format": "date-time"
           }
         }
       },

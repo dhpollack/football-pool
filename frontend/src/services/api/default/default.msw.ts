@@ -22,14 +22,26 @@ import type {
 export const getLoginUserResponseMock = (
   overrideResponse: Partial<UserResponse> = {},
 ): UserResponse => ({
-  id: faker.number.int({ min: undefined, max: undefined }),
+  id: faker.number.int({
+    min: undefined,
+    max: undefined,
+    multipleOf: undefined,
+  }),
   name: faker.string.alpha({ length: { min: 10, max: 20 } }),
   email: faker.string.alpha({ length: { min: 10, max: 20 } }),
   role: faker.string.alpha({ length: { min: 10, max: 20 } }),
   player: faker.helpers.arrayElement([
     {
-      id: faker.number.int({ min: undefined, max: undefined }),
-      user_id: faker.number.int({ min: undefined, max: undefined }),
+      id: faker.number.int({
+        min: undefined,
+        max: undefined,
+        multipleOf: undefined,
+      }),
+      user_id: faker.number.int({
+        min: undefined,
+        max: undefined,
+        multipleOf: undefined,
+      }),
       name: faker.string.alpha({ length: { min: 10, max: 20 } }),
       address: faker.string.alpha({ length: { min: 10, max: 20 } }),
     },
@@ -43,14 +55,26 @@ export const getLoginUserResponseMock = (
 export const getRegisterUserResponseMock = (
   overrideResponse: Partial<UserResponse> = {},
 ): UserResponse => ({
-  id: faker.number.int({ min: undefined, max: undefined }),
+  id: faker.number.int({
+    min: undefined,
+    max: undefined,
+    multipleOf: undefined,
+  }),
   name: faker.string.alpha({ length: { min: 10, max: 20 } }),
   email: faker.string.alpha({ length: { min: 10, max: 20 } }),
   role: faker.string.alpha({ length: { min: 10, max: 20 } }),
   player: faker.helpers.arrayElement([
     {
-      id: faker.number.int({ min: undefined, max: undefined }),
-      user_id: faker.number.int({ min: undefined, max: undefined }),
+      id: faker.number.int({
+        min: undefined,
+        max: undefined,
+        multipleOf: undefined,
+      }),
+      user_id: faker.number.int({
+        min: undefined,
+        max: undefined,
+        multipleOf: undefined,
+      }),
       name: faker.string.alpha({ length: { min: 10, max: 20 } }),
       address: faker.string.alpha({ length: { min: 10, max: 20 } }),
     },
@@ -64,14 +88,26 @@ export const getRegisterUserResponseMock = (
 export const getGetProfileResponseMock = (
   overrideResponse: Partial<UserResponse> = {},
 ): UserResponse => ({
-  id: faker.number.int({ min: undefined, max: undefined }),
+  id: faker.number.int({
+    min: undefined,
+    max: undefined,
+    multipleOf: undefined,
+  }),
   name: faker.string.alpha({ length: { min: 10, max: 20 } }),
   email: faker.string.alpha({ length: { min: 10, max: 20 } }),
   role: faker.string.alpha({ length: { min: 10, max: 20 } }),
   player: faker.helpers.arrayElement([
     {
-      id: faker.number.int({ min: undefined, max: undefined }),
-      user_id: faker.number.int({ min: undefined, max: undefined }),
+      id: faker.number.int({
+        min: undefined,
+        max: undefined,
+        multipleOf: undefined,
+      }),
+      user_id: faker.number.int({
+        min: undefined,
+        max: undefined,
+        multipleOf: undefined,
+      }),
       name: faker.string.alpha({ length: { min: 10, max: 20 } }),
       address: faker.string.alpha({ length: { min: 10, max: 20 } }),
     },
@@ -85,14 +121,26 @@ export const getGetProfileResponseMock = (
 export const getUpdateProfileResponseMock = (
   overrideResponse: Partial<UserResponse> = {},
 ): UserResponse => ({
-  id: faker.number.int({ min: undefined, max: undefined }),
+  id: faker.number.int({
+    min: undefined,
+    max: undefined,
+    multipleOf: undefined,
+  }),
   name: faker.string.alpha({ length: { min: 10, max: 20 } }),
   email: faker.string.alpha({ length: { min: 10, max: 20 } }),
   role: faker.string.alpha({ length: { min: 10, max: 20 } }),
   player: faker.helpers.arrayElement([
     {
-      id: faker.number.int({ min: undefined, max: undefined }),
-      user_id: faker.number.int({ min: undefined, max: undefined }),
+      id: faker.number.int({
+        min: undefined,
+        max: undefined,
+        multipleOf: undefined,
+      }),
+      user_id: faker.number.int({
+        min: undefined,
+        max: undefined,
+        multipleOf: undefined,
+      }),
       name: faker.string.alpha({ length: { min: 10, max: 20 } }),
       address: faker.string.alpha({ length: { min: 10, max: 20 } }),
     },
@@ -110,9 +158,21 @@ export const getGetGamesResponseMock = (
     { length: faker.number.int({ min: 1, max: 10 }) },
     (_, i) => i + 1,
   ).map(() => ({
-    id: faker.number.int({ min: undefined, max: undefined }),
-    week: faker.number.int({ min: undefined, max: undefined }),
-    season: faker.number.int({ min: undefined, max: undefined }),
+    id: faker.number.int({
+      min: undefined,
+      max: undefined,
+      multipleOf: undefined,
+    }),
+    week: faker.number.int({
+      min: undefined,
+      max: undefined,
+      multipleOf: undefined,
+    }),
+    season: faker.number.int({
+      min: undefined,
+      max: undefined,
+      multipleOf: undefined,
+    }),
     favorite_team: faker.string.alpha({ length: { min: 10, max: 20 } }),
     underdog_team: faker.string.alpha({ length: { min: 10, max: 20 } }),
     spread: faker.number.float({
@@ -120,14 +180,31 @@ export const getGetGamesResponseMock = (
       max: undefined,
       fractionDigits: 2,
     }),
+    start_time: `${faker.date.past().toISOString().split(".")[0]}Z`,
     created_at: `${faker.date.past().toISOString().split(".")[0]}Z`,
     updated_at: `${faker.date.past().toISOString().split(".")[0]}Z`,
   })),
   pagination: {
-    page: faker.number.int({ min: undefined, max: undefined }),
-    limit: faker.number.int({ min: undefined, max: undefined }),
-    total: faker.number.int({ min: undefined, max: undefined }),
-    pages: faker.number.int({ min: undefined, max: undefined }),
+    page: faker.number.int({
+      min: undefined,
+      max: undefined,
+      multipleOf: undefined,
+    }),
+    limit: faker.number.int({
+      min: undefined,
+      max: undefined,
+      multipleOf: undefined,
+    }),
+    total: faker.number.int({
+      min: undefined,
+      max: undefined,
+      multipleOf: undefined,
+    }),
+    pages: faker.number.int({
+      min: undefined,
+      max: undefined,
+      multipleOf: undefined,
+    }),
   },
   ...overrideResponse,
 });
@@ -137,9 +214,21 @@ export const getCreateGameResponseMock = (): GameResponse[] =>
     { length: faker.number.int({ min: 1, max: 10 }) },
     (_, i) => i + 1,
   ).map(() => ({
-    id: faker.number.int({ min: undefined, max: undefined }),
-    week: faker.number.int({ min: undefined, max: undefined }),
-    season: faker.number.int({ min: undefined, max: undefined }),
+    id: faker.number.int({
+      min: undefined,
+      max: undefined,
+      multipleOf: undefined,
+    }),
+    week: faker.number.int({
+      min: undefined,
+      max: undefined,
+      multipleOf: undefined,
+    }),
+    season: faker.number.int({
+      min: undefined,
+      max: undefined,
+      multipleOf: undefined,
+    }),
     favorite_team: faker.string.alpha({ length: { min: 10, max: 20 } }),
     underdog_team: faker.string.alpha({ length: { min: 10, max: 20 } }),
     spread: faker.number.float({
@@ -147,6 +236,7 @@ export const getCreateGameResponseMock = (): GameResponse[] =>
       max: undefined,
       fractionDigits: 2,
     }),
+    start_time: `${faker.date.past().toISOString().split(".")[0]}Z`,
     created_at: `${faker.date.past().toISOString().split(".")[0]}Z`,
     updated_at: `${faker.date.past().toISOString().split(".")[0]}Z`,
   }));
@@ -158,18 +248,38 @@ export const getGetPicksResponseMock = (
     { length: faker.number.int({ min: 1, max: 10 }) },
     (_, i) => i + 1,
   ).map(() => ({
-    id: faker.number.int({ min: undefined, max: undefined }),
-    user_id: faker.number.int({ min: undefined, max: undefined }),
+    id: faker.number.int({
+      min: undefined,
+      max: undefined,
+      multipleOf: undefined,
+    }),
+    user_id: faker.number.int({
+      min: undefined,
+      max: undefined,
+      multipleOf: undefined,
+    }),
     user: faker.helpers.arrayElement([
       {
-        id: faker.number.int({ min: undefined, max: undefined }),
+        id: faker.number.int({
+          min: undefined,
+          max: undefined,
+          multipleOf: undefined,
+        }),
         name: faker.string.alpha({ length: { min: 10, max: 20 } }),
         email: faker.string.alpha({ length: { min: 10, max: 20 } }),
         role: faker.string.alpha({ length: { min: 10, max: 20 } }),
         player: faker.helpers.arrayElement([
           {
-            id: faker.number.int({ min: undefined, max: undefined }),
-            user_id: faker.number.int({ min: undefined, max: undefined }),
+            id: faker.number.int({
+              min: undefined,
+              max: undefined,
+              multipleOf: undefined,
+            }),
+            user_id: faker.number.int({
+              min: undefined,
+              max: undefined,
+              multipleOf: undefined,
+            }),
             name: faker.string.alpha({ length: { min: 10, max: 20 } }),
             address: faker.string.alpha({ length: { min: 10, max: 20 } }),
           },
@@ -180,12 +290,28 @@ export const getGetPicksResponseMock = (
       },
       undefined,
     ]),
-    game_id: faker.number.int({ min: undefined, max: undefined }),
+    game_id: faker.number.int({
+      min: undefined,
+      max: undefined,
+      multipleOf: undefined,
+    }),
     game: faker.helpers.arrayElement([
       {
-        id: faker.number.int({ min: undefined, max: undefined }),
-        week: faker.number.int({ min: undefined, max: undefined }),
-        season: faker.number.int({ min: undefined, max: undefined }),
+        id: faker.number.int({
+          min: undefined,
+          max: undefined,
+          multipleOf: undefined,
+        }),
+        week: faker.number.int({
+          min: undefined,
+          max: undefined,
+          multipleOf: undefined,
+        }),
+        season: faker.number.int({
+          min: undefined,
+          max: undefined,
+          multipleOf: undefined,
+        }),
         favorite_team: faker.string.alpha({ length: { min: 10, max: 20 } }),
         underdog_team: faker.string.alpha({ length: { min: 10, max: 20 } }),
         spread: faker.number.float({
@@ -193,22 +319,43 @@ export const getGetPicksResponseMock = (
           max: undefined,
           fractionDigits: 2,
         }),
+        start_time: `${faker.date.past().toISOString().split(".")[0]}Z`,
         created_at: `${faker.date.past().toISOString().split(".")[0]}Z`,
         updated_at: `${faker.date.past().toISOString().split(".")[0]}Z`,
       },
       undefined,
     ]),
     picked: faker.string.alpha({ length: { min: 10, max: 20 } }),
-    rank: faker.number.int({ min: undefined, max: undefined }),
+    rank: faker.number.int({
+      min: undefined,
+      max: undefined,
+      multipleOf: undefined,
+    }),
     quick_pick: faker.datatype.boolean(),
     created_at: `${faker.date.past().toISOString().split(".")[0]}Z`,
     updated_at: `${faker.date.past().toISOString().split(".")[0]}Z`,
   })),
   pagination: {
-    page: faker.number.int({ min: undefined, max: undefined }),
-    limit: faker.number.int({ min: undefined, max: undefined }),
-    total: faker.number.int({ min: undefined, max: undefined }),
-    pages: faker.number.int({ min: undefined, max: undefined }),
+    page: faker.number.int({
+      min: undefined,
+      max: undefined,
+      multipleOf: undefined,
+    }),
+    limit: faker.number.int({
+      min: undefined,
+      max: undefined,
+      multipleOf: undefined,
+    }),
+    total: faker.number.int({
+      min: undefined,
+      max: undefined,
+      multipleOf: undefined,
+    }),
+    pages: faker.number.int({
+      min: undefined,
+      max: undefined,
+      multipleOf: undefined,
+    }),
   },
   ...overrideResponse,
 });
@@ -218,18 +365,38 @@ export const getSubmitPicksResponseMock = (): PickResponse[] =>
     { length: faker.number.int({ min: 1, max: 10 }) },
     (_, i) => i + 1,
   ).map(() => ({
-    id: faker.number.int({ min: undefined, max: undefined }),
-    user_id: faker.number.int({ min: undefined, max: undefined }),
+    id: faker.number.int({
+      min: undefined,
+      max: undefined,
+      multipleOf: undefined,
+    }),
+    user_id: faker.number.int({
+      min: undefined,
+      max: undefined,
+      multipleOf: undefined,
+    }),
     user: faker.helpers.arrayElement([
       {
-        id: faker.number.int({ min: undefined, max: undefined }),
+        id: faker.number.int({
+          min: undefined,
+          max: undefined,
+          multipleOf: undefined,
+        }),
         name: faker.string.alpha({ length: { min: 10, max: 20 } }),
         email: faker.string.alpha({ length: { min: 10, max: 20 } }),
         role: faker.string.alpha({ length: { min: 10, max: 20 } }),
         player: faker.helpers.arrayElement([
           {
-            id: faker.number.int({ min: undefined, max: undefined }),
-            user_id: faker.number.int({ min: undefined, max: undefined }),
+            id: faker.number.int({
+              min: undefined,
+              max: undefined,
+              multipleOf: undefined,
+            }),
+            user_id: faker.number.int({
+              min: undefined,
+              max: undefined,
+              multipleOf: undefined,
+            }),
             name: faker.string.alpha({ length: { min: 10, max: 20 } }),
             address: faker.string.alpha({ length: { min: 10, max: 20 } }),
           },
@@ -240,12 +407,28 @@ export const getSubmitPicksResponseMock = (): PickResponse[] =>
       },
       undefined,
     ]),
-    game_id: faker.number.int({ min: undefined, max: undefined }),
+    game_id: faker.number.int({
+      min: undefined,
+      max: undefined,
+      multipleOf: undefined,
+    }),
     game: faker.helpers.arrayElement([
       {
-        id: faker.number.int({ min: undefined, max: undefined }),
-        week: faker.number.int({ min: undefined, max: undefined }),
-        season: faker.number.int({ min: undefined, max: undefined }),
+        id: faker.number.int({
+          min: undefined,
+          max: undefined,
+          multipleOf: undefined,
+        }),
+        week: faker.number.int({
+          min: undefined,
+          max: undefined,
+          multipleOf: undefined,
+        }),
+        season: faker.number.int({
+          min: undefined,
+          max: undefined,
+          multipleOf: undefined,
+        }),
         favorite_team: faker.string.alpha({ length: { min: 10, max: 20 } }),
         underdog_team: faker.string.alpha({ length: { min: 10, max: 20 } }),
         spread: faker.number.float({
@@ -253,13 +436,18 @@ export const getSubmitPicksResponseMock = (): PickResponse[] =>
           max: undefined,
           fractionDigits: 2,
         }),
+        start_time: `${faker.date.past().toISOString().split(".")[0]}Z`,
         created_at: `${faker.date.past().toISOString().split(".")[0]}Z`,
         updated_at: `${faker.date.past().toISOString().split(".")[0]}Z`,
       },
       undefined,
     ]),
     picked: faker.string.alpha({ length: { min: 10, max: 20 } }),
-    rank: faker.number.int({ min: undefined, max: undefined }),
+    rank: faker.number.int({
+      min: undefined,
+      max: undefined,
+      multipleOf: undefined,
+    }),
     quick_pick: faker.datatype.boolean(),
     created_at: `${faker.date.past().toISOString().split(".")[0]}Z`,
     updated_at: `${faker.date.past().toISOString().split(".")[0]}Z`,
@@ -270,18 +458,38 @@ export const getAdminSubmitPicksResponseMock = (): PickResponse[] =>
     { length: faker.number.int({ min: 1, max: 10 }) },
     (_, i) => i + 1,
   ).map(() => ({
-    id: faker.number.int({ min: undefined, max: undefined }),
-    user_id: faker.number.int({ min: undefined, max: undefined }),
+    id: faker.number.int({
+      min: undefined,
+      max: undefined,
+      multipleOf: undefined,
+    }),
+    user_id: faker.number.int({
+      min: undefined,
+      max: undefined,
+      multipleOf: undefined,
+    }),
     user: faker.helpers.arrayElement([
       {
-        id: faker.number.int({ min: undefined, max: undefined }),
+        id: faker.number.int({
+          min: undefined,
+          max: undefined,
+          multipleOf: undefined,
+        }),
         name: faker.string.alpha({ length: { min: 10, max: 20 } }),
         email: faker.string.alpha({ length: { min: 10, max: 20 } }),
         role: faker.string.alpha({ length: { min: 10, max: 20 } }),
         player: faker.helpers.arrayElement([
           {
-            id: faker.number.int({ min: undefined, max: undefined }),
-            user_id: faker.number.int({ min: undefined, max: undefined }),
+            id: faker.number.int({
+              min: undefined,
+              max: undefined,
+              multipleOf: undefined,
+            }),
+            user_id: faker.number.int({
+              min: undefined,
+              max: undefined,
+              multipleOf: undefined,
+            }),
             name: faker.string.alpha({ length: { min: 10, max: 20 } }),
             address: faker.string.alpha({ length: { min: 10, max: 20 } }),
           },
@@ -292,12 +500,28 @@ export const getAdminSubmitPicksResponseMock = (): PickResponse[] =>
       },
       undefined,
     ]),
-    game_id: faker.number.int({ min: undefined, max: undefined }),
+    game_id: faker.number.int({
+      min: undefined,
+      max: undefined,
+      multipleOf: undefined,
+    }),
     game: faker.helpers.arrayElement([
       {
-        id: faker.number.int({ min: undefined, max: undefined }),
-        week: faker.number.int({ min: undefined, max: undefined }),
-        season: faker.number.int({ min: undefined, max: undefined }),
+        id: faker.number.int({
+          min: undefined,
+          max: undefined,
+          multipleOf: undefined,
+        }),
+        week: faker.number.int({
+          min: undefined,
+          max: undefined,
+          multipleOf: undefined,
+        }),
+        season: faker.number.int({
+          min: undefined,
+          max: undefined,
+          multipleOf: undefined,
+        }),
         favorite_team: faker.string.alpha({ length: { min: 10, max: 20 } }),
         underdog_team: faker.string.alpha({ length: { min: 10, max: 20 } }),
         spread: faker.number.float({
@@ -305,13 +529,18 @@ export const getAdminSubmitPicksResponseMock = (): PickResponse[] =>
           max: undefined,
           fractionDigits: 2,
         }),
+        start_time: `${faker.date.past().toISOString().split(".")[0]}Z`,
         created_at: `${faker.date.past().toISOString().split(".")[0]}Z`,
         updated_at: `${faker.date.past().toISOString().split(".")[0]}Z`,
       },
       undefined,
     ]),
     picked: faker.string.alpha({ length: { min: 10, max: 20 } }),
-    rank: faker.number.int({ min: undefined, max: undefined }),
+    rank: faker.number.int({
+      min: undefined,
+      max: undefined,
+      multipleOf: undefined,
+    }),
     quick_pick: faker.datatype.boolean(),
     created_at: `${faker.date.past().toISOString().split(".")[0]}Z`,
     updated_at: `${faker.date.past().toISOString().split(".")[0]}Z`,
@@ -322,13 +551,33 @@ export const getGetWeeklyResultsResponseMock = (): ResultResponse[] =>
     { length: faker.number.int({ min: 1, max: 10 }) },
     (_, i) => i + 1,
   ).map(() => ({
-    id: faker.number.int({ min: undefined, max: undefined }),
-    game_id: faker.number.int({ min: undefined, max: undefined }),
+    id: faker.number.int({
+      min: undefined,
+      max: undefined,
+      multipleOf: undefined,
+    }),
+    game_id: faker.number.int({
+      min: undefined,
+      max: undefined,
+      multipleOf: undefined,
+    }),
     game: faker.helpers.arrayElement([
       {
-        id: faker.number.int({ min: undefined, max: undefined }),
-        week: faker.number.int({ min: undefined, max: undefined }),
-        season: faker.number.int({ min: undefined, max: undefined }),
+        id: faker.number.int({
+          min: undefined,
+          max: undefined,
+          multipleOf: undefined,
+        }),
+        week: faker.number.int({
+          min: undefined,
+          max: undefined,
+          multipleOf: undefined,
+        }),
+        season: faker.number.int({
+          min: undefined,
+          max: undefined,
+          multipleOf: undefined,
+        }),
         favorite_team: faker.string.alpha({ length: { min: 10, max: 20 } }),
         underdog_team: faker.string.alpha({ length: { min: 10, max: 20 } }),
         spread: faker.number.float({
@@ -336,13 +585,22 @@ export const getGetWeeklyResultsResponseMock = (): ResultResponse[] =>
           max: undefined,
           fractionDigits: 2,
         }),
+        start_time: `${faker.date.past().toISOString().split(".")[0]}Z`,
         created_at: `${faker.date.past().toISOString().split(".")[0]}Z`,
         updated_at: `${faker.date.past().toISOString().split(".")[0]}Z`,
       },
       undefined,
     ]),
-    favorite_score: faker.number.int({ min: undefined, max: undefined }),
-    underdog_score: faker.number.int({ min: undefined, max: undefined }),
+    favorite_score: faker.number.int({
+      min: undefined,
+      max: undefined,
+      multipleOf: undefined,
+    }),
+    underdog_score: faker.number.int({
+      min: undefined,
+      max: undefined,
+      multipleOf: undefined,
+    }),
     outcome: faker.string.alpha({ length: { min: 10, max: 20 } }),
     created_at: `${faker.date.past().toISOString().split(".")[0]}Z`,
     updated_at: `${faker.date.past().toISOString().split(".")[0]}Z`,
@@ -353,13 +611,33 @@ export const getGetSeasonResultsResponseMock = (): ResultResponse[] =>
     { length: faker.number.int({ min: 1, max: 10 }) },
     (_, i) => i + 1,
   ).map(() => ({
-    id: faker.number.int({ min: undefined, max: undefined }),
-    game_id: faker.number.int({ min: undefined, max: undefined }),
+    id: faker.number.int({
+      min: undefined,
+      max: undefined,
+      multipleOf: undefined,
+    }),
+    game_id: faker.number.int({
+      min: undefined,
+      max: undefined,
+      multipleOf: undefined,
+    }),
     game: faker.helpers.arrayElement([
       {
-        id: faker.number.int({ min: undefined, max: undefined }),
-        week: faker.number.int({ min: undefined, max: undefined }),
-        season: faker.number.int({ min: undefined, max: undefined }),
+        id: faker.number.int({
+          min: undefined,
+          max: undefined,
+          multipleOf: undefined,
+        }),
+        week: faker.number.int({
+          min: undefined,
+          max: undefined,
+          multipleOf: undefined,
+        }),
+        season: faker.number.int({
+          min: undefined,
+          max: undefined,
+          multipleOf: undefined,
+        }),
         favorite_team: faker.string.alpha({ length: { min: 10, max: 20 } }),
         underdog_team: faker.string.alpha({ length: { min: 10, max: 20 } }),
         spread: faker.number.float({
@@ -367,13 +645,22 @@ export const getGetSeasonResultsResponseMock = (): ResultResponse[] =>
           max: undefined,
           fractionDigits: 2,
         }),
+        start_time: `${faker.date.past().toISOString().split(".")[0]}Z`,
         created_at: `${faker.date.past().toISOString().split(".")[0]}Z`,
         updated_at: `${faker.date.past().toISOString().split(".")[0]}Z`,
       },
       undefined,
     ]),
-    favorite_score: faker.number.int({ min: undefined, max: undefined }),
-    underdog_score: faker.number.int({ min: undefined, max: undefined }),
+    favorite_score: faker.number.int({
+      min: undefined,
+      max: undefined,
+      multipleOf: undefined,
+    }),
+    underdog_score: faker.number.int({
+      min: undefined,
+      max: undefined,
+      multipleOf: undefined,
+    }),
     outcome: faker.string.alpha({ length: { min: 10, max: 20 } }),
     created_at: `${faker.date.past().toISOString().split(".")[0]}Z`,
     updated_at: `${faker.date.past().toISOString().split(".")[0]}Z`,
@@ -382,13 +669,33 @@ export const getGetSeasonResultsResponseMock = (): ResultResponse[] =>
 export const getSubmitResultResponseMock = (
   overrideResponse: Partial<ResultResponse> = {},
 ): ResultResponse => ({
-  id: faker.number.int({ min: undefined, max: undefined }),
-  game_id: faker.number.int({ min: undefined, max: undefined }),
+  id: faker.number.int({
+    min: undefined,
+    max: undefined,
+    multipleOf: undefined,
+  }),
+  game_id: faker.number.int({
+    min: undefined,
+    max: undefined,
+    multipleOf: undefined,
+  }),
   game: faker.helpers.arrayElement([
     {
-      id: faker.number.int({ min: undefined, max: undefined }),
-      week: faker.number.int({ min: undefined, max: undefined }),
-      season: faker.number.int({ min: undefined, max: undefined }),
+      id: faker.number.int({
+        min: undefined,
+        max: undefined,
+        multipleOf: undefined,
+      }),
+      week: faker.number.int({
+        min: undefined,
+        max: undefined,
+        multipleOf: undefined,
+      }),
+      season: faker.number.int({
+        min: undefined,
+        max: undefined,
+        multipleOf: undefined,
+      }),
       favorite_team: faker.string.alpha({ length: { min: 10, max: 20 } }),
       underdog_team: faker.string.alpha({ length: { min: 10, max: 20 } }),
       spread: faker.number.float({
@@ -396,13 +703,22 @@ export const getSubmitResultResponseMock = (
         max: undefined,
         fractionDigits: 2,
       }),
+      start_time: `${faker.date.past().toISOString().split(".")[0]}Z`,
       created_at: `${faker.date.past().toISOString().split(".")[0]}Z`,
       updated_at: `${faker.date.past().toISOString().split(".")[0]}Z`,
     },
     undefined,
   ]),
-  favorite_score: faker.number.int({ min: undefined, max: undefined }),
-  underdog_score: faker.number.int({ min: undefined, max: undefined }),
+  favorite_score: faker.number.int({
+    min: undefined,
+    max: undefined,
+    multipleOf: undefined,
+  }),
+  underdog_score: faker.number.int({
+    min: undefined,
+    max: undefined,
+    multipleOf: undefined,
+  }),
   outcome: faker.string.alpha({ length: { min: 10, max: 20 } }),
   created_at: `${faker.date.past().toISOString().split(".")[0]}Z`,
   updated_at: `${faker.date.past().toISOString().split(".")[0]}Z`,
@@ -414,18 +730,38 @@ export const getGetSurvivorPicksResponseMock = (): SurvivorPickResponse[] =>
     { length: faker.number.int({ min: 1, max: 10 }) },
     (_, i) => i + 1,
   ).map(() => ({
-    id: faker.number.int({ min: undefined, max: undefined }),
-    user_id: faker.number.int({ min: undefined, max: undefined }),
+    id: faker.number.int({
+      min: undefined,
+      max: undefined,
+      multipleOf: undefined,
+    }),
+    user_id: faker.number.int({
+      min: undefined,
+      max: undefined,
+      multipleOf: undefined,
+    }),
     user: faker.helpers.arrayElement([
       {
-        id: faker.number.int({ min: undefined, max: undefined }),
+        id: faker.number.int({
+          min: undefined,
+          max: undefined,
+          multipleOf: undefined,
+        }),
         name: faker.string.alpha({ length: { min: 10, max: 20 } }),
         email: faker.string.alpha({ length: { min: 10, max: 20 } }),
         role: faker.string.alpha({ length: { min: 10, max: 20 } }),
         player: faker.helpers.arrayElement([
           {
-            id: faker.number.int({ min: undefined, max: undefined }),
-            user_id: faker.number.int({ min: undefined, max: undefined }),
+            id: faker.number.int({
+              min: undefined,
+              max: undefined,
+              multipleOf: undefined,
+            }),
+            user_id: faker.number.int({
+              min: undefined,
+              max: undefined,
+              multipleOf: undefined,
+            }),
             name: faker.string.alpha({ length: { min: 10, max: 20 } }),
             address: faker.string.alpha({ length: { min: 10, max: 20 } }),
           },
@@ -436,7 +772,11 @@ export const getGetSurvivorPicksResponseMock = (): SurvivorPickResponse[] =>
       },
       undefined,
     ]),
-    week: faker.number.int({ min: undefined, max: undefined }),
+    week: faker.number.int({
+      min: undefined,
+      max: undefined,
+      multipleOf: undefined,
+    }),
     team: faker.string.alpha({ length: { min: 10, max: 20 } }),
     created_at: `${faker.date.past().toISOString().split(".")[0]}Z`,
     updated_at: `${faker.date.past().toISOString().split(".")[0]}Z`,
@@ -445,18 +785,38 @@ export const getGetSurvivorPicksResponseMock = (): SurvivorPickResponse[] =>
 export const getSubmitSurvivorPickResponseMock = (
   overrideResponse: Partial<SurvivorPickResponse> = {},
 ): SurvivorPickResponse => ({
-  id: faker.number.int({ min: undefined, max: undefined }),
-  user_id: faker.number.int({ min: undefined, max: undefined }),
+  id: faker.number.int({
+    min: undefined,
+    max: undefined,
+    multipleOf: undefined,
+  }),
+  user_id: faker.number.int({
+    min: undefined,
+    max: undefined,
+    multipleOf: undefined,
+  }),
   user: faker.helpers.arrayElement([
     {
-      id: faker.number.int({ min: undefined, max: undefined }),
+      id: faker.number.int({
+        min: undefined,
+        max: undefined,
+        multipleOf: undefined,
+      }),
       name: faker.string.alpha({ length: { min: 10, max: 20 } }),
       email: faker.string.alpha({ length: { min: 10, max: 20 } }),
       role: faker.string.alpha({ length: { min: 10, max: 20 } }),
       player: faker.helpers.arrayElement([
         {
-          id: faker.number.int({ min: undefined, max: undefined }),
-          user_id: faker.number.int({ min: undefined, max: undefined }),
+          id: faker.number.int({
+            min: undefined,
+            max: undefined,
+            multipleOf: undefined,
+          }),
+          user_id: faker.number.int({
+            min: undefined,
+            max: undefined,
+            multipleOf: undefined,
+          }),
           name: faker.string.alpha({ length: { min: 10, max: 20 } }),
           address: faker.string.alpha({ length: { min: 10, max: 20 } }),
         },
@@ -467,7 +827,11 @@ export const getSubmitSurvivorPickResponseMock = (
     },
     undefined,
   ]),
-  week: faker.number.int({ min: undefined, max: undefined }),
+  week: faker.number.int({
+    min: undefined,
+    max: undefined,
+    multipleOf: undefined,
+  }),
   team: faker.string.alpha({ length: { min: 10, max: 20 } }),
   created_at: `${faker.date.past().toISOString().split(".")[0]}Z`,
   updated_at: `${faker.date.past().toISOString().split(".")[0]}Z`,
@@ -481,29 +845,65 @@ export const getDebugGetUsersResponseMock = (
     { length: faker.number.int({ min: 1, max: 10 }) },
     (_, i) => i + 1,
   ).map(() => ({
-    id: faker.number.int({ min: undefined, max: undefined }),
+    id: faker.number.int({
+      min: undefined,
+      max: undefined,
+      multipleOf: undefined,
+    }),
     name: faker.string.alpha({ length: { min: 10, max: 20 } }),
     email: faker.string.alpha({ length: { min: 10, max: 20 } }),
     role: faker.string.alpha({ length: { min: 10, max: 20 } }),
     player: faker.helpers.arrayElement([
       {
-        id: faker.number.int({ min: undefined, max: undefined }),
-        user_id: faker.number.int({ min: undefined, max: undefined }),
+        id: faker.number.int({
+          min: undefined,
+          max: undefined,
+          multipleOf: undefined,
+        }),
+        user_id: faker.number.int({
+          min: undefined,
+          max: undefined,
+          multipleOf: undefined,
+        }),
         name: faker.string.alpha({ length: { min: 10, max: 20 } }),
         address: faker.string.alpha({ length: { min: 10, max: 20 } }),
       },
       undefined,
     ]),
-    pick_count: faker.number.int({ min: undefined, max: undefined }),
-    total_wins: faker.number.int({ min: undefined, max: undefined }),
+    pick_count: faker.number.int({
+      min: undefined,
+      max: undefined,
+      multipleOf: undefined,
+    }),
+    total_wins: faker.number.int({
+      min: undefined,
+      max: undefined,
+      multipleOf: undefined,
+    }),
     created_at: `${faker.date.past().toISOString().split(".")[0]}Z`,
     updated_at: `${faker.date.past().toISOString().split(".")[0]}Z`,
   })),
   pagination: {
-    page: faker.number.int({ min: undefined, max: undefined }),
-    limit: faker.number.int({ min: undefined, max: undefined }),
-    total: faker.number.int({ min: undefined, max: undefined }),
-    pages: faker.number.int({ min: undefined, max: undefined }),
+    page: faker.number.int({
+      min: undefined,
+      max: undefined,
+      multipleOf: undefined,
+    }),
+    limit: faker.number.int({
+      min: undefined,
+      max: undefined,
+      multipleOf: undefined,
+    }),
+    total: faker.number.int({
+      min: undefined,
+      max: undefined,
+      multipleOf: undefined,
+    }),
+    pages: faker.number.int({
+      min: undefined,
+      max: undefined,
+      multipleOf: undefined,
+    }),
   },
   ...overrideResponse,
 });
@@ -515,9 +915,21 @@ export const getAdminListGamesResponseMock = (
     { length: faker.number.int({ min: 1, max: 10 }) },
     (_, i) => i + 1,
   ).map(() => ({
-    id: faker.number.int({ min: undefined, max: undefined }),
-    week: faker.number.int({ min: undefined, max: undefined }),
-    season: faker.number.int({ min: undefined, max: undefined }),
+    id: faker.number.int({
+      min: undefined,
+      max: undefined,
+      multipleOf: undefined,
+    }),
+    week: faker.number.int({
+      min: undefined,
+      max: undefined,
+      multipleOf: undefined,
+    }),
+    season: faker.number.int({
+      min: undefined,
+      max: undefined,
+      multipleOf: undefined,
+    }),
     favorite_team: faker.string.alpha({ length: { min: 10, max: 20 } }),
     underdog_team: faker.string.alpha({ length: { min: 10, max: 20 } }),
     spread: faker.number.float({
@@ -525,14 +937,31 @@ export const getAdminListGamesResponseMock = (
       max: undefined,
       fractionDigits: 2,
     }),
+    start_time: `${faker.date.past().toISOString().split(".")[0]}Z`,
     created_at: `${faker.date.past().toISOString().split(".")[0]}Z`,
     updated_at: `${faker.date.past().toISOString().split(".")[0]}Z`,
   })),
   pagination: {
-    page: faker.number.int({ min: undefined, max: undefined }),
-    limit: faker.number.int({ min: undefined, max: undefined }),
-    total: faker.number.int({ min: undefined, max: undefined }),
-    pages: faker.number.int({ min: undefined, max: undefined }),
+    page: faker.number.int({
+      min: undefined,
+      max: undefined,
+      multipleOf: undefined,
+    }),
+    limit: faker.number.int({
+      min: undefined,
+      max: undefined,
+      multipleOf: undefined,
+    }),
+    total: faker.number.int({
+      min: undefined,
+      max: undefined,
+      multipleOf: undefined,
+    }),
+    pages: faker.number.int({
+      min: undefined,
+      max: undefined,
+      multipleOf: undefined,
+    }),
   },
   ...overrideResponse,
 });
@@ -540,9 +969,21 @@ export const getAdminListGamesResponseMock = (
 export const getUpdateGameResponseMock = (
   overrideResponse: Partial<GameResponse> = {},
 ): GameResponse => ({
-  id: faker.number.int({ min: undefined, max: undefined }),
-  week: faker.number.int({ min: undefined, max: undefined }),
-  season: faker.number.int({ min: undefined, max: undefined }),
+  id: faker.number.int({
+    min: undefined,
+    max: undefined,
+    multipleOf: undefined,
+  }),
+  week: faker.number.int({
+    min: undefined,
+    max: undefined,
+    multipleOf: undefined,
+  }),
+  season: faker.number.int({
+    min: undefined,
+    max: undefined,
+    multipleOf: undefined,
+  }),
   favorite_team: faker.string.alpha({ length: { min: 10, max: 20 } }),
   underdog_team: faker.string.alpha({ length: { min: 10, max: 20 } }),
   spread: faker.number.float({
@@ -550,6 +991,7 @@ export const getUpdateGameResponseMock = (
     max: undefined,
     fractionDigits: 2,
   }),
+  start_time: `${faker.date.past().toISOString().split(".")[0]}Z`,
   created_at: `${faker.date.past().toISOString().split(".")[0]}Z`,
   updated_at: `${faker.date.past().toISOString().split(".")[0]}Z`,
   ...overrideResponse,
@@ -562,18 +1004,38 @@ export const getAdminListPicksResponseMock = (
     { length: faker.number.int({ min: 1, max: 10 }) },
     (_, i) => i + 1,
   ).map(() => ({
-    id: faker.number.int({ min: undefined, max: undefined }),
-    user_id: faker.number.int({ min: undefined, max: undefined }),
+    id: faker.number.int({
+      min: undefined,
+      max: undefined,
+      multipleOf: undefined,
+    }),
+    user_id: faker.number.int({
+      min: undefined,
+      max: undefined,
+      multipleOf: undefined,
+    }),
     user: faker.helpers.arrayElement([
       {
-        id: faker.number.int({ min: undefined, max: undefined }),
+        id: faker.number.int({
+          min: undefined,
+          max: undefined,
+          multipleOf: undefined,
+        }),
         name: faker.string.alpha({ length: { min: 10, max: 20 } }),
         email: faker.string.alpha({ length: { min: 10, max: 20 } }),
         role: faker.string.alpha({ length: { min: 10, max: 20 } }),
         player: faker.helpers.arrayElement([
           {
-            id: faker.number.int({ min: undefined, max: undefined }),
-            user_id: faker.number.int({ min: undefined, max: undefined }),
+            id: faker.number.int({
+              min: undefined,
+              max: undefined,
+              multipleOf: undefined,
+            }),
+            user_id: faker.number.int({
+              min: undefined,
+              max: undefined,
+              multipleOf: undefined,
+            }),
             name: faker.string.alpha({ length: { min: 10, max: 20 } }),
             address: faker.string.alpha({ length: { min: 10, max: 20 } }),
           },
@@ -584,12 +1046,28 @@ export const getAdminListPicksResponseMock = (
       },
       undefined,
     ]),
-    game_id: faker.number.int({ min: undefined, max: undefined }),
+    game_id: faker.number.int({
+      min: undefined,
+      max: undefined,
+      multipleOf: undefined,
+    }),
     game: faker.helpers.arrayElement([
       {
-        id: faker.number.int({ min: undefined, max: undefined }),
-        week: faker.number.int({ min: undefined, max: undefined }),
-        season: faker.number.int({ min: undefined, max: undefined }),
+        id: faker.number.int({
+          min: undefined,
+          max: undefined,
+          multipleOf: undefined,
+        }),
+        week: faker.number.int({
+          min: undefined,
+          max: undefined,
+          multipleOf: undefined,
+        }),
+        season: faker.number.int({
+          min: undefined,
+          max: undefined,
+          multipleOf: undefined,
+        }),
         favorite_team: faker.string.alpha({ length: { min: 10, max: 20 } }),
         underdog_team: faker.string.alpha({ length: { min: 10, max: 20 } }),
         spread: faker.number.float({
@@ -597,22 +1075,43 @@ export const getAdminListPicksResponseMock = (
           max: undefined,
           fractionDigits: 2,
         }),
+        start_time: `${faker.date.past().toISOString().split(".")[0]}Z`,
         created_at: `${faker.date.past().toISOString().split(".")[0]}Z`,
         updated_at: `${faker.date.past().toISOString().split(".")[0]}Z`,
       },
       undefined,
     ]),
     picked: faker.string.alpha({ length: { min: 10, max: 20 } }),
-    rank: faker.number.int({ min: undefined, max: undefined }),
+    rank: faker.number.int({
+      min: undefined,
+      max: undefined,
+      multipleOf: undefined,
+    }),
     quick_pick: faker.datatype.boolean(),
     created_at: `${faker.date.past().toISOString().split(".")[0]}Z`,
     updated_at: `${faker.date.past().toISOString().split(".")[0]}Z`,
   })),
   pagination: {
-    page: faker.number.int({ min: undefined, max: undefined }),
-    limit: faker.number.int({ min: undefined, max: undefined }),
-    total: faker.number.int({ min: undefined, max: undefined }),
-    pages: faker.number.int({ min: undefined, max: undefined }),
+    page: faker.number.int({
+      min: undefined,
+      max: undefined,
+      multipleOf: undefined,
+    }),
+    limit: faker.number.int({
+      min: undefined,
+      max: undefined,
+      multipleOf: undefined,
+    }),
+    total: faker.number.int({
+      min: undefined,
+      max: undefined,
+      multipleOf: undefined,
+    }),
+    pages: faker.number.int({
+      min: undefined,
+      max: undefined,
+      multipleOf: undefined,
+    }),
   },
   ...overrideResponse,
 });
@@ -624,18 +1123,38 @@ export const getAdminGetPicksByWeekResponseMock = (
     { length: faker.number.int({ min: 1, max: 10 }) },
     (_, i) => i + 1,
   ).map(() => ({
-    id: faker.number.int({ min: undefined, max: undefined }),
-    user_id: faker.number.int({ min: undefined, max: undefined }),
+    id: faker.number.int({
+      min: undefined,
+      max: undefined,
+      multipleOf: undefined,
+    }),
+    user_id: faker.number.int({
+      min: undefined,
+      max: undefined,
+      multipleOf: undefined,
+    }),
     user: faker.helpers.arrayElement([
       {
-        id: faker.number.int({ min: undefined, max: undefined }),
+        id: faker.number.int({
+          min: undefined,
+          max: undefined,
+          multipleOf: undefined,
+        }),
         name: faker.string.alpha({ length: { min: 10, max: 20 } }),
         email: faker.string.alpha({ length: { min: 10, max: 20 } }),
         role: faker.string.alpha({ length: { min: 10, max: 20 } }),
         player: faker.helpers.arrayElement([
           {
-            id: faker.number.int({ min: undefined, max: undefined }),
-            user_id: faker.number.int({ min: undefined, max: undefined }),
+            id: faker.number.int({
+              min: undefined,
+              max: undefined,
+              multipleOf: undefined,
+            }),
+            user_id: faker.number.int({
+              min: undefined,
+              max: undefined,
+              multipleOf: undefined,
+            }),
             name: faker.string.alpha({ length: { min: 10, max: 20 } }),
             address: faker.string.alpha({ length: { min: 10, max: 20 } }),
           },
@@ -646,12 +1165,28 @@ export const getAdminGetPicksByWeekResponseMock = (
       },
       undefined,
     ]),
-    game_id: faker.number.int({ min: undefined, max: undefined }),
+    game_id: faker.number.int({
+      min: undefined,
+      max: undefined,
+      multipleOf: undefined,
+    }),
     game: faker.helpers.arrayElement([
       {
-        id: faker.number.int({ min: undefined, max: undefined }),
-        week: faker.number.int({ min: undefined, max: undefined }),
-        season: faker.number.int({ min: undefined, max: undefined }),
+        id: faker.number.int({
+          min: undefined,
+          max: undefined,
+          multipleOf: undefined,
+        }),
+        week: faker.number.int({
+          min: undefined,
+          max: undefined,
+          multipleOf: undefined,
+        }),
+        season: faker.number.int({
+          min: undefined,
+          max: undefined,
+          multipleOf: undefined,
+        }),
         favorite_team: faker.string.alpha({ length: { min: 10, max: 20 } }),
         underdog_team: faker.string.alpha({ length: { min: 10, max: 20 } }),
         spread: faker.number.float({
@@ -659,22 +1194,43 @@ export const getAdminGetPicksByWeekResponseMock = (
           max: undefined,
           fractionDigits: 2,
         }),
+        start_time: `${faker.date.past().toISOString().split(".")[0]}Z`,
         created_at: `${faker.date.past().toISOString().split(".")[0]}Z`,
         updated_at: `${faker.date.past().toISOString().split(".")[0]}Z`,
       },
       undefined,
     ]),
     picked: faker.string.alpha({ length: { min: 10, max: 20 } }),
-    rank: faker.number.int({ min: undefined, max: undefined }),
+    rank: faker.number.int({
+      min: undefined,
+      max: undefined,
+      multipleOf: undefined,
+    }),
     quick_pick: faker.datatype.boolean(),
     created_at: `${faker.date.past().toISOString().split(".")[0]}Z`,
     updated_at: `${faker.date.past().toISOString().split(".")[0]}Z`,
   })),
   pagination: {
-    page: faker.number.int({ min: undefined, max: undefined }),
-    limit: faker.number.int({ min: undefined, max: undefined }),
-    total: faker.number.int({ min: undefined, max: undefined }),
-    pages: faker.number.int({ min: undefined, max: undefined }),
+    page: faker.number.int({
+      min: undefined,
+      max: undefined,
+      multipleOf: undefined,
+    }),
+    limit: faker.number.int({
+      min: undefined,
+      max: undefined,
+      multipleOf: undefined,
+    }),
+    total: faker.number.int({
+      min: undefined,
+      max: undefined,
+      multipleOf: undefined,
+    }),
+    pages: faker.number.int({
+      min: undefined,
+      max: undefined,
+      multipleOf: undefined,
+    }),
   },
   ...overrideResponse,
 });
@@ -686,18 +1242,38 @@ export const getAdminGetPicksByUserResponseMock = (
     { length: faker.number.int({ min: 1, max: 10 }) },
     (_, i) => i + 1,
   ).map(() => ({
-    id: faker.number.int({ min: undefined, max: undefined }),
-    user_id: faker.number.int({ min: undefined, max: undefined }),
+    id: faker.number.int({
+      min: undefined,
+      max: undefined,
+      multipleOf: undefined,
+    }),
+    user_id: faker.number.int({
+      min: undefined,
+      max: undefined,
+      multipleOf: undefined,
+    }),
     user: faker.helpers.arrayElement([
       {
-        id: faker.number.int({ min: undefined, max: undefined }),
+        id: faker.number.int({
+          min: undefined,
+          max: undefined,
+          multipleOf: undefined,
+        }),
         name: faker.string.alpha({ length: { min: 10, max: 20 } }),
         email: faker.string.alpha({ length: { min: 10, max: 20 } }),
         role: faker.string.alpha({ length: { min: 10, max: 20 } }),
         player: faker.helpers.arrayElement([
           {
-            id: faker.number.int({ min: undefined, max: undefined }),
-            user_id: faker.number.int({ min: undefined, max: undefined }),
+            id: faker.number.int({
+              min: undefined,
+              max: undefined,
+              multipleOf: undefined,
+            }),
+            user_id: faker.number.int({
+              min: undefined,
+              max: undefined,
+              multipleOf: undefined,
+            }),
             name: faker.string.alpha({ length: { min: 10, max: 20 } }),
             address: faker.string.alpha({ length: { min: 10, max: 20 } }),
           },
@@ -708,12 +1284,28 @@ export const getAdminGetPicksByUserResponseMock = (
       },
       undefined,
     ]),
-    game_id: faker.number.int({ min: undefined, max: undefined }),
+    game_id: faker.number.int({
+      min: undefined,
+      max: undefined,
+      multipleOf: undefined,
+    }),
     game: faker.helpers.arrayElement([
       {
-        id: faker.number.int({ min: undefined, max: undefined }),
-        week: faker.number.int({ min: undefined, max: undefined }),
-        season: faker.number.int({ min: undefined, max: undefined }),
+        id: faker.number.int({
+          min: undefined,
+          max: undefined,
+          multipleOf: undefined,
+        }),
+        week: faker.number.int({
+          min: undefined,
+          max: undefined,
+          multipleOf: undefined,
+        }),
+        season: faker.number.int({
+          min: undefined,
+          max: undefined,
+          multipleOf: undefined,
+        }),
         favorite_team: faker.string.alpha({ length: { min: 10, max: 20 } }),
         underdog_team: faker.string.alpha({ length: { min: 10, max: 20 } }),
         spread: faker.number.float({
@@ -721,22 +1313,43 @@ export const getAdminGetPicksByUserResponseMock = (
           max: undefined,
           fractionDigits: 2,
         }),
+        start_time: `${faker.date.past().toISOString().split(".")[0]}Z`,
         created_at: `${faker.date.past().toISOString().split(".")[0]}Z`,
         updated_at: `${faker.date.past().toISOString().split(".")[0]}Z`,
       },
       undefined,
     ]),
     picked: faker.string.alpha({ length: { min: 10, max: 20 } }),
-    rank: faker.number.int({ min: undefined, max: undefined }),
+    rank: faker.number.int({
+      min: undefined,
+      max: undefined,
+      multipleOf: undefined,
+    }),
     quick_pick: faker.datatype.boolean(),
     created_at: `${faker.date.past().toISOString().split(".")[0]}Z`,
     updated_at: `${faker.date.past().toISOString().split(".")[0]}Z`,
   })),
   pagination: {
-    page: faker.number.int({ min: undefined, max: undefined }),
-    limit: faker.number.int({ min: undefined, max: undefined }),
-    total: faker.number.int({ min: undefined, max: undefined }),
-    pages: faker.number.int({ min: undefined, max: undefined }),
+    page: faker.number.int({
+      min: undefined,
+      max: undefined,
+      multipleOf: undefined,
+    }),
+    limit: faker.number.int({
+      min: undefined,
+      max: undefined,
+      multipleOf: undefined,
+    }),
+    total: faker.number.int({
+      min: undefined,
+      max: undefined,
+      multipleOf: undefined,
+    }),
+    pages: faker.number.int({
+      min: undefined,
+      max: undefined,
+      multipleOf: undefined,
+    }),
   },
   ...overrideResponse,
 });
@@ -748,29 +1361,65 @@ export const getAdminListUsersResponseMock = (
     { length: faker.number.int({ min: 1, max: 10 }) },
     (_, i) => i + 1,
   ).map(() => ({
-    id: faker.number.int({ min: undefined, max: undefined }),
+    id: faker.number.int({
+      min: undefined,
+      max: undefined,
+      multipleOf: undefined,
+    }),
     name: faker.string.alpha({ length: { min: 10, max: 20 } }),
     email: faker.string.alpha({ length: { min: 10, max: 20 } }),
     role: faker.string.alpha({ length: { min: 10, max: 20 } }),
     player: faker.helpers.arrayElement([
       {
-        id: faker.number.int({ min: undefined, max: undefined }),
-        user_id: faker.number.int({ min: undefined, max: undefined }),
+        id: faker.number.int({
+          min: undefined,
+          max: undefined,
+          multipleOf: undefined,
+        }),
+        user_id: faker.number.int({
+          min: undefined,
+          max: undefined,
+          multipleOf: undefined,
+        }),
         name: faker.string.alpha({ length: { min: 10, max: 20 } }),
         address: faker.string.alpha({ length: { min: 10, max: 20 } }),
       },
       undefined,
     ]),
-    pick_count: faker.number.int({ min: undefined, max: undefined }),
-    total_wins: faker.number.int({ min: undefined, max: undefined }),
+    pick_count: faker.number.int({
+      min: undefined,
+      max: undefined,
+      multipleOf: undefined,
+    }),
+    total_wins: faker.number.int({
+      min: undefined,
+      max: undefined,
+      multipleOf: undefined,
+    }),
     created_at: `${faker.date.past().toISOString().split(".")[0]}Z`,
     updated_at: `${faker.date.past().toISOString().split(".")[0]}Z`,
   })),
   pagination: {
-    page: faker.number.int({ min: undefined, max: undefined }),
-    limit: faker.number.int({ min: undefined, max: undefined }),
-    total: faker.number.int({ min: undefined, max: undefined }),
-    pages: faker.number.int({ min: undefined, max: undefined }),
+    page: faker.number.int({
+      min: undefined,
+      max: undefined,
+      multipleOf: undefined,
+    }),
+    limit: faker.number.int({
+      min: undefined,
+      max: undefined,
+      multipleOf: undefined,
+    }),
+    total: faker.number.int({
+      min: undefined,
+      max: undefined,
+      multipleOf: undefined,
+    }),
+    pages: faker.number.int({
+      min: undefined,
+      max: undefined,
+      multipleOf: undefined,
+    }),
   },
   ...overrideResponse,
 });
@@ -778,14 +1427,26 @@ export const getAdminListUsersResponseMock = (
 export const getAdminGetUserResponseMock = (
   overrideResponse: Partial<UserResponse> = {},
 ): UserResponse => ({
-  id: faker.number.int({ min: undefined, max: undefined }),
+  id: faker.number.int({
+    min: undefined,
+    max: undefined,
+    multipleOf: undefined,
+  }),
   name: faker.string.alpha({ length: { min: 10, max: 20 } }),
   email: faker.string.alpha({ length: { min: 10, max: 20 } }),
   role: faker.string.alpha({ length: { min: 10, max: 20 } }),
   player: faker.helpers.arrayElement([
     {
-      id: faker.number.int({ min: undefined, max: undefined }),
-      user_id: faker.number.int({ min: undefined, max: undefined }),
+      id: faker.number.int({
+        min: undefined,
+        max: undefined,
+        multipleOf: undefined,
+      }),
+      user_id: faker.number.int({
+        min: undefined,
+        max: undefined,
+        multipleOf: undefined,
+      }),
       name: faker.string.alpha({ length: { min: 10, max: 20 } }),
       address: faker.string.alpha({ length: { min: 10, max: 20 } }),
     },
@@ -799,14 +1460,26 @@ export const getAdminGetUserResponseMock = (
 export const getAdminUpdateUserResponseMock = (
   overrideResponse: Partial<UserResponse> = {},
 ): UserResponse => ({
-  id: faker.number.int({ min: undefined, max: undefined }),
+  id: faker.number.int({
+    min: undefined,
+    max: undefined,
+    multipleOf: undefined,
+  }),
   name: faker.string.alpha({ length: { min: 10, max: 20 } }),
   email: faker.string.alpha({ length: { min: 10, max: 20 } }),
   role: faker.string.alpha({ length: { min: 10, max: 20 } }),
   player: faker.helpers.arrayElement([
     {
-      id: faker.number.int({ min: undefined, max: undefined }),
-      user_id: faker.number.int({ min: undefined, max: undefined }),
+      id: faker.number.int({
+        min: undefined,
+        max: undefined,
+        multipleOf: undefined,
+      }),
+      user_id: faker.number.int({
+        min: undefined,
+        max: undefined,
+        multipleOf: undefined,
+      }),
       name: faker.string.alpha({ length: { min: 10, max: 20 } }),
       address: faker.string.alpha({ length: { min: 10, max: 20 } }),
     },

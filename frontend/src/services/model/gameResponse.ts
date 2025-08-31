@@ -12,6 +12,7 @@ export interface GameResponse {
   favorite_team: string;
   underdog_team: string;
   spread: number;
+  start_time: string;
   created_at: string;
   updated_at: string;
 }

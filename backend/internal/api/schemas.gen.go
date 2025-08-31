@@ -25,11 +25,12 @@ type GameListResponse struct {
 
 // GameRequest defines model for GameRequest.
 type GameRequest struct {
-	FavoriteTeam string  `json:"favorite_team"`
-	Season       int     `json:"season"`
-	Spread       float32 `json:"spread"`
-	UnderdogTeam string  `json:"underdog_team"`
-	Week         int     `json:"week"`
+	FavoriteTeam string    `json:"favorite_team"`
+	Season       int       `json:"season"`
+	Spread       float32   `json:"spread"`
+	StartTime    time.Time `json:"start_time"`
+	UnderdogTeam string    `json:"underdog_team"`
+	Week         int       `json:"week"`
 }
 
 // GameResponse defines model for GameResponse.
@@ -39,6 +40,7 @@ type GameResponse struct {
 	Id           uint      `json:"id"`
 	Season       int       `json:"season"`
 	Spread       float32   `json:"spread"`
+	StartTime    time.Time `json:"start_time"`
 	UnderdogTeam string    `json:"underdog_team"`
 	UpdatedAt    time.Time `json:"updated_at"`
 	Week         int       `json:"week"`
