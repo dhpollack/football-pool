@@ -72,9 +72,20 @@ func GetGames(db *gorm.DB) http.HandlerFunc {
 		}
 
 		// Convert to API response
-		response := make([]api.GameResponse, len(games))
+		gameResponses := make([]api.GameResponse, len(games))
 		for i, game := range games {
-			response[i] = api.GameToResponse(game)
+			gameResponses[i] = api.GameToResponse(game)
+		}
+
+		// Create proper GameListResponse with pagination
+		response := api.GameListResponse{
+			Games: gameResponses,
+			Pagination: api.PaginationResponse{
+				Limit: len(games),
+				Page:  1,
+				Pages: 1,
+				Total: int64(len(games)),
+			},
 		}
 
 		if err = json.NewEncoder(w).Encode(response); err != nil {
@@ -210,7 +221,7 @@ func UpdateGame(db *gorm.DB) http.HandlerFunc {
 			json.NewEncoder(w).Encode(api.ErrorResponse{Error: "Failed to update game"})
 			return
 		}
-		
+
 		// Return updated game as API response
 		response := api.GameToResponse(existingGame)
 		if err := json.NewEncoder(w).Encode(response); err != nil {

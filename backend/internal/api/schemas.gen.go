@@ -52,6 +52,12 @@ type LoginRequest struct {
 	Password string `json:"password"`
 }
 
+// LoginResponse defines model for LoginResponse.
+type LoginResponse struct {
+	Token string       `json:"token"`
+	User  UserResponse `json:"user"`
+}
+
 // PaginationResponse defines model for PaginationResponse.
 type PaginationResponse struct {
 	Limit int   `json:"limit"`
@@ -109,6 +115,11 @@ type RegisterRequest struct {
 	Name     string  `json:"name"`
 	Password string  `json:"password"`
 	Role     *string `json:"role,omitempty"`
+}
+
+// RegisterResponse defines model for RegisterResponse.
+type RegisterResponse struct {
+	Message string `json:"message"`
 }
 
 // ResultRequest defines model for ResultRequest.

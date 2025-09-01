@@ -8,6 +8,9 @@ import (
 	"net/http/httptest"
 	"testing"
 
+	"time"
+
+	"github.com/david/football-pool/internal/api"
 	"github.com/david/football-pool/internal/database"
 	"github.com/david/football-pool/internal/server"
 	"github.com/stretchr/testify/assert"
@@ -51,20 +54,20 @@ func TestIntegration(t *testing.T) {
 	assert.Equal(t, http.StatusOK, resp.StatusCode)
 
 	// Check the response body
-	var games []database.Game
-	err = json.NewDecoder(resp.Body).Decode(&games)
+	var gameListResponse api.GameListResponse
+	err = json.NewDecoder(resp.Body).Decode(&gameListResponse)
 	assert.NoError(t, err)
-	assert.Len(t, games, 2)
-	assert.Equal(t, "Team A", games[0].FavoriteTeam)
-	assert.Equal(t, "Team C", games[1].FavoriteTeam)
+	assert.Len(t, gameListResponse.Games, 2)
+	assert.Equal(t, "Team A", gameListResponse.Games[0].FavoriteTeam)
+	assert.Equal(t, "Team C", gameListResponse.Games[1].FavoriteTeam)
 }
 
 func createUser(t *testing.T, ts *httptest.Server, name, email, password, role string) {
-	user := map[string]string{
-		"name":     name,
-		"email":    email,
-		"password": password,
-		"role":     role,
+	user := api.RegisterRequest{
+		Name:     name,
+		Email:    email,
+		Password: password,
+		Role:     &role,
 	}
 	body, _ := json.Marshal(user)
 	req, _ := http.NewRequest("POST", ts.URL+"/api/register", bytes.NewBuffer(body))
@@ -86,9 +89,9 @@ func createUser(t *testing.T, ts *httptest.Server, name, email, password, role s
 }
 
 func loginUser(t *testing.T, ts *httptest.Server, email, password string) string {
-	loginData := map[string]string{
-		"email":    email,
-		"password": password,
+	loginData := api.LoginRequest{
+		Email:    email,
+		Password: password,
 	}
 	body, _ := json.Marshal(loginData)
 	req, _ := http.NewRequest("POST", ts.URL+"/api/login", bytes.NewBuffer(body))
@@ -99,18 +102,18 @@ func loginUser(t *testing.T, ts *httptest.Server, email, password string) string
 	assert.NoError(t, err)
 	assert.Equal(t, http.StatusOK, resp.StatusCode)
 
-	var tokenMap map[string]string
-	err = json.NewDecoder(resp.Body).Decode(&tokenMap)
+	var loginResponse api.LoginResponse
+	err = json.NewDecoder(resp.Body).Decode(&loginResponse)
 	if err != nil {
 		t.Fatalf("Failed to decode login response: %v", err)
 	}
-	return tokenMap["token"]
+	return loginResponse.Token
 }
 
 func createGames(t *testing.T, ts *httptest.Server, token string) {
-	games := []database.Game{
-		{Week: 1, Season: 2023, FavoriteTeam: "Team A", UnderdogTeam: "Team B", Spread: 3.5},
-		{Week: 1, Season: 2023, FavoriteTeam: "Team C", UnderdogTeam: "Team D", Spread: 7.0},
+	games := []api.GameRequest{
+		{Week: 1, Season: 2023, FavoriteTeam: "Team A", UnderdogTeam: "Team B", Spread: 3.5, StartTime: time.Now()},
+		{Week: 1, Season: 2023, FavoriteTeam: "Team C", UnderdogTeam: "Team D", Spread: 7.0, StartTime: time.Now()},
 	}
 	body, _ := json.Marshal(games)
 	req, _ := http.NewRequest("POST", ts.URL+"/api/games/create", bytes.NewBuffer(body))
@@ -124,9 +127,9 @@ func createGames(t *testing.T, ts *httptest.Server, token string) {
 }
 
 func submitPicks(t *testing.T, ts *httptest.Server, token string) {
-	picks := []database.Pick{
-		{UserID: 1, GameID: 1, Picked: "favorite", Rank: 1},
-		{UserID: 1, GameID: 2, Picked: "underdog", Rank: 2},
+	picks := []api.PickRequest{
+		{GameId: 1, Picked: "favorite", Rank: 1, QuickPick: false},
+		{GameId: 2, Picked: "underdog", Rank: 2, QuickPick: false},
 	}
 	body, _ := json.Marshal(picks)
 	req, _ := http.NewRequest("POST", ts.URL+"/api/admin/picks/submit", bytes.NewBuffer(body))

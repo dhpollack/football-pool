@@ -11,6 +11,7 @@ import (
 	"strings"
 	"time"
 
+	"github.com/david/football-pool/internal/api"
 	"github.com/david/football-pool/internal/database"
 	"github.com/golang-jwt/jwt/v5"
 	"golang.org/x/crypto/bcrypt"
@@ -32,10 +33,7 @@ type Claims struct {
 }
 
 func (a *Auth) Login(w http.ResponseWriter, r *http.Request) {
-	var creds struct {
-		Email    string `json:"email"`
-		Password string `json:"password"`
-	}
+	var creds api.LoginRequest
 	if err := json.NewDecoder(r.Body).Decode(&creds); err != nil {
 		w.WriteHeader(http.StatusBadRequest)
 		return
@@ -84,7 +82,17 @@ func (a *Auth) Login(w http.ResponseWriter, r *http.Request) {
 	})
 
 	w.Header().Set("Content-Type", "application/json")
-	if err := json.NewEncoder(w).Encode(map[string]string{"token": tokenString}); err != nil {
+	if err := json.NewEncoder(w).Encode(api.LoginResponse{
+		Token: tokenString,
+		User: api.UserResponse{
+			Id:        user.ID,
+			Name:      user.Name,
+			Email:     user.Email,
+			Role:      user.Role,
+			CreatedAt: user.CreatedAt,
+			UpdatedAt: user.UpdatedAt,
+		},
+	}); err != nil {
 		slog.Debug("Error encoding token response:", "error", err)
 		w.WriteHeader(http.StatusInternalServerError)
 		return
@@ -92,12 +100,7 @@ func (a *Auth) Login(w http.ResponseWriter, r *http.Request) {
 }
 
 func (a *Auth) Register(w http.ResponseWriter, r *http.Request) {
-	var creds struct {
-		Name     string `json:"name"`
-		Email    string `json:"email"`
-		Password string `json:"password"`
-		Role     string `json:"role"`
-	}
+	var creds api.RegisterRequest
 	// Read the request body into a byte slice for logging
 	bodyBytes, err := io.ReadAll(r.Body)
 	if err != nil {
@@ -130,12 +133,13 @@ func (a *Auth) Register(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	if creds.Role == "" {
-		creds.Role = "player"
+	if creds.Role == nil || *creds.Role == "" {
+		role := "player"
+		creds.Role = &role
 	}
 
 	slog.Debug("Hashed password:", "hash", string(hashedPassword))
-	user := database.User{Name: creds.Name, Email: creds.Email, Password: string(hashedPassword), Role: creds.Role}
+	user := database.User{Name: creds.Name, Email: creds.Email, Password: string(hashedPassword), Role: *creds.Role}
 	if result := a.db.GetDB().Create(&user); result.Error != nil {
 		slog.Debug("Error creating user:", "error", result.Error)
 		w.WriteHeader(http.StatusInternalServerError)
@@ -159,7 +163,9 @@ func (a *Auth) Register(w http.ResponseWriter, r *http.Request) {
 	slog.Debug("User and player registered successfully:", "email", creds.Email)
 	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(http.StatusCreated)
-	if err := json.NewEncoder(w).Encode(map[string]string{"message": "User registered successfully"}); err != nil {
+	if err := json.NewEncoder(w).Encode(api.RegisterResponse{
+		Message: "User registered successfully",
+	}); err != nil {
 		slog.Debug("Error encoding registration response:", "error", err)
 		w.WriteHeader(http.StatusInternalServerError)
 		return
@@ -194,13 +200,17 @@ func (a *Auth) Middleware(next http.Handler) http.Handler {
 				w.Header().Set("Content-Type", "application/json")
 				if err == http.ErrNoCookie {
 					w.WriteHeader(http.StatusUnauthorized)
-					if err := json.NewEncoder(w).Encode(map[string]string{"error": "Unauthorized: No token provided"}); err != nil {
+					if err := json.NewEncoder(w).Encode(api.ErrorResponse{
+					Error: "Unauthorized: No token provided",
+				}); err != nil {
 						slog.Debug("Error encoding error response:", "error", err)
 					}
 					return
 				}
 				w.WriteHeader(http.StatusBadRequest)
-				if err := json.NewEncoder(w).Encode(map[string]string{"error": "Bad Request: Invalid token cookie"}); err != nil {
+				if err := json.NewEncoder(w).Encode(api.ErrorResponse{
+				Error: "Bad Request: Invalid token cookie",
+			}); err != nil {
 					slog.Debug("Error encoding error response:", "error", err)
 				}
 				return
@@ -217,20 +227,26 @@ func (a *Auth) Middleware(next http.Handler) http.Handler {
 			w.Header().Set("Content-Type", "application/json")
 			if errors.Is(err, jwt.ErrSignatureInvalid) {
 				w.WriteHeader(http.StatusUnauthorized)
-				if err := json.NewEncoder(w).Encode(map[string]string{"error": "Unauthorized: Invalid token signature"}); err != nil {
+				if err := json.NewEncoder(w).Encode(api.ErrorResponse{
+					Error: "Unauthorized: Invalid token signature",
+				}); err != nil {
 					slog.Debug("Error encoding error response:", "error", err)
 				}
 				return
 			}
 			if errors.Is(err, jwt.ErrTokenExpired) {
 				w.WriteHeader(http.StatusUnauthorized)
-				if err := json.NewEncoder(w).Encode(map[string]string{"error": "Unauthorized: Token expired"}); err != nil {
+				if err := json.NewEncoder(w).Encode(api.ErrorResponse{
+					Error: "Unauthorized: Token expired",
+				}); err != nil {
 					slog.Debug("Error encoding error response:", "error", err)
 				}
 				return
 			}
 			w.WriteHeader(http.StatusBadRequest)
-			if err := json.NewEncoder(w).Encode(map[string]string{"error": "Bad Request: Invalid token"}); err != nil {
+			if err := json.NewEncoder(w).Encode(api.ErrorResponse{
+				Error: "Bad Request: Invalid token",
+			}); err != nil {
 				slog.Debug("Error encoding error response:", "error", err)
 			}
 			return
@@ -238,7 +254,9 @@ func (a *Auth) Middleware(next http.Handler) http.Handler {
 		if !tkn.Valid {
 			w.Header().Set("Content-Type", "application/json")
 			w.WriteHeader(http.StatusUnauthorized)
-			if err := json.NewEncoder(w).Encode(map[string]string{"error": "Unauthorized: Invalid token"}); err != nil {
+			if err := json.NewEncoder(w).Encode(api.ErrorResponse{
+				Error: "Unauthorized: Invalid token",
+			}); err != nil {
 				slog.Debug("Error encoding error response:", "error", err)
 			}
 			return
@@ -257,7 +275,9 @@ func (a *Auth) AdminMiddleware(next http.Handler) http.Handler {
 		if result := a.db.GetDB().Where("email = ?", email).First(&user); result.Error != nil {
 			w.Header().Set("Content-Type", "application/json")
 			w.WriteHeader(http.StatusNotFound)
-			if err := json.NewEncoder(w).Encode(map[string]string{"error": "Not Found: User not found"}); err != nil {
+			if err := json.NewEncoder(w).Encode(api.ErrorResponse{
+				Error: "Not Found: User not found",
+			}); err != nil {
 				slog.Debug("Error encoding error response:", "error", err)
 			}
 			return
@@ -266,7 +286,9 @@ func (a *Auth) AdminMiddleware(next http.Handler) http.Handler {
 		if user.Role != "admin" {
 			w.Header().Set("Content-Type", "application/json")
 			w.WriteHeader(http.StatusForbidden)
-			if err := json.NewEncoder(w).Encode(map[string]string{"error": "Forbidden: User is not an admin"}); err != nil {
+			if err := json.NewEncoder(w).Encode(api.ErrorResponse{
+				Error: "Forbidden: User is not an admin",
+			}); err != nil {
 				slog.Debug("Error encoding error response:", "error", err)
 			}
 			return
