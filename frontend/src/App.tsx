@@ -1,6 +1,6 @@
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
-import AuthProvider from 'react-auth-kit/AuthProvider';
-import { authStore } from './lib/auth';
+import AuthProvider from "react-auth-kit/AuthProvider";
+import { authStore } from "./lib/auth";
 import Layout from "./components/Layout";
 import ErrorBoundary from "./components/ErrorBoundary";
 import QueryErrorBoundary from "./components/QueryErrorBoundary";

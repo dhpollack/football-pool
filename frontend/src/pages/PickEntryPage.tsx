@@ -43,11 +43,13 @@ const PickEntryPage = () => {
     useSubmitPicks();
 
   const games = gamesData?.games || [];
-  const sortedGames = React.useMemo(() => 
-    [...games].sort((a, b) => 
-      new Date(a.start_time).getTime() - new Date(b.start_time).getTime()
-    ),
-    [games]
+  const sortedGames = React.useMemo(
+    () =>
+      [...games].sort(
+        (a, b) =>
+          new Date(a.start_time).getTime() - new Date(b.start_time).getTime(),
+      ),
+    [games],
   );
 
   // Initialize picks when games load

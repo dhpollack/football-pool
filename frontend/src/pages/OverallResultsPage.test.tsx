@@ -38,10 +38,28 @@ describe("OverallResultsPage", () => {
   it("renders the results", async () => {
     const mockUsersData = {
       users: [
-        { id: 1, name: "Player 1", total_wins: 100, pick_count: 10, email: "player1@test.com", role: "user", created_at: "", updated_at: "" },
-        { id: 2, name: "Player 2", total_wins: 90, pick_count: 8, email: "player2@test.com", role: "user", created_at: "", updated_at: "" },
+        {
+          id: 1,
+          name: "Player 1",
+          total_wins: 100,
+          pick_count: 10,
+          email: "player1@test.com",
+          role: "user",
+          created_at: "",
+          updated_at: "",
+        },
+        {
+          id: 2,
+          name: "Player 2",
+          total_wins: 90,
+          pick_count: 8,
+          email: "player2@test.com",
+          role: "user",
+          created_at: "",
+          updated_at: "",
+        },
       ],
-      pagination: { total: 2, page: 1, per_page: 10, total_pages: 1 }
+      pagination: { total: 2, page: 1, per_page: 10, total_pages: 1 },
     };
 
     vi.mocked(useDebugGetUsers).mockReturnValue({

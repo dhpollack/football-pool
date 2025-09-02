@@ -29,3 +29,5 @@ export * from "./userListResponse";
 export * from "./userRequest";
 export * from "./userResponse";
 export * from "./userWithStats";
+export * from "./loginResponse";
+export * from "./registerResponse";

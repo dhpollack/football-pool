@@ -6,10 +6,10 @@ test.describe("Main Page", () => {
   }) => {
     // Navigate to the home page
     await page.goto("/");
-    
+
     // Wait for the React app to load
-    await page.waitForLoadState('networkidle');
-    
+    await page.waitForLoadState("networkidle");
+
     // Check if the main heading is visible
     const mainHeading = page.locator("text=Welcome to the Football Pool!");
     await expect(mainHeading).toBeVisible();

@@ -19,9 +19,9 @@ describe("SurvivorPoolPage", () => {
   beforeEach(() => {
     vi.clearAllMocks();
     // Mock localStorage
-    Object.defineProperty(window, 'localStorage', {
+    Object.defineProperty(window, "localStorage", {
       value: {
-        getItem: vi.fn(() => 'fake-token'),
+        getItem: vi.fn(() => "fake-token"),
       },
       writable: true,
     });
@@ -70,18 +70,18 @@ describe("SurvivorPoolPage", () => {
     await waitFor(() => {
       fireEvent.mouseDown(screen.getByLabelText(/select a team/i));
     });
-    
+
     fireEvent.click(await screen.findByRole("option", { name: /team a/i }));
 
     await waitFor(() => {
       fireEvent.click(screen.getByText(/submit survivor pick/i));
     });
 
-    expect(mockSubmitSurvivorPick).toHaveBeenCalledWith({ 
-      data: { 
-        week: 1, 
-        team: "Team A" 
-      } 
+    expect(mockSubmitSurvivorPick).toHaveBeenCalledWith({
+      data: {
+        week: 1,
+        team: "Team A",
+      },
     });
   });
 });

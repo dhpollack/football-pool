@@ -13,15 +13,16 @@ import type { UserWithStats } from "../services/model";
 
 const OverallResultsPage = () => {
   const { data: usersData, isLoading, error } = useDebugGetUsers();
-  
+
   // Transform the user data into the format expected by the UI
-  const seasonResults = usersData?.users
-    ?.filter((user: UserWithStats) => user.total_wins > 0)
-    ?.map((user: UserWithStats) => ({
-      player_name: user.name,
-      score: user.total_wins,
-    }))
-    ?.sort((a, b) => b.score - a.score) || [];
+  const seasonResults =
+    usersData?.users
+      ?.filter((user: UserWithStats) => user.total_wins > 0)
+      ?.map((user: UserWithStats) => ({
+        player_name: user.name,
+        score: user.total_wins,
+      }))
+      ?.sort((a, b) => b.score - a.score) || [];
 
   if (isLoading) {
     return <Typography>Loading overall results...</Typography>;

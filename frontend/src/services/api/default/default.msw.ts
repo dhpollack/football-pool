@@ -11,8 +11,10 @@ import { HttpResponse, delay, http } from "msw";
 import type {
   GameListResponse,
   GameResponse,
+  LoginResponse,
   PickListResponse,
   PickResponse,
+  RegisterResponse,
   ResultResponse,
   SurvivorPickResponse,
   UserListResponse,
@@ -20,68 +22,45 @@ import type {
 } from "../../model";
 
 export const getLoginUserResponseMock = (
-  overrideResponse: Partial<UserResponse> = {},
-): UserResponse => ({
-  id: faker.number.int({
-    min: undefined,
-    max: undefined,
-    multipleOf: undefined,
-  }),
-  name: faker.string.alpha({ length: { min: 10, max: 20 } }),
-  email: faker.string.alpha({ length: { min: 10, max: 20 } }),
-  role: faker.string.alpha({ length: { min: 10, max: 20 } }),
-  player: faker.helpers.arrayElement([
-    {
-      id: faker.number.int({
-        min: undefined,
-        max: undefined,
-        multipleOf: undefined,
-      }),
-      user_id: faker.number.int({
-        min: undefined,
-        max: undefined,
-        multipleOf: undefined,
-      }),
-      name: faker.string.alpha({ length: { min: 10, max: 20 } }),
-      address: faker.string.alpha({ length: { min: 10, max: 20 } }),
-    },
-    undefined,
-  ]),
-  created_at: `${faker.date.past().toISOString().split(".")[0]}Z`,
-  updated_at: `${faker.date.past().toISOString().split(".")[0]}Z`,
+  overrideResponse: Partial<LoginResponse> = {},
+): LoginResponse => ({
+  token: faker.string.alpha({ length: { min: 10, max: 20 } }),
+  user: {
+    id: faker.number.int({
+      min: undefined,
+      max: undefined,
+      multipleOf: undefined,
+    }),
+    name: faker.string.alpha({ length: { min: 10, max: 20 } }),
+    email: faker.string.alpha({ length: { min: 10, max: 20 } }),
+    role: faker.string.alpha({ length: { min: 10, max: 20 } }),
+    player: faker.helpers.arrayElement([
+      {
+        id: faker.number.int({
+          min: undefined,
+          max: undefined,
+          multipleOf: undefined,
+        }),
+        user_id: faker.number.int({
+          min: undefined,
+          max: undefined,
+          multipleOf: undefined,
+        }),
+        name: faker.string.alpha({ length: { min: 10, max: 20 } }),
+        address: faker.string.alpha({ length: { min: 10, max: 20 } }),
+      },
+      undefined,
+    ]),
+    created_at: `${faker.date.past().toISOString().split(".")[0]}Z`,
+    updated_at: `${faker.date.past().toISOString().split(".")[0]}Z`,
+  },
   ...overrideResponse,
 });
 
 export const getRegisterUserResponseMock = (
-  overrideResponse: Partial<UserResponse> = {},
-): UserResponse => ({
-  id: faker.number.int({
-    min: undefined,
-    max: undefined,
-    multipleOf: undefined,
-  }),
-  name: faker.string.alpha({ length: { min: 10, max: 20 } }),
-  email: faker.string.alpha({ length: { min: 10, max: 20 } }),
-  role: faker.string.alpha({ length: { min: 10, max: 20 } }),
-  player: faker.helpers.arrayElement([
-    {
-      id: faker.number.int({
-        min: undefined,
-        max: undefined,
-        multipleOf: undefined,
-      }),
-      user_id: faker.number.int({
-        min: undefined,
-        max: undefined,
-        multipleOf: undefined,
-      }),
-      name: faker.string.alpha({ length: { min: 10, max: 20 } }),
-      address: faker.string.alpha({ length: { min: 10, max: 20 } }),
-    },
-    undefined,
-  ]),
-  created_at: `${faker.date.past().toISOString().split(".")[0]}Z`,
-  updated_at: `${faker.date.past().toISOString().split(".")[0]}Z`,
+  overrideResponse: Partial<RegisterResponse> = {},
+): RegisterResponse => ({
+  message: faker.string.alpha({ length: { min: 10, max: 20 } }),
   ...overrideResponse,
 });
 
@@ -1492,10 +1471,10 @@ export const getAdminUpdateUserResponseMock = (
 
 export const getLoginUserMockHandler = (
   overrideResponse?:
-    | UserResponse
+    | LoginResponse
     | ((
         info: Parameters<Parameters<typeof http.post>[1]>[0],
-      ) => Promise<UserResponse> | UserResponse),
+      ) => Promise<LoginResponse> | LoginResponse),
 ) => {
   return http.post("*/api/login", async (info) => {
     await delay(1000);
@@ -1531,10 +1510,10 @@ export const getLogoutUserMockHandler = (
 
 export const getRegisterUserMockHandler = (
   overrideResponse?:
-    | UserResponse
+    | RegisterResponse
     | ((
         info: Parameters<Parameters<typeof http.post>[1]>[0],
-      ) => Promise<UserResponse> | UserResponse),
+      ) => Promise<RegisterResponse> | RegisterResponse),
 ) => {
   return http.post("*/api/register", async (info) => {
     await delay(1000);

@@ -1,5 +1,6 @@
 import { defineConfig, devices } from "@playwright/test";
 import { E2E_CONFIG } from "./tests/e2e.config";
+import path from "path";
 
 export default defineConfig({
   // Test directory
@@ -68,19 +69,28 @@ export default defineConfig({
 
   // Configure projects for major browsers
   projects: [
+    // Setup project - runs authentication setup first
+    {
+      name: "setup",
+      testMatch: /.*\.setup\.ts/,
+    },
+
     {
       name: "chromium",
       use: { ...devices["Desktop Chrome"] },
+      dependencies: ["setup"],
     },
     {
       name: "firefox",
       use: { ...devices["Desktop Firefox"] },
+      dependencies: ["setup"],
     },
 
     // Test against mobile viewports
     {
       name: "Mobile Chrome",
       use: { ...devices["Pixel 5"] },
+      dependencies: ["setup"],
     },
 
     // Test in headed mode for debugging
@@ -90,6 +100,7 @@ export default defineConfig({
         ...devices["Desktop Chrome"],
         headless: false,
       },
+      dependencies: ["setup"],
     },
   ],
 

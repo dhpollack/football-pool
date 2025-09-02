@@ -1,6 +1,6 @@
-import useAuthUser from 'react-auth-kit/hooks/useAuthUser';
-import useSignOut from 'react-auth-kit/hooks/useSignOut';
-import type { AuthUser } from '../lib/auth';
+import useAuthUser from "react-auth-kit/hooks/useAuthUser";
+import useSignOut from "react-auth-kit/hooks/useSignOut";
+import type { AuthUser } from "../lib/auth";
 
 /**
  * Custom hook that provides a similar interface to our previous useAuth hook
@@ -16,13 +16,15 @@ export const useAuth = () => {
       // This will be implemented in the LoginPage using React Query mutations
       // For now, we'll keep the signature but the actual implementation
       // will be in the LoginPage component
-      throw new Error('Login should be implemented using React Query mutations in LoginPage');
+      throw new Error(
+        "Login should be implemented using React Query mutations in LoginPage",
+      );
     },
     logout: async () => {
       signOut();
     },
     isAuthenticated: !!user,
-    isAdmin: user?.role === 'admin',
+    isAdmin: user?.role === "admin",
     loading: false, // react-auth-kit handles loading state internally
   };
 };

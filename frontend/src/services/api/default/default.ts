@@ -30,11 +30,13 @@ import type {
   GetSeasonResultsParams,
   GetWeeklyResultsParams,
   LoginRequest,
+  LoginResponse,
   PickListResponse,
   PickRequest,
   PickResponse,
   PlayerRequest,
   RegisterRequest,
+  RegisterResponse,
   ResultRequest,
   ResultResponse,
   SurvivorPickRequest,
@@ -56,7 +58,7 @@ export const loginUser = (
   options?: SecondParameter<typeof customInstance>,
   signal?: AbortSignal,
 ) => {
-  return customInstance<UserResponse>(
+  return customInstance<LoginResponse>(
     {
       url: `/api/login`,
       method: "POST",
@@ -69,7 +71,7 @@ export const loginUser = (
 };
 
 export const getLoginUserMutationOptions = <
-  TError = ErrorResponse,
+  TError = ErrorResponse | ErrorResponse | ErrorResponse,
   TContext = unknown,
 >(options?: {
   mutation?: UseMutationOptions<
@@ -110,12 +112,18 @@ export type LoginUserMutationResult = NonNullable<
   Awaited<ReturnType<typeof loginUser>>
 >;
 export type LoginUserMutationBody = LoginRequest;
-export type LoginUserMutationError = ErrorResponse;
+export type LoginUserMutationError =
+  | ErrorResponse
+  | ErrorResponse
+  | ErrorResponse;
 
 /**
  * @summary Login a user
  */
-export const useLoginUser = <TError = ErrorResponse, TContext = unknown>(
+export const useLoginUser = <
+  TError = ErrorResponse | ErrorResponse | ErrorResponse,
+  TContext = unknown,
+>(
   options?: {
     mutation?: UseMutationOptions<
       Awaited<ReturnType<typeof loginUser>>,
@@ -223,7 +231,7 @@ export const registerUser = (
   options?: SecondParameter<typeof customInstance>,
   signal?: AbortSignal,
 ) => {
-  return customInstance<UserResponse>(
+  return customInstance<RegisterResponse>(
     {
       url: `/api/register`,
       method: "POST",
@@ -236,7 +244,7 @@ export const registerUser = (
 };
 
 export const getRegisterUserMutationOptions = <
-  TError = ErrorResponse,
+  TError = ErrorResponse | ErrorResponse,
   TContext = unknown,
 >(options?: {
   mutation?: UseMutationOptions<
@@ -277,12 +285,15 @@ export type RegisterUserMutationResult = NonNullable<
   Awaited<ReturnType<typeof registerUser>>
 >;
 export type RegisterUserMutationBody = RegisterRequest;
-export type RegisterUserMutationError = ErrorResponse;
+export type RegisterUserMutationError = ErrorResponse | ErrorResponse;
 
 /**
  * @summary Register a new user
  */
-export const useRegisterUser = <TError = ErrorResponse, TContext = unknown>(
+export const useRegisterUser = <
+  TError = ErrorResponse | ErrorResponse,
+  TContext = unknown,
+>(
   options?: {
     mutation?: UseMutationOptions<
       Awaited<ReturnType<typeof registerUser>>,
@@ -456,7 +467,7 @@ export const getGetProfileQueryKey = () => {
 
 export const getGetProfileQueryOptions = <
   TData = Awaited<ReturnType<typeof getProfile>>,
-  TError = ErrorResponse,
+  TError = ErrorResponse | ErrorResponse,
 >(options?: {
   query?: Partial<
     UseQueryOptions<Awaited<ReturnType<typeof getProfile>>, TError, TData>
@@ -481,11 +492,11 @@ export const getGetProfileQueryOptions = <
 export type GetProfileQueryResult = NonNullable<
   Awaited<ReturnType<typeof getProfile>>
 >;
-export type GetProfileQueryError = ErrorResponse;
+export type GetProfileQueryError = ErrorResponse | ErrorResponse;
 
 export function useGetProfile<
   TData = Awaited<ReturnType<typeof getProfile>>,
-  TError = ErrorResponse,
+  TError = ErrorResponse | ErrorResponse,
 >(
   options: {
     query: Partial<
@@ -507,7 +518,7 @@ export function useGetProfile<
 };
 export function useGetProfile<
   TData = Awaited<ReturnType<typeof getProfile>>,
-  TError = ErrorResponse,
+  TError = ErrorResponse | ErrorResponse,
 >(
   options?: {
     query?: Partial<
@@ -529,7 +540,7 @@ export function useGetProfile<
 };
 export function useGetProfile<
   TData = Awaited<ReturnType<typeof getProfile>>,
-  TError = ErrorResponse,
+  TError = ErrorResponse | ErrorResponse,
 >(
   options?: {
     query?: Partial<
@@ -547,7 +558,7 @@ export function useGetProfile<
 
 export function useGetProfile<
   TData = Awaited<ReturnType<typeof getProfile>>,
-  TError = ErrorResponse,
+  TError = ErrorResponse | ErrorResponse,
 >(
   options?: {
     query?: Partial<

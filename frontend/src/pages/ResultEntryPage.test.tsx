@@ -44,7 +44,7 @@ describe("ResultEntryPage", () => {
 
     // Wait for games to load
     await screen.findByText(/team a/i);
-    
+
     // Get all spinbuttons and find the specific ones
     const allSpinbuttons = screen.getAllByRole("spinbutton");
     const favoriteScoreInput = allSpinbuttons.find(
@@ -53,7 +53,7 @@ describe("ResultEntryPage", () => {
     const underdogScoreInput = allSpinbuttons.find(
       (input) => input.getAttribute("name") === "underdog_score_1",
     );
-    
+
     if (!favoriteScoreInput || !underdogScoreInput) {
       throw new Error("Could not find score inputs");
     }
