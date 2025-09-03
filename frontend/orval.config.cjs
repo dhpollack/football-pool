@@ -1,6 +1,6 @@
 module.exports = {
   "football-pool-api": {
-    input: "../backend/openapi.json",
+    input: "../openapi.json",
     output: {
       mock: true,
       mode: "tags-split",

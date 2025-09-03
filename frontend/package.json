@@ -5,6 +5,7 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
+    "dev:msw": "vite --mode msw",
     "generate": "orval --config orval.config.cjs",
     "build": "tsc -b && vite build",
     "lint": "biome lint .",
@@ -21,7 +22,8 @@
     "test:e2e:debug": "playwright test --debug",
     "test:e2e:report": "playwright test --reporter=html",
     "playwright:install": "playwright install",
-    "playwright:show-report": "playwright show-report"
+    "playwright:show-report": "playwright show-report",
+    "msw:init": "msw init public/"
   },
   "dependencies": {
     "@emotion/react": "^11.14.0",
@@ -64,5 +66,10 @@
     "typescript-eslint": "^8.39.1",
     "vite": "^7.1.2",
     "vitest": "^3.2.4"
+  },
+  "msw": {
+    "workerDirectory": [
+      "public"
+    ]
   }
 }

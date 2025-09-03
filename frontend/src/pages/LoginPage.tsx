@@ -33,7 +33,7 @@ const LoginPage = () => {
             token: userData.token, // Use the actual JWT token from API response
             type: "Bearer",
           },
-          userState: userData,
+          userState: userData.user,
         })
       ) {
         navigate("/");

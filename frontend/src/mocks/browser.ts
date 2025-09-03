@@ -1,0 +1,61 @@
+import { setupWorker } from 'msw/browser'
+import {
+  getLoginUserMockHandler,
+  getLogoutUserMockHandler,
+  getRegisterUserMockHandler,
+  getHealthCheckMockHandler,
+  getGetProfileMockHandler,
+  getUpdateProfileMockHandler,
+  getGetGamesMockHandler,
+  getCreateGameMockHandler,
+  getGetPicksMockHandler,
+  getSubmitPicksMockHandler,
+  getAdminSubmitPicksMockHandler,
+  getGetWeeklyResultsMockHandler,
+  getGetSeasonResultsMockHandler,
+  getSubmitResultMockHandler,
+  getGetSurvivorPicksMockHandler,
+  getSubmitSurvivorPickMockHandler,
+  getDebugGetUsersMockHandler,
+  getDeleteUserMockHandler,
+  getAdminListGamesMockHandler,
+  getUpdateGameMockHandler,
+  getDeleteGameMockHandler,
+  getAdminListPicksMockHandler,
+  getAdminGetPicksByWeekMockHandler,
+  getAdminGetPicksByUserMockHandler,
+  getAdminDeletePickMockHandler,
+} from '../services/api/default/default.msw'
+
+export const worker = setupWorker(
+  getLoginUserMockHandler(),
+  getLogoutUserMockHandler(),
+  getRegisterUserMockHandler(),
+  getHealthCheckMockHandler(),
+  getGetProfileMockHandler(),
+  getUpdateProfileMockHandler(),
+  getGetGamesMockHandler(),
+  getCreateGameMockHandler(),
+  getGetPicksMockHandler(),
+  getSubmitPicksMockHandler(),
+  getAdminSubmitPicksMockHandler(),
+  getGetWeeklyResultsMockHandler(),
+  getGetSeasonResultsMockHandler(),
+  getSubmitResultMockHandler(),
+  getGetSurvivorPicksMockHandler(),
+  getSubmitSurvivorPickMockHandler(),
+  getDebugGetUsersMockHandler(),
+  getDeleteUserMockHandler(),
+  getAdminListGamesMockHandler(),
+  getUpdateGameMockHandler(),
+  getDeleteGameMockHandler(),
+  getAdminListPicksMockHandler(),
+  getAdminGetPicksByWeekMockHandler(),
+  getAdminGetPicksByUserMockHandler(),
+  getAdminDeletePickMockHandler(),
+  {
+    serviceWorker: {
+      url: '/mockServiceWorker.js'
+    }
+  }
+)
