@@ -12,7 +12,7 @@ import {
   Card,
 } from "@mui/material";
 import { Home, EmojiEvents, Search } from "@mui/icons-material";
-import { useAdminGetPicksByWeek } from "../../services/api/default/default";
+import { useAdminGetPicksByWeek } from "../../services/api/picks/picks";
 import AdminDataTable from "../../components/admin/AdminDataTable";
 import { PickResponse } from "../../services/model";
 
@@ -62,7 +62,7 @@ const WeeklyPicksPage = () => {
   // Filter picks by search term
   const filteredPicks = picks.filter((pick) => {
     if (!searchTerm) return true;
-    
+
     const searchLower = searchTerm.toLowerCase();
     return (
       pick.user?.email?.toLowerCase().includes(searchLower) ||
@@ -82,7 +82,9 @@ const WeeklyPicksPage = () => {
       id: "game",
       label: "Game",
       format: (pick: PickResponse) =>
-        pick.game ? `${pick.game.favorite_team} vs ${pick.game.underdog_team}` : "Unknown",
+        pick.game
+          ? `${pick.game.favorite_team} vs ${pick.game.underdog_team}`
+          : "Unknown",
     },
     {
       id: "picked",
@@ -106,13 +108,14 @@ const WeeklyPicksPage = () => {
       id: "start_time",
       label: "Game Time",
       format: (pick: PickResponse) =>
-        pick.game?.start_time ? new Date(pick.game.start_time).toLocaleString() : "-",
+        pick.game?.start_time
+          ? new Date(pick.game.start_time).toLocaleString()
+          : "-",
     },
     {
       id: "created_at",
       label: "Submitted",
-      format: (dateString: string) =>
-        new Date(dateString).toLocaleDateString(),
+      format: (dateString: string) => new Date(dateString).toLocaleDateString(),
     },
   ];
 
@@ -120,17 +123,31 @@ const WeeklyPicksPage = () => {
     <Box>
       {/* Breadcrumbs */}
       <Breadcrumbs sx={{ mb: 3 }}>
-        <Link to="/admin" style={{ display: 'flex', alignItems: 'center', textDecoration: 'none', color: 'inherit' }}>
+        <Link
+          to="/admin"
+          style={{
+            display: "flex",
+            alignItems: "center",
+            textDecoration: "none",
+            color: "inherit",
+          }}
+        >
           <Home sx={{ mr: 0.5 }} fontSize="inherit" />
           Admin
         </Link>
-        <Link to="/admin/picks" style={{ display: 'flex', alignItems: 'center', textDecoration: 'none', color: 'inherit' }}>
+        <Link
+          to="/admin/picks"
+          style={{
+            display: "flex",
+            alignItems: "center",
+            textDecoration: "none",
+            color: "inherit",
+          }}
+        >
           <EmojiEvents sx={{ mr: 0.5 }} fontSize="inherit" />
           Picks
         </Link>
-        <Typography color="text.primary">
-          Week {week} Picks
-        </Typography>
+        <Typography color="text.primary">Week {week} Picks</Typography>
       </Breadcrumbs>
 
       <Typography variant="h4" gutterBottom>
@@ -174,7 +191,9 @@ const WeeklyPicksPage = () => {
               value={searchTerm}
               onChange={handleSearchChange}
               InputProps={{
-                startAdornment: <Search sx={{ mr: 1, color: 'text.secondary' }} />,
+                startAdornment: (
+                  <Search sx={{ mr: 1, color: "text.secondary" }} />
+                ),
               }}
             />
           </Grid>
@@ -184,7 +203,7 @@ const WeeklyPicksPage = () => {
               variant="contained"
               onClick={handleLoadPicks}
               disabled={picksLoading}
-              sx={{ height: '56px' }}
+              sx={{ height: "56px" }}
               data-testid="load-picks-button"
             >
               {picksLoading ? "Loading..." : "Load Picks"}
@@ -200,7 +219,15 @@ const WeeklyPicksPage = () => {
         </Typography>
         <Grid container spacing={2}>
           <Grid size={{ xs: 6, sm: 3 }}>
-            <Box sx={{ textAlign: 'center', p: 2, bgcolor: 'grey.100', borderRadius: 1 }} data-testid="total-picks-box">
+            <Box
+              sx={{
+                textAlign: "center",
+                p: 2,
+                bgcolor: "grey.100",
+                borderRadius: 1,
+              }}
+              data-testid="total-picks-box"
+            >
               <Typography variant="h4" color="primary">
                 {picks.length}
               </Typography>
@@ -210,9 +237,17 @@ const WeeklyPicksPage = () => {
             </Box>
           </Grid>
           <Grid size={{ xs: 6, sm: 3 }}>
-            <Box sx={{ textAlign: 'center', p: 2, bgcolor: 'grey.100', borderRadius: 1 }} data-testid="unique-users-box">
+            <Box
+              sx={{
+                textAlign: "center",
+                p: 2,
+                bgcolor: "grey.100",
+                borderRadius: 1,
+              }}
+              data-testid="unique-users-box"
+            >
               <Typography variant="h4" color="primary">
-                {new Set(picks.map(pick => pick.user_id)).size}
+                {new Set(picks.map((pick) => pick.user_id)).size}
               </Typography>
               <Typography variant="body2" color="text.secondary">
                 Unique Users
@@ -220,9 +255,17 @@ const WeeklyPicksPage = () => {
             </Box>
           </Grid>
           <Grid size={{ xs: 6, sm: 3 }}>
-            <Box sx={{ textAlign: 'center', p: 2, bgcolor: 'grey.100', borderRadius: 1 }} data-testid="favorite-picks-box">
+            <Box
+              sx={{
+                textAlign: "center",
+                p: 2,
+                bgcolor: "grey.100",
+                borderRadius: 1,
+              }}
+              data-testid="favorite-picks-box"
+            >
               <Typography variant="h4" color="primary">
-                {picks.filter(pick => pick.picked === 'favorite').length}
+                {picks.filter((pick) => pick.picked === "favorite").length}
               </Typography>
               <Typography variant="body2" color="text.secondary">
                 Favorite Picks
@@ -230,9 +273,17 @@ const WeeklyPicksPage = () => {
             </Box>
           </Grid>
           <Grid size={{ xs: 6, sm: 3 }}>
-            <Box sx={{ textAlign: 'center', p: 2, bgcolor: 'grey.100', borderRadius: 1 }} data-testid="underdog-picks-box">
+            <Box
+              sx={{
+                textAlign: "center",
+                p: 2,
+                bgcolor: "grey.100",
+                borderRadius: 1,
+              }}
+              data-testid="underdog-picks-box"
+            >
               <Typography variant="h4" color="primary">
-                {picks.filter(pick => pick.picked === 'underdog').length}
+                {picks.filter((pick) => pick.picked === "underdog").length}
               </Typography>
               <Typography variant="body2" color="text.secondary">
                 Underdog Picks
@@ -254,11 +305,11 @@ const WeeklyPicksPage = () => {
         onPageChange={() => {}}
         onRowsPerPageChange={() => {}}
         emptyMessage={
-          picksLoading 
-            ? "Loading picks..." 
-            : week 
-            ? `No picks found for week ${week}`
-            : "Please select a week to view picks"
+          picksLoading
+            ? "Loading picks..."
+            : week
+              ? `No picks found for week ${week}`
+              : "Please select a week to view picks"
         }
       />
     </Box>

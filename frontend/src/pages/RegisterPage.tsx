@@ -1,7 +1,7 @@
 import { useState, useId } from "react";
 import { useNavigate } from "react-router-dom";
 import { TextField, Button, Box, Typography } from "@mui/material";
-import { useRegisterUser } from "../services/api/default/default";
+import { useRegisterUser } from "../services/api/user/user";
 import type { RegisterRequest } from "../services/model";
 import axios from "axios";
 

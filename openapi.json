@@ -8,6 +8,36 @@
       "identifier": "MIT"
     }
   },
+  "tags": [
+    {
+      "name": "games",
+      "description": "Game-related operations"
+    },
+    {
+      "name": "picks",
+      "description": "Pick-related operations"
+    },
+    {
+      "name": "results",
+      "description": "Result-related operations"
+    },
+    {
+      "name": "survivor",
+      "description": "Survivor pool operations"
+    },
+    {
+      "name": "user",
+      "description": "User-related operations"
+    },
+    {
+      "name": "health",
+      "description": "Health check"
+    },
+    {
+      "name": "admin",
+      "description": "Admin operations"
+    }
+  ],
   "servers": [
     {
       "url": "http://localhost:8080"
@@ -16,6 +46,7 @@
   "paths": {
     "/api/login": {
       "post": {
+        "tags": ["user"],
         "summary": "Login a user",
         "operationId": "loginUser",
         "security": [],
@@ -74,6 +105,7 @@
     },
     "/api/logout": {
       "post": {
+        "tags": ["user"],
         "summary": "Logout a user",
         "operationId": "logoutUser",
         "security": [],
@@ -96,6 +128,7 @@
     },
     "/api/register": {
       "post": {
+        "tags": ["user"],
         "summary": "Register a new user",
         "operationId": "registerUser",
         "security": [],
@@ -144,6 +177,7 @@
     },
     "/api/health": {
       "get": {
+        "tags": ["health"],
         "summary": "Health check",
         "operationId": "healthCheck",
         "security": [],
@@ -166,6 +200,7 @@
     },
     "/api/users/me": {
       "get": {
+        "tags": ["user"],
         "summary": "Get user profile",
         "operationId": "getProfile",
         "security": [
@@ -209,6 +244,7 @@
     },
     "/api/users/me/update": {
       "put": {
+        "tags": ["user"],
         "summary": "Update user profile",
         "operationId": "updateProfile",
         "security": [
@@ -251,6 +287,7 @@
     },
     "/api/games": {
       "get": {
+        "tags": ["games"],
         "summary": "Get games by week and season",
         "operationId": "getGames",
         "security": [
@@ -302,6 +339,7 @@
     },
     "/api/games/create": {
       "post": {
+        "tags": ["games"],
         "summary": "Create new games",
         "operationId": "createGame",
         "security": [
@@ -350,6 +388,7 @@
     },
     "/api/picks": {
       "get": {
+        "tags": ["picks"],
         "summary": "Get user picks",
         "operationId": "getPicks",
         "security": [
@@ -383,6 +422,7 @@
     },
     "/api/picks/submit": {
       "post": {
+        "tags": ["picks"],
         "summary": "Submit picks",
         "operationId": "submitPicks",
         "security": [
@@ -431,6 +471,7 @@
     },
     "/api/admin/picks/submit": {
       "post": {
+        "tags": ["picks", "admin"],
         "summary": "Admin submit picks",
         "operationId": "adminSubmitPicks",
         "security": [
@@ -479,6 +520,9 @@
     },
     "/api/results/week": {
       "get": {
+        "tags": [
+          "results"
+        ],
         "summary": "Get weekly results",
         "operationId": "getWeeklyResults",
         "security": [
@@ -512,7 +556,7 @@
                 "schema": {
                   "type": "array",
                   "items": {
-                    "$ref": "#/components/schemas/ResultResponse"
+                    "$ref": "#/components/schemas/WeeklyResult"
                   }
                 }
               }
@@ -533,6 +577,9 @@
     },
     "/api/results/season": {
       "get": {
+        "tags": [
+          "results"
+        ],
         "summary": "Get season results",
         "operationId": "getSeasonResults",
         "security": [
@@ -558,7 +605,7 @@
                 "schema": {
                   "type": "array",
                   "items": {
-                    "$ref": "#/components/schemas/ResultResponse"
+                    "$ref": "#/components/schemas/SeasonResult"
                   }
                 }
               }
@@ -579,6 +626,7 @@
     },
     "/api/results": {
       "post": {
+        "tags": ["results"],
         "summary": "Submit a result",
         "operationId": "submitResult",
         "security": [
@@ -621,6 +669,7 @@
     },
     "/api/survivor/picks": {
       "get": {
+        "tags": ["survivor"],
         "summary": "Get survivor picks",
         "operationId": "getSurvivorPicks",
         "security": [
@@ -657,6 +706,7 @@
     },
     "/api/survivor/picks/submit": {
       "post": {
+        "tags": ["survivor"],
         "summary": "Submit survivor pick",
         "operationId": "submitSurvivorPick",
         "security": [
@@ -697,41 +747,10 @@
         }
       }
     },
-    "/api/debug/users": {
-      "get": {
-        "summary": "Debug get users",
-        "operationId": "debugGetUsers",
-        "security": [
-          {
-            "bearerAuth": []
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "OK",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/UserListResponse"
-                }
-              }
-            }
-          },
-          "401": {
-            "description": "Unauthorized",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ErrorResponse"
-                }
-              }
-            }
-          }
-        }
-      }
-    },
+    
     "/api/admin/users/delete": {
       "delete": {
+        "tags": ["user", "admin"],
         "summary": "Delete a user",
         "operationId": "deleteUser",
         "security": [
@@ -768,6 +787,7 @@
     },
     "/api/admin/games": {
       "get": {
+        "tags": ["games", "admin"],
         "summary": "Admin list games",
         "operationId": "adminListGames",
         "security": [
@@ -801,6 +821,7 @@
     },
     "/api/admin/games/{id}": {
       "put": {
+        "tags": ["games", "admin"],
         "summary": "Update game",
         "operationId": "updateGame",
         "security": [
@@ -852,6 +873,7 @@
         }
       },
       "delete": {
+        "tags": ["games", "admin"],
         "summary": "Delete game",
         "operationId": "deleteGame",
         "security": [
@@ -889,6 +911,7 @@
     },
     "/api/admin/picks": {
       "get": {
+        "tags": ["picks", "admin"],
         "summary": "Admin list picks",
         "operationId": "adminListPicks",
         "security": [
@@ -922,6 +945,7 @@
     },
     "/api/admin/picks/week/{week}": {
       "get": {
+        "tags": ["picks", "admin"],
         "summary": "Admin get picks by week",
         "operationId": "adminGetPicksByWeek",
         "security": [
@@ -965,6 +989,7 @@
     },
     "/api/admin/picks/user/{userId}": {
       "get": {
+        "tags": ["picks", "admin"],
         "summary": "Admin get picks by user",
         "operationId": "adminGetPicksByUser",
         "security": [
@@ -1009,6 +1034,7 @@
     },
     "/api/admin/picks/{id}": {
       "delete": {
+        "tags": ["picks", "admin"],
         "summary": "Admin delete pick",
         "operationId": "adminDeletePick",
         "security": [
@@ -1046,6 +1072,7 @@
     },
     "/api/admin/users": {
       "get": {
+        "tags": ["user", "admin"],
         "summary": "Admin list users",
         "operationId": "adminListUsers",
         "security": [
@@ -1079,6 +1106,7 @@
     },
     "/api/admin/users/{id}": {
       "get": {
+        "tags": ["user", "admin"],
         "summary": "Admin get user",
         "operationId": "adminGetUser",
         "security": [
@@ -1121,6 +1149,7 @@
         }
       },
       "put": {
+        "tags": ["user", "admin"],
         "summary": "Admin update user",
         "operationId": "adminUpdateUser",
         "security": [
@@ -1497,6 +1526,38 @@
           },
           "outcome": {
             "type": "string"
+          }
+        }
+      },
+      "SeasonResult": {
+        "type": "object",
+        "required": ["player_id", "player_name", "score"],
+        "properties": {
+          "player_id": {
+            "type": "integer",
+            "format": "uint"
+          },
+          "player_name": {
+            "type": "string"
+          },
+          "score": {
+            "type": "integer"
+          }
+        }
+      },
+      "WeeklyResult": {
+        "type": "object",
+        "required": ["player_id", "player_name", "score"],
+        "properties": {
+          "player_id": {
+            "type": "integer",
+            "format": "uint"
+          },
+          "player_name": {
+            "type": "string"
+          },
+          "score": {
+            "type": "integer"
           }
         }
       },

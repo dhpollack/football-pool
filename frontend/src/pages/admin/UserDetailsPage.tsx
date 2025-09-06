@@ -13,7 +13,8 @@ import {
   Tabs,
 } from "@mui/material";
 import { Home, People } from "@mui/icons-material";
-import { useAdminGetUser, useAdminGetPicksByUser } from "../../services/api/default/default";
+import { useAdminGetUser } from "../../services/api/user/user";
+import { useAdminGetPicksByUser } from "../../services/api/picks/picks";
 import AdminDataTable from "../../components/admin/AdminDataTable";
 import { UserResponse, PickResponse } from "../../services/model";
 
@@ -55,7 +56,7 @@ const UserDetailsPage = () => {
     isLoading: picksLoading,
   } = useAdminGetPicksByUser(Number(userId));
 
-  const user = userData || {} as UserResponse;
+  const user = userData || ({} as UserResponse);
   const picks = picksData?.picks || [];
 
   const handleTabChange = (_event: React.SyntheticEvent, newValue: number) => {
@@ -72,7 +73,9 @@ const UserDetailsPage = () => {
       id: "game",
       label: "Game",
       format: (pick: PickResponse) =>
-        pick.game ? `${pick.game.favorite_team} vs ${pick.game.underdog_team}` : "Unknown",
+        pick.game
+          ? `${pick.game.favorite_team} vs ${pick.game.underdog_team}`
+          : "Unknown",
     },
     {
       id: "week",
@@ -101,16 +104,13 @@ const UserDetailsPage = () => {
     {
       id: "created_at",
       label: "Submitted",
-      format: (dateString: string) =>
-        new Date(dateString).toLocaleDateString(),
+      format: (dateString: string) => new Date(dateString).toLocaleDateString(),
     },
   ];
 
   if (!userId) {
     return (
-      <Alert severity="error">
-        User ID is required to view user details.
-      </Alert>
+      <Alert severity="error">User ID is required to view user details.</Alert>
     );
   }
 
@@ -118,11 +118,27 @@ const UserDetailsPage = () => {
     <Box>
       {/* Breadcrumbs */}
       <Breadcrumbs sx={{ mb: 3 }}>
-        <Link to="/admin" style={{ display: 'flex', alignItems: 'center', textDecoration: 'none', color: 'inherit' }}>
+        <Link
+          to="/admin"
+          style={{
+            display: "flex",
+            alignItems: "center",
+            textDecoration: "none",
+            color: "inherit",
+          }}
+        >
           <Home sx={{ mr: 0.5 }} fontSize="inherit" />
           Admin
         </Link>
-        <Link to="/admin/users" style={{ display: 'flex', alignItems: 'center', textDecoration: 'none', color: 'inherit' }}>
+        <Link
+          to="/admin/users"
+          style={{
+            display: "flex",
+            alignItems: "center",
+            textDecoration: "none",
+            color: "inherit",
+          }}
+        >
           <People sx={{ mr: 0.5 }} fontSize="inherit" />
           Users
         </Link>
@@ -145,23 +161,19 @@ const UserDetailsPage = () => {
               <Typography variant="h6" gutterBottom>
                 User Information
               </Typography>
-              
+
               <Box sx={{ mb: 2 }}>
                 <Typography variant="subtitle2" color="text.secondary">
                   Email
                 </Typography>
-                <Typography variant="body1">
-                  {user.email || "-"}
-                </Typography>
+                <Typography variant="body1">{user.email || "-"}</Typography>
               </Box>
 
               <Box sx={{ mb: 2 }}>
                 <Typography variant="subtitle2" color="text.secondary">
                   Name
                 </Typography>
-                <Typography variant="body1">
-                  {user.name || "-"}
-                </Typography>
+                <Typography variant="body1">{user.name || "-"}</Typography>
               </Box>
 
               <Box sx={{ mb: 2 }}>
@@ -180,7 +192,7 @@ const UserDetailsPage = () => {
               <Typography variant="h6" gutterBottom>
                 Player Profile
               </Typography>
-              
+
               <Box sx={{ mb: 2 }}>
                 <Typography variant="subtitle2" color="text.secondary">
                   Player Name
@@ -204,7 +216,9 @@ const UserDetailsPage = () => {
                   Member Since
                 </Typography>
                 <Typography variant="body1">
-                  {user.created_at ? new Date(user.created_at).toLocaleDateString() : "-"}
+                  {user.created_at
+                    ? new Date(user.created_at).toLocaleDateString()
+                    : "-"}
                 </Typography>
               </Box>
             </Grid>
@@ -213,7 +227,7 @@ const UserDetailsPage = () => {
       </Card>
 
       {/* Tabs */}
-      <Box sx={{ borderBottom: 1, borderColor: 'divider' }}>
+      <Box sx={{ borderBottom: 1, borderColor: "divider" }}>
         <Tabs value={activeTab} onChange={handleTabChange}>
           <Tab label="Picks History" />
           <Tab label="Statistics" />
@@ -250,8 +264,8 @@ const UserDetailsPage = () => {
           User Statistics
         </Typography>
         <Typography color="text.secondary">
-          Statistics functionality is coming soon. This will include win/loss records, 
-          weekly performance, and overall standings.
+          Statistics functionality is coming soon. This will include win/loss
+          records, weekly performance, and overall standings.
         </Typography>
       </TabPanel>
     </Box>

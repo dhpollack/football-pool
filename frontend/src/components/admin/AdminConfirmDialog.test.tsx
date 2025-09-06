@@ -1,4 +1,3 @@
-
 import { render, screen, fireEvent } from "@testing-library/react";
 import AdminConfirmDialog from "./AdminConfirmDialog";
 
@@ -15,7 +14,7 @@ describe("AdminConfirmDialog", () => {
     render(<AdminConfirmDialog {...props} />);
     expect(screen.getByText("Confirm Action")).toBeInTheDocument();
     expect(
-      screen.getByText("Are you sure you want to perform this action?")
+      screen.getByText("Are you sure you want to perform this action?"),
     ).toBeInTheDocument();
   });
 

@@ -12,7 +12,8 @@ import {
   Card,
 } from "@mui/material";
 import { Home, People, Search } from "@mui/icons-material";
-import { useAdminGetPicksByUser, useAdminGetUser } from "../../services/api/default/default";
+import { useAdminGetPicksByUser } from "../../services/api/picks/picks";
+import { useAdminGetUser } from "../../services/api/user/user";
 import AdminDataTable from "../../components/admin/AdminDataTable";
 import { PickResponse, UserResponse } from "../../services/model";
 
@@ -22,10 +23,7 @@ const UserPicksPage = () => {
   const [searchTerm, setSearchTerm] = useState("");
   const [season, setSeason] = useState(2024); // Default season
 
-  const {
-    data: userData,
-    error: userError,
-  } = useAdminGetUser(userId);
+  const { data: userData, error: userError } = useAdminGetUser(userId);
 
   const {
     data: picksData,
@@ -40,7 +38,7 @@ const UserPicksPage = () => {
     },
   });
 
-  const user = userData || {} as UserResponse;
+  const user = userData || ({} as UserResponse);
   const picks = picksData?.picks || [];
 
   const handleUserIdChange = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -68,7 +66,7 @@ const UserPicksPage = () => {
   // Filter picks by search term
   const filteredPicks = picks.filter((pick) => {
     if (!searchTerm) return true;
-    
+
     const searchLower = searchTerm.toLowerCase();
     return (
       pick.game?.favorite_team?.toLowerCase().includes(searchLower) ||
@@ -83,7 +81,9 @@ const UserPicksPage = () => {
       id: "game",
       label: "Game",
       format: (pick: PickResponse) =>
-        pick.game ? `${pick.game.favorite_team} vs ${pick.game.underdog_team}` : "Unknown",
+        pick.game
+          ? `${pick.game.favorite_team} vs ${pick.game.underdog_team}`
+          : "Unknown",
     },
     {
       id: "week",
@@ -119,13 +119,14 @@ const UserPicksPage = () => {
       id: "start_time",
       label: "Game Time",
       format: (pick: PickResponse) =>
-        pick.game?.start_time ? new Date(pick.game.start_time).toLocaleString() : "-",
+        pick.game?.start_time
+          ? new Date(pick.game.start_time).toLocaleString()
+          : "-",
     },
     {
       id: "created_at",
       label: "Submitted",
-      format: (dateString: string) =>
-        new Date(dateString).toLocaleDateString(),
+      format: (dateString: string) => new Date(dateString).toLocaleDateString(),
     },
   ];
 
@@ -133,17 +134,31 @@ const UserPicksPage = () => {
     <Box>
       {/* Breadcrumbs */}
       <Breadcrumbs sx={{ mb: 3 }}>
-        <Link to="/admin" style={{ display: 'flex', alignItems: 'center', textDecoration: 'none', color: 'inherit' }}>
+        <Link
+          to="/admin"
+          style={{
+            display: "flex",
+            alignItems: "center",
+            textDecoration: "none",
+            color: "inherit",
+          }}
+        >
           <Home sx={{ mr: 0.5 }} fontSize="inherit" />
           Admin
         </Link>
-        <Link to="/admin/picks" style={{ display: 'flex', alignItems: 'center', textDecoration: 'none', color: 'inherit' }}>
+        <Link
+          to="/admin/picks"
+          style={{
+            display: "flex",
+            alignItems: "center",
+            textDecoration: "none",
+            color: "inherit",
+          }}
+        >
           <People sx={{ mr: 0.5 }} fontSize="inherit" />
           Picks
         </Link>
-        <Typography color="text.primary">
-          User {userId} Picks
-        </Typography>
+        <Typography color="text.primary">User {userId} Picks</Typography>
       </Breadcrumbs>
 
       <Typography variant="h4" gutterBottom>
@@ -170,25 +185,19 @@ const UserPicksPage = () => {
               <Typography variant="subtitle2" color="text.secondary">
                 User ID
               </Typography>
-              <Typography variant="body1">
-                {user.id}
-              </Typography>
+              <Typography variant="body1">{user.id}</Typography>
             </Grid>
             <Grid size={{ xs: 12, sm: 6, md: 3 }}>
               <Typography variant="subtitle2" color="text.secondary">
                 Email
               </Typography>
-              <Typography variant="body1">
-                {user.email}
-              </Typography>
+              <Typography variant="body1">{user.email}</Typography>
             </Grid>
             <Grid size={{ xs: 12, sm: 6, md: 3 }}>
               <Typography variant="subtitle2" color="text.secondary">
                 Name
               </Typography>
-              <Typography variant="body1">
-                {user.name || "-"}
-              </Typography>
+              <Typography variant="body1">{user.name || "-"}</Typography>
             </Grid>
             <Grid size={{ xs: 12, sm: 6, md: 3 }}>
               <Typography variant="subtitle2" color="text.secondary">
@@ -235,7 +244,9 @@ const UserPicksPage = () => {
               value={searchTerm}
               onChange={handleSearchChange}
               InputProps={{
-                startAdornment: <Search sx={{ mr: 1, color: 'text.secondary' }} />,
+                startAdornment: (
+                  <Search sx={{ mr: 1, color: "text.secondary" }} />
+                ),
               }}
             />
           </Grid>
@@ -245,7 +256,7 @@ const UserPicksPage = () => {
               variant="contained"
               onClick={handleLoadPicks}
               disabled={picksLoading || userId === 0}
-              sx={{ height: '56px' }}
+              sx={{ height: "56px" }}
             >
               {picksLoading ? "Loading..." : "Load Picks"}
             </Button>
@@ -261,7 +272,14 @@ const UserPicksPage = () => {
           </Typography>
           <Grid container spacing={2}>
             <Grid size={{ xs: 6, sm: 3 }}>
-              <Box sx={{ textAlign: 'center', p: 2, bgcolor: 'grey.100', borderRadius: 1 }}>
+              <Box
+                sx={{
+                  textAlign: "center",
+                  p: 2,
+                  bgcolor: "grey.100",
+                  borderRadius: 1,
+                }}
+              >
                 <Typography variant="h4" color="primary">
                   {picks.length}
                 </Typography>
@@ -271,9 +289,16 @@ const UserPicksPage = () => {
               </Box>
             </Grid>
             <Grid size={{ xs: 6, sm: 3 }}>
-              <Box sx={{ textAlign: 'center', p: 2, bgcolor: 'grey.100', borderRadius: 1 }}>
+              <Box
+                sx={{
+                  textAlign: "center",
+                  p: 2,
+                  bgcolor: "grey.100",
+                  borderRadius: 1,
+                }}
+              >
                 <Typography variant="h4" color="primary">
-                  {picks.filter(pick => pick.picked === 'favorite').length}
+                  {picks.filter((pick) => pick.picked === "favorite").length}
                 </Typography>
                 <Typography variant="body2" color="text.secondary">
                   Favorite Picks
@@ -281,9 +306,16 @@ const UserPicksPage = () => {
               </Box>
             </Grid>
             <Grid size={{ xs: 6, sm: 3 }}>
-              <Box sx={{ textAlign: 'center', p: 2, bgcolor: 'grey.100', borderRadius: 1 }}>
+              <Box
+                sx={{
+                  textAlign: "center",
+                  p: 2,
+                  bgcolor: "grey.100",
+                  borderRadius: 1,
+                }}
+              >
                 <Typography variant="h4" color="primary">
-                  {picks.filter(pick => pick.picked === 'underdog').length}
+                  {picks.filter((pick) => pick.picked === "underdog").length}
                 </Typography>
                 <Typography variant="body2" color="text.secondary">
                   Underdog Picks
@@ -291,9 +323,16 @@ const UserPicksPage = () => {
               </Box>
             </Grid>
             <Grid size={{ xs: 6, sm: 3 }}>
-              <Box sx={{ textAlign: 'center', p: 2, bgcolor: 'grey.100', borderRadius: 1 }}>
+              <Box
+                sx={{
+                  textAlign: "center",
+                  p: 2,
+                  bgcolor: "grey.100",
+                  borderRadius: 1,
+                }}
+              >
                 <Typography variant="h4" color="primary">
-                  {new Set(picks.map(pick => pick.game?.week)).size}
+                  {new Set(picks.map((pick) => pick.game?.week)).size}
                 </Typography>
                 <Typography variant="body2" color="text.secondary">
                   Weeks Played
@@ -316,11 +355,11 @@ const UserPicksPage = () => {
         onPageChange={() => {}}
         onRowsPerPageChange={() => {}}
         emptyMessage={
-          picksLoading 
-            ? "Loading picks..." 
-            : userId 
-            ? `No picks found for user ${userId}`
-            : "Please enter a user ID to view picks"
+          picksLoading
+            ? "Loading picks..."
+            : userId
+              ? `No picks found for user ${userId}`
+              : "Please enter a user ID to view picks"
         }
       />
     </Box>

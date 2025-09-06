@@ -5,7 +5,7 @@ import { vi } from "vitest";
 import LoginPage from "./LoginPage";
 
 // Mock the React Query hooks
-vi.mock("../services/api/default/default", () => ({
+vi.mock("../services/api/user/user", () => ({
   loginUser: vi.fn(),
 }));
 

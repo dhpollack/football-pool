@@ -14,8 +14,8 @@ import {
   Select,
   MenuItem,
 } from "@mui/material";
-import { useSubmitResult } from "../../services/api/default/default";
-import { ResultRequest, GameResponse } from "../../services/model";
+import { useSubmitResult } from "../../services/api/results/results";
+import type { ResultRequest, GameResponse } from "../../services/model";
 
 interface GameResultFormProps {
   open: boolean;
@@ -24,14 +24,21 @@ interface GameResultFormProps {
   game: GameResponse;
 }
 
-const GameResultForm = ({ open, onClose, onSuccess, game }: GameResultFormProps) => {
+const GameResultForm = ({
+  open,
+  onClose,
+  onSuccess,
+  game,
+}: GameResultFormProps) => {
   const [formData, setFormData] = useState<ResultRequest>({
     game_id: game.id,
     favorite_score: 0,
     underdog_score: 0,
     outcome: "",
   });
-  const [errors, setErrors] = useState<Partial<Record<keyof ResultRequest, string>>>({});
+  const [errors, setErrors] = useState<
+    Partial<Record<keyof ResultRequest, string>>
+  >({});
   const [calculatedOutcome, setCalculatedOutcome] = useState<string>("");
 
   const submitResultMutation = useSubmitResult();
@@ -50,7 +57,10 @@ const GameResultForm = ({ open, onClose, onSuccess, game }: GameResultFormProps)
   }, [open, game]);
 
   useEffect(() => {
-    if (formData.favorite_score !== undefined && formData.underdog_score !== undefined) {
+    if (
+      formData.favorite_score !== undefined &&
+      formData.underdog_score !== undefined
+    ) {
       const favScore = formData.favorite_score;
       const udScore = formData.underdog_score;
       const spread = game.spread;
@@ -112,7 +122,7 @@ const GameResultForm = ({ open, onClose, onSuccess, game }: GameResultFormProps)
       ...prev,
       [field]: value,
     }));
-    
+
     if (errors[field]) {
       setErrors((prev) => ({
         ...prev,
@@ -134,7 +144,8 @@ const GameResultForm = ({ open, onClose, onSuccess, game }: GameResultFormProps)
           <Box display="flex" flexDirection="column" gap={2} mt={1}>
             {error && (
               <Alert severity="error" sx={{ mb: 2 }}>
-                {error.message || "An error occurred while submitting the result"}
+                {error.message ||
+                  "An error occurred while submitting the result"}
               </Alert>
             )}
 
@@ -142,7 +153,8 @@ const GameResultForm = ({ open, onClose, onSuccess, game }: GameResultFormProps)
               Week {game.week}, Season {game.season}
             </Typography>
             <Typography variant="body2" color="text.secondary">
-              Spread: {game.favorite_team} {game.spread > 0 ? "-" : "+"} {Math.abs(game.spread)}
+              Spread: {game.favorite_team} {game.spread > 0 ? "-" : "+"}{" "}
+              {Math.abs(game.spread)}
             </Typography>
 
             <Box display="flex" gap={2}>
@@ -150,7 +162,12 @@ const GameResultForm = ({ open, onClose, onSuccess, game }: GameResultFormProps)
                 label={`${game.favorite_team} Score`}
                 type="number"
                 value={formData.favorite_score}
-                onChange={(e) => handleInputChange("favorite_score", parseInt(e.target.value) || 0)}
+                onChange={(e) =>
+                  handleInputChange(
+                    "favorite_score",
+                    parseInt(e.target.value, 10) || 0,
+                  )
+                }
                 error={!!errors.favorite_score}
                 helperText={errors.favorite_score}
                 fullWidth
@@ -162,7 +179,12 @@ const GameResultForm = ({ open, onClose, onSuccess, game }: GameResultFormProps)
                 label={`${game.underdog_team} Score`}
                 type="number"
                 value={formData.underdog_score}
-                onChange={(e) => handleInputChange("underdog_score", parseInt(e.target.value) || 0)}
+                onChange={(e) =>
+                  handleInputChange(
+                    "underdog_score",
+                    parseInt(e.target.value, 10) || 0,
+                  )
+                }
                 error={!!errors.underdog_score}
                 helperText={errors.underdog_score}
                 fullWidth
@@ -175,8 +197,10 @@ const GameResultForm = ({ open, onClose, onSuccess, game }: GameResultFormProps)
             {calculatedOutcome && (
               <Alert severity="info">
                 Calculated Outcome: {calculatedOutcome}
-                {calculatedOutcome === "FAVORITE" && ` (${game.favorite_team} covers)`}
-                {calculatedOutcome === "UNDERDOG" && ` (${game.underdog_team} covers)`}
+                {calculatedOutcome === "FAVORITE" &&
+                  ` (${game.favorite_team} covers)`}
+                {calculatedOutcome === "UNDERDOG" &&
+                  ` (${game.underdog_team} covers)`}
                 {calculatedOutcome === "PUSH" && " (Spread exactly matches)"}
                 {calculatedOutcome === "TIE" && " (Scores are tied)"}
               </Alert>
@@ -202,7 +226,8 @@ const GameResultForm = ({ open, onClose, onSuccess, game }: GameResultFormProps)
             </FormControl>
 
             <Typography variant="body2" color="text.secondary">
-              Final Score: {game.favorite_team} {formData.favorite_score} - {game.underdog_team} {formData.underdog_score}
+              Final Score: {game.favorite_team} {formData.favorite_score} -{" "}
+              {game.underdog_team} {formData.underdog_score}
             </Typography>
           </Box>
         </DialogContent>
@@ -210,11 +235,7 @@ const GameResultForm = ({ open, onClose, onSuccess, game }: GameResultFormProps)
           <Button onClick={onClose} disabled={isLoading}>
             Cancel
           </Button>
-          <Button
-            type="submit"
-            variant="contained"
-            disabled={isLoading}
-          >
+          <Button type="submit" variant="contained" disabled={isLoading}>
             {isLoading ? "Submitting..." : "Submit Result"}
           </Button>
         </DialogActions>

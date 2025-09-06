@@ -4,15 +4,15 @@ import { render } from "../test-utils";
 import OverallResultsPage from "./OverallResultsPage";
 
 // Mock the React Query hooks
-vi.mock("../services/api/default/default", () => ({
-  useDebugGetUsers: vi.fn().mockReturnValue({
+vi.mock("../services/api/results/results", () => ({
+  useGetSeasonResults: vi.fn().mockReturnValue({
     data: null,
     isLoading: true,
     error: null,
   }),
 }));
 
-import { useDebugGetUsers } from "../services/api/default/default";
+import { useGetSeasonResults } from "../services/api/results/results";
 
 describe("OverallResultsPage", () => {
   it("renders the loading state", () => {
@@ -22,7 +22,7 @@ describe("OverallResultsPage", () => {
   });
 
   it("renders the error state", async () => {
-    vi.mocked(useDebugGetUsers).mockReturnValue({
+    vi.mocked(useGetSeasonResults).mockReturnValue({
       data: null,
       isLoading: false,
       error: new Error("Failed to fetch overall results"),
@@ -36,34 +36,13 @@ describe("OverallResultsPage", () => {
   });
 
   it("renders the results", async () => {
-    const mockUsersData = {
-      users: [
-        {
-          id: 1,
-          name: "Player 1",
-          total_wins: 100,
-          pick_count: 10,
-          email: "player1@test.com",
-          role: "user",
-          created_at: "",
-          updated_at: "",
-        },
-        {
-          id: 2,
-          name: "Player 2",
-          total_wins: 90,
-          pick_count: 8,
-          email: "player2@test.com",
-          role: "user",
-          created_at: "",
-          updated_at: "",
-        },
-      ],
-      pagination: { total: 2, page: 1, per_page: 10, total_pages: 1 },
-    };
+    const mockSeasonResults = [
+      { player_name: "Player 1", score: 100 },
+      { player_name: "Player 2", score: 90 },
+    ];
 
-    vi.mocked(useDebugGetUsers).mockReturnValue({
-      data: mockUsersData,
+    vi.mocked(useGetSeasonResults).mockReturnValue({
+      data: mockSeasonResults,
       isLoading: false,
       error: null,
     } as any);

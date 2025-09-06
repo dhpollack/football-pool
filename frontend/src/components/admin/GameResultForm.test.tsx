@@ -1,10 +1,9 @@
-
 import { render, screen, fireEvent } from "@testing-library/react";
 import GameResultForm from "./GameResultForm";
-import { useSubmitResult } from "../../services/api/default/default";
+import { useSubmitResult } from "../../services/api/results/results";
 
 // Mock the custom hooks
-vi.mock("../../services/api/default/default", () => ({
+vi.mock("../../services/api/results/results", () => ({
   useSubmitResult: vi.fn(),
 }));
 
@@ -12,7 +11,11 @@ describe("GameResultForm", () => {
   const mockSubmitResult = vi.fn();
 
   beforeEach(() => {
-    (useSubmitResult as jest.Mock).mockReturnValue({ mutateAsync: mockSubmitResult, isPending: false, error: null });
+    (useSubmitResult as jest.Mock).mockReturnValue({
+      mutateAsync: mockSubmitResult,
+      isPending: false,
+      error: null,
+    });
   });
 
   afterEach(() => {
@@ -38,7 +41,9 @@ describe("GameResultForm", () => {
 
   it("renders the form with the correct title and game information", () => {
     render(<GameResultForm {...props} />);
-    expect(screen.getByText("Add Game Result - Team A vs Team B")).toBeInTheDocument();
+    expect(
+      screen.getByText("Add Game Result - Team A vs Team B"),
+    ).toBeInTheDocument();
     expect(screen.getByText("Week 1, Season 2023")).toBeInTheDocument();
   });
 
@@ -50,7 +55,9 @@ describe("GameResultForm", () => {
     fireEvent.change(favoriteScoreInput, { target: { value: "24" } });
     fireEvent.change(underdogScoreInput, { target: { value: "20" } });
 
-    expect(screen.getByText("Calculated Outcome: FAVORITE (Team A covers)")).toBeInTheDocument();
+    expect(
+      screen.getByText("Calculated Outcome: FAVORITE (Team A covers)"),
+    ).toBeInTheDocument();
   });
 
   it("shows validation errors for invalid input", async () => {
@@ -65,20 +72,22 @@ describe("GameResultForm", () => {
     render(<GameResultForm {...props} />);
     const favoriteScoreInput = screen.getByLabelText("Team A Score");
     const underdogScoreInput = screen.getByLabelText("Team B Score");
-    
+
     fireEvent.change(favoriteScoreInput, { target: { value: "24" } });
     fireEvent.change(underdogScoreInput, { target: { value: "20" } });
 
     const outcomeSelect = screen.getByRole("combobox");
     fireEvent.mouseDown(outcomeSelect);
-    const favoriteWinsOption = await screen.findByRole('option', { name: 'Favorite Wins' });
+    const favoriteWinsOption = await screen.findByRole("option", {
+      name: "Favorite Wins",
+    });
     fireEvent.click(favoriteWinsOption);
 
     const submitButton = screen.getByText("Submit Result");
     fireEvent.click(submitButton);
 
     await vi.waitFor(() => {
-        expect(mockSubmitResult).toHaveBeenCalledTimes(1);
+      expect(mockSubmitResult).toHaveBeenCalledTimes(1);
     });
   });
 });

@@ -83,46 +83,70 @@ function App() {
                   }
                 />
               </Route>
-              <Route path="/admin" element={
-                <ProtectedRoute requireAdmin>
-                  <AdminLayout />
-                </ProtectedRoute>
-              }>
-                <Route index element={
-                  <QueryErrorBoundary>
-                    <AdminDashboard />
-                  </QueryErrorBoundary>
-                } />
-                <Route path="games" element={
-                  <QueryErrorBoundary>
-                    <AdminGamesPage />
-                  </QueryErrorBoundary>
-                } />
-                <Route path="users" element={
-                  <QueryErrorBoundary>
-                    <AdminUsersPage />
-                  </QueryErrorBoundary>
-                } />
-                <Route path="users/:userId" element={
-                  <QueryErrorBoundary>
-                    <UserDetailsPage />
-                  </QueryErrorBoundary>
-                } />
-                <Route path="picks" element={
-                  <QueryErrorBoundary>
-                    <AdminPicksPage />
-                  </QueryErrorBoundary>
-                } />
-                <Route path="picks/week/:week" element={
-                  <QueryErrorBoundary>
-                    <WeeklyPicksPage />
-                  </QueryErrorBoundary>
-                } />
-                <Route path="picks/user/:userId" element={
-                  <QueryErrorBoundary>
-                    <UserPicksPage />
-                  </QueryErrorBoundary>
-                } />
+              <Route
+                path="/admin"
+                element={
+                  <ProtectedRoute requireAdmin>
+                    <AdminLayout />
+                  </ProtectedRoute>
+                }
+              >
+                <Route
+                  index
+                  element={
+                    <QueryErrorBoundary>
+                      <AdminDashboard />
+                    </QueryErrorBoundary>
+                  }
+                />
+                <Route
+                  path="games"
+                  element={
+                    <QueryErrorBoundary>
+                      <AdminGamesPage />
+                    </QueryErrorBoundary>
+                  }
+                />
+                <Route
+                  path="users"
+                  element={
+                    <QueryErrorBoundary>
+                      <AdminUsersPage />
+                    </QueryErrorBoundary>
+                  }
+                />
+                <Route
+                  path="users/:userId"
+                  element={
+                    <QueryErrorBoundary>
+                      <UserDetailsPage />
+                    </QueryErrorBoundary>
+                  }
+                />
+                <Route
+                  path="picks"
+                  element={
+                    <QueryErrorBoundary>
+                      <AdminPicksPage />
+                    </QueryErrorBoundary>
+                  }
+                />
+                <Route
+                  path="picks/week/:week"
+                  element={
+                    <QueryErrorBoundary>
+                      <WeeklyPicksPage />
+                    </QueryErrorBoundary>
+                  }
+                />
+                <Route
+                  path="picks/user/:userId"
+                  element={
+                    <QueryErrorBoundary>
+                      <UserPicksPage />
+                    </QueryErrorBoundary>
+                  }
+                />
               </Route>
             </Routes>
           </Router>

@@ -4,15 +4,15 @@ import { render } from "../test-utils";
 import WeeklyResultsPage from "./WeeklyResultsPage";
 
 // Mock the React Query hooks
-vi.mock("../services/api/default/default", () => ({
-  useDebugGetUsers: vi.fn().mockReturnValue({
+vi.mock("../services/api/results/results", () => ({
+  useGetWeeklyResults: vi.fn().mockReturnValue({
     data: null,
     isLoading: false,
     error: null,
   }),
 }));
 
-import { useDebugGetUsers } from "../services/api/default/default";
+import { useGetWeeklyResults } from "../services/api/results/results";
 
 describe("WeeklyResultsPage", () => {
   const mockResults = [
@@ -21,7 +21,7 @@ describe("WeeklyResultsPage", () => {
   ];
 
   it("renders the error state", async () => {
-    vi.mocked(useDebugGetUsers).mockReturnValue({
+    vi.mocked(useGetWeeklyResults).mockReturnValue({
       data: null,
       isLoading: false,
       error: new Error("Failed to fetch weekly results"),
@@ -35,34 +35,13 @@ describe("WeeklyResultsPage", () => {
   });
 
   it("renders the results", async () => {
-    const mockUsersData = {
-      users: [
-        {
-          id: 1,
-          name: "Player 1",
-          total_wins: 5,
-          pick_count: 10,
-          email: "player1@test.com",
-          role: "user",
-          created_at: "",
-          updated_at: "",
-        },
-        {
-          id: 2,
-          name: "Player 2",
-          total_wins: 3,
-          pick_count: 8,
-          email: "player2@test.com",
-          role: "user",
-          created_at: "",
-          updated_at: "",
-        },
-      ],
-      pagination: { total: 2, page: 1, per_page: 10, total_pages: 1 },
-    };
+    const mockWeeklyResults = [
+      { player_name: "Player 1", score: 100 },
+      { player_name: "Player 2", score: 90 },
+    ];
 
-    vi.mocked(useDebugGetUsers).mockReturnValue({
-      data: mockUsersData,
+    vi.mocked(useGetWeeklyResults).mockReturnValue({
+      data: mockWeeklyResults,
       isLoading: false,
       error: null,
     } as any);
@@ -70,8 +49,8 @@ describe("WeeklyResultsPage", () => {
     render(<WeeklyResultsPage />);
 
     expect(await screen.findByText(/player 1/i)).toBeInTheDocument();
-    expect(await screen.findByText(/5/i)).toBeInTheDocument(); // total_wins (5) + index (0) = 5
+    expect(await screen.findByText(/100/i)).toBeInTheDocument();
     expect(await screen.findByText(/player 2/i)).toBeInTheDocument();
-    expect(await screen.findByText(/4/i)).toBeInTheDocument(); // total_wins (3) + index (1) = 4
+    expect(await screen.findByText(/90/i)).toBeInTheDocument();
   });
 });

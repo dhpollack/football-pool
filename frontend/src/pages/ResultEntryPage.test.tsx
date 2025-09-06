@@ -12,7 +12,15 @@ const mockGamesData = {
   ],
 };
 
-vi.mock("../services/api/default/default", () => ({
+vi.mock("../services/api/games/games", () => ({
+  useGetGames: () => ({
+    data: mockGamesData,
+    isLoading: false,
+    error: null,
+  }),
+}));
+
+vi.mock("../services/api/results/results", () => ({
   useGetGames: () => ({
     data: mockGamesData,
     isLoading: false,

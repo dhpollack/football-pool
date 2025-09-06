@@ -8,21 +8,19 @@ import {
   Paper,
   Typography,
 } from "@mui/material";
-import { useDebugGetUsers } from "../services/api/default/default";
-import type { UserWithStats } from "../services/model";
+import { useGetSeasonResults } from "../services/api/results/results";
+import type { SeasonResult } from "../services/model";
 
 const OverallResultsPage = () => {
-  const { data: usersData, isLoading, error } = useDebugGetUsers();
+  const {
+    data: seasonResultsData,
+    isLoading,
+    error,
+  } = useGetSeasonResults({
+    season: 2025,
+  });
 
-  // Transform the user data into the format expected by the UI
-  const seasonResults =
-    usersData?.users
-      ?.filter((user: UserWithStats) => user.total_wins > 0)
-      ?.map((user: UserWithStats) => ({
-        player_name: user.name,
-        score: user.total_wins,
-      }))
-      ?.sort((a, b) => b.score - a.score) || [];
+  const seasonResults: SeasonResult[] = seasonResultsData || [];
 
   if (isLoading) {
     return <Typography>Loading overall results...</Typography>;

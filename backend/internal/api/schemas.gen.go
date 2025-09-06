@@ -142,6 +142,13 @@ type ResultResponse struct {
 	UpdatedAt     time.Time     `json:"updated_at"`
 }
 
+// SeasonResult defines model for SeasonResult.
+type SeasonResult struct {
+	PlayerId   uint   `json:"player_id"`
+	PlayerName string `json:"player_name"`
+	Score      int    `json:"score"`
+}
+
 // SurvivorPickRequest defines model for SurvivorPickRequest.
 type SurvivorPickRequest struct {
 	Team   string `json:"team"`
@@ -196,6 +203,13 @@ type UserWithStats struct {
 	Role      string          `json:"role"`
 	TotalWins int             `json:"total_wins"`
 	UpdatedAt time.Time       `json:"updated_at"`
+}
+
+// WeeklyResult defines model for WeeklyResult.
+type WeeklyResult struct {
+	PlayerId   uint   `json:"player_id"`
+	PlayerName string `json:"player_name"`
+	Score      int    `json:"score"`
 }
 
 // AdminSubmitPicksJSONBody defines parameters for AdminSubmitPicks.

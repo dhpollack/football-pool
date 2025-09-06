@@ -31,3 +31,5 @@ export * from "./userListResponse";
 export * from "./userRequest";
 export * from "./userResponse";
 export * from "./userWithStats";
+export * from "./seasonResult";
+export * from "./weeklyResult";

@@ -1,4 +1,3 @@
-
 import { render, screen } from "@testing-library/react";
 import { MemoryRouter, Routes, Route } from "react-router-dom";
 import AdminLayout from "./AdminLayout";
@@ -25,11 +24,11 @@ describe("AdminLayout", () => {
     render(
       <MemoryRouter>
         <AdminLayout />
-      </MemoryRouter>
+      </MemoryRouter>,
     );
     expect(screen.getByText("Access Denied")).toBeInTheDocument();
     expect(
-      screen.getByText("You do not have permission to access the admin area.")
+      screen.getByText("You do not have permission to access the admin area."),
     ).toBeInTheDocument();
   });
 
@@ -42,7 +41,7 @@ describe("AdminLayout", () => {
             <Route index element={<div>Admin Content</div>} />
           </Route>
         </Routes>
-      </MemoryRouter>
+      </MemoryRouter>,
     );
 
     expect(screen.getByText("Football Pool Admin")).toBeInTheDocument();
@@ -55,7 +54,7 @@ describe("AdminLayout", () => {
     const { container } = render(
       <MemoryRouter>
         <AdminLayout />
-      </MemoryRouter>
+      </MemoryRouter>,
     );
     expect(container.firstChild).toBeNull();
   });

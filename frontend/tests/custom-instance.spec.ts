@@ -1,5 +1,4 @@
 import { test, expect } from "@playwright/test";
-import { customInstance } from "../src/services/custom-instance";
 
 // Simple test to verify custom instance works
 test.describe("Custom Instance", () => {

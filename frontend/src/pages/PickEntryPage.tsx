@@ -1,5 +1,6 @@
 import React, { useState, useId } from "react";
-import { useGetGames, useSubmitPicks } from "../services/api/default/default";
+import { useGetGames } from "../services/api/games/games";
+import { useSubmitPicks } from "../services/api/picks/picks";
 import type { GameResponse, PickRequest } from "../services/model";
 import axios from "axios";
 import {

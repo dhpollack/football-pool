@@ -8,7 +8,7 @@ import {
   CircularProgress,
   Alert,
 } from "@mui/material";
-import { ReactNode } from "react";
+import type { ReactNode } from "react";
 
 interface AdminFormDialogProps {
   open: boolean;
@@ -20,7 +20,7 @@ interface AdminFormDialogProps {
   error?: string | null;
   submitLabel?: string;
   cancelLabel?: string;
-  maxWidth?: 'xs' | 'sm' | 'md' | 'lg' | 'xl';
+  maxWidth?: "xs" | "sm" | "md" | "lg" | "xl";
   fullWidth?: boolean;
 }
 
@@ -34,7 +34,7 @@ const AdminFormDialog = ({
   error = null,
   submitLabel = "Save",
   cancelLabel = "Cancel",
-  maxWidth = 'md',
+  maxWidth = "md",
   fullWidth = true,
 }: AdminFormDialogProps) => {
   const handleSubmit = (e: React.FormEvent) => {
@@ -49,7 +49,7 @@ const AdminFormDialog = ({
       maxWidth={maxWidth}
       fullWidth={fullWidth}
       PaperProps={{
-        component: 'form',
+        component: "form",
         onSubmit: handleSubmit,
       }}
     >
@@ -60,9 +60,7 @@ const AdminFormDialog = ({
             {error}
           </Alert>
         )}
-        <Box sx={{ pt: 1 }}>
-          {children}
-        </Box>
+        <Box sx={{ pt: 1 }}>{children}</Box>
       </DialogContent>
       <DialogActions>
         <Button onClick={onClose} disabled={loading}>

@@ -1,13 +1,7 @@
 import { useState } from "react";
-import {
-  Typography,
-  Box,
-  IconButton,
-  Alert,
-  Chip,
-} from "@mui/material";
+import { Typography, Box, IconButton, Alert, Chip } from "@mui/material";
 import { Edit, Delete } from "@mui/icons-material";
-import { useAdminListUsers } from "../../services/api/default/default";
+import { useAdminListUsers } from "../../services/api/user/user";
 import AdminDataTable from "../../components/admin/AdminDataTable";
 import AdminSearchFilter from "../../components/admin/AdminSearchFilter";
 import AdminActionButtons from "../../components/admin/AdminActionButtons";
@@ -117,8 +111,7 @@ const AdminUsersPage = () => {
     {
       id: "created_at",
       label: "Joined",
-      format: (dateString: string) =>
-        new Date(dateString).toLocaleDateString(),
+      format: (dateString: string) => new Date(dateString).toLocaleDateString(),
     },
     {
       id: "actions",
@@ -156,7 +149,12 @@ const AdminUsersPage = () => {
 
   return (
     <Box>
-      <Box display="flex" justifyContent="space-between" alignItems="center" mb={3}>
+      <Box
+        display="flex"
+        justifyContent="space-between"
+        alignItems="center"
+        mb={3}
+      >
         <Typography variant="h4">User Management</Typography>
         <AdminActionButtons
           onAdd={() => console.log("Add new user")}

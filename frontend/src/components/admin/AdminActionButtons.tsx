@@ -16,7 +16,7 @@ interface AdminActionButtonsProps {
     delete?: boolean;
     view?: boolean;
   };
-  size?: 'small' | 'medium' | 'large';
+  size?: "small" | "medium" | "large";
 }
 
 const AdminActionButtons = ({
@@ -29,7 +29,7 @@ const AdminActionButtons = ({
   deleteLabel = "Delete",
   viewLabel = "View",
   disabled = {},
-  size = 'medium',
+  size = "medium",
 }: AdminActionButtonsProps) => {
   return (
     <Box display="flex" gap={1} flexWrap="wrap">

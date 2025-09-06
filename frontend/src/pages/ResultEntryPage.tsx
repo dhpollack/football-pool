@@ -13,7 +13,8 @@ import {
   TextField,
   Box,
 } from "@mui/material";
-import { useGetGames, useSubmitResult } from "../services/api/default/default";
+import { useGetGames } from "../services/api/games/games";
+import { useSubmitResult } from "../services/api/results/results";
 import type { GameResponse, ResultRequest } from "../services/model";
 import axios from "axios";
 

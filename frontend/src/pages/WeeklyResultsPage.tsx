@@ -8,22 +8,20 @@ import {
   Paper,
   Typography,
 } from "@mui/material";
-import { useDebugGetUsers } from "../services/api/default/default";
-import type { UserWithStats } from "../services/model";
+import { useGetWeeklyResults } from "../services/api/results/results";
+import type { WeeklyResult } from "../services/model";
 
 const WeeklyResultsPage = () => {
-  const { data: usersData, isLoading, error } = useDebugGetUsers();
+  const {
+    data: weeklyResultsData,
+    isLoading,
+    error,
+  } = useGetWeeklyResults({
+    week: 1,
+    season: 2025,
+  });
 
-  // For weekly results, we'll use mock data since there's no appropriate API endpoint
-  // This is a temporary fix to make the build pass
-  const weeklyResults =
-    usersData?.users
-      ?.filter((user: UserWithStats) => user.total_wins > 0)
-      ?.map((user: UserWithStats, index: number) => ({
-        player_name: user.name,
-        score: user.total_wins + index, // Consistent score based on user data
-      }))
-      ?.sort((a, b) => b.score - a.score) || [];
+  const weeklyResults: WeeklyResult[] = weeklyResultsData || [];
 
   if (isLoading) {
     return <Typography>Loading weekly results...</Typography>;

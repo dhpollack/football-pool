@@ -1,12 +1,7 @@
 import { useState } from "react";
-import {
-  Typography,
-  Box,
-  IconButton,
-  Alert,
-} from "@mui/material";
+import { Typography, Box, IconButton, Alert } from "@mui/material";
 import { Edit, Delete } from "@mui/icons-material";
-import { useAdminListGames } from "../../services/api/default/default";
+import { useAdminListGames } from "../../services/api/games/games";
 import AdminDataTable from "../../components/admin/AdminDataTable";
 import AdminSearchFilter from "../../components/admin/AdminSearchFilter";
 import AdminActionButtons from "../../components/admin/AdminActionButtons";
@@ -86,19 +81,20 @@ const AdminGamesPage = () => {
     {
       id: "matchup",
       label: "Matchup",
-      format: (game: GameResponse) => `${game.favorite_team} vs ${game.underdog_team}`,
+      format: (game: GameResponse) =>
+        `${game.favorite_team} vs ${game.underdog_team}`,
     },
     {
       id: "spread",
       label: "Spread",
       align: "center" as const,
-      format: (spread: number) => spread > 0 ? `+${spread}` : spread.toString(),
+      format: (spread: number) =>
+        spread > 0 ? `+${spread}` : spread.toString(),
     },
     {
       id: "start_time",
       label: "Start Time",
-      format: (dateString: string) =>
-        new Date(dateString).toLocaleDateString(),
+      format: (dateString: string) => new Date(dateString).toLocaleDateString(),
     },
     {
       id: "actions",
@@ -141,7 +137,9 @@ const AdminGamesPage = () => {
         game.underdog_team.toLowerCase().includes(searchTerm.toLowerCase())
       : true;
 
-    const matchesWeek = filters.week ? game.week === parseInt(filters.week) : true;
+    const matchesWeek = filters.week
+      ? game.week === parseInt(filters.week)
+      : true;
     const matchesSeason = filters.season
       ? game.season === parseInt(filters.season)
       : true;
@@ -151,12 +149,17 @@ const AdminGamesPage = () => {
 
   const paginatedGames = filteredGames.slice(
     page * rowsPerPage,
-    page * rowsPerPage + rowsPerPage
+    page * rowsPerPage + rowsPerPage,
   );
 
   return (
     <Box>
-      <Box display="flex" justifyContent="space-between" alignItems="center" mb={3}>
+      <Box
+        display="flex"
+        justifyContent="space-between"
+        alignItems="center"
+        mb={3}
+      >
         <Typography variant="h4">Game Management</Typography>
         <AdminActionButtons
           onAdd={() => console.log("Add new game")}

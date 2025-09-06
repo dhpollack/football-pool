@@ -1,4 +1,3 @@
-
 import { render, screen } from "@testing-library/react";
 import { MemoryRouter } from "react-router-dom";
 import AdminNavigation from "./AdminNavigation";
@@ -8,7 +7,7 @@ describe("AdminNavigation", () => {
     return render(
       <MemoryRouter initialEntries={[path]}>
         <AdminNavigation />
-      </MemoryRouter>
+      </MemoryRouter>,
     );
   };
 
@@ -32,11 +31,11 @@ describe("AdminNavigation", () => {
     renderWithRouter("/admin");
     expect(screen.getByText("Dashboard").closest("a")).toHaveAttribute(
       "href",
-      "/admin"
+      "/admin",
     );
     expect(screen.getByText("Game Management").closest("a")).toHaveAttribute(
       "href",
-      "/admin/games"
+      "/admin/games",
     );
   });
 });

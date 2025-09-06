@@ -1,4 +1,3 @@
-
 import { render, screen } from "@testing-library/react";
 import AdminDashboard from "./AdminDashboard";
 
@@ -8,12 +7,12 @@ describe("AdminDashboard", () => {
 
     // Check for the main title
     expect(
-      screen.getByText("Admin Dashboard", { selector: "h4" })
+      screen.getByText("Admin Dashboard", { selector: "h4" }),
     ).toBeInTheDocument();
 
     // Check for the welcome message
     expect(
-      screen.getByText("Welcome to the Football Pool Administration Panel")
+      screen.getByText("Welcome to the Football Pool Administration Panel"),
     ).toBeInTheDocument();
 
     // Check for the stats titles

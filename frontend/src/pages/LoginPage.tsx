@@ -3,8 +3,8 @@ import { useNavigate } from "react-router-dom";
 import { TextField, Button, Box, Typography } from "@mui/material";
 import { useMutation } from "@tanstack/react-query";
 import useSignIn from "react-auth-kit/hooks/useSignIn";
-import { loginUser } from "../services/api/default/default";
-import { LoginRequest } from "../services/model";
+import { loginUser } from "../services/api/user/user";
+import type { LoginRequest } from "../services/model";
 
 const LoginPage = () => {
   const signIn = useSignIn();

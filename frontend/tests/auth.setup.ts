@@ -1,13 +1,6 @@
 import { test as setup, expect } from "@playwright/test";
 import { E2E_CONFIG } from "./e2e.config";
 
-// Test user credentials for registration
-const TEST_USER = {
-  name: "Test User",
-  email: `test-user-${Date.now()}@example.com`,
-  password: "SecurePassword123!",
-};
-
 const adminFile = "playwright/.auth/admin.json";
 setup("authenticate as admin", async ({ page }) => {
   // Login with admin credentials

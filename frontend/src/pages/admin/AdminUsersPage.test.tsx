@@ -1,10 +1,10 @@
 import { render, screen } from "@testing-library/react";
 import AdminUsersPage from "./AdminUsersPage";
-import { useAdminListUsers } from "../../services/api/default/default";
-import { getAdminListUsersResponseMock } from "../../services/api/default/default.msw";
+import { useAdminListUsers } from "../../services/api/user/user";
+import { getAdminListUsersResponseMock } from "../../services/api/user/user.msw";
 
 // Mock the custom hooks
-vi.mock("../../services/api/default/default", () => ({
+vi.mock("../../services/api/user/user", () => ({
   useAdminListUsers: vi.fn(),
 }));
 
@@ -40,15 +40,16 @@ vi.mock("../../components/admin/AdminActionButtons", () => ({
 }));
 
 vi.mock("../../components/admin/AdminConfirmDialog", () => ({
-  default: ({ open }: any) => open && <div data-testid="confirm-dialog">Confirm Dialog</div>,
+  default: ({ open }: any) =>
+    open && <div data-testid="confirm-dialog">Confirm Dialog</div>,
 }));
 
 describe("AdminUsersPage", () => {
   beforeEach(() => {
-    (useAdminListUsers as jest.Mock).mockReturnValue({ 
-      data: null, 
-      error: null, 
-      isLoading: false 
+    (useAdminListUsers as jest.Mock).mockReturnValue({
+      data: null,
+      error: null,
+      isLoading: false,
     });
   });
 
@@ -58,19 +59,19 @@ describe("AdminUsersPage", () => {
 
   it("renders the page title", () => {
     render(<AdminUsersPage />);
-    
+
     expect(screen.getByText("User Management")).toBeInTheDocument();
   });
 
   it("renders loading state", () => {
-    (useAdminListUsers as jest.Mock).mockReturnValue({ 
-      data: null, 
-      error: null, 
-      isLoading: true 
+    (useAdminListUsers as jest.Mock).mockReturnValue({
+      data: null,
+      error: null,
+      isLoading: true,
     });
 
     render(<AdminUsersPage />);
-    
+
     expect(screen.getByText("Loading...")).toBeInTheDocument();
   });
 
@@ -85,34 +86,34 @@ describe("AdminUsersPage", () => {
           pick_count: 10,
           total_wins: 5,
           created_at: "2023-09-10T12:00:00Z",
-          updated_at: "2023-09-10T12:00:00Z"
+          updated_at: "2023-09-10T12:00:00Z",
         },
         {
           id: 2,
-          email: "user@example.com", 
+          email: "user@example.com",
           name: "Regular User",
           role: "user",
           pick_count: 8,
           total_wins: 3,
           created_at: "2023-09-10T13:00:00Z",
-          updated_at: "2023-09-10T13:00:00Z"
-        }
+          updated_at: "2023-09-10T13:00:00Z",
+        },
       ],
       pagination: {
         page: 1,
         limit: 10,
-        total: 2
-      }
+        total: 2,
+      },
     });
 
-    (useAdminListUsers as jest.Mock).mockReturnValue({ 
-      data: mockData, 
-      error: null, 
-      isLoading: false 
+    (useAdminListUsers as jest.Mock).mockReturnValue({
+      data: mockData,
+      error: null,
+      isLoading: false,
     });
 
     render(<AdminUsersPage />);
-    
+
     expect(screen.getByText("admin@example.com")).toBeInTheDocument();
     expect(screen.getByText("user@example.com")).toBeInTheDocument();
     expect(screen.getByText("Admin User")).toBeInTheDocument();
@@ -120,26 +121,26 @@ describe("AdminUsersPage", () => {
   });
 
   it("shows error message when there is an error", () => {
-    (useAdminListUsers as jest.Mock).mockReturnValue({ 
-      data: null, 
-      error: { message: "Failed to load users" }, 
-      isLoading: false 
+    (useAdminListUsers as jest.Mock).mockReturnValue({
+      data: null,
+      error: { message: "Failed to load users" },
+      isLoading: false,
     });
 
     render(<AdminUsersPage />);
-    
+
     expect(screen.getByText("Error: Failed to load users")).toBeInTheDocument();
   });
 
   it("renders search filter component", () => {
     render(<AdminUsersPage />);
-    
+
     expect(screen.getByTestId("search-filter")).toBeInTheDocument();
   });
 
   it("renders action buttons component", () => {
     render(<AdminUsersPage />);
-    
+
     expect(screen.getByTestId("action-buttons")).toBeInTheDocument();
   });
 });

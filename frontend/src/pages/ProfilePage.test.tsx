@@ -9,7 +9,7 @@ const mockProfileData = {
 };
 
 const mockUpdateProfile = vi.fn();
-vi.mock("../services/api/default/default", () => ({
+vi.mock("../services/api/user/user", () => ({
   useGetProfile: () => ({
     data: mockProfileData,
     error: null,

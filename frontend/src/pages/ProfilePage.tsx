@@ -1,9 +1,6 @@
 import { useState, useEffect, useId } from "react";
 import { TextField, Button, Box, Typography } from "@mui/material";
-import {
-  useGetProfile,
-  useUpdateProfile,
-} from "../services/api/default/default";
+import { useGetProfile, useUpdateProfile } from "../services/api/user/user";
 import type { PlayerRequest } from "../services/model";
 import axios from "axios";
 

@@ -8,7 +8,7 @@ global.fetch = vi.fn();
 
 // Mock the React Query hook
 const mockSubmitSurvivorPick = vi.fn();
-vi.mock("../services/api/default/default", () => ({
+vi.mock("../services/api/survivor/survivor", () => ({
   useSubmitSurvivorPick: () => ({
     mutateAsync: mockSubmitSurvivorPick,
     isPending: false,

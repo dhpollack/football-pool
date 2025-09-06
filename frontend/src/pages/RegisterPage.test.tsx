@@ -16,7 +16,7 @@ vi.mock("react-router-dom", async () => {
 
 // Mock the React Query hook
 const mockRegisterUser = vi.fn();
-vi.mock("../services/api/default/default", () => ({
+vi.mock("../services/api/user/user", () => ({
   useRegisterUser: () => ({
     mutateAsync: mockRegisterUser,
     isPending: false,

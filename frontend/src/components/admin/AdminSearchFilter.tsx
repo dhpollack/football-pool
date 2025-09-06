@@ -12,7 +12,7 @@ import { Search, Clear, FilterList } from "@mui/icons-material";
 interface FilterField {
   name: string;
   label: string;
-  type?: 'text' | 'number' | 'select';
+  type?: "text" | "number" | "select";
   options?: { value: string; label: string }[];
 }
 
@@ -35,9 +35,10 @@ const AdminSearchFilter = ({
   onClearFilters,
   placeholder = "Search...",
 }: AdminSearchFilterProps) => {
-  const hasActiveFilters = Object.values(filters).some(
-    (value) => value !== undefined && value !== '' && value !== null
-  ) || searchTerm !== '';
+  const hasActiveFilters =
+    Object.values(filters).some(
+      (value) => value !== undefined && value !== "" && value !== null,
+    ) || searchTerm !== "";
 
   return (
     <Paper sx={{ p: 2, mb: 3 }}>
@@ -59,7 +60,7 @@ const AdminSearchFilter = ({
                 <InputAdornment position="end">
                   <IconButton
                     size="small"
-                    onClick={() => onSearchChange('')}
+                    onClick={() => onSearchChange("")}
                     edge="end"
                   >
                     <Clear />
@@ -76,10 +77,10 @@ const AdminSearchFilter = ({
               {filterFields.map((field) => (
                 <TextField
                   key={field.name}
-                  select={field.type === 'select'}
-                  type={field.type === 'number' ? 'number' : 'text'}
+                  select={field.type === "select"}
+                  type={field.type === "number" ? "number" : "text"}
                   label={field.label}
-                  value={filters[field.name] || ''}
+                  value={filters[field.name] || ""}
                   onChange={(e) => onFilterChange(field.name, e.target.value)}
                   size="small"
                   sx={{ minWidth: 120 }}
@@ -87,10 +88,10 @@ const AdminSearchFilter = ({
                     native: true,
                   }}
                 >
-                  {field.type === 'select' && field.options && (
+                  {field.type === "select" && field.options && (
                     <option value="">All</option>
                   )}
-                  {field.type === 'select' &&
+                  {field.type === "select" &&
                     field.options &&
                     field.options.map((option) => (
                       <option key={option.value} value={option.value}>
@@ -105,7 +106,7 @@ const AdminSearchFilter = ({
 
         {(hasActiveFilters || filterFields.length > 0) && (
           <Grid size={{ xs: 12, md: 2 }}>
-            <Box display="flex" gap={1} justifyContent={{ md: 'flex-end' }}>
+            <Box display="flex" gap={1} justifyContent={{ md: "flex-end" }}>
               {filterFields.length > 0 && (
                 <Button
                   variant="outlined"

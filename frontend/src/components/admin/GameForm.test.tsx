@@ -1,10 +1,9 @@
-
-import { render, screen, fireEvent, waitFor } from "@testing-library/react";
+import { render, screen, fireEvent } from "@testing-library/react";
 import GameForm from "./GameForm";
-import { useCreateGame, useUpdateGame } from "../../services/api/default/default";
+import { useCreateGame, useUpdateGame } from "../../services/api/games/games";
 
 // Mock the custom hooks
-vi.mock("../../services/api/default/default", () => ({
+vi.mock("../../services/api/games/games", () => ({
   useCreateGame: vi.fn(),
   useUpdateGame: vi.fn(),
 }));
@@ -14,8 +13,16 @@ describe("GameForm", () => {
   const mockUpdateGame = vi.fn();
 
   beforeEach(() => {
-    (useCreateGame as jest.Mock).mockReturnValue({ mutateAsync: mockCreateGame, isPending: false, error: null });
-    (useUpdateGame as jest.Mock).mockReturnValue({ mutateAsync: mockUpdateGame, isPending: false, error: null });
+    (useCreateGame as jest.Mock).mockReturnValue({
+      mutateAsync: mockCreateGame,
+      isPending: false,
+      error: null,
+    });
+    (useUpdateGame as jest.Mock).mockReturnValue({
+      mutateAsync: mockUpdateGame,
+      isPending: false,
+      error: null,
+    });
   });
 
   afterEach(() => {
@@ -78,7 +85,7 @@ describe("GameForm", () => {
     fireEvent.click(createButton);
 
     await vi.waitFor(() => {
-        expect(mockCreateGame).toHaveBeenCalledTimes(1);
+      expect(mockCreateGame).toHaveBeenCalledTimes(1);
     });
   });
 });

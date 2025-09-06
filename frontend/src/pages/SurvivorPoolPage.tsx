@@ -8,7 +8,7 @@ import {
   InputLabel,
   Box,
 } from "@mui/material";
-import { useSubmitSurvivorPick } from "../services/api/default/default";
+import { useSubmitSurvivorPick } from "../services/api/survivor/survivor";
 import type { SurvivorPickRequest } from "../services/model";
 import axios from "axios";
 

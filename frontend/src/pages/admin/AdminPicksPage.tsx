@@ -1,13 +1,7 @@
 import { useState } from "react";
-import {
-  Typography,
-  Box,
-  IconButton,
-  Alert,
-  Chip,
-} from "@mui/material";
+import { Typography, Box, IconButton, Alert, Chip } from "@mui/material";
 import { Delete } from "@mui/icons-material";
-import { useAdminListPicks } from "../../services/api/default/default";
+import { useAdminListPicks } from "../../services/api/picks/picks";
 import AdminDataTable from "../../components/admin/AdminDataTable";
 import AdminSearchFilter from "../../components/admin/AdminSearchFilter";
 import AdminConfirmDialog from "../../components/admin/AdminConfirmDialog";
@@ -94,7 +88,9 @@ const AdminPicksPage = () => {
       id: "game",
       label: "Game",
       format: (pick: PickResponse) =>
-        pick.game ? `${pick.game.favorite_team} vs ${pick.game.underdog_team}` : "Unknown",
+        pick.game
+          ? `${pick.game.favorite_team} vs ${pick.game.underdog_team}`
+          : "Unknown",
     },
     {
       id: "week",
@@ -123,8 +119,7 @@ const AdminPicksPage = () => {
     {
       id: "created_at",
       label: "Submitted",
-      format: (dateString: string) =>
-        new Date(dateString).toLocaleDateString(),
+      format: (dateString: string) => new Date(dateString).toLocaleDateString(),
     },
     {
       id: "actions",
@@ -169,7 +164,12 @@ const AdminPicksPage = () => {
 
   return (
     <Box>
-      <Box display="flex" justifyContent="space-between" alignItems="center" mb={3}>
+      <Box
+        display="flex"
+        justifyContent="space-between"
+        alignItems="center"
+        mb={3}
+      >
         <Typography variant="h4">Pick Management</Typography>
       </Box>
 

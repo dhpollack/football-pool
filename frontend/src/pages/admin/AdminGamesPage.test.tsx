@@ -1,10 +1,9 @@
-
 import { render, screen, fireEvent } from "@testing-library/react";
 import AdminGamesPage from "./AdminGamesPage";
-import { useAdminListGames } from "../../services/api/default/default";
+import { useAdminListGames } from "../../services/api/games/games";
 
 // Mock the custom hooks and components
-vi.mock("../../services/api/default/default", () => ({
+vi.mock("../../services/api/games/games", () => ({
   useAdminListGames: vi.fn(),
 }));
 
@@ -68,7 +67,9 @@ describe("AdminGamesPage", () => {
       isLoading: false,
     });
     render(<AdminGamesPage />);
-    expect(screen.getByText("Error loading games: Failed to fetch games")).toBeInTheDocument();
+    expect(
+      screen.getByText("Error loading games: Failed to fetch games"),
+    ).toBeInTheDocument();
   });
 
   it("displays the games in a table when the API call is successful", () => {

@@ -85,33 +85,7 @@ func UpdateProfile(db *gorm.DB) http.HandlerFunc {
 	}
 }
 
-func DebugGetUsers(db *gorm.DB) http.HandlerFunc {
-	return func(w http.ResponseWriter, r *http.Request) {
-		w.Header().Set("Content-Type", "application/json")
 
-		var users []database.User
-		if result := db.Find(&users); result.Error != nil {
-			w.WriteHeader(http.StatusInternalServerError)
-			json.NewEncoder(w).Encode(api.ErrorResponse{Error: "Database error"})
-			return
-		}
-		slog.Debug("Found users:", "count", len(users))
-		for _, user := range users {
-			slog.Debug("User:", "email", user.Email)
-		}
-
-		// Convert to API response
-		response := make([]api.UserResponse, len(users))
-		for i, user := range users {
-			response[i] = api.UserToResponse(user)
-		}
-
-		if err := json.NewEncoder(w).Encode(response); err != nil {
-			w.WriteHeader(http.StatusInternalServerError)
-			json.NewEncoder(w).Encode(api.ErrorResponse{Error: "Failed to encode response"})
-		}
-	}
-}
 
 func DeleteUser(db *gorm.DB) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {

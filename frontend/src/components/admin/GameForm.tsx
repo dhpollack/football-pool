@@ -10,8 +10,8 @@ import {
   Typography,
   Alert,
 } from "@mui/material";
-import { useCreateGame, useUpdateGame } from "../../services/api/default/default";
-import { GameRequest, GameResponse } from "../../services/model";
+import { useCreateGame, useUpdateGame } from "../../services/api/games/games";
+import type { GameRequest, GameResponse } from "../../services/model";
 
 interface GameFormProps {
   open: boolean;
@@ -29,7 +29,9 @@ const GameForm = ({ open, onClose, onSuccess, game }: GameFormProps) => {
     spread: 0,
     start_time: "",
   });
-  const [errors, setErrors] = useState<Partial<Record<keyof GameRequest, string>>>({});
+  const [errors, setErrors] = useState<
+    Partial<Record<keyof GameRequest, string>>
+  >({});
 
   const createGameMutation = useCreateGame();
   const updateGameMutation = useUpdateGame();
@@ -120,7 +122,7 @@ const GameForm = ({ open, onClose, onSuccess, game }: GameFormProps) => {
       ...prev,
       [field]: value,
     }));
-    
+
     if (errors[field]) {
       setErrors((prev) => ({
         ...prev,
@@ -129,14 +131,13 @@ const GameForm = ({ open, onClose, onSuccess, game }: GameFormProps) => {
     }
   };
 
-  const isLoading = createGameMutation.isPending || updateGameMutation.isPending;
+  const isLoading =
+    createGameMutation.isPending || updateGameMutation.isPending;
   const error = createGameMutation.error || updateGameMutation.error;
 
   return (
     <Dialog open={open} onClose={onClose} maxWidth="md" fullWidth>
-      <DialogTitle>
-        {game ? "Edit Game" : "Add New Game"}
-      </DialogTitle>
+      <DialogTitle>{game ? "Edit Game" : "Add New Game"}</DialogTitle>
       <form onSubmit={handleSubmit}>
         <DialogContent>
           <Box display="flex" flexDirection="column" gap={2} mt={1}>
@@ -151,7 +152,9 @@ const GameForm = ({ open, onClose, onSuccess, game }: GameFormProps) => {
                 label="Week"
                 type="number"
                 value={formData.week}
-                onChange={(e) => handleInputChange("week", parseInt(e.target.value) || 1)}
+                onChange={(e) =>
+                  handleInputChange("week", parseInt(e.target.value, 10) || 1)
+                }
                 error={!!errors.week}
                 helperText={errors.week}
                 fullWidth
@@ -164,7 +167,12 @@ const GameForm = ({ open, onClose, onSuccess, game }: GameFormProps) => {
                 label="Season"
                 type="number"
                 value={formData.season}
-                onChange={(e) => handleInputChange("season", parseInt(e.target.value) || new Date().getFullYear())}
+                onChange={(e) =>
+                  handleInputChange(
+                    "season",
+                    parseInt(e.target.value, 10) || new Date().getFullYear(),
+                  )
+                }
                 error={!!errors.season}
                 helperText={errors.season}
                 fullWidth
@@ -179,7 +187,9 @@ const GameForm = ({ open, onClose, onSuccess, game }: GameFormProps) => {
               <TextField
                 label="Favorite Team"
                 value={formData.favorite_team}
-                onChange={(e) => handleInputChange("favorite_team", e.target.value)}
+                onChange={(e) =>
+                  handleInputChange("favorite_team", e.target.value)
+                }
                 error={!!errors.favorite_team}
                 helperText={errors.favorite_team}
                 fullWidth
@@ -187,7 +197,9 @@ const GameForm = ({ open, onClose, onSuccess, game }: GameFormProps) => {
               <TextField
                 label="Underdog Team"
                 value={formData.underdog_team}
-                onChange={(e) => handleInputChange("underdog_team", e.target.value)}
+                onChange={(e) =>
+                  handleInputChange("underdog_team", e.target.value)
+                }
                 error={!!errors.underdog_team}
                 helperText={errors.underdog_team}
                 fullWidth
@@ -199,9 +211,13 @@ const GameForm = ({ open, onClose, onSuccess, game }: GameFormProps) => {
                 label="Spread"
                 type="number"
                 value={formData.spread}
-                onChange={(e) => handleInputChange("spread", parseFloat(e.target.value) || 0)}
+                onChange={(e) =>
+                  handleInputChange("spread", parseFloat(e.target.value) || 0)
+                }
                 error={!!errors.spread}
-                helperText={errors.spread || "Positive number means favorite is favored"}
+                helperText={
+                  errors.spread || "Positive number means favorite is favored"
+                }
                 fullWidth
                 inputProps={{
                   step: 0.5,
@@ -211,7 +227,9 @@ const GameForm = ({ open, onClose, onSuccess, game }: GameFormProps) => {
                 label="Start Time"
                 type="datetime-local"
                 value={formData.start_time}
-                onChange={(e) => handleInputChange("start_time", e.target.value)}
+                onChange={(e) =>
+                  handleInputChange("start_time", e.target.value)
+                }
                 error={!!errors.start_time}
                 helperText={errors.start_time}
                 fullWidth
@@ -223,7 +241,9 @@ const GameForm = ({ open, onClose, onSuccess, game }: GameFormProps) => {
 
             {formData.spread !== 0 && (
               <Typography variant="body2" color="text.secondary">
-                Spread: {formData.favorite_team} {formData.spread > 0 ? "-" : "+"} {Math.abs(formData.spread)} vs {formData.underdog_team}
+                Spread: {formData.favorite_team}{" "}
+                {formData.spread > 0 ? "-" : "+"} {Math.abs(formData.spread)} vs{" "}
+                {formData.underdog_team}
               </Typography>
             )}
           </Box>
@@ -232,11 +252,7 @@ const GameForm = ({ open, onClose, onSuccess, game }: GameFormProps) => {
           <Button onClick={onClose} disabled={isLoading}>
             Cancel
           </Button>
-          <Button
-            type="submit"
-            variant="contained"
-            disabled={isLoading}
-          >
+          <Button type="submit" variant="contained" disabled={isLoading}>
             {isLoading ? "Saving..." : game ? "Update Game" : "Create Game"}
           </Button>
         </DialogActions>

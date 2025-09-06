@@ -82,7 +82,10 @@ const AdminNavigation = () => {
             >
               <ListItemIcon
                 sx={{
-                  color: location.pathname === item.path ? "inherit" : "action.active",
+                  color:
+                    location.pathname === item.path
+                      ? "inherit"
+                      : "action.active",
                 }}
               >
                 {item.icon}

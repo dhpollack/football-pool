@@ -81,7 +81,7 @@ func (s *Server) NewRouter() http.Handler {
 	mux.Handle("/api/survivor/picks", s.auth.Middleware(handlers.GetSurvivorPicks(s.db.GetDB())))
 	mux.Handle("/api/survivor/picks/submit", s.auth.Middleware(handlers.SubmitSurvivorPick(s.db.GetDB())))
 
-	mux.Handle("/api/debug/users", s.auth.Middleware(s.auth.AdminMiddleware(handlers.DebugGetUsers(s.db.GetDB()))))
+	
 	mux.Handle("/api/admin/users/delete", s.auth.Middleware(s.auth.AdminMiddleware(handlers.DeleteUser(s.db.GetDB()))))
 	
 	// Admin user management endpoints

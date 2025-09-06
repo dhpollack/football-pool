@@ -1,4 +1,4 @@
-import { ReactNode } from "react";
+import type { ReactNode } from "react";
 import { useAuth } from "../hooks/useAuth";
 import { CircularProgress, Box, Typography, Container } from "@mui/material";
 
@@ -7,7 +7,10 @@ interface ProtectedRouteProps {
   requireAdmin?: boolean;
 }
 
-const ProtectedRoute = ({ children, requireAdmin = false }: ProtectedRouteProps) => {
+const ProtectedRoute = ({
+  children,
+  requireAdmin = false,
+}: ProtectedRouteProps) => {
   const { isAuthenticated, isAdmin, loading } = useAuth();
 
   if (loading) {

@@ -1,9 +1,13 @@
-
 import { render, screen, fireEvent } from "@testing-library/react";
 import AdminSearchFilter from "./AdminSearchFilter";
 
 const filterFields = [
-  { name: "status", label: "Status", type: "select" as const, options: [{ value: "active", label: "Active" }] },
+  {
+    name: "status",
+    label: "Status",
+    type: "select" as const,
+    options: [{ value: "active", label: "Active" }],
+  },
   { name: "name", label: "Name", type: "text" as const },
 ];
 

@@ -51,6 +51,72 @@ export const E2E_CONFIG = {
       SUCCESS: "[data-testid='success-message']",
       HEADING: "h4",
     },
+    ADMIN: {
+      NAVIGATION: {
+        USERS_LINK: "a[href*='/users']",
+        GAMES_LINK: "a[href*='/games']",
+        PICKS_LINK: "a[href*='/picks']",
+      },
+      USERS: {
+        SEARCH_INPUT: "input[placeholder*='Search']",
+        USER_ROW: ".MuiTableRow-root",
+        USER_EMAIL: "td:nth-child(2)", // Email column
+        USER_ROLE: "td:nth-child(4) .MuiChip-root", // Role column with chip
+        EDIT_BUTTON: "button svg[data-testid='EditIcon']",
+        DELETE_BUTTON: "button svg[data-testid='DeleteIcon']",
+        DETAILS_LINK: "a[href*='/users/']",
+      },
+      USER_DETAILS: {
+        EMAIL: "h6:has(+ p:contains('Email')) + p",
+        NAME: "h6:has(+ p:contains('Name')) + p",
+        ROLE: "h6:has(+ p:contains('Role')) + p .MuiChip-root",
+        PLAYER_NAME: "h6:has(+ p:contains('Player Name')) + p",
+        PLAYER_ADDRESS: "h6:has(+ p:contains('Address')) + p",
+        MEMBER_SINCE: "h6:has(+ p:contains('Member Since')) + p",
+        PICKS_TAB: "button[role='tab']:has-text('Picks History')",
+        STATS_TAB: "button[role='tab']:has-text('Statistics')",
+      },
+      GAMES: {
+        SEARCH_INPUT: "input[placeholder*='Search']",
+        GAME_ROW: ".MuiTableRow-root",
+        GAME_MATCHUP: "td:nth-child(1)", // First column typically matchup
+        GAME_WEEK: "td:nth-child(2)", // Week column
+        GAME_SEASON: "td:nth-child(3)", // Season column
+        GAME_STATUS: "td:nth-child(4)", // Status column
+        CREATE_BUTTON: "button:has-text('Create Game')",
+        EDIT_BUTTON: "button svg[data-testid='EditIcon']",
+        DELETE_BUTTON: "button svg[data-testid='DeleteIcon']",
+        ADD_RESULT_BUTTON: "button:has-text('Add Result')",
+      },
+      GAME_FORM: {
+        FAVORITE_TEAM: "input[name='favorite_team']",
+        UNDERDOG_TEAM: "input[name='underdog_team']",
+        SPREAD: "input[name='spread']",
+        WEEK: "input[name='week']",
+        SEASON: "input[name='season']",
+        START_DATE: "input[name='start_date']",
+        SUBMIT_BUTTON: "button:has-text('Submit')",
+        CANCEL_BUTTON: "button:has-text('Cancel')",
+      },
+      RESULT_FORM: {
+        OUTCOME: "#outcome",
+        SUBMIT_BUTTON: "button:has-text('Submit')",
+        CANCEL_BUTTON: "button:has-text('Cancel')",
+      },
+      PICKS: {
+        SEARCH_INPUT: "input[placeholder*='Search']",
+        PICK_ROW: ".MuiTableRow-root",
+        PICK_USER: "td:nth-child(1)", // User column
+        PICK_GAME: "td:nth-child(2)", // Game column
+        PICK_CHOICE: "td:nth-child(3)", // Pick choice column
+        PICK_WEEK: "td:nth-child(4)", // Week column
+        PICK_SEASON: "td:nth-child(5)", // Season column
+        DELETE_BUTTON: "button svg[data-testid='DeleteIcon']",
+        FILTER_USER: "#user-filter",
+        FILTER_WEEK: "#week-filter",
+        FILTER_SEASON: "#season-filter",
+      },
+    },
   },
 
   // Routes
@@ -60,7 +126,20 @@ export const E2E_CONFIG = {
     REGISTER: "/register",
     PROFILE: "/profile",
     PICKS: "/picks",
-    PROTECTED: ["/profile", "/picks", "/results"],
+    ADMIN: "/admin",
+    ADMIN_USERS: "/admin/users",
+    ADMIN_GAMES: "/admin/games",
+    ADMIN_PICKS: "/admin/picks",
+    ADMIN_USER_DETAILS: "/admin/users/",
+    PROTECTED: [
+      "/profile",
+      "/picks",
+      "/results",
+      "/admin",
+      "/admin/users",
+      "/admin/games",
+      "/admin/picks",
+    ],
     PUBLIC: ["/login", "/register", "/"],
   },
 };

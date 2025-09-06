@@ -1,4 +1,4 @@
-import { render, screen, fireEvent, waitFor } from "@testing-library/react";
+import { screen, fireEvent, waitFor } from "@testing-library/react";
 import { vi } from "vitest";
 import { render } from "../test-utils";
 import PickEntryPage from "./PickEntryPage";
@@ -12,12 +12,15 @@ const mockGamesData = {
 };
 
 const mockSubmitPicks = vi.fn();
-vi.mock("../services/api/default/default", () => ({
+vi.mock("../services/api/games/games", () => ({
   useGetGames: () => ({
     data: mockGamesData,
     isLoading: false,
     error: null,
   }),
+}));
+
+vi.mock("../services/api/picks/picks", () => ({
   useSubmitPicks: () => ({
     mutateAsync: mockSubmitPicks,
     isPending: false,

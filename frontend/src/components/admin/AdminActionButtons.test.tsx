@@ -1,4 +1,3 @@
-
 import { render, screen, fireEvent } from "@testing-library/react";
 import AdminActionButtons from "./AdminActionButtons";
 
@@ -53,7 +52,7 @@ describe("AdminActionButtons", () => {
         addLabel="Create New"
         onEdit={() => {}}
         editLabel="Modify"
-      />
+      />,
     );
     expect(screen.getByText("Create New")).toBeInTheDocument();
     expect(screen.getByText("Modify")).toBeInTheDocument();

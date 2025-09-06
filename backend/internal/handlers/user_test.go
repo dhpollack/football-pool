@@ -230,74 +230,7 @@ func TestUpdateProfileErrors(t *testing.T) {
 	}
 }
 
-func TestDebugGetUsers(t *testing.T) {
-	// Set up test database
-	db, err := database.New("file::memory:")
-	if err != nil {
-		t.Fatalf("Failed to connect to database: %v", err)
-	}
-	gormDB := db.GetDB()
 
-	// Clear existing users to ensure a clean state for this test
-	gormDB.Exec("DELETE FROM users")
-
-	// Create some dummy users
-	user1 := database.User{Email: "user1@test.com", Password: "pass1", Name: "User One", Role: "player"}
-	user2 := database.User{Email: "user2@test.com", Password: "pass2", Name: "User Two", Role: "player"}
-	adminUser := database.User{Email: "admin@test.com", Password: "adminpass", Name: "Admin User", Role: "admin"}
-	gormDB.Create(&user1)
-	gormDB.Create(&user2)
-	gormDB.Create(&adminUser)
-
-	// Create a request to the DebugGetUsers endpoint
-	req, err := http.NewRequest("GET", "/debug/users", nil)
-	if err != nil {
-		t.Fatal(err)
-	}
-
-	// Create a ResponseRecorder
-	rr := httptest.NewRecorder()
-	handler := DebugGetUsers(gormDB)
-
-	// Serve the request
-	handler.ServeHTTP(rr, req)
-
-	// Check the status code
-	if status := rr.Code; status != http.StatusOK {
-		t.Errorf("handler returned wrong status code: got %v want %v",
-			status, http.StatusOK)
-	}
-
-	// Check the response body
-	var users []database.User
-	if err := json.NewDecoder(rr.Body).Decode(&users); err != nil {
-		t.Fatalf("could not decode response: %v", err)
-	}
-
-	if len(users) != 3 {
-		t.Errorf("expected 3 users, got %d", len(users))
-	}
-
-	// Basic check for user data
-	foundUser1 := false
-	foundUser2 := false
-	foundAdmin := false
-	for _, u := range users {
-		if u.Email == user1.Email {
-			foundUser1 = true
-		}
-		if u.Email == user2.Email {
-			foundUser2 = true
-		}
-		if u.Email == adminUser.Email {
-			foundAdmin = true
-		}
-	}
-
-	if !foundUser1 || !foundUser2 || !foundAdmin {
-		t.Errorf("expected all created users to be in the response")
-	}
-}
 
 func TestDeleteUser(t *testing.T) {
 	// Set up test database

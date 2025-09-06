@@ -19,7 +19,7 @@ interface AdminConfirmDialogProps {
   error?: string | null;
   confirmLabel?: string;
   cancelLabel?: string;
-  severity?: 'warning' | 'error' | 'info';
+  severity?: "warning" | "error" | "info";
 }
 
 const AdminConfirmDialog = ({
@@ -32,16 +32,16 @@ const AdminConfirmDialog = ({
   error = null,
   confirmLabel = "Confirm",
   cancelLabel = "Cancel",
-  severity = 'warning',
+  severity = "warning",
 }: AdminConfirmDialogProps) => {
   const getSeverityColor = () => {
     switch (severity) {
-      case 'error':
-        return 'error';
-      case 'info':
-        return 'info';
+      case "error":
+        return "error";
+      case "info":
+        return "info";
       default:
-        return 'warning';
+        return "warning";
     }
   };
 

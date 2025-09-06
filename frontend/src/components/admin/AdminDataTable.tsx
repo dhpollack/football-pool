@@ -1,4 +1,4 @@
-import React from "react";
+import type React from "react";
 import {
   Table,
   TableBody,
@@ -16,7 +16,7 @@ import {
 interface Column {
   id: string;
   label: string;
-  align?: 'left' | 'center' | 'right';
+  align?: "left" | "center" | "right";
   format?: (value: any) => string | React.ReactNode;
 }
 
@@ -49,7 +49,9 @@ const AdminDataTable = ({
     onPageChange(newPage);
   };
 
-  const handleChangeRowsPerPage = (event: React.ChangeEvent<HTMLInputElement>) => {
+  const handleChangeRowsPerPage = (
+    event: React.ChangeEvent<HTMLInputElement>,
+  ) => {
     onRowsPerPageChange(parseInt(event.target.value, 10));
   };
 
@@ -62,7 +64,7 @@ const AdminDataTable = ({
   }
 
   return (
-    <Paper sx={{ width: '100%', overflow: 'hidden' }}>
+    <Paper sx={{ width: "100%", overflow: "hidden" }}>
       <TableContainer>
         <Table stickyHeader aria-label="admin data table">
           <TableHead>
@@ -70,8 +72,8 @@ const AdminDataTable = ({
               {columns.map((column) => (
                 <TableCell
                   key={column.id}
-                  align={column.align || 'left'}
-                  sx={{ fontWeight: 'bold', backgroundColor: 'grey.100' }}
+                  align={column.align || "left"}
+                  sx={{ fontWeight: "bold", backgroundColor: "grey.100" }}
                 >
                   {column.label}
                 </TableCell>
@@ -81,13 +83,21 @@ const AdminDataTable = ({
           <TableBody>
             {loading ? (
               <TableRow>
-                <TableCell colSpan={columns.length} align="center" sx={{ py: 4 }}>
+                <TableCell
+                  colSpan={columns.length}
+                  align="center"
+                  sx={{ py: 4 }}
+                >
                   <CircularProgress />
                 </TableCell>
               </TableRow>
             ) : data.length === 0 ? (
               <TableRow>
-                <TableCell colSpan={columns.length} align="center" sx={{ py: 4 }}>
+                <TableCell
+                  colSpan={columns.length}
+                  align="center"
+                  sx={{ py: 4 }}
+                >
                   <Typography variant="body2" color="text.secondary">
                     {emptyMessage}
                   </Typography>
@@ -99,7 +109,7 @@ const AdminDataTable = ({
                   {columns.map((column) => {
                     const value = row[column.id];
                     return (
-                      <TableCell key={column.id} align={column.align || 'left'}>
+                      <TableCell key={column.id} align={column.align || "left"}>
                         {column.format ? column.format(value) : value}
                       </TableCell>
                     );

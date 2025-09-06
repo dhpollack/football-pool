@@ -1,4 +1,3 @@
-
 import { render, screen, fireEvent } from "@testing-library/react";
 import AdminDataTable from "./AdminDataTable";
 
@@ -57,7 +56,7 @@ describe("AdminDataTable", () => {
     render(<AdminDataTable {...props} />);
     const rowsPerPageSelect = screen.getByLabelText(/rows per page/i);
     fireEvent.mouseDown(rowsPerPageSelect);
-    const option = screen.getByRole('option', { name: '25' });
+    const option = screen.getByRole("option", { name: "25" });
     fireEvent.click(option);
     expect(props.onRowsPerPageChange).toHaveBeenCalledWith(25);
   });
