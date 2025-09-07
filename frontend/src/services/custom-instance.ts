@@ -3,7 +3,9 @@ import Axios, {
   type InternalAxiosRequestConfig,
 } from "axios";
 
-export const AXIOS_INSTANCE = Axios.create();
+export const AXIOS_INSTANCE = Axios.create({
+  baseURL: import.meta.env.VITE_BACKEND_URL,
+});
 
 // Add a request interceptor
 AXIOS_INSTANCE.interceptors.request.use(

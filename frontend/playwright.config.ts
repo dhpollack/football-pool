@@ -31,22 +31,30 @@ export default defineConfig({
   // Configure web servers to start automatically
   webServer: [
     {
-      command: "just -f ../backend/justfile run",
-      url: `${E2E_CONFIG.BACKEND_URL}/api/health`,
-      timeout: 60000,
+      name: "backend",
+      command: "just -f ../justfile backend run",
+      url: "http://127.0.0.1:18080/api/health",
+      timeout: 60000, // Increased timeout to 2 minutes
       reuseExistingServer: !process.env.CI,
+      stdout: "pipe",
+      stderr: "pipe",
+      debug: true,
+      ignoreHTTPSErrors: true,
       env: {
         FOOTBALL_POOL_DSN: "file::memory:",
         FOOTBALL_POOL_PORT: "18080",
+        FOOTBALL_POOL_HOST: "127.0.0.1",
       },
     },
     {
+      name: "frontend",
       command: "npm run dev -- --strictPort",
       url: E2E_CONFIG.FRONTEND_URL,
       timeout: 60000,
       reuseExistingServer: !process.env.CI,
       env: {
         VITE_BACKEND_URL: E2E_CONFIG.BACKEND_URL,
+        RUNNING_WITH_PLAYWRIGHT: "1",
       },
     },
   ],

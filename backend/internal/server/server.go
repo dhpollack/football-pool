@@ -1,9 +1,10 @@
 package server
 
 import (
+	"fmt"
+	"log/slog"
 	"net/http"
 	"os"
-
 
 	"github.com/david/football-pool/internal/auth"
 	"github.com/david/football-pool/internal/database"
@@ -42,7 +43,7 @@ func (s *Server) NewRouter() http.Handler {
 
 	mux.HandleFunc("/api/games", handlers.GetGames(s.db.GetDB()))
 	mux.Handle("/api/games/create", s.auth.Middleware(s.auth.AdminMiddleware(handlers.CreateGame(s.db.GetDB()))))
-	
+
 	// Admin game management endpoints
 	mux.Handle("/api/admin/games", s.auth.Middleware(s.auth.AdminMiddleware(handlers.AdminListGames(s.db.GetDB()))))
 	mux.Handle("/api/admin/games/", s.auth.Middleware(s.auth.AdminMiddleware(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
@@ -59,7 +60,7 @@ func (s *Server) NewRouter() http.Handler {
 	mux.Handle("/api/picks", s.auth.Middleware(handlers.GetPicks(s.db.GetDB())))
 	mux.Handle("/api/picks/submit", s.auth.Middleware(handlers.SubmitPicks(s.db.GetDB())))
 	mux.Handle("/api/admin/picks/submit", s.auth.Middleware(s.auth.AdminMiddleware(handlers.AdminSubmitPicks(s.db.GetDB()))))
-	
+
 	// Admin pick management endpoints
 	mux.Handle("/api/admin/picks", s.auth.Middleware(s.auth.AdminMiddleware(handlers.AdminListPicks(s.db.GetDB()))))
 	mux.Handle("/api/admin/picks/week/", s.auth.Middleware(s.auth.AdminMiddleware(handlers.AdminGetPicksByWeek(s.db.GetDB()))))
@@ -81,9 +82,8 @@ func (s *Server) NewRouter() http.Handler {
 	mux.Handle("/api/survivor/picks", s.auth.Middleware(handlers.GetSurvivorPicks(s.db.GetDB())))
 	mux.Handle("/api/survivor/picks/submit", s.auth.Middleware(handlers.SubmitSurvivorPick(s.db.GetDB())))
 
-	
 	mux.Handle("/api/admin/users/delete", s.auth.Middleware(s.auth.AdminMiddleware(handlers.DeleteUser(s.db.GetDB()))))
-	
+
 	// Admin user management endpoints
 	mux.Handle("/api/admin/users", s.auth.Middleware(s.auth.AdminMiddleware(handlers.AdminListUsers(s.db.GetDB()))))
 	mux.Handle("/api/admin/users/", s.auth.Middleware(s.auth.AdminMiddleware(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
@@ -106,7 +106,17 @@ func (s *Server) Start() {
 		port = "8080"
 	}
 
-	addr := ":" + port
+	host := os.Getenv("FOOTBALL_POOL_HOST")
+	if host == "" {
+		host = "localhost"
+	}
+
+	addr := host + ":" + port
+
+	// Log the server URL and port for debugging
+	slog.Info(fmt.Sprintf("Starting server on http://%s", addr))
+	slog.Debug(fmt.Sprintf("Health endpoint: http://%s/api/health", addr))
+
 	if err := http.ListenAndServe(addr, s.NewRouter()); err != nil {
 		panic(err)
 	}

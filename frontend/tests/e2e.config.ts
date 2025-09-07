@@ -2,7 +2,7 @@
 export const E2E_CONFIG = {
   // Base URLs
   FRONTEND_URL: "http://localhost:5173",
-  BACKEND_URL: "http://localhost:18080",
+  BACKEND_URL: "http://127.0.0.1:18080",
 
   // Test credentials
   ADMIN_CREDENTIALS: {
