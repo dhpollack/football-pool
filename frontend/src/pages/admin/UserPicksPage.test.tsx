@@ -157,7 +157,9 @@ describe("UserPicksPage", () => {
     expect(emailElements.length).toBeGreaterThan(0);
     expect(screen.getByText(/Test User/i)).toBeInTheDocument();
     // The role is rendered as a Chip component, so we need to look for the specific chip text
-    expect(screen.getByText('user', { selector: '.MuiChip-label' })).toBeInTheDocument();
+    expect(
+      screen.getByText("user", { selector: ".MuiChip-label" }),
+    ).toBeInTheDocument();
   });
 
   it("renders picks data when loaded", () => {
