@@ -60,8 +60,14 @@ export const E2E_CONFIG = {
       USERS: {
         SEARCH_INPUT: "input[placeholder*='Search']",
         USER_ROW: ".MuiTableRow-root",
+        USER_ID: "td:nth-child(1)", // ID column
         USER_EMAIL: "td:nth-child(2)", // Email column
+        USER_NAME: "td:nth-child(3)", // Name column
         USER_ROLE: "td:nth-child(4) .MuiChip-root", // Role column with chip
+        USER_PICKS: "td:nth-child(5)", // Picks column
+        USER_WINS: "td:nth-child(6)", // Wins column
+        USER_JOINED: "td:nth-child(7)", // Joined column
+        USER_ACTIONS: "td:nth-child(8)", // Actions column
         EDIT_BUTTON: "button svg[data-testid='EditIcon']",
         DELETE_BUTTON: "button svg[data-testid='DeleteIcon']",
         DETAILS_LINK: "a[href*='/users/']",
@@ -79,14 +85,16 @@ export const E2E_CONFIG = {
       GAMES: {
         SEARCH_INPUT: "input[placeholder*='Search']",
         GAME_ROW: ".MuiTableRow-root",
-        GAME_MATCHUP: "td:nth-child(1)", // First column typically matchup
+        GAME_ID: "td:nth-child(1)", // ID column
         GAME_WEEK: "td:nth-child(2)", // Week column
         GAME_SEASON: "td:nth-child(3)", // Season column
-        GAME_STATUS: "td:nth-child(4)", // Status column
-        CREATE_BUTTON: "button:has-text('Create Game')",
+        GAME_MATCHUP: "td:nth-child(4)", // Matchup column
+        GAME_SPREAD: "td:nth-child(5)", // Spread column
+        GAME_START_TIME: "td:nth-child(6)", // Start Time column
+        GAME_ACTIONS: "td:nth-child(7)", // Actions column
+        CREATE_BUTTON: "button:has-text('Add Game')",
         EDIT_BUTTON: "button svg[data-testid='EditIcon']",
         DELETE_BUTTON: "button svg[data-testid='DeleteIcon']",
-        ADD_RESULT_BUTTON: "button:has-text('Add Result')",
       },
       GAME_FORM: {
         FAVORITE_TEAM: "input[name='favorite_team']",
@@ -106,11 +114,14 @@ export const E2E_CONFIG = {
       PICKS: {
         SEARCH_INPUT: "input[placeholder*='Search']",
         PICK_ROW: ".MuiTableRow-root",
-        PICK_USER: "td:nth-child(1)", // User column
-        PICK_GAME: "td:nth-child(2)", // Game column
-        PICK_CHOICE: "td:nth-child(3)", // Pick choice column
+        PICK_ID: "td:nth-child(1)", // ID column
+        PICK_USER: "td:nth-child(2)", // User column
+        PICK_GAME: "td:nth-child(3)", // Game column
         PICK_WEEK: "td:nth-child(4)", // Week column
         PICK_SEASON: "td:nth-child(5)", // Season column
+        PICK_CHOICE: "td:nth-child(6) .MuiChip-root", // Pick choice column with chip
+        PICK_SUBMITTED: "td:nth-child(7)", // Submitted column
+        PICK_ACTIONS: "td:nth-child(8)", // Actions column
         DELETE_BUTTON: "button svg[data-testid='DeleteIcon']",
         FILTER_USER: "#user-filter",
         FILTER_WEEK: "#week-filter",

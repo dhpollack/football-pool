@@ -206,7 +206,9 @@ describe("UserDetailsPage", () => {
 
     renderWithRouter();
 
-    expect(screen.getByTestId("pick-game")).toHaveTextContent("Team A vs Team B");
+    expect(screen.getByTestId("pick-game")).toHaveTextContent(
+      "Team A vs Team B",
+    );
     expect(screen.getByTestId("pick-choice")).toHaveTextContent("favorite");
   });
 
