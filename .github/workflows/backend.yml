@@ -21,18 +21,21 @@ jobs:
         working-directory: ./backend
 
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
 
       - name: Set up Go
-        uses: actions/setup-go@v4
+        uses: actions/setup-go@v5
         with:
           go-version: "1.23"
+
+      - name: Gather dependencies
+        run: go mod download
 
       - name: Build
         run: go build -v ./...
 
       - name: Test
-        run: go test -coverprofile=coverage.txt -v ./...
+        run: go test -race -coverprofile=coverage.txt -covermode=atomic -v ./...
 
       - name: Upload coverage reports to Codecov
         uses: codecov/codecov-action@v5
