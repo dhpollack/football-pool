@@ -9,7 +9,7 @@ import { PickResponse } from "../../services/model";
 
 const AdminPicksPage = () => {
   const [page, setPage] = useState(0);
-  const [rowsPerPage, setRowsPerPage] = useState(20);
+  const [rowsPerPage, setRowsPerPage] = useState(25);
   const [searchTerm, setSearchTerm] = useState("");
   const [filters, setFilters] = useState<Record<string, any>>({});
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
@@ -30,6 +30,19 @@ const AdminPicksPage = () => {
 
   const picks = data?.picks || [];
   const totalCount = data?.pagination?.total || 0;
+
+  // Filter picks based on search term (client-side filtering since API doesn't support search)
+  const filteredPicks = searchTerm
+    ? picks.filter((pick) => {
+        const searchLower = searchTerm.toLowerCase();
+        return (
+          pick.user?.email?.toLowerCase().includes(searchLower) ||
+          pick.game?.favorite_team?.toLowerCase().includes(searchLower) ||
+          pick.game?.underdog_team?.toLowerCase().includes(searchLower) ||
+          pick.picked?.toLowerCase().includes(searchLower)
+        );
+      })
+    : picks;
 
   const handlePageChange = (newPage: number) => {
     setPage(newPage);
@@ -108,10 +121,10 @@ const AdminPicksPage = () => {
       id: "picked",
       label: "Pick",
       align: "center" as const,
-      format: (picked: string) => (
+      format: (pick: PickResponse) => (
         <Chip
-          label={picked}
-          color={picked === "favorite" ? "primary" : "secondary"}
+          label={pick.picked}
+          color={pick.picked === "favorite" ? "primary" : "secondary"}
           size="small"
         />
       ),
@@ -119,7 +132,7 @@ const AdminPicksPage = () => {
     {
       id: "created_at",
       label: "Submitted",
-      format: (dateString: string) => new Date(dateString).toLocaleDateString(),
+      format: (pick: PickResponse) => new Date(pick.created_at).toLocaleDateString(),
     },
     {
       id: "actions",
@@ -191,16 +204,16 @@ const AdminPicksPage = () => {
 
       <AdminDataTable
         columns={columns}
-        data={picks}
+        data={filteredPicks}
         loading={isLoading}
         error={error?.message || null}
         page={page}
         rowsPerPage={rowsPerPage}
-        totalCount={totalCount}
+        totalCount={searchTerm ? filteredPicks.length : totalCount}
         onPageChange={handlePageChange}
         onRowsPerPageChange={handleRowsPerPageChange}
         emptyMessage={
-          Object.keys(filters).length > 0
+          Object.keys(filters).length > 0 || searchTerm
             ? "No picks match your filter criteria"
             : "No picks available"
         }

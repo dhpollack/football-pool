@@ -9,6 +9,13 @@ test.describe("Admin Pick Management", () => {
     await expect(page).toHaveURL(E2E_CONFIG.ROUTES.ADMIN_PICKS);
   });
 
+  // Helper function to create test picks
+  async function createTestPicks(page: any) {
+    // This would normally call the API to create test picks
+    // For now, we'll assume the database has picks or we'll handle empty state
+    console.log("Test picks would be created here via API calls");
+  }
+
   test("should navigate to admin picks page", async ({ page }) => {
     // Verify we're on the admin picks page
     await expect(page.locator("h4")).toContainText("Pick Management");
@@ -17,34 +24,79 @@ test.describe("Admin Pick Management", () => {
     ).toBeVisible();
   });
 
-  test("should display picks list or empty state", async ({ page }) => {
-    // Check that the picks table or empty state is visible
+  test("should display picks table structure", async ({ page }) => {
+    // Wait for loading to complete first
+    await page.waitForSelector(".MuiCircularProgress-root", { state: "hidden", timeout: 10000 });
+    
+    // Check that the picks table is visible
     const pickTable = page.locator("table");
-    const emptyState = page.getByText(/No picks available|No picks match your filter criteria/i);
+    await expect(pickTable).toBeVisible();
 
-    // Wait for either table or empty state to appear
-    await Promise.race([
-      pickTable.waitFor({ state: "visible", timeout: 5000 }),
-      emptyState.waitFor({ state: "visible", timeout: 5000 })
-    ]);
+    // Check table headers are present
+    const tableHeaders = page.locator("thead th");
+    await expect(tableHeaders.first()).toBeVisible();
 
     // Check if we have picks or empty state
     const pickRows = page.locator(E2E_CONFIG.SELECTORS.ADMIN.PICKS.PICK_ROW);
     const hasPicks = (await pickRows.count()) > 0;
-    const hasEmptyState = (await emptyState.count()) > 0;
 
-    // Should either have picks or show empty state
-    expect(hasPicks || hasEmptyState).toBeTruthy();
-
-    // If we have picks, verify the table structure is intact
     if (hasPicks) {
-      // Check that the first row has cells (don't assume specific count)
+      // If we have picks, verify the table structure is intact
       const firstRowCells = pickRows.first().locator("td");
       await expect(firstRowCells.first()).toBeVisible();
+    } else {
+      // If no picks, verify empty state is displayed
+      const emptyState = page.getByText(/No picks available/i);
+      await expect(emptyState).toBeVisible();
     }
   });
 
-  test("should search for picks", async ({ page }) => {
+  test("should display empty state when no picks exist", async ({ page }) => {
+    // Wait for loading to complete first
+    await page.waitForSelector(".MuiCircularProgress-root", { state: "hidden", timeout: 10000 });
+    
+    // Debug: Check what's actually on the page
+    const pageContent = await page.content();
+    console.log("Page content contains 'No picks':", pageContent.includes("No picks"));
+    console.log("Page content contains 'available':", pageContent.includes("available"));
+    console.log("Page content contains 'No data':", pageContent.includes("No data"));
+    console.log("Page content contains 'match':", pageContent.includes("match"));
+    console.log("Page content contains 'criteria':", pageContent.includes("criteria"));
+    
+    // Check if table is visible at all
+    const pickTable = page.locator("table");
+    const isTableVisible = await pickTable.isVisible().catch(() => false);
+    console.log("Table is visible:", isTableVisible);
+    
+    // Check for any empty state message with flexible matching
+    const emptyState = page.getByText(/No.*(picks|data).*(available|match)/i);
+    
+    // Wait for empty state to appear
+    await emptyState.waitFor({ state: "visible", timeout: 5000 });
+    
+    // Verify empty state is displayed
+    await expect(emptyState).toBeVisible();
+    
+    // Verify the table structure is still present but empty
+    await expect(pickTable).toBeVisible();
+    
+    const pickRows = page.locator(E2E_CONFIG.SELECTORS.ADMIN.PICKS.PICK_ROW);
+    await expect(pickRows).toHaveCount(0);
+  });
+
+  test("should search for picks when picks exist", async ({ page }) => {
+    // Wait for loading to complete first
+    await page.waitForSelector(".MuiCircularProgress-root", { state: "hidden", timeout: 10000 });
+    
+    // Skip this test if no picks exist in the database
+    const pickRows = page.locator(E2E_CONFIG.SELECTORS.ADMIN.PICKS.PICK_ROW);
+    const hasPicks = (await pickRows.count()) > 0;
+    
+    if (!hasPicks) {
+      test.fail();
+      return;
+    }
+
     const searchInput = page.locator(
       E2E_CONFIG.SELECTORS.ADMIN.PICKS.SEARCH_INPUT,
     );
@@ -75,6 +127,9 @@ test.describe("Admin Pick Management", () => {
         const choiceText = await pickChoices.nth(i).textContent();
         expect(choiceText?.toLowerCase()).toContain("favorite");
       }
+    } else {
+      // If no results, verify empty state is displayed
+      await expect(emptyState).toBeVisible();
     }
   });
 

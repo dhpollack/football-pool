@@ -110,7 +110,7 @@ const AdminDataTable = ({
                     const value = row[column.id];
                     return (
                       <TableCell key={column.id} align={column.align || "left"}>
-                        {column.format ? column.format(value) : value}
+                        {column.format ? column.format(row) : value}
                       </TableCell>
                     );
                   })}

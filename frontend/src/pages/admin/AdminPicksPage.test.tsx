@@ -44,7 +44,7 @@ vi.mock("../../components/admin/AdminConfirmDialog", () => ({
 
 describe("AdminPicksPage", () => {
   beforeEach(() => {
-    (useAdminListPicks as jest.Mock).mockReturnValue({
+    (useAdminListPicks as vi.Mock).mockReturnValue({
       data: null,
       error: null,
       isLoading: false,
@@ -62,7 +62,7 @@ describe("AdminPicksPage", () => {
   });
 
   it("renders loading state", () => {
-    (useAdminListPicks as jest.Mock).mockReturnValue({
+    (useAdminListPicks as vi.Mock).mockReturnValue({
       data: null,
       error: null,
       isLoading: true,
@@ -109,7 +109,7 @@ describe("AdminPicksPage", () => {
       },
     });
 
-    (useAdminListPicks as jest.Mock).mockReturnValue({
+    (useAdminListPicks as vi.Mock).mockReturnValue({
       data: mockData,
       error: null,
       isLoading: false,
@@ -123,7 +123,7 @@ describe("AdminPicksPage", () => {
   });
 
   it("shows error message when there is an error", () => {
-    (useAdminListPicks as jest.Mock).mockReturnValue({
+    (useAdminListPicks as vi.Mock).mockReturnValue({
       data: null,
       error: { message: "Failed to load picks" },
       isLoading: false,
