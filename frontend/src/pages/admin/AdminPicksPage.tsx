@@ -132,7 +132,8 @@ const AdminPicksPage = () => {
     {
       id: "created_at",
       label: "Submitted",
-      format: (pick: PickResponse) => new Date(pick.created_at).toLocaleDateString(),
+      format: (pick: PickResponse) =>
+        new Date(pick.created_at).toLocaleDateString(),
     },
     {
       id: "actions",

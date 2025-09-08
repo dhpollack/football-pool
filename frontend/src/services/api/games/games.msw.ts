@@ -219,7 +219,7 @@ export const getCreateGameMockHandler = (
         info: Parameters<Parameters<typeof http.post>[1]>[0],
       ) => Promise<GameResponse[]> | GameResponse[]),
 ) => {
-  return http.post("*/api/games/create", async (info) => {
+  return http.post("*/api/admin/games/create", async (info) => {
     await delay(1000);
 
     return new HttpResponse(

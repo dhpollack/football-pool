@@ -4,7 +4,7 @@ import Axios, {
 } from "axios";
 
 export const AXIOS_INSTANCE = Axios.create({
-  baseURL: import.meta.env.VITE_BACKEND_URL,
+  baseURL: import.meta.env.VITE_BACKEND_URL || "/",
 });
 
 // Add a request interceptor

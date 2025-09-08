@@ -3,11 +3,16 @@ services:
     build:
       context: ./backend
       dockerfile: Dockerfile
-    ports:
-      - "18080:8080"
     volumes:
       - ./backend:/app
     env_file: ".env-dev"
+    environment:
+      - FOOTBALL_POOL_HOST=0.0.0.0
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8080/api/health"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
 
   frontend:
     build:
@@ -15,10 +20,11 @@ services:
       dockerfile: Dockerfile
       args:
         BUILDKIT_INLINE_CACHE: "1"
-        VITE_BACKEND_URL: "http://localhost:18080"
     ports:
       - "13000:80"
+      - "13001:443"
     #volumes:
     #  - ./frontend:/app
     depends_on:
-      - backend
+      backend:
+        condition: service_healthy

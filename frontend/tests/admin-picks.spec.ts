@@ -26,8 +26,11 @@ test.describe("Admin Pick Management", () => {
 
   test("should display picks table structure", async ({ page }) => {
     // Wait for loading to complete first
-    await page.waitForSelector(".MuiCircularProgress-root", { state: "hidden", timeout: 10000 });
-    
+    await page.waitForSelector(".MuiCircularProgress-root", {
+      state: "hidden",
+      timeout: 10000,
+    });
+
     // Check that the picks table is visible
     const pickTable = page.locator("table");
     await expect(pickTable).toBeVisible();
@@ -53,45 +56,66 @@ test.describe("Admin Pick Management", () => {
 
   test("should display empty state when no picks exist", async ({ page }) => {
     // Wait for loading to complete first
-    await page.waitForSelector(".MuiCircularProgress-root", { state: "hidden", timeout: 10000 });
-    
+    await page.waitForSelector(".MuiCircularProgress-root", {
+      state: "hidden",
+      timeout: 10000,
+    });
+
     // Debug: Check what's actually on the page
     const pageContent = await page.content();
-    console.log("Page content contains 'No picks':", pageContent.includes("No picks"));
-    console.log("Page content contains 'available':", pageContent.includes("available"));
-    console.log("Page content contains 'No data':", pageContent.includes("No data"));
-    console.log("Page content contains 'match':", pageContent.includes("match"));
-    console.log("Page content contains 'criteria':", pageContent.includes("criteria"));
-    
+    console.log(
+      "Page content contains 'No picks':",
+      pageContent.includes("No picks"),
+    );
+    console.log(
+      "Page content contains 'available':",
+      pageContent.includes("available"),
+    );
+    console.log(
+      "Page content contains 'No data':",
+      pageContent.includes("No data"),
+    );
+    console.log(
+      "Page content contains 'match':",
+      pageContent.includes("match"),
+    );
+    console.log(
+      "Page content contains 'criteria':",
+      pageContent.includes("criteria"),
+    );
+
     // Check if table is visible at all
     const pickTable = page.locator("table");
     const isTableVisible = await pickTable.isVisible().catch(() => false);
     console.log("Table is visible:", isTableVisible);
-    
+
     // Check for any empty state message with flexible matching
     const emptyState = page.getByText(/No.*(picks|data).*(available|match)/i);
-    
+
     // Wait for empty state to appear
     await emptyState.waitFor({ state: "visible", timeout: 5000 });
-    
+
     // Verify empty state is displayed
     await expect(emptyState).toBeVisible();
-    
+
     // Verify the table structure is still present but empty
     await expect(pickTable).toBeVisible();
-    
+
     const pickRows = page.locator(E2E_CONFIG.SELECTORS.ADMIN.PICKS.PICK_ROW);
     await expect(pickRows).toHaveCount(0);
   });
 
   test("should search for picks when picks exist", async ({ page }) => {
     // Wait for loading to complete first
-    await page.waitForSelector(".MuiCircularProgress-root", { state: "hidden", timeout: 10000 });
-    
+    await page.waitForSelector(".MuiCircularProgress-root", {
+      state: "hidden",
+      timeout: 10000,
+    });
+
     // Skip this test if no picks exist in the database
     const pickRows = page.locator(E2E_CONFIG.SELECTORS.ADMIN.PICKS.PICK_ROW);
     const hasPicks = (await pickRows.count()) > 0;
-    
+
     if (!hasPicks) {
       test.fail();
       return;
@@ -256,20 +280,22 @@ test.describe("Admin Pick Management", () => {
     // Check if we have picks
     const pickRows = page.locator(E2E_CONFIG.SELECTORS.ADMIN.PICKS.PICK_ROW);
     const hasPicks = (await pickRows.count()) > 0;
-    
+
     if (hasPicks) {
       // Check that delete buttons are available
       const deleteButtons = page.locator(
         E2E_CONFIG.SELECTORS.ADMIN.PICKS.DELETE_BUTTON,
       );
-      
+
       // If we have picks but no delete buttons, this might be expected behavior
       const hasDeleteButtons = (await deleteButtons.count()) > 0;
-      
+
       if (hasDeleteButtons) {
         await expect(deleteButtons.first()).toBeVisible();
       } else {
-        console.log("No delete buttons found - this might be expected behavior");
+        console.log(
+          "No delete buttons found - this might be expected behavior",
+        );
       }
     } else {
       // If no picks, this test should pass since there's nothing to delete

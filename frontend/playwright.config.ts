@@ -33,7 +33,7 @@ export default defineConfig({
     {
       name: "backend",
       command: "just -f ../justfile backend run",
-      url: "http://127.0.0.1:18080/api/health",
+      url: "http://localhost:18080/api/health",
       timeout: 60000, // Increased timeout to 2 minutes
       reuseExistingServer: !process.env.CI,
       stdout: "pipe",
@@ -43,7 +43,7 @@ export default defineConfig({
       env: {
         FOOTBALL_POOL_DSN: "file::memory:",
         FOOTBALL_POOL_PORT: "18080",
-        FOOTBALL_POOL_HOST: "127.0.0.1",
+        FOOTBALL_POOL_HOST: "localhost",
       },
     },
     {
