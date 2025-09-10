@@ -11,10 +11,9 @@ export const AXIOS_INSTANCE = Axios.create({
 AXIOS_INSTANCE.interceptors.request.use(
   (config: InternalAxiosRequestConfig) => {
     try {
-      const authData = localStorage.getItem("_auth");
+      const authData = localStorage.getItem("_auth_auth");
       if (authData) {
-        const parsedAuth = JSON.parse(authData);
-        const authToken = parsedAuth?.auth?.token || null;
+        const authToken = authData.split('^&*&^')[1];
         if (authToken) {
           config.headers.Authorization = `Bearer ${authToken}`;
         }

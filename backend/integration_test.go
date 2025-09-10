@@ -116,7 +116,7 @@ func createGames(t *testing.T, ts *httptest.Server, token string) {
 		{Week: 1, Season: 2023, FavoriteTeam: "Team C", UnderdogTeam: "Team D", Spread: 7.0, StartTime: time.Now()},
 	}
 	body, _ := json.Marshal(games)
-	req, _ := http.NewRequest("POST", ts.URL+"/api/games/create", bytes.NewBuffer(body))
+	req, _ := http.NewRequest("POST", ts.URL+"/api/admin/games/create", bytes.NewBuffer(body))
 	req.Header.Set("Content-Type", "application/json")
 	req.Header.Set("Authorization", "Bearer "+token)
 

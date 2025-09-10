@@ -14,7 +14,7 @@ func UserToResponse(user database.User) UserResponse {
 		CreatedAt: user.CreatedAt,
 		UpdatedAt: user.UpdatedAt,
 	}
-	
+
 	// Include player if it exists
 	if user.Player.ID != 0 {
 		response.Player = &PlayerResponse{
@@ -24,7 +24,7 @@ func UserToResponse(user database.User) UserResponse {
 			Address: user.Player.Address,
 		}
 	}
-	
+
 	return response
 }
 
@@ -40,7 +40,7 @@ func UserWithStatsFromUser(user database.User, pickCount, totalWins int) UserWit
 		CreatedAt: user.CreatedAt,
 		UpdatedAt: user.UpdatedAt,
 	}
-	
+
 	// Include player if it exists
 	if user.Player.ID != 0 {
 		stats.Player = &PlayerResponse{
@@ -50,7 +50,7 @@ func UserWithStatsFromUser(user database.User, pickCount, totalWins int) UserWit
 			Address: user.Player.Address,
 		}
 	}
-	
+
 	return stats
 }
 
@@ -61,12 +61,12 @@ func UserFromRequest(req UserRequest) database.User {
 		Email: req.Email,
 		Role:  req.Role,
 	}
-	
+
 	// Handle optional password
 	if req.Password != nil {
 		user.Password = *req.Password
 	}
-	
+
 	return user
 }
 
@@ -109,19 +109,19 @@ func PickToResponse(pick database.Pick) PickResponse {
 		CreatedAt: pick.CreatedAt,
 		UpdatedAt: pick.UpdatedAt,
 	}
-	
+
 	// Include user if preloaded
 	if pick.User.ID != 0 {
 		user := UserToResponse(pick.User)
 		response.User = &user
 	}
-	
+
 	// Include game if preloaded
 	if pick.Game.ID != 0 {
 		game := GameToResponse(pick.Game)
 		response.Game = &game
 	}
-	
+
 	return response
 }
 
@@ -133,12 +133,12 @@ func PickFromRequest(req PickRequest) database.Pick {
 		Rank:      req.Rank,
 		QuickPick: req.QuickPick,
 	}
-	
+
 	// Handle optional UserId
 	if req.UserId != nil {
 		pick.UserID = *req.UserId
 	}
-	
+
 	return pick
 }
 
@@ -162,13 +162,13 @@ func ResultToResponse(result database.Result) ResultResponse {
 		CreatedAt:     result.CreatedAt,
 		UpdatedAt:     result.UpdatedAt,
 	}
-	
+
 	// Include game if preloaded
 	if result.Game.ID != 0 {
 		game := GameToResponse(result.Game)
 		response.Game = &game
 	}
-	
+
 	return response
 }
 
@@ -192,13 +192,13 @@ func SurvivorPickToResponse(pick database.SurvivorPick) SurvivorPickResponse {
 		CreatedAt: pick.CreatedAt,
 		UpdatedAt: pick.UpdatedAt,
 	}
-	
+
 	// Include user if preloaded
 	if pick.User.ID != 0 {
 		user := UserToResponse(pick.User)
 		response.User = &user
 	}
-	
+
 	return response
 }
 
@@ -208,12 +208,12 @@ func SurvivorPickFromRequest(req SurvivorPickRequest) database.SurvivorPick {
 		Week: req.Week,
 		Team: req.Team,
 	}
-	
+
 	// Handle optional UserId
 	if req.UserId != nil {
 		pick.UserID = *req.UserId
 	}
-	
+
 	return pick
 }
 

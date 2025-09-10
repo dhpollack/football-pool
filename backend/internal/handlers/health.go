@@ -30,6 +30,6 @@ func HealthCheck(db *gorm.DB) http.HandlerFunc {
 		}
 
 		w.WriteHeader(http.StatusOK)
-		w.Write([]byte("Healthy"))
+
 	}
 }

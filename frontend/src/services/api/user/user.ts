@@ -26,6 +26,7 @@ import type {
   LoginRequest,
   LoginResponse,
   PlayerRequest,
+  PlayerResponse,
   RegisterRequest,
   RegisterResponse,
   UserListResponse,
@@ -308,7 +309,7 @@ export const getProfile = (
   options?: SecondParameter<typeof customInstance>,
   signal?: AbortSignal,
 ) => {
-  return customInstance<UserResponse>(
+  return customInstance<PlayerResponse>(
     { url: `/api/users/me`, method: "GET", signal },
     options,
   );
@@ -442,7 +443,7 @@ export const updateProfile = (
   playerRequest: PlayerRequest,
   options?: SecondParameter<typeof customInstance>,
 ) => {
-  return customInstance<UserResponse>(
+  return customInstance<PlayerResponse>(
     {
       url: `/api/users/me/update`,
       method: "PUT",

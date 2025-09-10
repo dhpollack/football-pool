@@ -230,8 +230,6 @@ func TestUpdateProfileErrors(t *testing.T) {
 	}
 }
 
-
-
 func TestDeleteUser(t *testing.T) {
 	// Set up test database
 	db, err := database.New("file::memory:")
@@ -297,7 +295,7 @@ func TestDeleteUserEdgeCases(t *testing.T) {
 	}{
 		{
 			name:           "Delete user without player",
-			email:          "no_player@test.com", 
+			email:          "no_player@test.com",
 			setupUser:      true,
 			setupPlayer:    false,
 			expectedStatus: http.StatusNoContent,
@@ -324,7 +322,7 @@ func TestDeleteUserEdgeCases(t *testing.T) {
 			if tt.setupUser {
 				userToDelete = database.User{Email: tt.email, Password: "password", Name: "Test User", Role: "player"}
 				gormDB.Create(&userToDelete)
-				
+
 				if tt.setupPlayer {
 					player := database.Player{UserID: userToDelete.ID, Name: "Test Player", Address: "123 Test St"}
 					gormDB.Create(&player)
@@ -360,7 +358,7 @@ func TestDeleteUserEdgeCases(t *testing.T) {
 				if result := gormDB.Where("email = ?", tt.email).First(&user); result.Error == nil {
 					t.Errorf("user was not deleted from the database")
 				}
-				
+
 				if tt.setupPlayer {
 					var player database.Player
 					if result := gormDB.Where("user_id = ?", userToDelete.ID).First(&player); result.Error == nil {

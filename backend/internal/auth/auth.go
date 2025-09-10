@@ -201,16 +201,16 @@ func (a *Auth) Middleware(next http.Handler) http.Handler {
 				if err == http.ErrNoCookie {
 					w.WriteHeader(http.StatusUnauthorized)
 					if err := json.NewEncoder(w).Encode(api.ErrorResponse{
-					Error: "Unauthorized: No token provided",
-				}); err != nil {
+						Error: "Unauthorized: No token provided",
+					}); err != nil {
 						slog.Debug("Error encoding error response:", "error", err)
 					}
 					return
 				}
 				w.WriteHeader(http.StatusBadRequest)
 				if err := json.NewEncoder(w).Encode(api.ErrorResponse{
-				Error: "Bad Request: Invalid token cookie",
-			}); err != nil {
+					Error: "Bad Request: Invalid token cookie",
+				}); err != nil {
 					slog.Debug("Error encoding error response:", "error", err)
 				}
 				return

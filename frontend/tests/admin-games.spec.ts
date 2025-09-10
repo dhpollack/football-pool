@@ -1,12 +1,22 @@
 import { test, expect } from "@playwright/test";
 import { E2E_CONFIG } from "./e2e.config";
+import { createStandardTestGame, cleanupTestGames } from "./test-data-utils";
 
 test.describe("Admin Game Management", () => {
   test.use({ storageState: "playwright/.auth/admin.json" });
 
+  let testGameId: number | null = null;
+
   test.beforeEach(async ({ page }) => {
     await page.goto(E2E_CONFIG.ROUTES.ADMIN_GAMES);
     await expect(page).toHaveURL(E2E_CONFIG.ROUTES.ADMIN_GAMES);
+  });
+
+  test.afterEach(async ({ page }) => {
+    if (testGameId) {
+      await cleanupTestGames(page, [testGameId]);
+      testGameId = null;
+    }
   });
 
   test("should navigate to admin games page", async ({ page }) => {
@@ -34,18 +44,25 @@ test.describe("Admin Game Management", () => {
   });
 
   test("should search for games", async ({ page }) => {
+    // Create a test game first
+    testGameId = await createStandardTestGame(page);
+    
+    // Reload the page to see the new game
+    await page.reload();
+    await page.waitForLoadState("networkidle");
+
     const searchInput = page.locator(
       E2E_CONFIG.SELECTORS.ADMIN.GAMES.SEARCH_INPUT,
     );
 
-    // Search for games (assuming some games exist)
-    await searchInput.fill("team");
+    // Search for games containing "test"
+    await searchInput.fill("test");
     await searchInput.press("Enter");
 
     // Wait for results to load
     await page.waitForLoadState("networkidle");
 
-    // Should find games containing "team" in matchup
+    // Should find games containing "test" in matchup
     const gameMatchups = page.locator(
       E2E_CONFIG.SELECTORS.ADMIN.GAMES.GAME_MATCHUP,
     );
@@ -53,7 +70,7 @@ test.describe("Admin Game Management", () => {
 
     for (let i = 0; i < count; i++) {
       const matchupText = await gameMatchups.nth(i).textContent();
-      expect(matchupText?.toLowerCase()).toContain("team");
+      expect(matchupText?.toLowerCase()).toContain("test");
     }
   });
 
@@ -63,13 +80,13 @@ test.describe("Admin Game Management", () => {
     );
     await createButton.click();
 
-    // Should show game form with all fields using proper label-based selectors
-    await expect(page.getByLabel("Week")).toBeVisible();
-    await expect(page.getByLabel("Season")).toBeVisible();
-    await expect(page.getByLabel("Favorite Team")).toBeVisible();
-    await expect(page.getByLabel("Underdog Team")).toBeVisible();
-    await expect(page.getByLabel("Spread")).toBeVisible();
-    await expect(page.getByLabel("Start Time")).toBeVisible();
+    // Should show game form with all fields using specific form selectors
+    await expect(page.locator(E2E_CONFIG.SELECTORS.ADMIN.GAME_FORM.WEEK)).toBeVisible();
+    await expect(page.locator(E2E_CONFIG.SELECTORS.ADMIN.GAME_FORM.SEASON)).toBeVisible();
+    await expect(page.locator(E2E_CONFIG.SELECTORS.ADMIN.GAME_FORM.FAVORITE_TEAM)).toBeVisible();
+    await expect(page.locator(E2E_CONFIG.SELECTORS.ADMIN.GAME_FORM.UNDERDOG_TEAM)).toBeVisible();
+    await expect(page.locator(E2E_CONFIG.SELECTORS.ADMIN.GAME_FORM.SPREAD)).toBeVisible();
+    await expect(page.locator(E2E_CONFIG.SELECTORS.ADMIN.GAME_FORM.START_TIME)).toBeVisible();
 
     // Also verify the dialog title
     await expect(page.getByText("Add New Game")).toBeVisible();
@@ -165,29 +182,32 @@ test.describe("Admin Game Management", () => {
   });
 
   test("should show game actions buttons", async ({ page }) => {
+    // Create a test game first
+    testGameId = await createStandardTestGame(page);
+    
+    // Reload the page to see the new game
+    await page.reload();
+    await page.waitForLoadState("networkidle");
+
     const gameRows = page.locator(E2E_CONFIG.SELECTORS.ADMIN.GAMES.GAME_ROW);
+    await expect(gameRows.first()).toBeVisible();
 
-    // Only run this test if there are games available
-    if ((await gameRows.count()) > 0) {
-      await expect(gameRows.first()).toBeVisible();
+    // Check that action buttons are available for each game
+    const editButtons = page.locator(
+      E2E_CONFIG.SELECTORS.ADMIN.GAMES.EDIT_BUTTON,
+    );
+    await expect(editButtons.first()).toBeVisible();
 
-      // Check that action buttons are available for each game
-      const editButtons = page.locator(
-        E2E_CONFIG.SELECTORS.ADMIN.GAMES.EDIT_BUTTON,
-      );
-      await expect(editButtons.first()).toBeVisible();
+    const deleteButtons = page.locator(
+      E2E_CONFIG.SELECTORS.ADMIN.GAMES.DELETE_BUTTON,
+    );
+    await expect(deleteButtons.first()).toBeVisible();
 
-      const deleteButtons = page.locator(
-        E2E_CONFIG.SELECTORS.ADMIN.GAMES.DELETE_BUTTON,
-      );
-      await expect(deleteButtons.first()).toBeVisible();
-
-      // Note: Add Result button might not be implemented yet, so we'll skip that check
-      // const addResultButtons = page.locator(
-      //   E2E_CONFIG.SELECTORS.ADMIN.GAMES.ADD_RESULT_BUTTON,
-      // );
-      // await expect(addResultButtons.first()).toBeVisible();
-    }
+    // Note: Add Result button might not be implemented yet, so we'll skip that check
+    // const addResultButtons = page.locator(
+    //   E2E_CONFIG.SELECTORS.ADMIN.GAMES.ADD_RESULT_BUTTON,
+    // );
+    // await expect(addResultButtons.first()).toBeVisible();
   });
 });
 

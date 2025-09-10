@@ -293,7 +293,7 @@ export const getDeleteGameMockHandler = (
     if (typeof overrideResponse === "function") {
       await overrideResponse(info);
     }
-    return new HttpResponse(null, { status: 200 });
+    return new HttpResponse(null, { status: 204 });
   });
 };
 export const getGamesMock = () => [

@@ -38,13 +38,18 @@ const GameForm = ({ open, onClose, onSuccess, game }: GameFormProps) => {
 
   useEffect(() => {
     if (game) {
+      // Convert ISO datetime to local format for datetime-local input
+      const localStartTime = game.start_time
+        ? new Date(game.start_time).toISOString().slice(0, 16)
+        : "";
+
       setFormData({
         week: game.week,
         season: game.season,
         favorite_team: game.favorite_team,
         underdog_team: game.underdog_team,
         spread: game.spread,
-        start_time: game.start_time,
+        start_time: localStartTime,
       });
     } else {
       setFormData({
@@ -100,14 +105,20 @@ const GameForm = ({ open, onClose, onSuccess, game }: GameFormProps) => {
     }
 
     try {
+      // Convert datetime-local to ISO 8601 format with timezone
+      const submitData = {
+        ...formData,
+        start_time: new Date(formData.start_time).toISOString(),
+      };
+
       if (game) {
         await updateGameMutation.mutateAsync({
           id: game.id,
-          data: formData,
+          data: submitData,
         });
       } else {
         await createGameMutation.mutateAsync({
-          data: [formData],
+          data: [submitData],
         });
       }
       onSuccess();
@@ -161,6 +172,7 @@ const GameForm = ({ open, onClose, onSuccess, game }: GameFormProps) => {
                 inputProps={{
                   min: 1,
                   max: 18,
+                  "data-testid": "week-input",
                 }}
               />
               <TextField
@@ -179,6 +191,7 @@ const GameForm = ({ open, onClose, onSuccess, game }: GameFormProps) => {
                 inputProps={{
                   min: 2000,
                   max: 2100,
+                  "data-testid": "season-input",
                 }}
               />
             </Box>
@@ -193,6 +206,9 @@ const GameForm = ({ open, onClose, onSuccess, game }: GameFormProps) => {
                 error={!!errors.favorite_team}
                 helperText={errors.favorite_team}
                 fullWidth
+                inputProps={{
+                  "data-testid": "favorite-team-input",
+                }}
               />
               <TextField
                 label="Underdog Team"
@@ -203,6 +219,9 @@ const GameForm = ({ open, onClose, onSuccess, game }: GameFormProps) => {
                 error={!!errors.underdog_team}
                 helperText={errors.underdog_team}
                 fullWidth
+                inputProps={{
+                  "data-testid": "underdog-team-input",
+                }}
               />
             </Box>
 
@@ -221,6 +240,7 @@ const GameForm = ({ open, onClose, onSuccess, game }: GameFormProps) => {
                 fullWidth
                 inputProps={{
                   step: 0.5,
+                  "data-testid": "spread-input",
                 }}
               />
               <TextField
@@ -233,6 +253,9 @@ const GameForm = ({ open, onClose, onSuccess, game }: GameFormProps) => {
                 error={!!errors.start_time}
                 helperText={errors.start_time}
                 fullWidth
+                inputProps={{
+                  "data-testid": "start-time-input",
+                }}
                 InputLabelProps={{
                   shrink: true,
                 }}

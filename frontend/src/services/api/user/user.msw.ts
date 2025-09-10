@@ -10,6 +10,7 @@ import { HttpResponse, delay, http } from "msw";
 
 import type {
   LoginResponse,
+  PlayerResponse,
   RegisterResponse,
   UserListResponse,
   UserResponse,
@@ -59,68 +60,38 @@ export const getRegisterUserResponseMock = (
 });
 
 export const getGetProfileResponseMock = (
-  overrideResponse: Partial<UserResponse> = {},
-): UserResponse => ({
+  overrideResponse: Partial<PlayerResponse> = {},
+): PlayerResponse => ({
   id: faker.number.int({
     min: undefined,
     max: undefined,
     multipleOf: undefined,
   }),
+  user_id: faker.number.int({
+    min: undefined,
+    max: undefined,
+    multipleOf: undefined,
+  }),
   name: faker.string.alpha({ length: { min: 10, max: 20 } }),
-  email: faker.string.alpha({ length: { min: 10, max: 20 } }),
-  role: faker.string.alpha({ length: { min: 10, max: 20 } }),
-  player: faker.helpers.arrayElement([
-    {
-      id: faker.number.int({
-        min: undefined,
-        max: undefined,
-        multipleOf: undefined,
-      }),
-      user_id: faker.number.int({
-        min: undefined,
-        max: undefined,
-        multipleOf: undefined,
-      }),
-      name: faker.string.alpha({ length: { min: 10, max: 20 } }),
-      address: faker.string.alpha({ length: { min: 10, max: 20 } }),
-    },
-    undefined,
-  ]),
-  created_at: `${faker.date.past().toISOString().split(".")[0]}Z`,
-  updated_at: `${faker.date.past().toISOString().split(".")[0]}Z`,
+  address: faker.string.alpha({ length: { min: 10, max: 20 } }),
   ...overrideResponse,
 });
 
 export const getUpdateProfileResponseMock = (
-  overrideResponse: Partial<UserResponse> = {},
-): UserResponse => ({
+  overrideResponse: Partial<PlayerResponse> = {},
+): PlayerResponse => ({
   id: faker.number.int({
     min: undefined,
     max: undefined,
     multipleOf: undefined,
   }),
+  user_id: faker.number.int({
+    min: undefined,
+    max: undefined,
+    multipleOf: undefined,
+  }),
   name: faker.string.alpha({ length: { min: 10, max: 20 } }),
-  email: faker.string.alpha({ length: { min: 10, max: 20 } }),
-  role: faker.string.alpha({ length: { min: 10, max: 20 } }),
-  player: faker.helpers.arrayElement([
-    {
-      id: faker.number.int({
-        min: undefined,
-        max: undefined,
-        multipleOf: undefined,
-      }),
-      user_id: faker.number.int({
-        min: undefined,
-        max: undefined,
-        multipleOf: undefined,
-      }),
-      name: faker.string.alpha({ length: { min: 10, max: 20 } }),
-      address: faker.string.alpha({ length: { min: 10, max: 20 } }),
-    },
-    undefined,
-  ]),
-  created_at: `${faker.date.past().toISOString().split(".")[0]}Z`,
-  updated_at: `${faker.date.past().toISOString().split(".")[0]}Z`,
+  address: faker.string.alpha({ length: { min: 10, max: 20 } }),
   ...overrideResponse,
 });
 
@@ -324,10 +295,10 @@ export const getRegisterUserMockHandler = (
 
 export const getGetProfileMockHandler = (
   overrideResponse?:
-    | UserResponse
+    | PlayerResponse
     | ((
         info: Parameters<Parameters<typeof http.get>[1]>[0],
-      ) => Promise<UserResponse> | UserResponse),
+      ) => Promise<PlayerResponse> | PlayerResponse),
 ) => {
   return http.get("*/api/users/me", async (info) => {
     await delay(1000);
@@ -347,10 +318,10 @@ export const getGetProfileMockHandler = (
 
 export const getUpdateProfileMockHandler = (
   overrideResponse?:
-    | UserResponse
+    | PlayerResponse
     | ((
         info: Parameters<Parameters<typeof http.put>[1]>[0],
-      ) => Promise<UserResponse> | UserResponse),
+      ) => Promise<PlayerResponse> | PlayerResponse),
 ) => {
   return http.put("*/api/users/me/update", async (info) => {
     await delay(1000);
@@ -380,7 +351,7 @@ export const getDeleteUserMockHandler = (
     if (typeof overrideResponse === "function") {
       await overrideResponse(info);
     }
-    return new HttpResponse(null, { status: 200 });
+    return new HttpResponse(null, { status: 204 });
   });
 };
 

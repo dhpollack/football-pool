@@ -60,7 +60,7 @@ func main() {
 				slog.Error("Failed to create admin user", "error", createResult.Error)
 				os.Exit(1)
 			}
-			
+
 			// Create associated Player record for admin user
 			adminPlayer := database.Player{
 				UserID:  adminUser.ID,
@@ -73,7 +73,7 @@ func main() {
 			} else {
 				slog.Info("Admin player record created successfully.")
 			}
-			
+
 			slog.Info("Admin user created successfully.")
 		} else {
 			slog.Error("Error checking for admin user", "error", result.Error)
