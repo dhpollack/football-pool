@@ -13,7 +13,7 @@ AXIOS_INSTANCE.interceptors.request.use(
     try {
       const authData = localStorage.getItem("_auth_auth");
       if (authData) {
-        const authToken = authData.split('^&*&^')[1];
+        const authToken = authData.split("^&*&^")[1];
         if (authToken) {
           config.headers.Authorization = `Bearer ${authToken}`;
         }

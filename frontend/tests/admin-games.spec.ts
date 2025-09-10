@@ -46,7 +46,7 @@ test.describe("Admin Game Management", () => {
   test("should search for games", async ({ page }) => {
     // Create a test game first
     testGameId = await createStandardTestGame(page);
-    
+
     // Reload the page to see the new game
     await page.reload();
     await page.waitForLoadState("networkidle");
@@ -81,12 +81,24 @@ test.describe("Admin Game Management", () => {
     await createButton.click();
 
     // Should show game form with all fields using specific form selectors
-    await expect(page.locator(E2E_CONFIG.SELECTORS.ADMIN.GAME_FORM.WEEK)).toBeVisible();
-    await expect(page.locator(E2E_CONFIG.SELECTORS.ADMIN.GAME_FORM.SEASON)).toBeVisible();
-    await expect(page.locator(E2E_CONFIG.SELECTORS.ADMIN.GAME_FORM.FAVORITE_TEAM)).toBeVisible();
-    await expect(page.locator(E2E_CONFIG.SELECTORS.ADMIN.GAME_FORM.UNDERDOG_TEAM)).toBeVisible();
-    await expect(page.locator(E2E_CONFIG.SELECTORS.ADMIN.GAME_FORM.SPREAD)).toBeVisible();
-    await expect(page.locator(E2E_CONFIG.SELECTORS.ADMIN.GAME_FORM.START_TIME)).toBeVisible();
+    await expect(
+      page.locator(E2E_CONFIG.SELECTORS.ADMIN.GAME_FORM.WEEK),
+    ).toBeVisible();
+    await expect(
+      page.locator(E2E_CONFIG.SELECTORS.ADMIN.GAME_FORM.SEASON),
+    ).toBeVisible();
+    await expect(
+      page.locator(E2E_CONFIG.SELECTORS.ADMIN.GAME_FORM.FAVORITE_TEAM),
+    ).toBeVisible();
+    await expect(
+      page.locator(E2E_CONFIG.SELECTORS.ADMIN.GAME_FORM.UNDERDOG_TEAM),
+    ).toBeVisible();
+    await expect(
+      page.locator(E2E_CONFIG.SELECTORS.ADMIN.GAME_FORM.SPREAD),
+    ).toBeVisible();
+    await expect(
+      page.locator(E2E_CONFIG.SELECTORS.ADMIN.GAME_FORM.START_TIME),
+    ).toBeVisible();
 
     // Also verify the dialog title
     await expect(page.getByText("Add New Game")).toBeVisible();
@@ -184,7 +196,7 @@ test.describe("Admin Game Management", () => {
   test("should show game actions buttons", async ({ page }) => {
     // Create a test game first
     testGameId = await createStandardTestGame(page);
-    
+
     // Reload the page to see the new game
     await page.reload();
     await page.waitForLoadState("networkidle");
