@@ -3,10 +3,13 @@ import { vi } from "vitest";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import ProfilePage from "./ProfilePage";
 
+import { getGetProfileResponseMock } from "../services/api/user/user.msw";
+
 // Mock the React Query hooks
-const mockProfileData = {
-  player: { name: "John Doe", address: "123 Main St" },
-};
+const mockProfileData = getGetProfileResponseMock({
+  name: "John Doe",
+  address: "123 Main St",
+});
 
 const mockUpdateProfile = vi.fn();
 vi.mock("../services/api/user/user", () => ({

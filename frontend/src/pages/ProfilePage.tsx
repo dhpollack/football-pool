@@ -25,9 +25,9 @@ const ProfilePage = () => {
 
   // Set form data when profile loads
   useEffect(() => {
-    if (profileData?.player) {
-      setName(profileData.player.name || "");
-      setAddress(profileData.player.address || "");
+    if (profileData) {
+      setName(profileData.name || "");
+      setAddress(profileData.address || "");
     }
   }, [profileData]);
 
