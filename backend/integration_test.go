@@ -132,7 +132,7 @@ func submitPicks(t *testing.T, ts *httptest.Server, token string) {
 		{GameId: 2, Picked: "underdog", Rank: 2, QuickPick: false},
 	}
 	body, _ := json.Marshal(picks)
-	req, _ := http.NewRequest("POST", ts.URL+"/api/admin/picks/submit", bytes.NewBuffer(body))
+	req, _ := http.NewRequest("POST", ts.URL+"/api/picks/submit", bytes.NewBuffer(body))
 	req.Header.Set("Content-Type", "application/json")
 	req.Header.Set("Authorization", "Bearer "+token)
 

@@ -2,7 +2,10 @@ package api
 
 import (
 	"github.com/david/football-pool/internal/database"
+	"github.com/go-playground/validator/v10"
 )
+
+var validate = validator.New()
 
 // UserToResponse converts a database User to a UserResponse
 func UserToResponse(user database.User) UserResponse {
@@ -55,7 +58,7 @@ func UserWithStatsFromUser(user database.User, pickCount, totalWins int) UserWit
 }
 
 // UserFromRequest converts a UserRequest to a database User
-func UserFromRequest(req UserRequest) database.User {
+func UserFromRequest(req UserRequest) (database.User, error) {
 	user := database.User{
 		Name:  req.Name,
 		Email: req.Email,
@@ -67,7 +70,11 @@ func UserFromRequest(req UserRequest) database.User {
 		user.Password = *req.Password
 	}
 
-	return user
+	if err := validate.Struct(user); err != nil {
+		return database.User{}, err
+	}
+
+	return user, nil
 }
 
 // GameToResponse converts a database Game to a GameResponse
@@ -86,8 +93,8 @@ func GameToResponse(game database.Game) GameResponse {
 }
 
 // GameFromRequest converts a GameRequest to a database Game
-func GameFromRequest(req GameRequest) database.Game {
-	return database.Game{
+func GameFromRequest(req GameRequest) (database.Game, error) {
+	game := database.Game{
 		Week:         req.Week,
 		Season:       req.Season,
 		FavoriteTeam: req.FavoriteTeam,
@@ -95,6 +102,12 @@ func GameFromRequest(req GameRequest) database.Game {
 		Spread:       req.Spread,
 		StartTime:    req.StartTime,
 	}
+
+	if err := validate.Struct(game); err != nil {
+		return database.Game{}, err
+	}
+
+	return game, nil
 }
 
 // PickToResponse converts a database Pick to a PickResponse
@@ -126,7 +139,7 @@ func PickToResponse(pick database.Pick) PickResponse {
 }
 
 // PickFromRequest converts a PickRequest to a database Pick
-func PickFromRequest(req PickRequest) database.Pick {
+func PickFromRequest(req PickRequest) (database.Pick, error) {
 	pick := database.Pick{
 		GameID:    req.GameId,
 		Picked:    req.Picked,
@@ -139,16 +152,33 @@ func PickFromRequest(req PickRequest) database.Pick {
 		pick.UserID = *req.UserId
 	}
 
-	return pick
+	// Skip UserID validation when not provided in request
+	// (it will be set later from authenticated user context)
+	if req.UserId == nil {
+		if err := validate.StructExcept(pick, "UserID"); err != nil {
+			return database.Pick{}, err
+		}
+	} else {
+		// Validate all fields including UserID when provided
+		if err := validate.Struct(pick); err != nil {
+			return database.Pick{}, err
+		}
+	}
+
+	return pick, nil
 }
 
 // PicksFromRequest converts multiple PickRequest to database Picks
-func PicksFromRequest(reqs []PickRequest) []database.Pick {
+func PicksFromRequest(reqs []PickRequest) ([]database.Pick, error) {
 	picks := make([]database.Pick, len(reqs))
 	for i, req := range reqs {
-		picks[i] = PickFromRequest(req)
+		pick, err := PickFromRequest(req)
+		if err != nil {
+			return nil, err
+		}
+		picks[i] = pick
 	}
-	return picks
+	return picks, nil
 }
 
 // ResultToResponse converts a database Result to a ResultResponse

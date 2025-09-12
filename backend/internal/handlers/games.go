@@ -25,7 +25,13 @@ func CreateGame(db *gorm.DB) http.HandlerFunc {
 		// Convert to database models
 		games := make([]database.Game, len(gameRequests))
 		for i, req := range gameRequests {
-			games[i] = api.GameFromRequest(req)
+			game, err := api.GameFromRequest(req)
+			if err != nil {
+				w.WriteHeader(http.StatusBadRequest)
+				_ = json.NewEncoder(w).Encode(api.ErrorResponse{Error: err.Error()})
+				return
+			}
+			games[i] = game
 		}
 
 		if result := db.Create(&games); result.Error != nil {
@@ -220,7 +226,12 @@ func UpdateGame(db *gorm.DB) http.HandlerFunc {
 		}
 
 		// Convert to database model
-		updateData := api.GameFromRequest(updateRequest)
+		updateData, err := api.GameFromRequest(updateRequest)
+		if err != nil {
+			w.WriteHeader(http.StatusBadRequest)
+			_ = json.NewEncoder(w).Encode(api.ErrorResponse{Error: err.Error()})
+			return
+		}
 
 		// Update the game
 		if err := db.Model(&existingGame).Updates(updateData).Error; err != nil {

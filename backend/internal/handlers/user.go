@@ -376,6 +376,14 @@ func AdminCreateUsers(db *gorm.DB) http.HandlerFunc {
 		}
 
 		for _, req := range userRequests {
+			user, err := api.UserFromRequest(req)
+			if err != nil {
+				tx.Rollback()
+				w.WriteHeader(http.StatusBadRequest)
+				_ = json.NewEncoder(w).Encode(api.ErrorResponse{Error: err.Error()})
+				return
+			}
+
 			if req.Password == nil || *req.Password == "" {
 				tx.Rollback()
 				w.WriteHeader(http.StatusBadRequest)
@@ -391,7 +399,6 @@ func AdminCreateUsers(db *gorm.DB) http.HandlerFunc {
 				return
 			}
 
-			user := api.UserFromRequest(req)
 			user.Password = string(hashedPassword)
 
 			if result := tx.Create(&user); result.Error != nil {

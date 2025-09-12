@@ -28,7 +28,7 @@ func TestRegister(t *testing.T) {
 	auth := NewAuth(db)
 
 	// Create a request to pass to our handler.
-	req, err := http.NewRequest("POST", "/register", strings.NewReader(`{"email":"test@test.com", "password":"password"}`))
+	req, err := http.NewRequest("POST", "/register", strings.NewReader(`{"name":"testuser","email":"test@test.com", "password":"password"}`))
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -316,6 +316,11 @@ func TestRegisterErrors(t *testing.T) {
 		{
 			name:           "User already exists",
 			body:           `{"email":"test4@test.com", "password":"password"}`,
+			expectedStatus: http.StatusBadRequest,
+		},
+		{
+			name:           "Missing name",
+			body:           `{"email":"test5@test.com", "password":"password"}`,
 			expectedStatus: http.StatusBadRequest,
 		},
 	}

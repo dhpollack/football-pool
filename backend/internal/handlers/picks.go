@@ -64,14 +64,19 @@ func SubmitPicks(db *gorm.DB) http.HandlerFunc {
 		}
 
 		// Convert to database models and set user ID
-		picks := api.PicksFromRequest(pickRequests)
+		picks, err := api.PicksFromRequest(pickRequests)
+		if err != nil {
+			w.WriteHeader(http.StatusBadRequest)
+			_ = json.NewEncoder(w).Encode(api.ErrorResponse{Error: err.Error()})
+			return
+		}
 		for i := range picks {
 			picks[i].UserID = user.ID
 		}
 
 		if result := db.Create(&picks); result.Error != nil {
 			w.WriteHeader(http.StatusInternalServerError)
-			_ = json.NewEncoder(w).Encode(api.ErrorResponse{Error: "Failed to create picks"})
+			_ = json.NewEncoder(w).Encode(api.ErrorResponse{Error: "Failed to create picks: " + result.Error.Error()})
 			return
 		}
 
@@ -97,7 +102,12 @@ func AdminSubmitPicks(db *gorm.DB) http.HandlerFunc {
 		}
 
 		// Convert to database models
-		picks := api.PicksFromRequest(pickRequests)
+		picks, err := api.PicksFromRequest(pickRequests)
+		if err != nil {
+			w.WriteHeader(http.StatusBadRequest)
+			_ = json.NewEncoder(w).Encode(api.ErrorResponse{Error: err.Error()})
+			return
+		}
 
 		if result := db.Create(&picks); result.Error != nil {
 			w.WriteHeader(http.StatusInternalServerError)
