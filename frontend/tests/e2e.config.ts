@@ -69,7 +69,7 @@ export const E2E_CONFIG = {
         USER_JOINED: "td:nth-child(7)", // Joined column
         USER_ACTIONS: "td:nth-child(8)", // Actions column
         EDIT_BUTTON: "button svg[data-testid='EditIcon']",
-        DELETE_BUTTON: "button svg[data-testid='DeleteIcon']",
+        DELETE_BUTTON: "button[data-testid='delete-pick-button']",
         DETAILS_LINK: "a[href*='/users/']",
       },
       USER_DETAILS: {
@@ -94,7 +94,7 @@ export const E2E_CONFIG = {
         GAME_ACTIONS: "td:nth-child(7)", // Actions column
         CREATE_BUTTON: "button:has-text('Add Game')",
         EDIT_BUTTON: "button svg[data-testid='EditIcon']",
-        DELETE_BUTTON: "button svg[data-testid='DeleteIcon']",
+        DELETE_BUTTON: "button[data-testid='delete-pick-button']",
       },
       GAME_FORM: {
         FAVORITE_TEAM: "input[data-testid='favorite-team-input']",
@@ -113,7 +113,7 @@ export const E2E_CONFIG = {
       },
       PICKS: {
         SEARCH_INPUT: "input[placeholder*='Search']",
-        PICK_ROW: ".MuiTableRow-root:not(thead .MuiTableRow-root):not(:has-text('No picks available'))",
+        PICK_ROW: ".MuiTableRow-root:not(thead .MuiTableRow-root)",
         PICK_ID: "td:nth-child(1)", // ID column
         PICK_USER: "td:nth-child(2)", // User column
         PICK_GAME: "td:nth-child(3)", // Game column
@@ -122,7 +122,7 @@ export const E2E_CONFIG = {
         PICK_CHOICE: "td:nth-child(6) .MuiChip-root", // Pick choice column with chip
         PICK_SUBMITTED: "td:nth-child(7)", // Submitted column
         PICK_ACTIONS: "td:nth-child(8)", // Actions column
-        DELETE_BUTTON: "button svg[data-testid='DeleteIcon']",
+        DELETE_BUTTON: "button[data-testid='delete-pick-button']",
         FILTER_USER: "#user-filter",
         FILTER_WEEK: "#week-filter",
         FILTER_SEASON: "#season-filter",

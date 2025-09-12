@@ -27,6 +27,37 @@ test.describe("Admin Pick Management", () => {
     ).toBeVisible();
   });
 
+  test("should display empty state when no picks exist", async ({ page }) => {
+    // Wait for loading to complete first
+    await page.waitForSelector(".MuiCircularProgress-root", {
+      state: "hidden",
+      timeout: 10000,
+    });
+
+    // Assertions for page content
+    const pageContent = await page.content();
+    expect(pageContent).toContain("No picks");
+    expect(pageContent).toContain("available");
+    
+    // Debug: Check for any text content in the table
+    const tableText = await page.locator("table").textContent();
+    console.log("Table text content:", tableText);
+
+    // Check if table is visible at all
+    const pickTable = page.locator("table");
+    const isTableVisible = await pickTable.isVisible().catch(() => false);
+    console.log("Table is visible:", isTableVisible);
+
+    // Check for any empty state message with flexible matching
+    const emptyState = page.getByText(/No.*(picks|data).*(available|match)/i);
+
+    // Wait for empty state to appear
+    await emptyState.waitFor({ state: "visible", timeout: 5000 });
+
+    // Verify empty state is displayed
+    await expect(emptyState).toBeVisible();
+  });
+
   test("should display picks when they exist", async ({ page }) => {
     // Create test data with a game and pick
     testData = await createTestGameWithPick(page);
@@ -94,72 +125,11 @@ test.describe("Admin Pick Management", () => {
       const allTableRows = page.locator(".MuiTableRow-root");
       await expect(allTableRows).toHaveCount(2); // Header + empty state row
       
-      // Skip cell visibility check for empty state - empty state row doesn't have visible cells
-      console.log("No picks available - skipping cell visibility check for empty state");
-      return; // Exit early to avoid the cell visibility check below
+      // Throw error when we have an empty state
+      throw new Error("No picks available - likely and error populating the table in the setup");
     }
   });
 
-  test("should display empty state when no picks exist", async ({ page }) => {
-    // Wait for loading to complete first
-    await page.waitForSelector(".MuiCircularProgress-root", {
-      state: "hidden",
-      timeout: 10000,
-    });
-
-    // Debug: Check what's actually on the page
-    const pageContent = await page.content();
-    console.log(
-      "Page content contains 'No picks':",
-      pageContent.includes("No picks"),
-    );
-    console.log(
-      "Page content contains 'available':",
-      pageContent.includes("available"),
-    );
-    console.log(
-      "Page content contains 'No data':",
-      pageContent.includes("No data"),
-    );
-    console.log(
-      "Page content contains 'match':",
-      pageContent.includes("match"),
-    );
-    console.log(
-      "Page content contains 'criteria':",
-      pageContent.includes("criteria"),
-    );
-    
-    // Debug: Check for any text content in the table
-    const tableText = await page.locator("table").textContent();
-    console.log("Table text content:", tableText);
-
-    // Check if table is visible at all
-    const pickTable = page.locator("table");
-    const isTableVisible = await pickTable.isVisible().catch(() => false);
-    console.log("Table is visible:", isTableVisible);
-
-    // Check for any empty state message with flexible matching
-    const emptyState = page.getByText(/No.*(picks|data).*(available|match)/i);
-
-    // Wait for empty state to appear
-    await emptyState.waitFor({ state: "visible", timeout: 5000 });
-
-    // Verify empty state is displayed
-    await expect(emptyState).toBeVisible();
-
-    // Verify the table structure is still present but empty
-    await expect(pickTable).toBeVisible();
-
-    // The table always has at least 2 rows: header row + empty state row
-    // We should check that there are no data rows (only header + empty state)
-    const allTableRows = page.locator(".MuiTableRow-root");
-    await expect(allTableRows).toHaveCount(2); // Header + empty state row
-    
-    // Verify empty state message is present
-    const emptyStateMessage = page.getByText(/No picks available/i);
-    await expect(emptyStateMessage).toBeVisible();
-  });
 
   test("should search for picks when picks exist", async ({ page }) => {
     // Wait for loading to complete first
@@ -168,14 +138,9 @@ test.describe("Admin Pick Management", () => {
       timeout: 10000,
     });
 
-    // Skip this test if no picks exist in the database
-    const pickRows = page.locator(E2E_CONFIG.SELECTORS.ADMIN.PICKS.PICK_ROW);
-    const hasPicks = (await pickRows.count()) > 0;
-
-    if (!hasPicks) {
-      test.fail();
-      return;
-    }
+    // Wait for picks to load - use the same selector as the display test
+    const pickRows = page.locator(".MuiTableRow-root:not(thead .MuiTableRow-root)");
+    await expect(pickRows.first()).toBeVisible({ timeout: 15000 });
 
     const searchInput = page.locator(
       E2E_CONFIG.SELECTORS.ADMIN.PICKS.SEARCH_INPUT,
@@ -329,6 +294,13 @@ test.describe("Admin Pick Management", () => {
   });
 
   test("should show delete buttons for picks", async ({ page }) => {
+    // Create test data with a game and pick
+    testData = await createTestGameWithPick(page);
+    
+    // Reload the page to see the new pick
+    await page.reload();
+    await page.waitForLoadState("networkidle");
+
     // Check that the picks table is visible
     const pickTable = page.locator("table");
     await expect(pickTable).toBeVisible();
@@ -349,9 +321,8 @@ test.describe("Admin Pick Management", () => {
       if (hasDeleteButtons) {
         await expect(deleteButtons.first()).toBeVisible();
       } else {
-        console.log(
-          "No delete buttons found - this might be expected behavior",
-        );
+        // Throw error when we don't have a delete button
+        throw new Error("delete button likely not implemented. This test should not be changed simple to pass");
       }
     } else {
       // If no picks, this test should pass since there's nothing to delete

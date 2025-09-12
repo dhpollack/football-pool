@@ -2,7 +2,7 @@ import { render, screen, waitFor, fireEvent } from "@testing-library/react";
 import AdminUsersPage from "./AdminUsersPage";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { setupServer } from "msw/node";
-import { getAdminListUsersMockHandler, getAdminListUsersMockHandler200, getAdminListUsersMockHandler401, getAdminUpdateUserMockHandler, getDeleteUserMockHandler, getAdminListUsersResponseMock } from "../../services/api/user/user.msw";
+import { getAdminListUsersMockHandler, getAdminListUsersMockHandler200, getAdminListUsersMockHandler401, getAdminUpdateUserMockHandler, getDeleteUserMockHandler, getAdminListUsersResponseMock, getCreateUsersMockHandler201 } from "../../services/api/user/user.msw";
 
 const server = setupServer();
 
@@ -144,8 +144,65 @@ describe("AdminUsersPage (Integration)", () => {
     }, { timeout: 10000 });
   });
 
-  // TODO: Add create user test when admin create user functionality is implemented
-  // Currently the "Add User" button only logs to console in the component
+  it("should create a new user", async () => {
+    const initialUsers = [{
+      id: 1,
+      email: "existing@example.com", 
+      name: "Existing User", 
+      role: "user", 
+      pick_count: 0,
+      total_wins: 0,
+      created_at: "2024-01-01T00:00:00Z", 
+      updated_at: "2024-01-01T00:00:00Z"
+    }];
+    
+    server.use(
+      getAdminListUsersMockHandler200({ users: initialUsers, pagination: { total: 1, page: 1, limit: 20 } }),
+      getCreateUsersMockHandler201([{
+        id: 2,
+        email: "newuser@example.com",
+        name: "New User",
+        role: "user",
+        pick_count: 0,
+        total_wins: 0,
+        created_at: "2024-01-02T00:00:00Z",
+        updated_at: "2024-01-02T00:00:00Z"
+      }])
+    );
+
+    render(<AdminUsersPage />, { wrapper });
+
+    await waitFor(() => {
+      expect(screen.getByRole("table")).toBeInTheDocument();
+    }, { timeout: 5000 });
+    
+    expect(await screen.findByText("existing@example.com")).toBeInTheDocument();
+
+    // Click the Add User button
+    const addButton = screen.getByRole("button", { name: /add user/i });
+    fireEvent.click(addButton);
+
+    // Wait for add dialog to open - look for the dialog title specifically
+    await waitFor(() => {
+      expect(screen.getByRole("heading", { name: "Add User" })).toBeInTheDocument();
+    });
+
+    // Fill out the form
+    const nameInput = screen.getByLabelText("Name");
+    const emailInput = screen.getByLabelText("Email");
+    
+    fireEvent.change(nameInput, { target: { value: "New User" } });
+    fireEvent.change(emailInput, { target: { value: "newuser@example.com" } });
+
+    // Click create
+    const createButton = screen.getByRole("button", { name: /create/i });
+    fireEvent.click(createButton);
+
+    // Wait for success message
+    await waitFor(() => {
+      expect(screen.getByText(/User newuser@example.com created successfully/)).toBeInTheDocument();
+    }, { timeout: 5000 });
+  });
 
   it("should edit an existing user", async () => {
     const initialUser = { 

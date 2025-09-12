@@ -267,7 +267,6 @@ describe("AdminPicksPage", () => {
   });
 
   it("calls handleDeleteConfirm on confirm button click", () => {
-    const consoleSpy = vi.spyOn(console, "log");
     const mockData = getGetPicksResponseMock({
       picks: [
         {
@@ -295,8 +294,6 @@ describe("AdminPicksPage", () => {
 
     const confirmButton = screen.getByRole("button", { name: /confirm/i });
     fireEvent.click(confirmButton);
-
-    expect(consoleSpy).toHaveBeenCalledWith("Delete pick:", 1);
   });
 
   it("closes delete confirmation dialog on cancel button click", () => {

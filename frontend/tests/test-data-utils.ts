@@ -145,7 +145,7 @@ export const cleanupTestGames = async (
  */
 export const createTestPick = async (
   page: any,
-  pickData: { game_id: number; picked: "favorite" | "underdog" },
+  pickData: { game_id: number; picked: "favorite" | "underdog"; rank: number; quick_pick: boolean },
 ): Promise<number> => {
   try {
     // Use React Query's createPick function directly in browser context
@@ -229,6 +229,8 @@ export const createTestGameWithPick = async (
   const pickId = await createTestPick(page, {
     game_id: gameId,
     picked: "favorite",
+    rank: 1,
+    quick_pick: false,
   });
 
   return { gameId, pickId };

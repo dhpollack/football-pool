@@ -1,7 +1,8 @@
 import { useState } from "react";
-import { Typography, Box, IconButton, Alert, Chip } from "@mui/material";
+import { Typography, Box, IconButton, Alert, Chip, Snackbar } from "@mui/material";
 import { Delete } from "@mui/icons-material";
-import { useAdminListPicks } from "../../services/api/picks/picks";
+import { useAdminListPicks, useAdminDeletePick } from "../../services/api/picks/picks";
+import { useQueryClient } from "@tanstack/react-query";
 import AdminDataTable from "../../components/admin/AdminDataTable";
 import AdminSearchFilter from "../../components/admin/AdminSearchFilter";
 import AdminConfirmDialog from "../../components/admin/AdminConfirmDialog";
@@ -14,6 +15,11 @@ const AdminPicksPage = () => {
   const [filters, setFilters] = useState<Record<string, any>>({});
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
   const [selectedPick, setSelectedPick] = useState<PickResponse | null>(null);
+  const [snackbarOpen, setSnackbarOpen] = useState(false);
+  const [snackbarMessage, setSnackbarMessage] = useState("");
+  const queryClient = useQueryClient();
+
+  const deletePickMutation = useAdminDeletePick();
 
   const { data, error, isLoading } = useAdminListPicks({
     request: {
@@ -74,9 +80,22 @@ const AdminPicksPage = () => {
     setDeleteDialogOpen(true);
   };
 
-  const handleDeleteConfirm = () => {
-    // TODO: Implement delete mutation
-    console.log("Delete pick:", selectedPick?.id);
+  const handleDeleteConfirm = async () => {
+    if (!selectedPick) return;
+    
+    try {
+      await deletePickMutation.mutateAsync({ id: selectedPick.id });
+      
+      // Invalidate the picks query to refresh the data
+      queryClient.invalidateQueries({ queryKey: ["/api/admin/picks"] });
+      
+      setSnackbarMessage("Pick deleted successfully");
+      setSnackbarOpen(true);
+    } catch (error) {
+      setSnackbarMessage("Error deleting pick");
+      setSnackbarOpen(true);
+    }
+    
     setDeleteDialogOpen(false);
     setSelectedPick(null);
   };
@@ -145,6 +164,7 @@ const AdminPicksPage = () => {
             size="small"
             color="error"
             onClick={() => handleDeleteClick(pick)}
+            data-testid="delete-pick-button"
           >
             <Delete />
           </IconButton>

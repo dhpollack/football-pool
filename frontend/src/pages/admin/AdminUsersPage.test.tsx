@@ -4,9 +4,14 @@ import { useAdminListUsers } from "../../services/api/user/user";
 import { getAdminListUsersResponseMock } from "../../services/api/user/user.msw";
 
 // Mock the custom hooks
-vi.mock("../../services/api/user/user", () => ({
-  useAdminListUsers: vi.fn(),
-}));
+vi.mock("../../services/api/user/user", async (importOriginal) => {
+  const actual = await importOriginal();
+  return {
+    ...actual,
+    useAdminListUsers: vi.fn(),
+    useCreateUsers: vi.fn(),
+  };
+});
 
 // Mock the admin components with simple implementations
 vi.mock("../../components/admin/AdminDataTable", () => ({

@@ -1,12 +1,12 @@
 import { useState } from "react";
-import { Typography, Box, IconButton, Alert, Chip, TextField, MenuItem } from "@mui/material";
+import { Typography, Box, IconButton, Alert, Chip, TextField, MenuItem, Snackbar } from "@mui/material";
 import { Edit, Delete } from "@mui/icons-material";
-import { useAdminListUsers } from "../../services/api/user/user";
+import { useAdminListUsers, useCreateUsers } from "../../services/api/user/user";
 import AdminDataTable from "../../components/admin/AdminDataTable";
 import AdminSearchFilter from "../../components/admin/AdminSearchFilter";
 import AdminActionButtons from "../../components/admin/AdminActionButtons";
 import AdminConfirmDialog from "../../components/admin/AdminConfirmDialog";
-import { UserWithStats } from "../../services/model";
+import { UserWithStats, UserRequest } from "../../services/model";
 
 const AdminUsersPage = () => {
   const [page, setPage] = useState(0);
@@ -21,8 +21,16 @@ const AdminUsersPage = () => {
     email: "",
     role: "",
   });
+  const [addDialogOpen, setAddDialogOpen] = useState(false);
+  const [addFormData, setAddFormData] = useState({
+    name: "",
+    email: "",
+    role: "user",
+  });
+  const [snackbarOpen, setSnackbarOpen] = useState(false);
+  const [snackbarMessage, setSnackbarMessage] = useState("");
 
-  const { data, error, isLoading } = useAdminListUsers({
+  const { data, error, isLoading, refetch } = useAdminListUsers({
     request: {
       params: {
         search: searchTerm || undefined,
@@ -32,6 +40,8 @@ const AdminUsersPage = () => {
       },
     },
   });
+
+  const createUsersMutation = useCreateUsers();
 
   const users = data?.users || [];
   const totalCount = data?.pagination?.total || 0;
@@ -112,6 +122,55 @@ const AdminUsersPage = () => {
 
   const handleEditFormChange = (field: string, value: string) => {
     setEditFormData(prev => ({ ...prev, [field]: value }));
+  };
+
+  const handleAddClick = () => {
+    setAddDialogOpen(true);
+  };
+
+  const handleAddCancel = () => {
+    setAddDialogOpen(false);
+    setAddFormData({
+      name: "",
+      email: "",
+      role: "user",
+    });
+  };
+
+  const handleAddConfirm = async () => {
+    try {
+      const userRequest: UserRequest = {
+        name: addFormData.name,
+        email: addFormData.email,
+        role: addFormData.role,
+      };
+
+      await createUsersMutation.mutateAsync({ data: [userRequest] });
+      
+      setSnackbarMessage(`User ${addFormData.email} created successfully`);
+      setSnackbarOpen(true);
+      
+      setAddDialogOpen(false);
+      setAddFormData({
+        name: "",
+        email: "",
+        role: "user",
+      });
+      
+      // Refresh the user list
+      refetch();
+    } catch (error) {
+      setSnackbarMessage(`Error creating user: ${error instanceof Error ? error.message : 'Unknown error'}`);
+      setSnackbarOpen(true);
+    }
+  };
+
+  const handleAddFormChange = (field: string, value: string) => {
+    setAddFormData(prev => ({ ...prev, [field]: value }));
+  };
+
+  const handleSnackbarClose = () => {
+    setSnackbarOpen(false);
   };
 
   const columns = [
@@ -203,7 +262,7 @@ const AdminUsersPage = () => {
       >
         <Typography variant="h4">User Management</Typography>
         <AdminActionButtons
-          onAdd={() => {}}
+          onAdd={handleAddClick}
           addLabel="Add User"
         />
       </Box>
@@ -295,6 +354,61 @@ const AdminUsersPage = () => {
           severity="info"
         />
       )}
+
+      {addDialogOpen && (
+        <AdminConfirmDialog
+          open={addDialogOpen}
+          onClose={handleAddCancel}
+          onConfirm={handleAddConfirm}
+          title="Add User"
+          message={
+            <Box component="div">
+              <Typography variant="body2" component="div" sx={{ mb: 2 }}>
+                Create a new user
+              </Typography>
+              <Box display="flex" flexDirection="column" gap={2} component="div">
+                <TextField
+                  label="Name"
+                  value={addFormData.name}
+                  onChange={(e) => handleAddFormChange("name", e.target.value)}
+                  fullWidth
+                  size="small"
+                />
+                <TextField
+                  label="Email"
+                  value={addFormData.email}
+                  onChange={(e) => handleAddFormChange("email", e.target.value)}
+                  fullWidth
+                  size="small"
+                />
+                <TextField
+                  label="Role"
+                  value={addFormData.role}
+                  onChange={(e) => handleAddFormChange("role", e.target.value)}
+                  fullWidth
+                  size="small"
+                  select
+                >
+                  <MenuItem value="user">User</MenuItem>
+                  <MenuItem value="admin">Admin</MenuItem>
+                </TextField>
+              </Box>
+            </Box>
+          }
+          confirmLabel="Create"
+          severity="info"
+        />
+      )}
+
+      <Snackbar
+        open={snackbarOpen}
+        autoHideDuration={6000}
+        onClose={handleSnackbarClose}
+      >
+        <Alert onClose={handleSnackbarClose} severity="success" sx={{ width: '100%' }}>
+          {snackbarMessage}
+        </Alert>
+      </Snackbar>
     </Box>
   );
 };
