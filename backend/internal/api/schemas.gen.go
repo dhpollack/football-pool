@@ -218,6 +218,9 @@ type CreateGameJSONBody = []GameRequest
 // AdminSubmitPicksJSONBody defines parameters for AdminSubmitPicks.
 type AdminSubmitPicksJSONBody = []PickRequest
 
+// CreateUsersJSONBody defines parameters for CreateUsers.
+type CreateUsersJSONBody = []UserRequest
+
 // DeleteUserParams defines parameters for DeleteUser.
 type DeleteUserParams struct {
 	Email string `form:"email" json:"email"`
@@ -251,6 +254,9 @@ type UpdateGameJSONRequestBody = GameRequest
 
 // AdminSubmitPicksJSONRequestBody defines body for AdminSubmitPicks for application/json ContentType.
 type AdminSubmitPicksJSONRequestBody = AdminSubmitPicksJSONBody
+
+// CreateUsersJSONRequestBody defines body for CreateUsers for application/json ContentType.
+type CreateUsersJSONRequestBody = CreateUsersJSONBody
 
 // AdminUpdateUserJSONRequestBody defines body for AdminUpdateUser for application/json ContentType.
 type AdminUpdateUserJSONRequestBody = UserRequest

@@ -100,3 +100,8 @@ We will aim for high test coverage for both the backend and frontend to ensure c
         *   [ ] Submitting picks for a week.
         *   [ ] Viewing weekly and season results.
         *   [ ] Submitting survivor picks.
+
+### Frontend Build
+
+*   [x] Fix frontend build errors.
+*   [x] Fix frontend unit tests.

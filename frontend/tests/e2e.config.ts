@@ -113,7 +113,7 @@ export const E2E_CONFIG = {
       },
       PICKS: {
         SEARCH_INPUT: "input[placeholder*='Search']",
-        PICK_ROW: ".MuiTableRow-root",
+        PICK_ROW: ".MuiTableRow-root:not(thead .MuiTableRow-root):not(:has-text('No picks available'))",
         PICK_ID: "td:nth-child(1)", // ID column
         PICK_USER: "td:nth-child(2)", // User column
         PICK_GAME: "td:nth-child(3)", // Game column

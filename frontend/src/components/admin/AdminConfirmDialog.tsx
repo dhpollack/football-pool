@@ -8,13 +8,14 @@ import {
   CircularProgress,
   Alert,
 } from "@mui/material";
+import { ReactNode } from "react";
 
 interface AdminConfirmDialogProps {
   open: boolean;
   onClose: () => void;
   onConfirm: () => void;
   title: string;
-  message: string;
+  message: string | ReactNode;
   loading?: boolean;
   error?: string | null;
   confirmLabel?: string;
@@ -54,7 +55,11 @@ const AdminConfirmDialog = ({
             {error}
           </Alert>
         )}
-        <Typography variant="body1">{message}</Typography>
+        {typeof message === 'string' ? (
+          <Typography variant="body1">{message}</Typography>
+        ) : (
+          message
+        )}
       </DialogContent>
       <DialogActions>
         <Button onClick={onClose} disabled={loading}>

@@ -9,6 +9,7 @@ import (
 	"github.com/david/football-pool/internal/api"
 	"github.com/david/football-pool/internal/auth"
 	"github.com/david/football-pool/internal/database"
+	"golang.org/x/crypto/bcrypt"
 	"gorm.io/gorm"
 	"log/slog"
 )
@@ -349,5 +350,79 @@ func AdminUpdateUser(db *gorm.DB) http.HandlerFunc {
 			w.WriteHeader(http.StatusInternalServerError)
 			json.NewEncoder(w).Encode(api.ErrorResponse{Error: "Failed to encode response"})
 		}
+	}
+}
+
+// AdminCreateUsers creates multiple users
+func AdminCreateUsers(db *gorm.DB) http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		w.Header().Set("Content-Type", "application/json")
+
+		var userRequests []api.UserRequest
+		if err := json.NewDecoder(r.Body).Decode(&userRequests); err != nil {
+			w.WriteHeader(http.StatusBadRequest)
+			_ = json.NewEncoder(w).Encode(api.ErrorResponse{Error: "Invalid request body"})
+			return
+		}
+
+		var users []database.User
+		var userResponses []api.UserResponse
+
+		tx := db.Begin()
+		if tx.Error != nil {
+			w.WriteHeader(http.StatusInternalServerError)
+			_ = json.NewEncoder(w).Encode(api.ErrorResponse{Error: "Failed to start transaction"})
+			return
+		}
+
+		for _, req := range userRequests {
+			if req.Password == nil || *req.Password == "" {
+				tx.Rollback()
+				w.WriteHeader(http.StatusBadRequest)
+				_ = json.NewEncoder(w).Encode(api.ErrorResponse{Error: "Password is required for all users"})
+				return
+			}
+
+			hashedPassword, err := bcrypt.GenerateFromPassword([]byte(*req.Password), 8)
+			if err != nil {
+				tx.Rollback()
+				w.WriteHeader(http.StatusInternalServerError)
+				_ = json.NewEncoder(w).Encode(api.ErrorResponse{Error: "Failed to hash password"})
+				return
+			}
+
+			user := api.UserFromRequest(req)
+			user.Password = string(hashedPassword)
+
+			if result := tx.Create(&user); result.Error != nil {
+				tx.Rollback()
+				w.WriteHeader(http.StatusInternalServerError)
+				_ = json.NewEncoder(w).Encode(api.ErrorResponse{Error: "Failed to create user"})
+				return
+			}
+
+			player := database.Player{
+				UserID: user.ID,
+				Name:   user.Name,
+			}
+			if result := tx.Create(&player); result.Error != nil {
+				tx.Rollback()
+				w.WriteHeader(http.StatusInternalServerError)
+				_ = json.NewEncoder(w).Encode(api.ErrorResponse{Error: "Failed to create player"})
+				return
+			}
+			user.Player = player
+			users = append(users, user)
+			userResponses = append(userResponses, api.UserToResponse(user))
+		}
+
+		if err := tx.Commit().Error; err != nil {
+			w.WriteHeader(http.StatusInternalServerError)
+			_ = json.NewEncoder(w).Encode(api.ErrorResponse{Error: "Failed to commit transaction"})
+			return
+		}
+
+		w.WriteHeader(http.StatusCreated)
+		_ = json.NewEncoder(w).Encode(userResponses)
 	}
 }

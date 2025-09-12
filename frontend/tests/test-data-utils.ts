@@ -139,3 +139,114 @@ export const cleanupTestGames = async (
   const deletePromises = gameIds.map((id) => deleteTestGame(page, id));
   await Promise.allSettled(deletePromises);
 };
+
+/**
+ * Utility to create test picks for E2E tests using React Query patterns
+ */
+export const createTestPick = async (
+  page: any,
+  pickData: { game_id: number; picked: "favorite" | "underdog" },
+): Promise<number> => {
+  try {
+    // Use React Query's createPick function directly in browser context
+    const result = await page.evaluate(async (pickData) => {
+      try {
+        // Dynamically import the adminSubmitPicks function from React Query client
+        const { adminSubmitPicks } = await import(
+          "../../src/services/api/picks/picks"
+        );
+
+        // Call the adminSubmitPicks function with the pick data
+        const response = await adminSubmitPicks([pickData]);
+
+        if (response && response.length > 0 && response[0].id) {
+          console.log("Pick created successfully with ID:", response[0].id);
+          return response[0].id;
+        }
+
+        throw new Error(
+          "Failed to create test pick: No pick returned in response",
+        );
+      } catch (error) {
+        console.error("Error creating test pick in browser context:", error);
+        throw error;
+      }
+    }, pickData);
+
+    return result;
+  } catch (error) {
+    console.error("Error creating test pick with React Query:", error);
+    throw error;
+  }
+};
+
+/**
+ * Utility to delete test picks for cleanup using React Query patterns
+ */
+export const deleteTestPick = async (
+  page: any,
+  pickId: number,
+): Promise<void> => {
+  try {
+    // Use React Query's deletePick function directly in browser context
+    await page.evaluate(async (pickId) => {
+      try {
+        // Dynamically import the adminDeletePick function from React Query client
+        const { adminDeletePick } = await import(
+          "../../src/services/api/picks/picks"
+        );
+
+        // Call the adminDeletePick function
+        await adminDeletePick(pickId);
+        console.log("Pick deleted successfully with ID:", pickId);
+      } catch (error) {
+        // Handle 404 gracefully - the pick might not exist (e.g., mock ID)
+        if (error.message && error.message.includes("404")) {
+          console.log("Pick not found for deletion (may be mock ID):", pickId);
+          return;
+        }
+        console.error("Error deleting test pick in browser context:", error);
+        throw error;
+      }
+    }, pickId);
+  } catch (error) {
+    console.error("Error deleting test pick with React Query:", error);
+    // Don't throw error for cleanup operations to avoid breaking test cleanup
+    console.log("Continuing with test cleanup despite deletion error");
+  }
+};
+
+/**
+ * Creates a test game and pick for comprehensive E2E testing
+ */
+export const createTestGameWithPick = async (
+  page: any,
+): Promise<{ gameId: number; pickId: number }> => {
+  // First create a test game
+  const gameId = await createStandardTestGame(page);
+  
+  // Then create a pick for that game
+  const pickId = await createTestPick(page, {
+    game_id: gameId,
+    picked: "favorite",
+  });
+
+  return { gameId, pickId };
+};
+
+/**
+ * Cleans up test games and picks
+ */
+export const cleanupTestData = async (
+  page: any,
+  gameIds: number[],
+  pickIds: number[],
+): Promise<void> => {
+  // Delete picks first (they have foreign key constraints)
+  const deletePickPromises = pickIds.map((id) => deleteTestPick(page, id));
+  await Promise.allSettled(deletePickPromises);
+  
+  // Then delete games
+  const deleteGamePromises = gameIds.map((id) => deleteTestGame(page, id));
+  await Promise.allSettled(deleteGamePromises);
+};

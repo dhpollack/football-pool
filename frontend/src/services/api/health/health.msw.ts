@@ -4,7 +4,22 @@
  * Football Pool API
  * OpenAPI spec version: 1.0.0
  */
+import { faker } from "@faker-js/faker";
+
 import { HttpResponse, delay, http } from "msw";
+
+import type { ErrorResponse } from "../../model";
+
+export const getHealthCheckResponseMock400 = (
+  overrideResponse: Partial<ErrorResponse> = {},
+): ErrorResponse => ({
+  error: faker.string.alpha({ length: { min: 10, max: 20 } }),
+  message: faker.helpers.arrayElement([
+    faker.string.alpha({ length: { min: 10, max: 20 } }),
+    undefined,
+  ]),
+  ...overrideResponse,
+});
 
 export const getHealthCheckMockHandler = (
   overrideResponse?:
@@ -14,11 +29,50 @@ export const getHealthCheckMockHandler = (
       ) => Promise<null> | null),
 ) => {
   return http.get("*/api/health", async (info) => {
-    await delay(1000);
+    await delay(100);
     if (typeof overrideResponse === "function") {
       await overrideResponse(info);
     }
     return new HttpResponse(null, { status: 200 });
+  });
+};
+
+export const getHealthCheckMockHandler200 = (
+  overrideResponse?:
+    | null
+    | ((
+        info: Parameters<Parameters<typeof http.get>[1]>[0],
+      ) => Promise<null> | null),
+) => {
+  return http.get("*/api/health", async (info) => {
+    await delay(100);
+    if (typeof overrideResponse === "function") {
+      await overrideResponse(info);
+    }
+    return new HttpResponse(null, { status: 200 });
+  });
+};
+
+export const getHealthCheckMockHandler400 = (
+  overrideResponse?:
+    | ErrorResponse
+    | ((
+        info: Parameters<Parameters<typeof http.get>[1]>[0],
+      ) => Promise<ErrorResponse> | ErrorResponse),
+) => {
+  return http.get("*/api/health", async (info) => {
+    await delay(100);
+
+    return new HttpResponse(
+      JSON.stringify(
+        overrideResponse !== undefined
+          ? typeof overrideResponse === "function"
+            ? await overrideResponse(info)
+            : overrideResponse
+          : getHealthCheckResponseMock400(),
+      ),
+      { status: 400, headers: { "Content-Type": "application/json" } },
+    );
   });
 };
 export const getHealthMock = () => [getHealthCheckMockHandler()];

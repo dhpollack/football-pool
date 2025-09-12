@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Typography, Box, IconButton, Alert, Chip } from "@mui/material";
+import { Typography, Box, IconButton, Alert, Chip, TextField, MenuItem } from "@mui/material";
 import { Edit, Delete } from "@mui/icons-material";
 import { useAdminListUsers } from "../../services/api/user/user";
 import AdminDataTable from "../../components/admin/AdminDataTable";
@@ -14,7 +14,13 @@ const AdminUsersPage = () => {
   const [searchTerm, setSearchTerm] = useState("");
   const [filters, setFilters] = useState<Record<string, any>>({});
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
+  const [editDialogOpen, setEditDialogOpen] = useState(false);
   const [selectedUser, setSelectedUser] = useState<UserWithStats | null>(null);
+  const [editFormData, setEditFormData] = useState({
+    name: "",
+    email: "",
+    role: "",
+  });
 
   const { data, error, isLoading } = useAdminListUsers({
     request: {
@@ -62,7 +68,6 @@ const AdminUsersPage = () => {
 
   const handleDeleteConfirm = () => {
     // TODO: Implement delete mutation
-    console.log("Delete user:", selectedUser?.id);
     setDeleteDialogOpen(false);
     setSelectedUser(null);
   };
@@ -70,6 +75,43 @@ const AdminUsersPage = () => {
   const handleDeleteCancel = () => {
     setDeleteDialogOpen(false);
     setSelectedUser(null);
+  };
+
+  const handleEditClick = (user: UserWithStats) => {
+    setSelectedUser(user);
+    setEditFormData({
+      name: user.name || "",
+      email: user.email || "",
+      role: user.role || "",
+    });
+    setEditDialogOpen(true);
+  };
+
+  const handleEditCancel = () => {
+    setEditDialogOpen(false);
+    setSelectedUser(null);
+    setEditFormData({
+      name: "",
+      email: "",
+      role: "",
+    });
+  };
+
+  const handleEditConfirm = () => {
+    if (!selectedUser) return;
+    
+    // TODO: Implement edit mutation
+    setEditDialogOpen(false);
+    setSelectedUser(null);
+    setEditFormData({
+      name: "",
+      email: "",
+      role: "",
+    });
+  };
+
+  const handleEditFormChange = (field: string, value: string) => {
+    setEditFormData(prev => ({ ...prev, [field]: value }));
   };
 
   const columns = [
@@ -90,10 +132,10 @@ const AdminUsersPage = () => {
       id: "role",
       label: "Role",
       align: "center" as const,
-      format: (role: string) => (
+      format: (user: UserWithStats) => (
         <Chip
-          label={role}
-          color={role === "admin" ? "primary" : "default"}
+          label={user.role}
+          color={user.role === "admin" ? "primary" : "default"}
           size="small"
         />
       ),
@@ -111,7 +153,7 @@ const AdminUsersPage = () => {
     {
       id: "created_at",
       label: "Joined",
-      format: (dateString: string) => new Date(dateString).toLocaleDateString(),
+      format: (user: UserWithStats) => new Date(user.created_at).toLocaleDateString(),
     },
     {
       id: "actions",
@@ -119,7 +161,11 @@ const AdminUsersPage = () => {
       align: "center" as const,
       format: (user: UserWithStats) => (
         <Box display="flex" gap={1} justifyContent="center">
-          <IconButton size="small" color="primary">
+          <IconButton 
+            size="small" 
+            color="primary"
+            onClick={() => handleEditClick(user)}
+          >
             <Edit />
           </IconButton>
           <IconButton
@@ -157,7 +203,7 @@ const AdminUsersPage = () => {
       >
         <Typography variant="h4">User Management</Typography>
         <AdminActionButtons
-          onAdd={() => console.log("Add new user")}
+          onAdd={() => {}}
           addLabel="Add User"
         />
       </Box>
@@ -204,6 +250,51 @@ const AdminUsersPage = () => {
         confirmLabel="Delete"
         severity="error"
       />
+
+      {editDialogOpen && (
+        <AdminConfirmDialog
+          open={editDialogOpen}
+          onClose={handleEditCancel}
+          onConfirm={handleEditConfirm}
+          title="Edit User"
+          message={
+            <Box component="div">
+              <Typography variant="body2" component="div" sx={{ mb: 2 }}>
+                Edit user details for {selectedUser?.email}
+              </Typography>
+              <Box display="flex" flexDirection="column" gap={2} component="div">
+                <TextField
+                  label="Name"
+                  value={editFormData.name}
+                  onChange={(e) => handleEditFormChange("name", e.target.value)}
+                  fullWidth
+                  size="small"
+                />
+                <TextField
+                  label="Email"
+                  value={editFormData.email}
+                  onChange={(e) => handleEditFormChange("email", e.target.value)}
+                  fullWidth
+                  size="small"
+                />
+                <TextField
+                  label="Role"
+                  value={editFormData.role}
+                  onChange={(e) => handleEditFormChange("role", e.target.value)}
+                  fullWidth
+                  size="small"
+                  select
+                >
+                  <MenuItem value="user">User</MenuItem>
+                  <MenuItem value="admin">Admin</MenuItem>
+                </TextField>
+              </Box>
+            </Box>
+          }
+          confirmLabel="Save"
+          severity="info"
+        />
+      )}
     </Box>
   );
 };

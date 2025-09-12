@@ -86,6 +86,7 @@ func (s *Server) NewRouter() http.Handler {
 
 	// Admin user management endpoints
 	mux.Handle("/api/admin/users", s.auth.Middleware(s.auth.AdminMiddleware(handlers.AdminListUsers(s.db.GetDB()))))
+	mux.Handle("/api/admin/users/create", s.auth.Middleware(s.auth.AdminMiddleware(handlers.AdminCreateUsers(s.db.GetDB()))))
 	mux.Handle("/api/admin/users/", s.auth.Middleware(s.auth.AdminMiddleware(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		switch r.Method {
 		case "GET":

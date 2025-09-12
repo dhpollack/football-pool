@@ -2,7 +2,12 @@ module.exports = {
   "football-pool-api": {
     input: "../openapi.json",
     output: {
-      mock: true,
+      mock: {
+        type: "msw",
+        delay: 100,
+        generateEachHttpStatus: true,
+        indexMockFiles: true,
+      },
       mode: "tags-split",
       target: "./src/services/api",
       schemas: "./src/services/model",

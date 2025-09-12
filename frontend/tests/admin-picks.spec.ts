@@ -1,20 +1,23 @@
 import { test, expect } from "@playwright/test";
 import { E2E_CONFIG } from "./e2e.config";
+import { createTestGameWithPick, cleanupTestData } from "./test-data-utils";
 
 test.describe("Admin Pick Management", () => {
   test.use({ storageState: "playwright/.auth/admin.json" });
+
+  let testData: { gameId: number; pickId: number } | null = null;
 
   test.beforeEach(async ({ page }) => {
     await page.goto(E2E_CONFIG.ROUTES.ADMIN_PICKS);
     await expect(page).toHaveURL(E2E_CONFIG.ROUTES.ADMIN_PICKS);
   });
 
-  // Helper function to create test picks
-  async function createTestPicks(page: any) {
-    // This would normally call the API to create test picks
-    // For now, we'll assume the database has picks or we'll handle empty state
-    console.log("Test picks would be created here via API calls");
-  }
+  test.afterEach(async ({ page }) => {
+    if (testData) {
+      await cleanupTestData(page, [testData.gameId], [testData.pickId]);
+      testData = null;
+    }
+  });
 
   test("should navigate to admin picks page", async ({ page }) => {
     // Verify we're on the admin picks page
@@ -22,6 +25,41 @@ test.describe("Admin Pick Management", () => {
     await expect(
       page.locator(E2E_CONFIG.SELECTORS.ADMIN.PICKS.SEARCH_INPUT),
     ).toBeVisible();
+  });
+
+  test("should display picks when they exist", async ({ page }) => {
+    // Create test data with a game and pick
+    testData = await createTestGameWithPick(page);
+    
+    // Reload the page to see the new pick
+    await page.reload();
+    await page.waitForLoadState("networkidle");
+
+    // Check that the picks table is visible and has data
+    const pickTable = page.locator("table");
+    await expect(pickTable).toBeVisible();
+
+    // Check table headers are present
+    const tableHeaders = page.locator("thead th");
+    await expect(tableHeaders.first()).toBeVisible();
+
+    // Verify we have picks in the table (excluding header row)
+    // The table has header row + data rows, so we expect 2 total rows (header + 1 data row)
+    const allTableRows = page.locator(".MuiTableRow-root");
+    await expect(allTableRows).toHaveCount(2);
+    
+    // Get just the data rows (excluding header) - use a more specific selector
+    const pickRows = page.locator(".MuiTableRow-root:not(thead .MuiTableRow-root)");
+    await expect(pickRows).toHaveCount(1);
+
+    // Verify the table structure is intact
+    const firstRowCells = pickRows.first().locator("td");
+    await expect(firstRowCells.first()).toBeVisible();
+
+    // Verify pick information is displayed
+    const pickChoice = page.locator(E2E_CONFIG.SELECTORS.ADMIN.PICKS.PICK_CHOICE);
+    await expect(pickChoice.first()).toBeVisible();
+    await expect(pickChoice.first()).toContainText("favorite");
   });
 
   test("should display picks table structure", async ({ page }) => {
@@ -51,6 +89,14 @@ test.describe("Admin Pick Management", () => {
       // If no picks, verify empty state is displayed
       const emptyState = page.getByText(/No picks available/i);
       await expect(emptyState).toBeVisible();
+      
+      // Also verify the table structure shows empty state properly
+      const allTableRows = page.locator(".MuiTableRow-root");
+      await expect(allTableRows).toHaveCount(2); // Header + empty state row
+      
+      // Skip cell visibility check for empty state - empty state row doesn't have visible cells
+      console.log("No picks available - skipping cell visibility check for empty state");
+      return; // Exit early to avoid the cell visibility check below
     }
   });
 
@@ -83,6 +129,10 @@ test.describe("Admin Pick Management", () => {
       "Page content contains 'criteria':",
       pageContent.includes("criteria"),
     );
+    
+    // Debug: Check for any text content in the table
+    const tableText = await page.locator("table").textContent();
+    console.log("Table text content:", tableText);
 
     // Check if table is visible at all
     const pickTable = page.locator("table");
@@ -101,8 +151,14 @@ test.describe("Admin Pick Management", () => {
     // Verify the table structure is still present but empty
     await expect(pickTable).toBeVisible();
 
-    const pickRows = page.locator(E2E_CONFIG.SELECTORS.ADMIN.PICKS.PICK_ROW);
-    await expect(pickRows).toHaveCount(0);
+    // The table always has at least 2 rows: header row + empty state row
+    // We should check that there are no data rows (only header + empty state)
+    const allTableRows = page.locator(".MuiTableRow-root");
+    await expect(allTableRows).toHaveCount(2); // Header + empty state row
+    
+    // Verify empty state message is present
+    const emptyStateMessage = page.getByText(/No picks available/i);
+    await expect(emptyStateMessage).toBeVisible();
   });
 
   test("should search for picks when picks exist", async ({ page }) => {
