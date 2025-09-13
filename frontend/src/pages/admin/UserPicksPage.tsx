@@ -15,11 +15,13 @@ import { Home, People, Search } from "@mui/icons-material";
 import { useAdminGetPicksByUser } from "../../services/api/picks/picks";
 import { useAdminGetUser } from "../../services/api/user/user";
 import AdminDataTable from "../../components/admin/AdminDataTable";
-import { PickResponse, UserResponse } from "../../services/model";
+import type { PickResponse, UserResponse } from "../../services/model";
 
 const UserPicksPage = () => {
   const { userId: userIdParam } = useParams<{ userId: string }>();
-  const [userId, setUserId] = useState(userIdParam ? parseInt(userIdParam) : 0);
+  const [userId, setUserId] = useState(
+    userIdParam ? parseInt(userIdParam, 10) : 0,
+  );
   const [searchTerm, setSearchTerm] = useState("");
   const [season, setSeason] = useState(2024); // Default season
 
@@ -42,15 +44,15 @@ const UserPicksPage = () => {
   const picks = picksData?.picks || [];
 
   const handleUserIdChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    const newUserId = parseInt(event.target.value);
-    if (!isNaN(newUserId) && newUserId > 0) {
+    const newUserId = parseInt(event.target.value, 10);
+    if (!Number.isNaN(newUserId) && newUserId > 0) {
       setUserId(newUserId);
     }
   };
 
   const handleSeasonChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    const newSeason = parseInt(event.target.value);
-    if (!isNaN(newSeason) && newSeason > 0) {
+    const newSeason = parseInt(event.target.value, 10);
+    if (!Number.isNaN(newSeason) && newSeason > 0) {
       setSeason(newSeason);
     }
   };
@@ -101,10 +103,10 @@ const UserPicksPage = () => {
       id: "picked",
       label: "Pick",
       align: "center" as const,
-      format: (picked: string) => (
+      format: (pick: PickResponse) => (
         <Chip
-          label={picked}
-          color={picked === "favorite" ? "primary" : "secondary"}
+          label={pick.picked}
+          color={pick.picked === "favorite" ? "primary" : "secondary"}
           size="small"
         />
       ),
@@ -126,7 +128,8 @@ const UserPicksPage = () => {
     {
       id: "created_at",
       label: "Submitted",
-      format: (dateString: string) => new Date(dateString).toLocaleDateString(),
+      format: (pick: PickResponse) =>
+        new Date(pick.created_at).toLocaleDateString(),
     },
   ];
 

@@ -2,7 +2,7 @@ import { render, screen, waitFor, fireEvent } from "@testing-library/react";
 import AdminPicksPage from "./AdminPicksPage";
 import { useAdminListPicks } from "../../services/api/picks/picks";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { PickResponse } from "../../services/model";
+import type { PickResponse } from "../../services/model";
 
 // Mock the custom hooks
 vi.mock("../../services/api/picks/picks", () => ({

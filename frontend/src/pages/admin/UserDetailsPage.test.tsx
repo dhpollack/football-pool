@@ -4,6 +4,7 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import UserDetailsPage from "./UserDetailsPage";
 import { getGetProfileResponseMock } from "../../services/api/user/user.msw";
 import { getGetPicksResponseMock } from "../../services/api/picks/picks.msw";
+import type { PickResponse } from "../../services/model";
 
 // Mock the custom hooks with proper return values to avoid hoisting issues
 vi.mock("../../services/api/user/user", () => ({
@@ -32,13 +33,21 @@ const mockUseAdminGetPicksByUser = vi.mocked(useAdminGetPicksByUser);
 
 // Mock the admin components with simple implementations
 vi.mock("../../components/admin/AdminDataTable", () => ({
-  default: ({ data, loading, error }: any) => (
+  default: ({
+    data,
+    loading,
+    error,
+  }: {
+    data?: PickResponse[];
+    loading: boolean;
+    error?: string | null;
+  }) => (
     <div data-testid="admin-data-table">
       {loading && <div>Loading picks...</div>}
       {error && <div>Error: {error}</div>}
       {!loading && data && data.length > 0 && (
         <div>
-          {data.map((pick: any) => (
+          {data.map((pick) => (
             <div key={pick.id} data-testid="pick-row">
               <span data-testid="pick-game">
                 {pick.game
@@ -67,16 +76,6 @@ vi.mock("react-router-dom", async () => {
 });
 
 describe("UserDetailsPage", () => {
-  beforeEach(() => {
-    // Reset mocks before each test
-    mockUseAdminGetUser.mockClear();
-    mockUseAdminGetPicksByUser.mockClear();
-  });
-
-  afterEach(() => {
-    vi.clearAllMocks();
-  });
-
   let queryClient: QueryClient;
 
   beforeEach(() => {
@@ -86,6 +85,14 @@ describe("UserDetailsPage", () => {
         mutations: { retry: false },
       },
     });
+
+    // Reset mocks before each test
+    mockUseAdminGetUser.mockClear();
+    mockUseAdminGetPicksByUser.mockClear();
+  });
+
+  afterEach(() => {
+    vi.clearAllMocks();
   });
 
   const renderWithRouter = () => {

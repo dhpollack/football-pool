@@ -1,4 +1,4 @@
-import { render, screen, fireEvent, waitFor } from "@testing-library/react";
+import { render, screen, fireEvent } from "@testing-library/react";
 import { MemoryRouter, Route, Routes } from "react-router-dom";
 import WeeklyPicksPage from "./WeeklyPicksPage";
 import { useAdminGetPicksByWeek } from "../../services/api/picks/picks";
@@ -11,13 +11,21 @@ vi.mock("../../services/api/picks/picks", () => ({
 
 // Mock the admin components with simple implementations
 vi.mock("../../components/admin/AdminDataTable", () => ({
-  default: ({ data, loading, error }: any) => (
+  default: ({
+    data,
+    loading,
+    error,
+  }: {
+    data?: unknown[];
+    loading?: boolean;
+    error?: string | null;
+  }) => (
     <div data-testid="admin-data-table">
       {loading && <div>Loading...</div>}
       {error && <div>Error: {error}</div>}
       {data && (
         <div>
-          {data.map((pick: any) => (
+          {data.map((pick) => (
             <div key={pick.id} data-testid="pick-row">
               <span data-testid="pick-user">{pick.user?.email}</span>
               <span data-testid="pick-game">

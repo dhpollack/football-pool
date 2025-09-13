@@ -1,7 +1,9 @@
 import { screen } from "@testing-library/react";
 import { vi } from "vitest";
+import type { DefinedUseQueryResult } from "@tanstack/react-query";
 import { render } from "../test-utils";
 import WeeklyResultsPage from "./WeeklyResultsPage";
+import type { WeeklyResult } from "../services/api/results/results";
 
 // Mock the React Query hooks
 vi.mock("../services/api/results/results", () => ({
@@ -14,8 +16,10 @@ vi.mock("../services/api/results/results", () => ({
 
 import { useGetWeeklyResults } from "../services/api/results/results";
 
+type MockQueryResult = Partial<DefinedUseQueryResult<WeeklyResult[], Error>>;
+
 describe("WeeklyResultsPage", () => {
-  const mockResults = [
+  const _mockResults = [
     { player_name: "Player 1", score: 100 },
     { player_name: "Player 2", score: 90 },
   ];
@@ -25,7 +29,7 @@ describe("WeeklyResultsPage", () => {
       data: null,
       isLoading: false,
       error: new Error("Failed to fetch weekly results"),
-    } as any);
+    } as MockQueryResult);
 
     render(<WeeklyResultsPage />);
 
@@ -44,7 +48,7 @@ describe("WeeklyResultsPage", () => {
       data: mockWeeklyResults,
       isLoading: false,
       error: null,
-    } as any);
+    } as MockQueryResult);
 
     render(<WeeklyResultsPage />);
 

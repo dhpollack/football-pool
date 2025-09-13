@@ -26,7 +26,7 @@ vi.mock("@tanstack/react-query", async () => {
 
 vi.mock("../../components/admin/AdminDataTable", () => ({
   __esModule: true,
-  default: ({ data }: { data: any[] }) => (
+  default: ({ data }: { data: { id: number }[] }) => (
     <div data-testid="admin-data-table">
       {data.map((item) => (
         <div key={item.id}>{item.id}</div>
@@ -43,7 +43,7 @@ vi.mock("../../components/admin/AdminSearchFilter", () => ({
 vi.mock("../../components/admin/AdminActionButtons", () => ({
   __esModule: true,
   default: ({ onAdd, addLabel }) => (
-    <button onClick={onAdd} data-testid="add-game-button">
+    <button type="button" onClick={onAdd} data-testid="add-game-button">
       {addLabel}
     </button>
   ),
@@ -68,6 +68,7 @@ vi.mock("../../components/admin/GameForm", () => ({
     open ? (
       <div data-testid="game-form">
         <button
+          type="button"
           onClick={() => {
             // Simulate successful form submission
             onSuccess();
@@ -77,7 +78,11 @@ vi.mock("../../components/admin/GameForm", () => ({
         >
           Submit Game
         </button>
-        <button onClick={onClose} data-testid="cancel-game-button">
+        <button
+          type="button"
+          onClick={onClose}
+          data-testid="cancel-game-button"
+        >
           Cancel
         </button>
       </div>

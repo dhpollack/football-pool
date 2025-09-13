@@ -1,5 +1,9 @@
 name: Frontend E2E Tests
 
+concurrency:
+  group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
+
 on:
   push:
     branches: [main]
@@ -15,12 +19,14 @@ on:
 jobs:
   test:
     runs-on: ubuntu-latest
-
-    defaults:
+    defaults: &default
       run:
         working-directory: ./frontend
+    strategy:
+      matrix:
+        target: ["chrome", "firefox"]
 
-    steps:
+    steps: &steps
       - uses: actions/checkout@v3
 
       # Setup
@@ -46,6 +52,13 @@ jobs:
         run: npx playwright install --with-deps
 
       - name: Run E2E tests
-        run: npm run test:e2e
+        run: npm run test:e2e:${{ matrix.target }}
         env:
-          CI: "1"
+          CI: "true"
+  test-macos:
+    runs-on: macos-latest
+    defaults: *default
+    strategy:
+      matrix:
+        target: ["webkit"]
+    steps: *steps

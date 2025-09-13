@@ -34,7 +34,10 @@ test.describe("Custom Instance", () => {
 
     expect(storedAuth).toBeTruthy();
 
-    const parsedAuth = JSON.parse(storedAuth!);
+    if (!storedAuth) {
+      throw new Error("storedAuth is null or undefined");
+    }
+    const parsedAuth = JSON.parse(storedAuth);
     expect(parsedAuth.auth.token).toBe(testToken);
 
     // Test the custom instance token extraction (simulate what it does)

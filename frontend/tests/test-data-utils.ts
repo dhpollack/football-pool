@@ -1,11 +1,11 @@
 import type { GameRequest } from "../src/services/model";
-import { E2E_CONFIG } from "./e2e.config";
+import type { Page } from "@playwright/test";
 
 /**
  * Utility to create test games for E2E tests using React Query patterns
  */
 export const createTestGame = async (
-  page: any,
+  page: Page,
   gameData: GameRequest,
 ): Promise<number> => {
   try {
@@ -52,7 +52,7 @@ export const createTestGame = async (
  * Utility to delete test games for cleanup using React Query patterns
  */
 export const deleteTestGame = async (
-  page: any,
+  page: Page,
   gameId: number,
 ): Promise<void> => {
   try {
@@ -70,7 +70,7 @@ export const deleteTestGame = async (
         console.log("Game deleted successfully with ID:", gameId);
       } catch (error) {
         // Handle 404 gracefully - the game might not exist (e.g., mock ID)
-        if (error.message && error.message.includes("404")) {
+        if (error.message?.includes("404")) {
           console.log("Game not found for deletion (may be mock ID):", gameId);
           return;
         }
@@ -88,7 +88,7 @@ export const deleteTestGame = async (
 /**
  * Creates a standard test game for E2E testing
  */
-export const createStandardTestGame = async (page: any): Promise<number> => {
+export const createStandardTestGame = async (page: Page): Promise<number> => {
   const testGame: GameRequest = {
     week: 1,
     season: new Date().getFullYear(),
@@ -105,7 +105,7 @@ export const createStandardTestGame = async (page: any): Promise<number> => {
  * Creates multiple test games for scenarios that need multiple games
  */
 export const createMultipleTestGames = async (
-  page: any,
+  page: Page,
   count: number = 2,
 ): Promise<number[]> => {
   const gameIds: number[] = [];
@@ -133,7 +133,7 @@ export const createMultipleTestGames = async (
  * Cleans up all test games
  */
 export const cleanupTestGames = async (
-  page: any,
+  page: Page,
   gameIds: number[],
 ): Promise<void> => {
   const deletePromises = gameIds.map((id) => deleteTestGame(page, id));
@@ -144,7 +144,7 @@ export const cleanupTestGames = async (
  * Utility to create test picks for E2E tests using React Query patterns
  */
 export const createTestPick = async (
-  page: any,
+  page: Page,
   pickData: {
     game_id: number;
     picked: "favorite" | "underdog";
@@ -189,7 +189,7 @@ export const createTestPick = async (
  * Utility to delete test picks for cleanup using React Query patterns
  */
 export const deleteTestPick = async (
-  page: any,
+  page: Page,
   pickId: number,
 ): Promise<void> => {
   try {
@@ -206,7 +206,7 @@ export const deleteTestPick = async (
         console.log("Pick deleted successfully with ID:", pickId);
       } catch (error) {
         // Handle 404 gracefully - the pick might not exist (e.g., mock ID)
-        if (error.message && error.message.includes("404")) {
+        if (error.message?.includes("404")) {
           console.log("Pick not found for deletion (may be mock ID):", pickId);
           return;
         }
@@ -225,7 +225,7 @@ export const deleteTestPick = async (
  * Creates a test game and pick for comprehensive E2E testing
  */
 export const createTestGameWithPick = async (
-  page: any,
+  page: Page,
 ): Promise<{ gameId: number; pickId: number }> => {
   // First create a test game
   const gameId = await createStandardTestGame(page);
@@ -245,7 +245,7 @@ export const createTestGameWithPick = async (
  * Cleans up test games and picks
  */
 export const cleanupTestData = async (
-  page: any,
+  page: Page,
   gameIds: number[],
   pickIds: number[],
 ): Promise<void> => {

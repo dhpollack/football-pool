@@ -30,6 +30,12 @@
       "linter": {
         "enabled": false
       }
+    },
+    {
+      "includes": ["public/mockServiceWorker.js"],
+      "linter": {
+        "enabled": false
+      }
     }
   ]
 }

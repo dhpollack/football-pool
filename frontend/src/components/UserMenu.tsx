@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useId } from "react";
 import { Link } from "react-router-dom";
 import {
   IconButton,
@@ -20,6 +20,7 @@ const UserMenu = () => {
   const { user, logout } = useAuth();
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
   const open = Boolean(anchorEl);
+  const menuId = useId();
 
   const handleClick = (event: React.MouseEvent<HTMLElement>) => {
     setAnchorEl(event.currentTarget);
@@ -51,7 +52,7 @@ const UserMenu = () => {
       </IconButton>
       <Menu
         anchorEl={anchorEl}
-        id="user-menu"
+        id={menuId}
         open={open}
         onClose={handleClose}
         onClick={handleClose}

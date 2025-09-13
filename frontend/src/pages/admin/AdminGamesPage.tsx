@@ -10,14 +10,16 @@ import AdminSearchFilter from "../../components/admin/AdminSearchFilter";
 import AdminActionButtons from "../../components/admin/AdminActionButtons";
 import AdminConfirmDialog from "../../components/admin/AdminConfirmDialog";
 import GameForm from "../../components/admin/GameForm";
-import { GameResponse } from "../../services/model";
+import type { GameResponse } from "../../services/model";
 import { useQueryClient } from "@tanstack/react-query";
 
 const AdminGamesPage = () => {
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(10);
   const [searchTerm, setSearchTerm] = useState("");
-  const [filters, setFilters] = useState<Record<string, any>>({});
+  const [filters, setFilters] = useState<
+    Record<string, string | number | undefined>
+  >({});
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
   const [gameFormOpen, setGameFormOpen] = useState(false);
   const [selectedGame, setSelectedGame] = useState<GameResponse | null>(null);
@@ -41,7 +43,7 @@ const AdminGamesPage = () => {
     setPage(0);
   };
 
-  const handleFilterChange = (name: string, value: any) => {
+  const handleFilterChange = (name: string, value: string | number) => {
     setFilters((prev) => ({ ...prev, [name]: value }));
     setPage(0);
   };
@@ -110,13 +112,14 @@ const AdminGamesPage = () => {
       id: "spread",
       label: "Spread",
       align: "center" as const,
-      format: (spread: number) =>
-        spread > 0 ? `+${spread}` : spread.toString(),
+      format: (game: GameResponse) =>
+        game.spread > 0 ? `+${game.spread}` : game.spread.toString(),
     },
     {
       id: "start_time",
       label: "Start Time",
-      format: (dateString: string) => new Date(dateString).toLocaleDateString(),
+      format: (game: GameResponse) =>
+        new Date(game.start_time).toLocaleDateString(),
     },
     {
       id: "actions",
@@ -160,10 +163,10 @@ const AdminGamesPage = () => {
       : true;
 
     const matchesWeek = filters.week
-      ? game.week === parseInt(filters.week)
+      ? game.week === parseInt(filters.week as string, 10)
       : true;
     const matchesSeason = filters.season
-      ? game.season === parseInt(filters.season)
+      ? game.season === parseInt(filters.season as string, 10)
       : true;
 
     return matchesSearch && matchesWeek && matchesSeason;

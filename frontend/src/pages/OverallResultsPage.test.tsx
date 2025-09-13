@@ -1,7 +1,9 @@
 import { screen } from "@testing-library/react";
 import { vi } from "vitest";
+import type { DefinedUseQueryResult } from "@tanstack/react-query";
 import { render } from "../test-utils";
 import OverallResultsPage from "./OverallResultsPage";
+import type { SeasonResult } from "../services/api/results/results";
 
 // Mock the React Query hooks
 vi.mock("../services/api/results/results", () => ({
@@ -13,6 +15,8 @@ vi.mock("../services/api/results/results", () => ({
 }));
 
 import { useGetSeasonResults } from "../services/api/results/results";
+
+type MockQueryResult = Partial<DefinedUseQueryResult<SeasonResult[], Error>>;
 
 describe("OverallResultsPage", () => {
   it("renders the loading state", () => {
@@ -26,7 +30,7 @@ describe("OverallResultsPage", () => {
       data: null,
       isLoading: false,
       error: new Error("Failed to fetch overall results"),
-    } as any);
+    } as MockQueryResult);
 
     render(<OverallResultsPage />);
 
@@ -45,7 +49,7 @@ describe("OverallResultsPage", () => {
       data: mockSeasonResults,
       isLoading: false,
       error: null,
-    } as any);
+    } as MockQueryResult);
 
     render(<OverallResultsPage />);
 

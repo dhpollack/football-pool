@@ -1,5 +1,6 @@
 import { screen, fireEvent } from "@testing-library/react";
 import { render } from "../../test-utils";
+import type { PickResponse } from "../../services/model";
 import AdminPicksPage from "./AdminPicksPage";
 import { useAdminListPicks } from "../../services/api/picks/picks";
 import { getGetPicksResponseMock } from "../../services/api/picks/picks.msw";
@@ -26,13 +27,26 @@ vi.mock("../../components/admin/AdminDataTable", () => ({
     rowsPerPage,
     totalCount,
     columns,
-  }: any) => (
+  }: {
+    data: PickResponse[];
+    loading: boolean;
+    error: string | null;
+    onPageChange: (page: number) => void;
+    onRowsPerPageChange: (rowsPerPage: number) => void;
+    page: number;
+    rowsPerPage: number;
+    totalCount: number;
+    columns: Array<{
+      id: string;
+      format?: (value: PickResponse) => React.ReactNode;
+    }>;
+  }) => (
     <div data-testid="admin-data-table">
       {loading && <div>Loading...</div>}
       {error && <div>Error: {error}</div>}
       {data && (
         <div>
-          {data.map((pick: any) => (
+          {data.map((pick: PickResponse) => (
             <div key={pick.id} data-testid="pick-row">
               <span data-testid="pick-user">{pick.user?.email}</span>
               <span data-testid="pick-game">
@@ -41,7 +55,7 @@ vi.mock("../../components/admin/AdminDataTable", () => ({
                   : "Unknown"}
               </span>
               <span data-testid="pick-choice">{pick.picked}</span>
-              {columns.find((c: any) => c.id === "actions").format(pick)}
+              {columns.find((c) => c.id === "actions")?.format?.(pick)}
             </div>
           ))}
         </div>
@@ -61,10 +75,15 @@ vi.mock("../../components/admin/AdminDataTable", () => ({
           {page * rowsPerPage + 1}-
           {Math.min((page + 1) * rowsPerPage, totalCount)} of {totalCount}
         </span>
-        <button onClick={() => onPageChange(page - 1)} disabled={page === 0}>
+        <button
+          type="button"
+          onClick={() => onPageChange(page - 1)}
+          disabled={page === 0}
+        >
           Previous Page
         </button>
         <button
+          type="button"
           onClick={() => onPageChange(page + 1)}
           disabled={(page + 1) * rowsPerPage >= totalCount}
         >
@@ -80,11 +99,23 @@ vi.mock("../../components/admin/AdminSearchFilter", () => ({
 }));
 
 vi.mock("../../components/admin/AdminConfirmDialog", () => ({
-  default: ({ open, onConfirm, onClose }: any) =>
+  default: ({
+    open,
+    onConfirm,
+    onClose,
+  }: {
+    open: boolean;
+    onConfirm: () => void;
+    onClose: () => void;
+  }) =>
     open ? (
       <div data-testid="confirm-dialog">
-        <button onClick={onConfirm}>Confirm</button>
-        <button onClick={onClose}>Cancel</button>
+        <button type="button" onClick={onConfirm}>
+          Confirm
+        </button>
+        <button type="button" onClick={onClose}>
+          Cancel
+        </button>
       </div>
     ) : null,
 }));
@@ -188,11 +219,13 @@ describe("AdminPicksPage", () => {
 
   it("handles page changes", () => {
     const mockData = getGetPicksResponseMock({
-      picks: new Array(30)
-        .fill(null)
-        .map(
-          (_, i) => ({ id: i, user: { email: `user${i}@example.com` } }) as any,
-        ),
+      picks: new Array(30).fill(null).map(
+        (_, i) =>
+          ({
+            id: i,
+            user: { email: `user${i}@example.com` },
+          }) as PickResponse,
+      ),
       pagination: { page: 1, limit: 25, total: 30 },
     });
 
@@ -225,11 +258,13 @@ describe("AdminPicksPage", () => {
 
   it("handles rows per page changes", () => {
     const mockData = getGetPicksResponseMock({
-      picks: new Array(30)
-        .fill(null)
-        .map(
-          (_, i) => ({ id: i, user: { email: `user${i}@example.com` } }) as any,
-        ),
+      picks: new Array(30).fill(null).map(
+        (_, i) =>
+          ({
+            id: i,
+            user: { email: `user${i}@example.com` },
+          }) as PickResponse,
+      ),
       pagination: { page: 1, limit: 25, total: 30 },
     });
 
@@ -268,7 +303,7 @@ describe("AdminPicksPage", () => {
           user: { email: "user1@example.com" },
           game: { favorite_team: "Team A", underdog_team: "Team B" },
           picked: "favorite",
-        } as any,
+        } as PickResponse,
       ],
       pagination: { page: 1, limit: 25, total: 1 },
     });
@@ -297,7 +332,7 @@ describe("AdminPicksPage", () => {
           user: { email: "user1@example.com" },
           game: { favorite_team: "Team A", underdog_team: "Team B" },
           picked: "favorite",
-        } as any,
+        } as PickResponse,
       ],
       pagination: { page: 1, limit: 25, total: 1 },
     });
@@ -327,7 +362,7 @@ describe("AdminPicksPage", () => {
           user: { email: "user1@example.com" },
           game: { favorite_team: "Team A", underdog_team: "Team B" },
           picked: "favorite",
-        } as any,
+        } as PickResponse,
       ],
       pagination: { page: 1, limit: 25, total: 1 },
     });
