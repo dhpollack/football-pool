@@ -1,4 +1,5 @@
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
+import { lazy, Suspense } from "react";
 import AuthProvider from "react-auth-kit/AuthProvider";
 import { authStore } from "./lib/auth";
 import Layout from "./components/Layout";
@@ -6,22 +7,27 @@ import AdminLayout from "./components/admin/AdminLayout";
 import ErrorBoundary from "./components/ErrorBoundary";
 import QueryErrorBoundary from "./components/QueryErrorBoundary";
 import ProtectedRoute from "./components/ProtectedRoute";
-import HomePage from "./pages/HomePage";
-import LoginPage from "./pages/LoginPage";
-import RegisterPage from "./pages/RegisterPage";
-import ProfilePage from "./pages/ProfilePage";
-import PickEntryPage from "./pages/PickEntryPage";
-import ResultEntryPage from "./pages/ResultEntryPage";
-import WeeklyResultsPage from "./pages/WeeklyResultsPage";
-import OverallResultsPage from "./pages/OverallResultsPage";
-import SurvivorPoolPage from "./pages/SurvivorPoolPage";
-import AdminDashboard from "./pages/admin/AdminDashboard";
-import AdminGamesPage from "./pages/admin/AdminGamesPage";
-import AdminUsersPage from "./pages/admin/AdminUsersPage";
-import AdminPicksPage from "./pages/admin/AdminPicksPage";
-import UserDetailsPage from "./pages/admin/UserDetailsPage";
-import WeeklyPicksPage from "./pages/admin/WeeklyPicksPage";
-import UserPicksPage from "./pages/admin/UserPicksPage";
+import LoadingSpinner from "./components/LoadingSpinner";
+
+// Non-admin pages (lazy loaded)
+const HomePage = lazy(() => import("./pages/HomePage"));
+const LoginPage = lazy(() => import("./pages/LoginPage"));
+const RegisterPage = lazy(() => import("./pages/RegisterPage"));
+const ProfilePage = lazy(() => import("./pages/ProfilePage"));
+const PickEntryPage = lazy(() => import("./pages/PickEntryPage"));
+const ResultEntryPage = lazy(() => import("./pages/ResultEntryPage"));
+const WeeklyResultsPage = lazy(() => import("./pages/WeeklyResultsPage"));
+const OverallResultsPage = lazy(() => import("./pages/OverallResultsPage"));
+const SurvivorPoolPage = lazy(() => import("./pages/SurvivorPoolPage"));
+
+// Admin pages (lazy loaded)
+const AdminDashboard = lazy(() => import("./pages/admin/AdminDashboard"));
+const AdminGamesPage = lazy(() => import("./pages/admin/AdminGamesPage"));
+const AdminUsersPage = lazy(() => import("./pages/admin/AdminUsersPage"));
+const AdminPicksPage = lazy(() => import("./pages/admin/AdminPicksPage"));
+const UserDetailsPage = lazy(() => import("./pages/admin/UserDetailsPage"));
+const WeeklyPicksPage = lazy(() => import("./pages/admin/WeeklyPicksPage"));
+const UserPicksPage = lazy(() => import("./pages/admin/UserPicksPage"));
 
 function App() {
   return (
@@ -31,14 +37,37 @@ function App() {
           <Router>
             <Routes>
               <Route path="/" element={<Layout />}>
-                <Route index element={<HomePage />} />
-                <Route path="login" element={<LoginPage />} />
-                <Route path="register" element={<RegisterPage />} />
+                <Route
+                  index
+                  element={
+                    <Suspense fallback={<LoadingSpinner />}>
+                      <HomePage />
+                    </Suspense>
+                  }
+                />
+                <Route
+                  path="login"
+                  element={
+                    <Suspense fallback={<LoadingSpinner />}>
+                      <LoginPage />
+                    </Suspense>
+                  }
+                />
+                <Route
+                  path="register"
+                  element={
+                    <Suspense fallback={<LoadingSpinner />}>
+                      <RegisterPage />
+                    </Suspense>
+                  }
+                />
                 <Route
                   path="profile"
                   element={
                     <QueryErrorBoundary>
-                      <ProfilePage />
+                      <Suspense fallback={<LoadingSpinner />}>
+                        <ProfilePage />
+                      </Suspense>
                     </QueryErrorBoundary>
                   }
                 />
@@ -46,7 +75,9 @@ function App() {
                   path="picks"
                   element={
                     <QueryErrorBoundary>
-                      <PickEntryPage />
+                      <Suspense fallback={<LoadingSpinner />}>
+                        <PickEntryPage />
+                      </Suspense>
                     </QueryErrorBoundary>
                   }
                 />
@@ -54,7 +85,9 @@ function App() {
                   path="results"
                   element={
                     <QueryErrorBoundary>
-                      <ResultEntryPage />
+                      <Suspense fallback={<LoadingSpinner />}>
+                        <ResultEntryPage />
+                      </Suspense>
                     </QueryErrorBoundary>
                   }
                 />
@@ -62,7 +95,9 @@ function App() {
                   path="weekly-results"
                   element={
                     <QueryErrorBoundary>
-                      <WeeklyResultsPage />
+                      <Suspense fallback={<LoadingSpinner />}>
+                        <WeeklyResultsPage />
+                      </Suspense>
                     </QueryErrorBoundary>
                   }
                 />
@@ -70,7 +105,9 @@ function App() {
                   path="overall-results"
                   element={
                     <QueryErrorBoundary>
-                      <OverallResultsPage />
+                      <Suspense fallback={<LoadingSpinner />}>
+                        <OverallResultsPage />
+                      </Suspense>
                     </QueryErrorBoundary>
                   }
                 />
@@ -78,7 +115,9 @@ function App() {
                   path="survivor-pool"
                   element={
                     <QueryErrorBoundary>
-                      <SurvivorPoolPage />
+                      <Suspense fallback={<LoadingSpinner />}>
+                        <SurvivorPoolPage />
+                      </Suspense>
                     </QueryErrorBoundary>
                   }
                 />
@@ -95,7 +134,9 @@ function App() {
                   index
                   element={
                     <QueryErrorBoundary>
-                      <AdminDashboard />
+                      <Suspense fallback={<LoadingSpinner />}>
+                        <AdminDashboard />
+                      </Suspense>
                     </QueryErrorBoundary>
                   }
                 />
@@ -103,7 +144,9 @@ function App() {
                   path="games"
                   element={
                     <QueryErrorBoundary>
-                      <AdminGamesPage />
+                      <Suspense fallback={<LoadingSpinner />}>
+                        <AdminGamesPage />
+                      </Suspense>
                     </QueryErrorBoundary>
                   }
                 />
@@ -111,7 +154,9 @@ function App() {
                   path="users"
                   element={
                     <QueryErrorBoundary>
-                      <AdminUsersPage />
+                      <Suspense fallback={<LoadingSpinner />}>
+                        <AdminUsersPage />
+                      </Suspense>
                     </QueryErrorBoundary>
                   }
                 />
@@ -119,7 +164,9 @@ function App() {
                   path="users/:userId"
                   element={
                     <QueryErrorBoundary>
-                      <UserDetailsPage />
+                      <Suspense fallback={<LoadingSpinner />}>
+                        <UserDetailsPage />
+                      </Suspense>
                     </QueryErrorBoundary>
                   }
                 />
@@ -127,7 +174,9 @@ function App() {
                   path="picks"
                   element={
                     <QueryErrorBoundary>
-                      <AdminPicksPage />
+                      <Suspense fallback={<LoadingSpinner />}>
+                        <AdminPicksPage />
+                      </Suspense>
                     </QueryErrorBoundary>
                   }
                 />
@@ -135,7 +184,9 @@ function App() {
                   path="picks/week/:week"
                   element={
                     <QueryErrorBoundary>
-                      <WeeklyPicksPage />
+                      <Suspense fallback={<LoadingSpinner />}>
+                        <WeeklyPicksPage />
+                      </Suspense>
                     </QueryErrorBoundary>
                   }
                 />
@@ -143,7 +194,9 @@ function App() {
                   path="picks/user/:userId"
                   element={
                     <QueryErrorBoundary>
-                      <UserPicksPage />
+                      <Suspense fallback={<LoadingSpinner />}>
+                        <UserPicksPage />
+                      </Suspense>
                     </QueryErrorBoundary>
                   }
                 />
