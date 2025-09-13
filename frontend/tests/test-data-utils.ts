@@ -145,7 +145,12 @@ export const cleanupTestGames = async (
  */
 export const createTestPick = async (
   page: any,
-  pickData: { game_id: number; picked: "favorite" | "underdog"; rank: number; quick_pick: boolean },
+  pickData: {
+    game_id: number;
+    picked: "favorite" | "underdog";
+    rank: number;
+    quick_pick: boolean;
+  },
 ): Promise<number> => {
   try {
     // Use React Query's createPick function directly in browser context
@@ -224,7 +229,7 @@ export const createTestGameWithPick = async (
 ): Promise<{ gameId: number; pickId: number }> => {
   // First create a test game
   const gameId = await createStandardTestGame(page);
-  
+
   // Then create a pick for that game
   const pickId = await createTestPick(page, {
     game_id: gameId,
@@ -247,7 +252,7 @@ export const cleanupTestData = async (
   // Delete picks first (they have foreign key constraints)
   const deletePickPromises = pickIds.map((id) => deleteTestPick(page, id));
   await Promise.allSettled(deletePickPromises);
-  
+
   // Then delete games
   const deleteGamePromises = gameIds.map((id) => deleteTestGame(page, id));
   await Promise.allSettled(deleteGamePromises);

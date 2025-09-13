@@ -38,7 +38,7 @@ test.describe("Admin Pick Management", () => {
     const pageContent = await page.content();
     expect(pageContent).toContain("No picks");
     expect(pageContent).toContain("available");
-    
+
     // Debug: Check for any text content in the table
     const tableText = await page.locator("table").textContent();
     console.log("Table text content:", tableText);
@@ -61,7 +61,7 @@ test.describe("Admin Pick Management", () => {
   test("should display picks when they exist", async ({ page }) => {
     // Create test data with a game and pick
     testData = await createTestGameWithPick(page);
-    
+
     // Reload the page to see the new pick
     await page.reload();
     await page.waitForLoadState("networkidle");
@@ -78,9 +78,11 @@ test.describe("Admin Pick Management", () => {
     // The table has header row + data rows, so we expect 2 total rows (header + 1 data row)
     const allTableRows = page.locator(".MuiTableRow-root");
     await expect(allTableRows).toHaveCount(2);
-    
+
     // Get just the data rows (excluding header) - use a more specific selector
-    const pickRows = page.locator(".MuiTableRow-root:not(thead .MuiTableRow-root)");
+    const pickRows = page.locator(
+      ".MuiTableRow-root:not(thead .MuiTableRow-root)",
+    );
     await expect(pickRows).toHaveCount(1);
 
     // Verify the table structure is intact
@@ -88,7 +90,9 @@ test.describe("Admin Pick Management", () => {
     await expect(firstRowCells.first()).toBeVisible();
 
     // Verify pick information is displayed
-    const pickChoice = page.locator(E2E_CONFIG.SELECTORS.ADMIN.PICKS.PICK_CHOICE);
+    const pickChoice = page.locator(
+      E2E_CONFIG.SELECTORS.ADMIN.PICKS.PICK_CHOICE,
+    );
     await expect(pickChoice.first()).toBeVisible();
     await expect(pickChoice.first()).toContainText("favorite");
   });
@@ -120,16 +124,17 @@ test.describe("Admin Pick Management", () => {
       // If no picks, verify empty state is displayed
       const emptyState = page.getByText(/No picks available/i);
       await expect(emptyState).toBeVisible();
-      
+
       // Also verify the table structure shows empty state properly
       const allTableRows = page.locator(".MuiTableRow-root");
       await expect(allTableRows).toHaveCount(2); // Header + empty state row
-      
+
       // Throw error when we have an empty state
-      throw new Error("No picks available - likely and error populating the table in the setup");
+      throw new Error(
+        "No picks available - likely and error populating the table in the setup",
+      );
     }
   });
-
 
   test("should search for picks when picks exist", async ({ page }) => {
     // Wait for loading to complete first
@@ -139,7 +144,9 @@ test.describe("Admin Pick Management", () => {
     });
 
     // Wait for picks to load - use the same selector as the display test
-    const pickRows = page.locator(".MuiTableRow-root:not(thead .MuiTableRow-root)");
+    const pickRows = page.locator(
+      ".MuiTableRow-root:not(thead .MuiTableRow-root)",
+    );
     await expect(pickRows.first()).toBeVisible({ timeout: 15000 });
 
     const searchInput = page.locator(
@@ -296,7 +303,7 @@ test.describe("Admin Pick Management", () => {
   test("should show delete buttons for picks", async ({ page }) => {
     // Create test data with a game and pick
     testData = await createTestGameWithPick(page);
-    
+
     // Reload the page to see the new pick
     await page.reload();
     await page.waitForLoadState("networkidle");
@@ -322,7 +329,9 @@ test.describe("Admin Pick Management", () => {
         await expect(deleteButtons.first()).toBeVisible();
       } else {
         // Throw error when we don't have a delete button
-        throw new Error("delete button likely not implemented. This test should not be changed simple to pass");
+        throw new Error(
+          "delete button likely not implemented. This test should not be changed simple to pass",
+        );
       }
     } else {
       // If no picks, this test should pass since there's nothing to delete

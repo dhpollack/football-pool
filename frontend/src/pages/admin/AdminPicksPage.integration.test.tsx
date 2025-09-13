@@ -7,6 +7,7 @@ import { PickResponse } from "../../services/model";
 // Mock the custom hooks
 vi.mock("../../services/api/picks/picks", () => ({
   useAdminListPicks: vi.fn(),
+  useAdminDeletePick: vi.fn(),
 }));
 
 describe("AdminPicksPage (Integration)", () => {

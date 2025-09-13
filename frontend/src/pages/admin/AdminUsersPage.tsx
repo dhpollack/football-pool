@@ -1,7 +1,19 @@
 import { useState } from "react";
-import { Typography, Box, IconButton, Alert, Chip, TextField, MenuItem, Snackbar } from "@mui/material";
+import {
+  Typography,
+  Box,
+  IconButton,
+  Alert,
+  Chip,
+  TextField,
+  MenuItem,
+  Snackbar,
+} from "@mui/material";
 import { Edit, Delete } from "@mui/icons-material";
-import { useAdminListUsers, useCreateUsers } from "../../services/api/user/user";
+import {
+  useAdminListUsers,
+  useCreateUsers,
+} from "../../services/api/user/user";
 import AdminDataTable from "../../components/admin/AdminDataTable";
 import AdminSearchFilter from "../../components/admin/AdminSearchFilter";
 import AdminActionButtons from "../../components/admin/AdminActionButtons";
@@ -109,7 +121,7 @@ const AdminUsersPage = () => {
 
   const handleEditConfirm = () => {
     if (!selectedUser) return;
-    
+
     // TODO: Implement edit mutation
     setEditDialogOpen(false);
     setSelectedUser(null);
@@ -121,7 +133,7 @@ const AdminUsersPage = () => {
   };
 
   const handleEditFormChange = (field: string, value: string) => {
-    setEditFormData(prev => ({ ...prev, [field]: value }));
+    setEditFormData((prev) => ({ ...prev, [field]: value }));
   };
 
   const handleAddClick = () => {
@@ -146,27 +158,29 @@ const AdminUsersPage = () => {
       };
 
       await createUsersMutation.mutateAsync({ data: [userRequest] });
-      
+
       setSnackbarMessage(`User ${addFormData.email} created successfully`);
       setSnackbarOpen(true);
-      
+
       setAddDialogOpen(false);
       setAddFormData({
         name: "",
         email: "",
         role: "user",
       });
-      
+
       // Refresh the user list
       refetch();
     } catch (error) {
-      setSnackbarMessage(`Error creating user: ${error instanceof Error ? error.message : 'Unknown error'}`);
+      setSnackbarMessage(
+        `Error creating user: ${error instanceof Error ? error.message : "Unknown error"}`,
+      );
       setSnackbarOpen(true);
     }
   };
 
   const handleAddFormChange = (field: string, value: string) => {
-    setAddFormData(prev => ({ ...prev, [field]: value }));
+    setAddFormData((prev) => ({ ...prev, [field]: value }));
   };
 
   const handleSnackbarClose = () => {
@@ -212,7 +226,8 @@ const AdminUsersPage = () => {
     {
       id: "created_at",
       label: "Joined",
-      format: (user: UserWithStats) => new Date(user.created_at).toLocaleDateString(),
+      format: (user: UserWithStats) =>
+        new Date(user.created_at).toLocaleDateString(),
     },
     {
       id: "actions",
@@ -220,8 +235,8 @@ const AdminUsersPage = () => {
       align: "center" as const,
       format: (user: UserWithStats) => (
         <Box display="flex" gap={1} justifyContent="center">
-          <IconButton 
-            size="small" 
+          <IconButton
+            size="small"
             color="primary"
             onClick={() => handleEditClick(user)}
           >
@@ -261,10 +276,7 @@ const AdminUsersPage = () => {
         mb={3}
       >
         <Typography variant="h4">User Management</Typography>
-        <AdminActionButtons
-          onAdd={handleAddClick}
-          addLabel="Add User"
-        />
+        <AdminActionButtons onAdd={handleAddClick} addLabel="Add User" />
       </Box>
 
       {error && (
@@ -321,7 +333,12 @@ const AdminUsersPage = () => {
               <Typography variant="body2" component="div" sx={{ mb: 2 }}>
                 Edit user details for {selectedUser?.email}
               </Typography>
-              <Box display="flex" flexDirection="column" gap={2} component="div">
+              <Box
+                display="flex"
+                flexDirection="column"
+                gap={2}
+                component="div"
+              >
                 <TextField
                   label="Name"
                   value={editFormData.name}
@@ -332,7 +349,9 @@ const AdminUsersPage = () => {
                 <TextField
                   label="Email"
                   value={editFormData.email}
-                  onChange={(e) => handleEditFormChange("email", e.target.value)}
+                  onChange={(e) =>
+                    handleEditFormChange("email", e.target.value)
+                  }
                   fullWidth
                   size="small"
                 />
@@ -366,7 +385,12 @@ const AdminUsersPage = () => {
               <Typography variant="body2" component="div" sx={{ mb: 2 }}>
                 Create a new user
               </Typography>
-              <Box display="flex" flexDirection="column" gap={2} component="div">
+              <Box
+                display="flex"
+                flexDirection="column"
+                gap={2}
+                component="div"
+              >
                 <TextField
                   label="Name"
                   value={addFormData.name}
@@ -405,7 +429,11 @@ const AdminUsersPage = () => {
         autoHideDuration={6000}
         onClose={handleSnackbarClose}
       >
-        <Alert onClose={handleSnackbarClose} severity="success" sx={{ width: '100%' }}>
+        <Alert
+          onClose={handleSnackbarClose}
+          severity="success"
+          sx={{ width: "100%" }}
+        >
           {snackbarMessage}
         </Alert>
       </Snackbar>

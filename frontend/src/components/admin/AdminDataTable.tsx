@@ -98,7 +98,11 @@ const AdminDataTable = ({
                   align="center"
                   sx={{ py: 4 }}
                 >
-                  <Typography variant="body2" color="text.secondary">
+                  <Typography
+                    variant="body2"
+                    color="text.secondary"
+                    data-testid="empty-state-message"
+                  >
                     {emptyMessage}
                   </Typography>
                 </TableCell>

@@ -1,16 +1,32 @@
-import { render, screen, fireEvent } from "@testing-library/react";
+import { screen, fireEvent } from "@testing-library/react";
+import { render } from "../../test-utils";
 import AdminPicksPage from "./AdminPicksPage";
 import { useAdminListPicks } from "../../services/api/picks/picks";
 import { getGetPicksResponseMock } from "../../services/api/picks/picks.msw";
 
 // Mock the custom hooks
-vi.mock("../../services/api/picks/picks", () => ({
-  useAdminListPicks: vi.fn(),
-}));
+vi.mock("../../services/api/picks/picks", async (importOriginal) => {
+  const actual = await importOriginal();
+  return {
+    ...actual,
+    useAdminListPicks: vi.fn(),
+    useAdminDeletePick: vi.fn(),
+  };
+});
 
 // Mock the admin components with simple implementations
 vi.mock("../../components/admin/AdminDataTable", () => ({
-  default: ({ data, loading, error, onPageChange, onRowsPerPageChange, page, rowsPerPage, totalCount, columns }: any) => (
+  default: ({
+    data,
+    loading,
+    error,
+    onPageChange,
+    onRowsPerPageChange,
+    page,
+    rowsPerPage,
+    totalCount,
+    columns,
+  }: any) => (
     <div data-testid="admin-data-table">
       {loading && <div>Loading...</div>}
       {error && <div>Error: {error}</div>}
@@ -25,7 +41,7 @@ vi.mock("../../components/admin/AdminDataTable", () => ({
                   : "Unknown"}
               </span>
               <span data-testid="pick-choice">{pick.picked}</span>
-              {columns.find((c: any) => c.id === 'actions').format(pick)}
+              {columns.find((c: any) => c.id === "actions").format(pick)}
             </div>
           ))}
         </div>
@@ -42,9 +58,8 @@ vi.mock("../../components/admin/AdminDataTable", () => ({
           <option value={50}>50</option>
         </select>
         <span>
-          {page * rowsPerPage + 1}-{
-            Math.min((page + 1) * rowsPerPage, totalCount)
-          } of {totalCount}
+          {page * rowsPerPage + 1}-
+          {Math.min((page + 1) * rowsPerPage, totalCount)} of {totalCount}
         </span>
         <button onClick={() => onPageChange(page - 1)} disabled={page === 0}>
           Previous Page
@@ -173,7 +188,11 @@ describe("AdminPicksPage", () => {
 
   it("handles page changes", () => {
     const mockData = getGetPicksResponseMock({
-      picks: new Array(30).fill(null).map((_, i) => ({ id: i, user: { email: `user${i}@example.com` } } as any)),
+      picks: new Array(30)
+        .fill(null)
+        .map(
+          (_, i) => ({ id: i, user: { email: `user${i}@example.com` } }) as any,
+        ),
       pagination: { page: 1, limit: 25, total: 30 },
     });
 
@@ -206,7 +225,11 @@ describe("AdminPicksPage", () => {
 
   it("handles rows per page changes", () => {
     const mockData = getGetPicksResponseMock({
-      picks: new Array(30).fill(null).map((_, i) => ({ id: i, user: { email: `user${i}@example.com` } } as any)),
+      picks: new Array(30)
+        .fill(null)
+        .map(
+          (_, i) => ({ id: i, user: { email: `user${i}@example.com` } }) as any,
+        ),
       pagination: { page: 1, limit: 25, total: 30 },
     });
 

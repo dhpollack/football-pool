@@ -55,7 +55,7 @@ const AdminConfirmDialog = ({
             {error}
           </Alert>
         )}
-        {typeof message === 'string' ? (
+        {typeof message === "string" ? (
           <Typography variant="body1">{message}</Typography>
         ) : (
           message
