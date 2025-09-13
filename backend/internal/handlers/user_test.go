@@ -230,8 +230,6 @@ func TestUpdateProfileErrors(t *testing.T) {
 	}
 }
 
-
-
 func TestDeleteUser(t *testing.T) {
 	// Set up test database
 	db, err := database.New("file::memory:")
@@ -297,7 +295,7 @@ func TestDeleteUserEdgeCases(t *testing.T) {
 	}{
 		{
 			name:           "Delete user without player",
-			email:          "no_player@test.com", 
+			email:          "no_player@test.com",
 			setupUser:      true,
 			setupPlayer:    false,
 			expectedStatus: http.StatusNoContent,
@@ -324,7 +322,7 @@ func TestDeleteUserEdgeCases(t *testing.T) {
 			if tt.setupUser {
 				userToDelete = database.User{Email: tt.email, Password: "password", Name: "Test User", Role: "player"}
 				gormDB.Create(&userToDelete)
-				
+
 				if tt.setupPlayer {
 					player := database.Player{UserID: userToDelete.ID, Name: "Test Player", Address: "123 Test St"}
 					gormDB.Create(&player)
@@ -360,7 +358,7 @@ func TestDeleteUserEdgeCases(t *testing.T) {
 				if result := gormDB.Where("email = ?", tt.email).First(&user); result.Error == nil {
 					t.Errorf("user was not deleted from the database")
 				}
-				
+
 				if tt.setupPlayer {
 					var player database.Player
 					if result := gormDB.Where("user_id = ?", userToDelete.ID).First(&player); result.Error == nil {
@@ -488,4 +486,69 @@ func TestAdminUpdateUser(t *testing.T) {
 			t.Errorf("expected user role to be updated, got %s", updatedUser.Role)
 		}
 	})
+}
+
+func TestAdminCreateUsers(t *testing.T) {
+	db, err := database.New("file::memory:")
+	if err != nil {
+		t.Fatalf("Failed to connect to database: %v", err)
+	}
+	gormDB := db.GetDB()
+
+	handler := AdminCreateUsers(gormDB)
+
+	password := "password"
+
+	tests := []struct {
+		name           string
+		body           string
+		expectedStatus int
+		expectedCount  int
+	}{
+		{
+			name: "success",
+			body: fmt.Sprintf(`[{"name": "New User 1", "email": "new1@test.com", "password": "%s", "role": "user"}, {"name": "New User 2", "email": "new2@test.com", "password": "%s", "role": "admin"}]`, password, password),
+			expectedStatus: http.StatusCreated,
+			expectedCount:  2,
+		},
+		{
+			name:           "invalid json",
+			body:           `[{"name": "New User 1"}]`,
+			expectedStatus: http.StatusBadRequest,
+			expectedCount:  0,
+		},
+		{
+			name:           "missing password",
+			body:           `[{"name": "New User 3", "email": "new3@test.com", "role": "user"}]`,
+			expectedStatus: http.StatusBadRequest,
+			expectedCount:  0,
+		},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			req, _ := http.NewRequest("POST", "/api/admin/users/create", bytes.NewBuffer([]byte(tt.body)))
+			rr := httptest.NewRecorder()
+			handler.ServeHTTP(rr, req)
+
+			if status := rr.Code; status != tt.expectedStatus {
+				t.Errorf("handler returned wrong status code: got %v want %v", status, tt.expectedStatus)
+			}
+
+			if tt.expectedStatus == http.StatusCreated {
+				var response []map[string]interface{}
+				json.NewDecoder(rr.Body).Decode(&response)
+				if len(response) != tt.expectedCount {
+					t.Errorf("expected %d users, got %d", tt.expectedCount, len(response))
+				}
+
+				// Check if users were actually created
+				var count int64
+				gormDB.Model(&database.User{}).Count(&count)
+				if count != int64(tt.expectedCount) {
+					t.Errorf("expected %d users in db, got %d", tt.expectedCount, count)
+				}
+			}
+		})
+	}
 }

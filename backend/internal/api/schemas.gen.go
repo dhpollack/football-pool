@@ -212,8 +212,14 @@ type WeeklyResult struct {
 	Score      int    `json:"score"`
 }
 
+// CreateGameJSONBody defines parameters for CreateGame.
+type CreateGameJSONBody = []GameRequest
+
 // AdminSubmitPicksJSONBody defines parameters for AdminSubmitPicks.
 type AdminSubmitPicksJSONBody = []PickRequest
+
+// CreateUsersJSONBody defines parameters for CreateUsers.
+type CreateUsersJSONBody = []UserRequest
 
 // DeleteUserParams defines parameters for DeleteUser.
 type DeleteUserParams struct {
@@ -225,9 +231,6 @@ type GetGamesParams struct {
 	Week   int `form:"week" json:"week"`
 	Season int `form:"season" json:"season"`
 }
-
-// CreateGameJSONBody defines parameters for CreateGame.
-type CreateGameJSONBody = []GameRequest
 
 // SubmitPicksJSONBody defines parameters for SubmitPicks.
 type SubmitPicksJSONBody = []PickRequest
@@ -243,17 +246,20 @@ type GetWeeklyResultsParams struct {
 	Season int `form:"season" json:"season"`
 }
 
+// CreateGameJSONRequestBody defines body for CreateGame for application/json ContentType.
+type CreateGameJSONRequestBody = CreateGameJSONBody
+
 // UpdateGameJSONRequestBody defines body for UpdateGame for application/json ContentType.
 type UpdateGameJSONRequestBody = GameRequest
 
 // AdminSubmitPicksJSONRequestBody defines body for AdminSubmitPicks for application/json ContentType.
 type AdminSubmitPicksJSONRequestBody = AdminSubmitPicksJSONBody
 
+// CreateUsersJSONRequestBody defines body for CreateUsers for application/json ContentType.
+type CreateUsersJSONRequestBody = CreateUsersJSONBody
+
 // AdminUpdateUserJSONRequestBody defines body for AdminUpdateUser for application/json ContentType.
 type AdminUpdateUserJSONRequestBody = UserRequest
-
-// CreateGameJSONRequestBody defines body for CreateGame for application/json ContentType.
-type CreateGameJSONRequestBody = CreateGameJSONBody
 
 // LoginUserJSONRequestBody defines body for LoginUser for application/json ContentType.
 type LoginUserJSONRequestBody = LoginRequest

@@ -8,7 +8,9 @@ import (
 	"net/http"
 	"net/http/httptest"
 	"testing"
+	"time"
 
+	"github.com/david/football-pool/internal/api"
 	"github.com/david/football-pool/internal/auth"
 	"github.com/david/football-pool/internal/database"
 )
@@ -78,14 +80,14 @@ func TestSubmitPicks(t *testing.T) {
 	gormDB := db.GetDB()
 
 	// Create a user and a game
-	user := database.User{Email: "test2@test.com", Password: "password"}
+	user := database.User{Name: "testuser", Email: "test2@test.com", Password: "password", Role: "user"}
 	gormDB.Create(&user)
-	game := database.Game{Week: 1, Season: 2023, FavoriteTeam: "Packers", UnderdogTeam: "Bears"}
+	game := database.Game{Week: 1, Season: 2023, FavoriteTeam: "Packers", UnderdogTeam: "Bears", Spread: 3.5, StartTime: time.Now()}
 	gormDB.Create(&game)
 
 	// Create the picks to submit
-	picks := []database.Pick{
-		{GameID: game.ID, Picked: "favorite", Rank: 1},
+	picks := []api.PickRequest{
+		{GameId: game.ID, Picked: "favorite", Rank: 1},
 	}
 	jsonPicks, _ := json.Marshal(picks)
 
@@ -106,6 +108,11 @@ func TestSubmitPicks(t *testing.T) {
 
 	// Check the status code
 	if status := rr.Code; status != http.StatusCreated {
+		// Print the response body to see the error
+		var errorResponse api.ErrorResponse
+		if err := json.NewDecoder(rr.Body).Decode(&errorResponse); err == nil {
+			t.Logf("Error response: %+v", errorResponse)
+		}
 		t.Errorf("handler returned wrong status code: got %v want %v",
 			status, http.StatusCreated)
 	}

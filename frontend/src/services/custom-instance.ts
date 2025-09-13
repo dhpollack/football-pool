@@ -4,17 +4,16 @@ import Axios, {
 } from "axios";
 
 export const AXIOS_INSTANCE = Axios.create({
-  baseURL: import.meta.env.VITE_BACKEND_URL,
+  baseURL: import.meta.env.VITE_BACKEND_URL || "/",
 });
 
 // Add a request interceptor
 AXIOS_INSTANCE.interceptors.request.use(
   (config: InternalAxiosRequestConfig) => {
     try {
-      const authData = localStorage.getItem("_auth");
+      const authData = localStorage.getItem("_auth_auth");
       if (authData) {
-        const parsedAuth = JSON.parse(authData);
-        const authToken = parsedAuth?.auth?.token || null;
+        const authToken = authData.split("^&*&^")[1];
         if (authToken) {
           config.headers.Authorization = `Bearer ${authToken}`;
         }

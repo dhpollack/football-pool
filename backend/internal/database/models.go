@@ -9,10 +9,10 @@ import (
 // swagger:model
 type User struct {
 	gorm.Model
-	Name     string
-	Email    string `gorm:"unique"`
-	Password string
-	Role     string
+	Name     string `validate:"required"`
+	Email    string `gorm:"unique" validate:"required,email"`
+	Password string `validate:"required"`
+	Role     string `validate:"required"`
 	Player   Player
 }
 
@@ -29,24 +29,24 @@ type Player struct {
 // swagger:model
 type Game struct {
 	gorm.Model
-	Week         int `gorm:"index:idx_week_season"`
-	Season       int `gorm:"index:idx_week_season"`
-	FavoriteTeam string
-	UnderdogTeam string
-	Spread       float32
-	StartTime    time.Time
+	Week         int `gorm:"index:idx_week_season" validate:"required,ne=0"`
+	Season       int `gorm:"index:idx_week_season" validate:"required,ne=0"`
+	FavoriteTeam string `validate:"required"`
+	UnderdogTeam string `validate:"required"`
+	Spread       float32 `validate:"required,ne=0"`
+	StartTime    time.Time `validate:"required"`
 }
 
 // Pick represents a user's pick for a game
 // swagger:model
 type Pick struct {
 	gorm.Model
-	UserID    uint `gorm:"index:idx_user_game,unique"`
-	User      User
-	GameID    uint `gorm:"index:idx_user_game,unique"`
-	Game      Game
-	Picked    string
-	Rank      int
+	UserID    uint `gorm:"index:idx_user_game,unique" validate:"required"`
+	User      User `validate:"-"`
+	GameID    uint `gorm:"index:idx_user_game,unique" validate:"required"`
+	Game      Game `validate:"-"`
+	Picked    string `validate:"required"`
+	Rank      int `validate:"required"`
 	QuickPick bool
 }
 

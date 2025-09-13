@@ -9,6 +9,7 @@ import (
 	"github.com/david/football-pool/internal/api"
 	"github.com/david/football-pool/internal/auth"
 	"github.com/david/football-pool/internal/database"
+	"golang.org/x/crypto/bcrypt"
 	"gorm.io/gorm"
 	"log/slog"
 )
@@ -85,8 +86,6 @@ func UpdateProfile(db *gorm.DB) http.HandlerFunc {
 	}
 }
 
-
-
 func DeleteUser(db *gorm.DB) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		w.Header().Set("Content-Type", "application/json")
@@ -133,35 +132,35 @@ func AdminListUsers(db *gorm.DB) http.HandlerFunc {
 
 		// Parse query parameters
 		query := db.Model(&database.User{}).Preload("Player")
-		
+
 		// Search by email or name
 		if search := r.URL.Query().Get("search"); search != "" {
 			query = query.Where("email LIKE ? OR name LIKE ?", "%"+search+"%", "%"+search+"%")
 		}
-		
+
 		// Filter by role
 		if role := r.URL.Query().Get("role"); role != "" {
 			query = query.Where("role = ?", role)
 		}
-		
+
 		// Pagination
 		page := 1
 		limit := 20 // Default limit for users
-		
+
 		if pageStr := r.URL.Query().Get("page"); pageStr != "" {
 			if p, err := strconv.Atoi(pageStr); err == nil && p > 0 {
 				page = p
 			}
 		}
-		
+
 		if limitStr := r.URL.Query().Get("limit"); limitStr != "" {
 			if l, err := strconv.Atoi(limitStr); err == nil && l > 0 && l <= 100 {
 				limit = l
 			}
 		}
-		
+
 		offset := (page - 1) * limit
-		
+
 		// Get total count
 		var total int64
 		if err := query.Count(&total).Error; err != nil {
@@ -169,7 +168,7 @@ func AdminListUsers(db *gorm.DB) http.HandlerFunc {
 			json.NewEncoder(w).Encode(api.ErrorResponse{Error: "Database error"})
 			return
 		}
-		
+
 		// Get users with pagination
 		var users []database.User
 		if err := query.Offset(offset).Limit(limit).Order("created_at DESC").Find(&users).Error; err != nil {
@@ -177,7 +176,7 @@ func AdminListUsers(db *gorm.DB) http.HandlerFunc {
 			json.NewEncoder(w).Encode(api.ErrorResponse{Error: "Database error"})
 			return
 		}
-		
+
 		// Calculate stats for each user and convert to API response
 		usersWithStats := make([]api.UserWithStats, len(users))
 		for i, user := range users {
@@ -188,10 +187,10 @@ func AdminListUsers(db *gorm.DB) http.HandlerFunc {
 				Joins("JOIN results ON picks.game_id = results.game_id").
 				Where("picks.user_id = ? AND picks.picked = results.outcome", user.ID).
 				Count(&totalWins)
-			
+
 			usersWithStats[i] = api.UserWithStatsFromUser(user, int(pickCount), int(totalWins))
 		}
-		
+
 		// Create structured response
 		response := api.UserListResponse{
 			Users: usersWithStats,
@@ -202,7 +201,7 @@ func AdminListUsers(db *gorm.DB) http.HandlerFunc {
 				Pages: (total + int64(limit) - 1) / int64(limit),
 			},
 		}
-		
+
 		if err := json.NewEncoder(w).Encode(response); err != nil {
 			w.WriteHeader(http.StatusInternalServerError)
 			json.NewEncoder(w).Encode(api.ErrorResponse{Error: "Failed to encode response"})
@@ -214,18 +213,18 @@ func AdminListUsers(db *gorm.DB) http.HandlerFunc {
 func AdminGetUser(db *gorm.DB) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		w.Header().Set("Content-Type", "application/json")
-		
+
 		// Extract user ID from URL path
 		path := strings.TrimPrefix(r.URL.Path, "/api/admin/users/")
 		idStr := strings.Split(path, "/")[0]
-		
+
 		id, err := strconv.ParseUint(idStr, 10, 32)
 		if err != nil {
 			w.WriteHeader(http.StatusBadRequest)
 			json.NewEncoder(w).Encode(api.ErrorResponse{Error: "Invalid user ID"})
 			return
 		}
-		
+
 		// Get user with player details
 		var user database.User
 		if err := db.Preload("Player").First(&user, id).Error; err != nil {
@@ -238,20 +237,20 @@ func AdminGetUser(db *gorm.DB) http.HandlerFunc {
 			}
 			return
 		}
-		
+
 		// Get additional stats for the user
 		var pickCount, totalWins int64
 		db.Model(&database.Pick{}).Where("user_id = ?", id).Count(&pickCount)
-		
+
 		// Count wins (this is a simplified version - you may want to enhance this)
 		db.Table("picks").
 			Joins("JOIN results ON picks.game_id = results.game_id").
 			Where("picks.user_id = ? AND picks.picked = results.outcome", id).
 			Count(&totalWins)
-		
+
 		// Convert to API response
 		response := api.UserWithStatsFromUser(user, int(pickCount), int(totalWins))
-		
+
 		if err := json.NewEncoder(w).Encode(response); err != nil {
 			w.WriteHeader(http.StatusInternalServerError)
 			json.NewEncoder(w).Encode(api.ErrorResponse{Error: "Failed to encode response"})
@@ -263,18 +262,18 @@ func AdminGetUser(db *gorm.DB) http.HandlerFunc {
 func AdminUpdateUser(db *gorm.DB) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		w.Header().Set("Content-Type", "application/json")
-		
+
 		// Extract user ID from URL path
 		path := strings.TrimPrefix(r.URL.Path, "/api/admin/users/")
 		idStr := strings.Split(path, "/")[0]
-		
+
 		id, err := strconv.ParseUint(idStr, 10, 32)
 		if err != nil {
 			w.WriteHeader(http.StatusBadRequest)
 			json.NewEncoder(w).Encode(api.ErrorResponse{Error: "Invalid user ID"})
 			return
 		}
-		
+
 		// Check if user exists
 		var existingUser database.User
 		if err := db.First(&existingUser, id).Error; err != nil {
@@ -287,22 +286,22 @@ func AdminUpdateUser(db *gorm.DB) http.HandlerFunc {
 			}
 			return
 		}
-		
+
 		// Parse update data with both user and player fields
 		var updateData struct {
-			Name    string `json:"name,omitempty"`
-			Email   string `json:"email,omitempty"`
-			Role    string `json:"role,omitempty"`
+			Name          string `json:"name,omitempty"`
+			Email         string `json:"email,omitempty"`
+			Role          string `json:"role,omitempty"`
 			PlayerName    string `json:"player_name,omitempty"`
 			PlayerAddress string `json:"player_address,omitempty"`
 		}
-		
+
 		if err := json.NewDecoder(r.Body).Decode(&updateData); err != nil {
 			w.WriteHeader(http.StatusBadRequest)
 			json.NewEncoder(w).Encode(api.ErrorResponse{Error: "Invalid JSON"})
 			return
 		}
-		
+
 		// Update user fields
 		if updateData.Name != "" {
 			existingUser.Name = updateData.Name
@@ -313,22 +312,22 @@ func AdminUpdateUser(db *gorm.DB) http.HandlerFunc {
 		if updateData.Role != "" {
 			existingUser.Role = updateData.Role
 		}
-		
+
 		// Save user updates
 		if err := db.Save(&existingUser).Error; err != nil {
 			w.WriteHeader(http.StatusInternalServerError)
 			json.NewEncoder(w).Encode(api.ErrorResponse{Error: "Failed to update user"})
 			return
 		}
-		
+
 		// Update player info if provided
 		if updateData.PlayerName != "" || updateData.PlayerAddress != "" {
 			var player database.Player
 			if err := db.Where("user_id = ?", id).First(&player).Error; err != nil {
 				// Create player if doesn't exist
 				player = database.Player{
-					UserID: uint(id),
-					Name:   updateData.PlayerName,
+					UserID:  uint(id),
+					Name:    updateData.PlayerName,
 					Address: updateData.PlayerAddress,
 				}
 				db.Create(&player)
@@ -343,7 +342,7 @@ func AdminUpdateUser(db *gorm.DB) http.HandlerFunc {
 				db.Save(&player)
 			}
 		}
-		
+
 		// Return updated user as API response
 		db.Preload("Player").First(&existingUser, id)
 		response := api.UserToResponse(existingUser)
@@ -351,5 +350,86 @@ func AdminUpdateUser(db *gorm.DB) http.HandlerFunc {
 			w.WriteHeader(http.StatusInternalServerError)
 			json.NewEncoder(w).Encode(api.ErrorResponse{Error: "Failed to encode response"})
 		}
+	}
+}
+
+// AdminCreateUsers creates multiple users
+func AdminCreateUsers(db *gorm.DB) http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		w.Header().Set("Content-Type", "application/json")
+
+		var userRequests []api.UserRequest
+		if err := json.NewDecoder(r.Body).Decode(&userRequests); err != nil {
+			w.WriteHeader(http.StatusBadRequest)
+			_ = json.NewEncoder(w).Encode(api.ErrorResponse{Error: "Invalid request body"})
+			return
+		}
+
+		var users []database.User
+		var userResponses []api.UserResponse
+
+		tx := db.Begin()
+		if tx.Error != nil {
+			w.WriteHeader(http.StatusInternalServerError)
+			_ = json.NewEncoder(w).Encode(api.ErrorResponse{Error: "Failed to start transaction"})
+			return
+		}
+
+		for _, req := range userRequests {
+			user, err := api.UserFromRequest(req)
+			if err != nil {
+				tx.Rollback()
+				w.WriteHeader(http.StatusBadRequest)
+				_ = json.NewEncoder(w).Encode(api.ErrorResponse{Error: err.Error()})
+				return
+			}
+
+			if req.Password == nil || *req.Password == "" {
+				tx.Rollback()
+				w.WriteHeader(http.StatusBadRequest)
+				_ = json.NewEncoder(w).Encode(api.ErrorResponse{Error: "Password is required for all users"})
+				return
+			}
+
+			hashedPassword, err := bcrypt.GenerateFromPassword([]byte(*req.Password), 8)
+			if err != nil {
+				tx.Rollback()
+				w.WriteHeader(http.StatusInternalServerError)
+				_ = json.NewEncoder(w).Encode(api.ErrorResponse{Error: "Failed to hash password"})
+				return
+			}
+
+			user.Password = string(hashedPassword)
+
+			if result := tx.Create(&user); result.Error != nil {
+				tx.Rollback()
+				w.WriteHeader(http.StatusInternalServerError)
+				_ = json.NewEncoder(w).Encode(api.ErrorResponse{Error: "Failed to create user"})
+				return
+			}
+
+			player := database.Player{
+				UserID: user.ID,
+				Name:   user.Name,
+			}
+			if result := tx.Create(&player); result.Error != nil {
+				tx.Rollback()
+				w.WriteHeader(http.StatusInternalServerError)
+				_ = json.NewEncoder(w).Encode(api.ErrorResponse{Error: "Failed to create player"})
+				return
+			}
+			user.Player = player
+			users = append(users, user)
+			userResponses = append(userResponses, api.UserToResponse(user))
+		}
+
+		if err := tx.Commit().Error; err != nil {
+			w.WriteHeader(http.StatusInternalServerError)
+			_ = json.NewEncoder(w).Encode(api.ErrorResponse{Error: "Failed to commit transaction"})
+			return
+		}
+
+		w.WriteHeader(http.StatusCreated)
+		_ = json.NewEncoder(w).Encode(userResponses)
 	}
 }

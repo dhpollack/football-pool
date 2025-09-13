@@ -1,12 +1,17 @@
 import { useState } from "react";
 import { Typography, Box, IconButton, Alert } from "@mui/material";
 import { Edit, Delete } from "@mui/icons-material";
-import { useAdminListGames } from "../../services/api/games/games";
+import {
+  useAdminListGames,
+  getAdminListGamesQueryKey,
+} from "../../services/api/games/games";
 import AdminDataTable from "../../components/admin/AdminDataTable";
 import AdminSearchFilter from "../../components/admin/AdminSearchFilter";
 import AdminActionButtons from "../../components/admin/AdminActionButtons";
 import AdminConfirmDialog from "../../components/admin/AdminConfirmDialog";
+import GameForm from "../../components/admin/GameForm";
 import { GameResponse } from "../../services/model";
+import { useQueryClient } from "@tanstack/react-query";
 
 const AdminGamesPage = () => {
   const [page, setPage] = useState(0);
@@ -14,8 +19,10 @@ const AdminGamesPage = () => {
   const [searchTerm, setSearchTerm] = useState("");
   const [filters, setFilters] = useState<Record<string, any>>({});
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
+  const [gameFormOpen, setGameFormOpen] = useState(false);
   const [selectedGame, setSelectedGame] = useState<GameResponse | null>(null);
 
+  const queryClient = useQueryClient();
   const { data, error, isLoading } = useAdminListGames();
 
   const games = data?.games || [];
@@ -60,6 +67,21 @@ const AdminGamesPage = () => {
   const handleDeleteCancel = () => {
     setDeleteDialogOpen(false);
     setSelectedGame(null);
+  };
+
+  const handleAddGame = () => {
+    setGameFormOpen(true);
+  };
+
+  const handleGameFormClose = () => {
+    setGameFormOpen(false);
+  };
+
+  const handleGameFormSuccess = () => {
+    queryClient.invalidateQueries({
+      queryKey: getAdminListGamesQueryKey(),
+    });
+    setGameFormOpen(false);
   };
 
   const columns = [
@@ -161,10 +183,7 @@ const AdminGamesPage = () => {
         mb={3}
       >
         <Typography variant="h4">Game Management</Typography>
-        <AdminActionButtons
-          onAdd={() => console.log("Add new game")}
-          addLabel="Add Game"
-        />
+        <AdminActionButtons onAdd={handleAddGame} addLabel="Add Game" />
       </Box>
 
       {error && (
@@ -208,6 +227,12 @@ const AdminGamesPage = () => {
         message={`Are you sure you want to delete the game between ${selectedGame?.favorite_team} and ${selectedGame?.underdog_team}? This action cannot be undone.`}
         confirmLabel="Delete"
         severity="error"
+      />
+
+      <GameForm
+        open={gameFormOpen}
+        onClose={handleGameFormClose}
+        onSuccess={handleGameFormSuccess}
       />
     </Box>
   );

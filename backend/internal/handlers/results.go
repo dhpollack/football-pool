@@ -5,6 +5,7 @@ import (
 	"net/http"
 	"strconv"
 
+	"github.com/david/football-pool/internal/api"
 	"github.com/david/football-pool/internal/database"
 	"gorm.io/gorm"
 )
@@ -121,7 +122,10 @@ func SubmitResult(db *gorm.DB) http.HandlerFunc {
 			return
 		}
 
+		response := api.ResultToResponse(result)
+
 		w.WriteHeader(http.StatusCreated)
+		_ = json.NewEncoder(w).Encode(response)
 	}
 }
 

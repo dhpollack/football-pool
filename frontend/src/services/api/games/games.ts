@@ -184,7 +184,7 @@ export const createGame = (
 ) => {
   return customInstance<GameResponse[]>(
     {
-      url: `/api/games/create`,
+      url: `/api/admin/games/create`,
       method: "POST",
       headers: { "Content-Type": "application/json" },
       data: gameRequest,

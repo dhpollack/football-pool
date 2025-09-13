@@ -8,7 +8,11 @@ import { faker } from "@faker-js/faker";
 
 import { HttpResponse, delay, http } from "msw";
 
-import type { GameListResponse, GameResponse } from "../../model";
+import type {
+  ErrorResponse,
+  GameListResponse,
+  GameResponse,
+} from "../../model";
 
 export const getGetGamesResponseMock = (
   overrideResponse: Partial<GameListResponse> = {},
@@ -68,6 +72,75 @@ export const getGetGamesResponseMock = (
   ...overrideResponse,
 });
 
+export const getGetGamesResponseMock200 = (
+  overrideResponse: Partial<GameListResponse> = {},
+): GameListResponse => ({
+  games: Array.from(
+    { length: faker.number.int({ min: 1, max: 10 }) },
+    (_, i) => i + 1,
+  ).map(() => ({
+    id: faker.number.int({
+      min: undefined,
+      max: undefined,
+      multipleOf: undefined,
+    }),
+    week: faker.number.int({
+      min: undefined,
+      max: undefined,
+      multipleOf: undefined,
+    }),
+    season: faker.number.int({
+      min: undefined,
+      max: undefined,
+      multipleOf: undefined,
+    }),
+    favorite_team: faker.string.alpha({ length: { min: 10, max: 20 } }),
+    underdog_team: faker.string.alpha({ length: { min: 10, max: 20 } }),
+    spread: faker.number.float({
+      min: undefined,
+      max: undefined,
+      fractionDigits: 2,
+    }),
+    start_time: `${faker.date.past().toISOString().split(".")[0]}Z`,
+    created_at: `${faker.date.past().toISOString().split(".")[0]}Z`,
+    updated_at: `${faker.date.past().toISOString().split(".")[0]}Z`,
+  })),
+  pagination: {
+    page: faker.number.int({
+      min: undefined,
+      max: undefined,
+      multipleOf: undefined,
+    }),
+    limit: faker.number.int({
+      min: undefined,
+      max: undefined,
+      multipleOf: undefined,
+    }),
+    total: faker.number.int({
+      min: undefined,
+      max: undefined,
+      multipleOf: undefined,
+    }),
+    pages: faker.number.int({
+      min: undefined,
+      max: undefined,
+      multipleOf: undefined,
+    }),
+  },
+  ...overrideResponse,
+});
+
+export const getGetGamesResponseMock401 = (
+  overrideResponse: Partial<ErrorResponse> = {},
+): ErrorResponse => ({
+  error: faker.string.alpha({ length: { min: 10, max: 20 } }),
+  message: faker.helpers.arrayElement([
+    faker.string.alpha({ length: { min: 10, max: 20 } }),
+    undefined,
+  ]),
+  ...overrideResponse,
+});
+
 export const getCreateGameResponseMock = (): GameResponse[] =>
   Array.from(
     { length: faker.number.int({ min: 1, max: 10 }) },
@@ -99,6 +172,49 @@ export const getCreateGameResponseMock = (): GameResponse[] =>
     created_at: `${faker.date.past().toISOString().split(".")[0]}Z`,
     updated_at: `${faker.date.past().toISOString().split(".")[0]}Z`,
   }));
+
+export const getCreateGameResponseMock201 = (): GameResponse[] =>
+  Array.from(
+    { length: faker.number.int({ min: 1, max: 10 }) },
+    (_, i) => i + 1,
+  ).map(() => ({
+    id: faker.number.int({
+      min: undefined,
+      max: undefined,
+      multipleOf: undefined,
+    }),
+    week: faker.number.int({
+      min: undefined,
+      max: undefined,
+      multipleOf: undefined,
+    }),
+    season: faker.number.int({
+      min: undefined,
+      max: undefined,
+      multipleOf: undefined,
+    }),
+    favorite_team: faker.string.alpha({ length: { min: 10, max: 20 } }),
+    underdog_team: faker.string.alpha({ length: { min: 10, max: 20 } }),
+    spread: faker.number.float({
+      min: undefined,
+      max: undefined,
+      fractionDigits: 2,
+    }),
+    start_time: `${faker.date.past().toISOString().split(".")[0]}Z`,
+    created_at: `${faker.date.past().toISOString().split(".")[0]}Z`,
+    updated_at: `${faker.date.past().toISOString().split(".")[0]}Z`,
+  }));
+
+export const getCreateGameResponseMock401 = (
+  overrideResponse: Partial<ErrorResponse> = {},
+): ErrorResponse => ({
+  error: faker.string.alpha({ length: { min: 10, max: 20 } }),
+  message: faker.helpers.arrayElement([
+    faker.string.alpha({ length: { min: 10, max: 20 } }),
+    undefined,
+  ]),
+  ...overrideResponse,
+});
 
 export const getAdminListGamesResponseMock = (
   overrideResponse: Partial<GameListResponse> = {},
@@ -158,6 +274,75 @@ export const getAdminListGamesResponseMock = (
   ...overrideResponse,
 });
 
+export const getAdminListGamesResponseMock200 = (
+  overrideResponse: Partial<GameListResponse> = {},
+): GameListResponse => ({
+  games: Array.from(
+    { length: faker.number.int({ min: 1, max: 10 }) },
+    (_, i) => i + 1,
+  ).map(() => ({
+    id: faker.number.int({
+      min: undefined,
+      max: undefined,
+      multipleOf: undefined,
+    }),
+    week: faker.number.int({
+      min: undefined,
+      max: undefined,
+      multipleOf: undefined,
+    }),
+    season: faker.number.int({
+      min: undefined,
+      max: undefined,
+      multipleOf: undefined,
+    }),
+    favorite_team: faker.string.alpha({ length: { min: 10, max: 20 } }),
+    underdog_team: faker.string.alpha({ length: { min: 10, max: 20 } }),
+    spread: faker.number.float({
+      min: undefined,
+      max: undefined,
+      fractionDigits: 2,
+    }),
+    start_time: `${faker.date.past().toISOString().split(".")[0]}Z`,
+    created_at: `${faker.date.past().toISOString().split(".")[0]}Z`,
+    updated_at: `${faker.date.past().toISOString().split(".")[0]}Z`,
+  })),
+  pagination: {
+    page: faker.number.int({
+      min: undefined,
+      max: undefined,
+      multipleOf: undefined,
+    }),
+    limit: faker.number.int({
+      min: undefined,
+      max: undefined,
+      multipleOf: undefined,
+    }),
+    total: faker.number.int({
+      min: undefined,
+      max: undefined,
+      multipleOf: undefined,
+    }),
+    pages: faker.number.int({
+      min: undefined,
+      max: undefined,
+      multipleOf: undefined,
+    }),
+  },
+  ...overrideResponse,
+});
+
+export const getAdminListGamesResponseMock401 = (
+  overrideResponse: Partial<ErrorResponse> = {},
+): ErrorResponse => ({
+  error: faker.string.alpha({ length: { min: 10, max: 20 } }),
+  message: faker.helpers.arrayElement([
+    faker.string.alpha({ length: { min: 10, max: 20 } }),
+    undefined,
+  ]),
+  ...overrideResponse,
+});
+
 export const getUpdateGameResponseMock = (
   overrideResponse: Partial<GameResponse> = {},
 ): GameResponse => ({
@@ -189,6 +374,59 @@ export const getUpdateGameResponseMock = (
   ...overrideResponse,
 });
 
+export const getUpdateGameResponseMock200 = (
+  overrideResponse: Partial<GameResponse> = {},
+): GameResponse => ({
+  id: faker.number.int({
+    min: undefined,
+    max: undefined,
+    multipleOf: undefined,
+  }),
+  week: faker.number.int({
+    min: undefined,
+    max: undefined,
+    multipleOf: undefined,
+  }),
+  season: faker.number.int({
+    min: undefined,
+    max: undefined,
+    multipleOf: undefined,
+  }),
+  favorite_team: faker.string.alpha({ length: { min: 10, max: 20 } }),
+  underdog_team: faker.string.alpha({ length: { min: 10, max: 20 } }),
+  spread: faker.number.float({
+    min: undefined,
+    max: undefined,
+    fractionDigits: 2,
+  }),
+  start_time: `${faker.date.past().toISOString().split(".")[0]}Z`,
+  created_at: `${faker.date.past().toISOString().split(".")[0]}Z`,
+  updated_at: `${faker.date.past().toISOString().split(".")[0]}Z`,
+  ...overrideResponse,
+});
+
+export const getUpdateGameResponseMock401 = (
+  overrideResponse: Partial<ErrorResponse> = {},
+): ErrorResponse => ({
+  error: faker.string.alpha({ length: { min: 10, max: 20 } }),
+  message: faker.helpers.arrayElement([
+    faker.string.alpha({ length: { min: 10, max: 20 } }),
+    undefined,
+  ]),
+  ...overrideResponse,
+});
+
+export const getDeleteGameResponseMock401 = (
+  overrideResponse: Partial<ErrorResponse> = {},
+): ErrorResponse => ({
+  error: faker.string.alpha({ length: { min: 10, max: 20 } }),
+  message: faker.helpers.arrayElement([
+    faker.string.alpha({ length: { min: 10, max: 20 } }),
+    undefined,
+  ]),
+  ...overrideResponse,
+});
+
 export const getGetGamesMockHandler = (
   overrideResponse?:
     | GameListResponse
@@ -197,7 +435,7 @@ export const getGetGamesMockHandler = (
       ) => Promise<GameListResponse> | GameListResponse),
 ) => {
   return http.get("*/api/games", async (info) => {
-    await delay(1000);
+    await delay(100);
 
     return new HttpResponse(
       JSON.stringify(
@@ -212,6 +450,52 @@ export const getGetGamesMockHandler = (
   });
 };
 
+export const getGetGamesMockHandler200 = (
+  overrideResponse?:
+    | GameListResponse
+    | ((
+        info: Parameters<Parameters<typeof http.get>[1]>[0],
+      ) => Promise<GameListResponse> | GameListResponse),
+) => {
+  return http.get("*/api/games", async (info) => {
+    await delay(100);
+
+    return new HttpResponse(
+      JSON.stringify(
+        overrideResponse !== undefined
+          ? typeof overrideResponse === "function"
+            ? await overrideResponse(info)
+            : overrideResponse
+          : getGetGamesResponseMock200(),
+      ),
+      { status: 200, headers: { "Content-Type": "application/json" } },
+    );
+  });
+};
+
+export const getGetGamesMockHandler401 = (
+  overrideResponse?:
+    | ErrorResponse
+    | ((
+        info: Parameters<Parameters<typeof http.get>[1]>[0],
+      ) => Promise<ErrorResponse> | ErrorResponse),
+) => {
+  return http.get("*/api/games", async (info) => {
+    await delay(100);
+
+    return new HttpResponse(
+      JSON.stringify(
+        overrideResponse !== undefined
+          ? typeof overrideResponse === "function"
+            ? await overrideResponse(info)
+            : overrideResponse
+          : getGetGamesResponseMock401(),
+      ),
+      { status: 401, headers: { "Content-Type": "application/json" } },
+    );
+  });
+};
+
 export const getCreateGameMockHandler = (
   overrideResponse?:
     | GameResponse[]
@@ -219,8 +503,8 @@ export const getCreateGameMockHandler = (
         info: Parameters<Parameters<typeof http.post>[1]>[0],
       ) => Promise<GameResponse[]> | GameResponse[]),
 ) => {
-  return http.post("*/api/games/create", async (info) => {
-    await delay(1000);
+  return http.post("*/api/admin/games/create", async (info) => {
+    await delay(100);
 
     return new HttpResponse(
       JSON.stringify(
@@ -235,6 +519,52 @@ export const getCreateGameMockHandler = (
   });
 };
 
+export const getCreateGameMockHandler201 = (
+  overrideResponse?:
+    | GameResponse[]
+    | ((
+        info: Parameters<Parameters<typeof http.post>[1]>[0],
+      ) => Promise<GameResponse[]> | GameResponse[]),
+) => {
+  return http.post("*/api/admin/games/create", async (info) => {
+    await delay(100);
+
+    return new HttpResponse(
+      JSON.stringify(
+        overrideResponse !== undefined
+          ? typeof overrideResponse === "function"
+            ? await overrideResponse(info)
+            : overrideResponse
+          : getCreateGameResponseMock201(),
+      ),
+      { status: 201, headers: { "Content-Type": "application/json" } },
+    );
+  });
+};
+
+export const getCreateGameMockHandler401 = (
+  overrideResponse?:
+    | ErrorResponse
+    | ((
+        info: Parameters<Parameters<typeof http.post>[1]>[0],
+      ) => Promise<ErrorResponse> | ErrorResponse),
+) => {
+  return http.post("*/api/admin/games/create", async (info) => {
+    await delay(100);
+
+    return new HttpResponse(
+      JSON.stringify(
+        overrideResponse !== undefined
+          ? typeof overrideResponse === "function"
+            ? await overrideResponse(info)
+            : overrideResponse
+          : getCreateGameResponseMock401(),
+      ),
+      { status: 401, headers: { "Content-Type": "application/json" } },
+    );
+  });
+};
+
 export const getAdminListGamesMockHandler = (
   overrideResponse?:
     | GameListResponse
@@ -243,7 +573,7 @@ export const getAdminListGamesMockHandler = (
       ) => Promise<GameListResponse> | GameListResponse),
 ) => {
   return http.get("*/api/admin/games", async (info) => {
-    await delay(1000);
+    await delay(100);
 
     return new HttpResponse(
       JSON.stringify(
@@ -258,6 +588,52 @@ export const getAdminListGamesMockHandler = (
   });
 };
 
+export const getAdminListGamesMockHandler200 = (
+  overrideResponse?:
+    | GameListResponse
+    | ((
+        info: Parameters<Parameters<typeof http.get>[1]>[0],
+      ) => Promise<GameListResponse> | GameListResponse),
+) => {
+  return http.get("*/api/admin/games", async (info) => {
+    await delay(100);
+
+    return new HttpResponse(
+      JSON.stringify(
+        overrideResponse !== undefined
+          ? typeof overrideResponse === "function"
+            ? await overrideResponse(info)
+            : overrideResponse
+          : getAdminListGamesResponseMock200(),
+      ),
+      { status: 200, headers: { "Content-Type": "application/json" } },
+    );
+  });
+};
+
+export const getAdminListGamesMockHandler401 = (
+  overrideResponse?:
+    | ErrorResponse
+    | ((
+        info: Parameters<Parameters<typeof http.get>[1]>[0],
+      ) => Promise<ErrorResponse> | ErrorResponse),
+) => {
+  return http.get("*/api/admin/games", async (info) => {
+    await delay(100);
+
+    return new HttpResponse(
+      JSON.stringify(
+        overrideResponse !== undefined
+          ? typeof overrideResponse === "function"
+            ? await overrideResponse(info)
+            : overrideResponse
+          : getAdminListGamesResponseMock401(),
+      ),
+      { status: 401, headers: { "Content-Type": "application/json" } },
+    );
+  });
+};
+
 export const getUpdateGameMockHandler = (
   overrideResponse?:
     | GameResponse
@@ -266,7 +642,7 @@ export const getUpdateGameMockHandler = (
       ) => Promise<GameResponse> | GameResponse),
 ) => {
   return http.put("*/api/admin/games/:id", async (info) => {
-    await delay(1000);
+    await delay(100);
 
     return new HttpResponse(
       JSON.stringify(
@@ -281,6 +657,52 @@ export const getUpdateGameMockHandler = (
   });
 };
 
+export const getUpdateGameMockHandler200 = (
+  overrideResponse?:
+    | GameResponse
+    | ((
+        info: Parameters<Parameters<typeof http.put>[1]>[0],
+      ) => Promise<GameResponse> | GameResponse),
+) => {
+  return http.put("*/api/admin/games/:id", async (info) => {
+    await delay(100);
+
+    return new HttpResponse(
+      JSON.stringify(
+        overrideResponse !== undefined
+          ? typeof overrideResponse === "function"
+            ? await overrideResponse(info)
+            : overrideResponse
+          : getUpdateGameResponseMock200(),
+      ),
+      { status: 200, headers: { "Content-Type": "application/json" } },
+    );
+  });
+};
+
+export const getUpdateGameMockHandler401 = (
+  overrideResponse?:
+    | ErrorResponse
+    | ((
+        info: Parameters<Parameters<typeof http.put>[1]>[0],
+      ) => Promise<ErrorResponse> | ErrorResponse),
+) => {
+  return http.put("*/api/admin/games/:id", async (info) => {
+    await delay(100);
+
+    return new HttpResponse(
+      JSON.stringify(
+        overrideResponse !== undefined
+          ? typeof overrideResponse === "function"
+            ? await overrideResponse(info)
+            : overrideResponse
+          : getUpdateGameResponseMock401(),
+      ),
+      { status: 401, headers: { "Content-Type": "application/json" } },
+    );
+  });
+};
+
 export const getDeleteGameMockHandler = (
   overrideResponse?:
     | null
@@ -289,11 +711,50 @@ export const getDeleteGameMockHandler = (
       ) => Promise<null> | null),
 ) => {
   return http.delete("*/api/admin/games/:id", async (info) => {
-    await delay(1000);
+    await delay(100);
     if (typeof overrideResponse === "function") {
       await overrideResponse(info);
     }
-    return new HttpResponse(null, { status: 200 });
+    return new HttpResponse(null, { status: 204 });
+  });
+};
+
+export const getDeleteGameMockHandler204 = (
+  overrideResponse?:
+    | null
+    | ((
+        info: Parameters<Parameters<typeof http.delete>[1]>[0],
+      ) => Promise<null> | null),
+) => {
+  return http.delete("*/api/admin/games/:id", async (info) => {
+    await delay(100);
+    if (typeof overrideResponse === "function") {
+      await overrideResponse(info);
+    }
+    return new HttpResponse(null, { status: 204 });
+  });
+};
+
+export const getDeleteGameMockHandler401 = (
+  overrideResponse?:
+    | ErrorResponse
+    | ((
+        info: Parameters<Parameters<typeof http.delete>[1]>[0],
+      ) => Promise<ErrorResponse> | ErrorResponse),
+) => {
+  return http.delete("*/api/admin/games/:id", async (info) => {
+    await delay(100);
+
+    return new HttpResponse(
+      JSON.stringify(
+        overrideResponse !== undefined
+          ? typeof overrideResponse === "function"
+            ? await overrideResponse(info)
+            : overrideResponse
+          : getDeleteGameResponseMock401(),
+      ),
+      { status: 401, headers: { "Content-Type": "application/json" } },
+    );
   });
 };
 export const getGamesMock = () => [

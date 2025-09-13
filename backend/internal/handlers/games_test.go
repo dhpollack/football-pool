@@ -8,6 +8,7 @@ import (
 	"net/http/httptest"
 	"os"
 	"testing"
+	"time"
 
 	"github.com/david/football-pool/internal/api"
 	"github.com/david/football-pool/internal/database"
@@ -17,6 +18,69 @@ func TestMain(m *testing.M) {
 	// Database setup is now handled in individual tests
 	code := m.Run()
 	os.Exit(code)
+}
+
+func TestCreateGame(t *testing.T) {
+	db, err := database.New("file::memory:")
+	if err != nil {
+		t.Fatalf("Failed to connect to database: %v", err)
+	}
+	gormDB := db.GetDB()
+	handler := CreateGame(gormDB)
+
+	tests := []struct {
+		name           string
+		body           string
+		expectedStatus int
+		expectedCount  int
+	}{
+		{
+			name:           "create single game",
+			body:           `[{"week": 1, "season": 2023, "favorite_team": "Team A", "underdog_team": "Team B", "spread": 3.5, "start_time": "2023-09-11T20:15:00Z"}]`,
+			expectedStatus: http.StatusCreated,
+			expectedCount:  1,
+		},
+		{
+			name:           "create multiple games",
+			body:           `[{"week": 2, "season": 2023, "favorite_team": "Team C", "underdog_team": "Team D", "spread": 7.0, "start_time": "2023-09-18T20:15:00Z"}, {"week": 2, "season": 2023, "favorite_team": "Team E", "underdog_team": "Team F", "spread": 1.5, "start_time": "2023-09-18T21:25:00Z"}]`,
+			expectedStatus: http.StatusCreated,
+			expectedCount:  2,
+		},
+		{
+			name:           "invalid json",
+			body:           `[{"week": 1}]`,
+			expectedStatus: http.StatusBadRequest,
+			expectedCount:  0,
+		},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			req, _ := http.NewRequest("POST", "/api/admin/games/create", bytes.NewBuffer([]byte(tt.body)))
+			rr := httptest.NewRecorder()
+			handler.ServeHTTP(rr, req)
+
+			if status := rr.Code; status != tt.expectedStatus {
+				t.Errorf("handler returned wrong status code: got %v want %v", status, tt.expectedStatus)
+			}
+
+			if tt.expectedStatus == http.StatusCreated {
+				var response []api.GameResponse
+				json.NewDecoder(rr.Body).Decode(&response)
+				if len(response) != tt.expectedCount {
+					t.Errorf("expected %d games in response, got %d", tt.expectedCount, len(response))
+				}
+
+				var count int64
+				gormDB.Model(&database.Game{}).Count(&count)
+				if count != int64(tt.expectedCount) {
+					t.Errorf("expected %d games in db, got %d", tt.expectedCount, count)
+				}
+			}
+			// Clean up db after each test run
+			gormDB.Exec("DELETE FROM games")
+		})
+	}
 }
 
 func TestGetGames(t *testing.T) {
@@ -177,13 +241,13 @@ func TestUpdateGame(t *testing.T) {
 		t.Fatalf("Failed to connect to database: %v", err)
 	}
 	gormDB := db.GetDB()
-	game := database.Game{Week: 1, Season: 2023, FavoriteTeam: "Old Team", UnderdogTeam: "Old Underdog"}
+	game := database.Game{Week: 1, Season: 2023, FavoriteTeam: "Old Team", UnderdogTeam: "Old Underdog", Spread: 3.5, StartTime: time.Now()}
 	gormDB.Create(&game)
 
 	handler := UpdateGame(gormDB)
 
 	t.Run("successful update", func(t *testing.T) {
-		updatePayload := []byte(`{"favorite_team": "New Team"}`)
+		updatePayload := []byte(`{"week": 1, "season": 2023, "favorite_team": "New Team", "underdog_team": "Old Underdog", "spread": 3.5, "start_time": "2023-09-11T20:15:00Z"}`)
 		req, _ := http.NewRequest("PUT", fmt.Sprintf("/api/admin/games/%d", game.ID), bytes.NewBuffer(updatePayload))
 		rr := httptest.NewRecorder()
 		handler.ServeHTTP(rr, req)
@@ -200,7 +264,7 @@ func TestUpdateGame(t *testing.T) {
 	})
 
 	t.Run("game not found", func(t *testing.T) {
-		req, _ := http.NewRequest("PUT", "/api/admin/games/999", bytes.NewBuffer([]byte(`{}`)))
+		req, _ := http.NewRequest("PUT", "/api/admin/games/999", bytes.NewBuffer([]byte(`{"week": 1, "season": 2023, "favorite_team": "New Team", "underdog_team": "Old Underdog", "spread": 3.5, "start_time": "2023-09-11T20:15:00Z"}`)))
 		rr := httptest.NewRecorder()
 		handler.ServeHTTP(rr, req)
 

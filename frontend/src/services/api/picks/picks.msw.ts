@@ -8,7 +8,11 @@ import { faker } from "@faker-js/faker";
 
 import { HttpResponse, delay, http } from "msw";
 
-import type { PickListResponse, PickResponse } from "../../model";
+import type {
+  ErrorResponse,
+  PickListResponse,
+  PickResponse,
+} from "../../model";
 
 export const getGetPicksResponseMock = (
   overrideResponse: Partial<PickListResponse> = {},
@@ -129,6 +133,136 @@ export const getGetPicksResponseMock = (
   ...overrideResponse,
 });
 
+export const getGetPicksResponseMock200 = (
+  overrideResponse: Partial<PickListResponse> = {},
+): PickListResponse => ({
+  picks: Array.from(
+    { length: faker.number.int({ min: 1, max: 10 }) },
+    (_, i) => i + 1,
+  ).map(() => ({
+    id: faker.number.int({
+      min: undefined,
+      max: undefined,
+      multipleOf: undefined,
+    }),
+    user_id: faker.number.int({
+      min: undefined,
+      max: undefined,
+      multipleOf: undefined,
+    }),
+    user: faker.helpers.arrayElement([
+      {
+        id: faker.number.int({
+          min: undefined,
+          max: undefined,
+          multipleOf: undefined,
+        }),
+        name: faker.string.alpha({ length: { min: 10, max: 20 } }),
+        email: faker.string.alpha({ length: { min: 10, max: 20 } }),
+        role: faker.string.alpha({ length: { min: 10, max: 20 } }),
+        player: faker.helpers.arrayElement([
+          {
+            id: faker.number.int({
+              min: undefined,
+              max: undefined,
+              multipleOf: undefined,
+            }),
+            user_id: faker.number.int({
+              min: undefined,
+              max: undefined,
+              multipleOf: undefined,
+            }),
+            name: faker.string.alpha({ length: { min: 10, max: 20 } }),
+            address: faker.string.alpha({ length: { min: 10, max: 20 } }),
+          },
+          undefined,
+        ]),
+        created_at: `${faker.date.past().toISOString().split(".")[0]}Z`,
+        updated_at: `${faker.date.past().toISOString().split(".")[0]}Z`,
+      },
+      undefined,
+    ]),
+    game_id: faker.number.int({
+      min: undefined,
+      max: undefined,
+      multipleOf: undefined,
+    }),
+    game: faker.helpers.arrayElement([
+      {
+        id: faker.number.int({
+          min: undefined,
+          max: undefined,
+          multipleOf: undefined,
+        }),
+        week: faker.number.int({
+          min: undefined,
+          max: undefined,
+          multipleOf: undefined,
+        }),
+        season: faker.number.int({
+          min: undefined,
+          max: undefined,
+          multipleOf: undefined,
+        }),
+        favorite_team: faker.string.alpha({ length: { min: 10, max: 20 } }),
+        underdog_team: faker.string.alpha({ length: { min: 10, max: 20 } }),
+        spread: faker.number.float({
+          min: undefined,
+          max: undefined,
+          fractionDigits: 2,
+        }),
+        start_time: `${faker.date.past().toISOString().split(".")[0]}Z`,
+        created_at: `${faker.date.past().toISOString().split(".")[0]}Z`,
+        updated_at: `${faker.date.past().toISOString().split(".")[0]}Z`,
+      },
+      undefined,
+    ]),
+    picked: faker.string.alpha({ length: { min: 10, max: 20 } }),
+    rank: faker.number.int({
+      min: undefined,
+      max: undefined,
+      multipleOf: undefined,
+    }),
+    quick_pick: faker.datatype.boolean(),
+    created_at: `${faker.date.past().toISOString().split(".")[0]}Z`,
+    updated_at: `${faker.date.past().toISOString().split(".")[0]}Z`,
+  })),
+  pagination: {
+    page: faker.number.int({
+      min: undefined,
+      max: undefined,
+      multipleOf: undefined,
+    }),
+    limit: faker.number.int({
+      min: undefined,
+      max: undefined,
+      multipleOf: undefined,
+    }),
+    total: faker.number.int({
+      min: undefined,
+      max: undefined,
+      multipleOf: undefined,
+    }),
+    pages: faker.number.int({
+      min: undefined,
+      max: undefined,
+      multipleOf: undefined,
+    }),
+  },
+  ...overrideResponse,
+});
+
+export const getGetPicksResponseMock401 = (
+  overrideResponse: Partial<ErrorResponse> = {},
+): ErrorResponse => ({
+  error: faker.string.alpha({ length: { min: 10, max: 20 } }),
+  message: faker.helpers.arrayElement([
+    faker.string.alpha({ length: { min: 10, max: 20 } }),
+    undefined,
+  ]),
+  ...overrideResponse,
+});
+
 export const getSubmitPicksResponseMock = (): PickResponse[] =>
   Array.from(
     { length: faker.number.int({ min: 1, max: 10 }) },
@@ -222,6 +356,110 @@ export const getSubmitPicksResponseMock = (): PickResponse[] =>
     updated_at: `${faker.date.past().toISOString().split(".")[0]}Z`,
   }));
 
+export const getSubmitPicksResponseMock201 = (): PickResponse[] =>
+  Array.from(
+    { length: faker.number.int({ min: 1, max: 10 }) },
+    (_, i) => i + 1,
+  ).map(() => ({
+    id: faker.number.int({
+      min: undefined,
+      max: undefined,
+      multipleOf: undefined,
+    }),
+    user_id: faker.number.int({
+      min: undefined,
+      max: undefined,
+      multipleOf: undefined,
+    }),
+    user: faker.helpers.arrayElement([
+      {
+        id: faker.number.int({
+          min: undefined,
+          max: undefined,
+          multipleOf: undefined,
+        }),
+        name: faker.string.alpha({ length: { min: 10, max: 20 } }),
+        email: faker.string.alpha({ length: { min: 10, max: 20 } }),
+        role: faker.string.alpha({ length: { min: 10, max: 20 } }),
+        player: faker.helpers.arrayElement([
+          {
+            id: faker.number.int({
+              min: undefined,
+              max: undefined,
+              multipleOf: undefined,
+            }),
+            user_id: faker.number.int({
+              min: undefined,
+              max: undefined,
+              multipleOf: undefined,
+            }),
+            name: faker.string.alpha({ length: { min: 10, max: 20 } }),
+            address: faker.string.alpha({ length: { min: 10, max: 20 } }),
+          },
+          undefined,
+        ]),
+        created_at: `${faker.date.past().toISOString().split(".")[0]}Z`,
+        updated_at: `${faker.date.past().toISOString().split(".")[0]}Z`,
+      },
+      undefined,
+    ]),
+    game_id: faker.number.int({
+      min: undefined,
+      max: undefined,
+      multipleOf: undefined,
+    }),
+    game: faker.helpers.arrayElement([
+      {
+        id: faker.number.int({
+          min: undefined,
+          max: undefined,
+          multipleOf: undefined,
+        }),
+        week: faker.number.int({
+          min: undefined,
+          max: undefined,
+          multipleOf: undefined,
+        }),
+        season: faker.number.int({
+          min: undefined,
+          max: undefined,
+          multipleOf: undefined,
+        }),
+        favorite_team: faker.string.alpha({ length: { min: 10, max: 20 } }),
+        underdog_team: faker.string.alpha({ length: { min: 10, max: 20 } }),
+        spread: faker.number.float({
+          min: undefined,
+          max: undefined,
+          fractionDigits: 2,
+        }),
+        start_time: `${faker.date.past().toISOString().split(".")[0]}Z`,
+        created_at: `${faker.date.past().toISOString().split(".")[0]}Z`,
+        updated_at: `${faker.date.past().toISOString().split(".")[0]}Z`,
+      },
+      undefined,
+    ]),
+    picked: faker.string.alpha({ length: { min: 10, max: 20 } }),
+    rank: faker.number.int({
+      min: undefined,
+      max: undefined,
+      multipleOf: undefined,
+    }),
+    quick_pick: faker.datatype.boolean(),
+    created_at: `${faker.date.past().toISOString().split(".")[0]}Z`,
+    updated_at: `${faker.date.past().toISOString().split(".")[0]}Z`,
+  }));
+
+export const getSubmitPicksResponseMock401 = (
+  overrideResponse: Partial<ErrorResponse> = {},
+): ErrorResponse => ({
+  error: faker.string.alpha({ length: { min: 10, max: 20 } }),
+  message: faker.helpers.arrayElement([
+    faker.string.alpha({ length: { min: 10, max: 20 } }),
+    undefined,
+  ]),
+  ...overrideResponse,
+});
+
 export const getAdminSubmitPicksResponseMock = (): PickResponse[] =>
   Array.from(
     { length: faker.number.int({ min: 1, max: 10 }) },
@@ -314,6 +552,110 @@ export const getAdminSubmitPicksResponseMock = (): PickResponse[] =>
     created_at: `${faker.date.past().toISOString().split(".")[0]}Z`,
     updated_at: `${faker.date.past().toISOString().split(".")[0]}Z`,
   }));
+
+export const getAdminSubmitPicksResponseMock201 = (): PickResponse[] =>
+  Array.from(
+    { length: faker.number.int({ min: 1, max: 10 }) },
+    (_, i) => i + 1,
+  ).map(() => ({
+    id: faker.number.int({
+      min: undefined,
+      max: undefined,
+      multipleOf: undefined,
+    }),
+    user_id: faker.number.int({
+      min: undefined,
+      max: undefined,
+      multipleOf: undefined,
+    }),
+    user: faker.helpers.arrayElement([
+      {
+        id: faker.number.int({
+          min: undefined,
+          max: undefined,
+          multipleOf: undefined,
+        }),
+        name: faker.string.alpha({ length: { min: 10, max: 20 } }),
+        email: faker.string.alpha({ length: { min: 10, max: 20 } }),
+        role: faker.string.alpha({ length: { min: 10, max: 20 } }),
+        player: faker.helpers.arrayElement([
+          {
+            id: faker.number.int({
+              min: undefined,
+              max: undefined,
+              multipleOf: undefined,
+            }),
+            user_id: faker.number.int({
+              min: undefined,
+              max: undefined,
+              multipleOf: undefined,
+            }),
+            name: faker.string.alpha({ length: { min: 10, max: 20 } }),
+            address: faker.string.alpha({ length: { min: 10, max: 20 } }),
+          },
+          undefined,
+        ]),
+        created_at: `${faker.date.past().toISOString().split(".")[0]}Z`,
+        updated_at: `${faker.date.past().toISOString().split(".")[0]}Z`,
+      },
+      undefined,
+    ]),
+    game_id: faker.number.int({
+      min: undefined,
+      max: undefined,
+      multipleOf: undefined,
+    }),
+    game: faker.helpers.arrayElement([
+      {
+        id: faker.number.int({
+          min: undefined,
+          max: undefined,
+          multipleOf: undefined,
+        }),
+        week: faker.number.int({
+          min: undefined,
+          max: undefined,
+          multipleOf: undefined,
+        }),
+        season: faker.number.int({
+          min: undefined,
+          max: undefined,
+          multipleOf: undefined,
+        }),
+        favorite_team: faker.string.alpha({ length: { min: 10, max: 20 } }),
+        underdog_team: faker.string.alpha({ length: { min: 10, max: 20 } }),
+        spread: faker.number.float({
+          min: undefined,
+          max: undefined,
+          fractionDigits: 2,
+        }),
+        start_time: `${faker.date.past().toISOString().split(".")[0]}Z`,
+        created_at: `${faker.date.past().toISOString().split(".")[0]}Z`,
+        updated_at: `${faker.date.past().toISOString().split(".")[0]}Z`,
+      },
+      undefined,
+    ]),
+    picked: faker.string.alpha({ length: { min: 10, max: 20 } }),
+    rank: faker.number.int({
+      min: undefined,
+      max: undefined,
+      multipleOf: undefined,
+    }),
+    quick_pick: faker.datatype.boolean(),
+    created_at: `${faker.date.past().toISOString().split(".")[0]}Z`,
+    updated_at: `${faker.date.past().toISOString().split(".")[0]}Z`,
+  }));
+
+export const getAdminSubmitPicksResponseMock401 = (
+  overrideResponse: Partial<ErrorResponse> = {},
+): ErrorResponse => ({
+  error: faker.string.alpha({ length: { min: 10, max: 20 } }),
+  message: faker.helpers.arrayElement([
+    faker.string.alpha({ length: { min: 10, max: 20 } }),
+    undefined,
+  ]),
+  ...overrideResponse,
+});
 
 export const getAdminListPicksResponseMock = (
   overrideResponse: Partial<PickListResponse> = {},
@@ -431,6 +773,136 @@ export const getAdminListPicksResponseMock = (
       multipleOf: undefined,
     }),
   },
+  ...overrideResponse,
+});
+
+export const getAdminListPicksResponseMock200 = (
+  overrideResponse: Partial<PickListResponse> = {},
+): PickListResponse => ({
+  picks: Array.from(
+    { length: faker.number.int({ min: 1, max: 10 }) },
+    (_, i) => i + 1,
+  ).map(() => ({
+    id: faker.number.int({
+      min: undefined,
+      max: undefined,
+      multipleOf: undefined,
+    }),
+    user_id: faker.number.int({
+      min: undefined,
+      max: undefined,
+      multipleOf: undefined,
+    }),
+    user: faker.helpers.arrayElement([
+      {
+        id: faker.number.int({
+          min: undefined,
+          max: undefined,
+          multipleOf: undefined,
+        }),
+        name: faker.string.alpha({ length: { min: 10, max: 20 } }),
+        email: faker.string.alpha({ length: { min: 10, max: 20 } }),
+        role: faker.string.alpha({ length: { min: 10, max: 20 } }),
+        player: faker.helpers.arrayElement([
+          {
+            id: faker.number.int({
+              min: undefined,
+              max: undefined,
+              multipleOf: undefined,
+            }),
+            user_id: faker.number.int({
+              min: undefined,
+              max: undefined,
+              multipleOf: undefined,
+            }),
+            name: faker.string.alpha({ length: { min: 10, max: 20 } }),
+            address: faker.string.alpha({ length: { min: 10, max: 20 } }),
+          },
+          undefined,
+        ]),
+        created_at: `${faker.date.past().toISOString().split(".")[0]}Z`,
+        updated_at: `${faker.date.past().toISOString().split(".")[0]}Z`,
+      },
+      undefined,
+    ]),
+    game_id: faker.number.int({
+      min: undefined,
+      max: undefined,
+      multipleOf: undefined,
+    }),
+    game: faker.helpers.arrayElement([
+      {
+        id: faker.number.int({
+          min: undefined,
+          max: undefined,
+          multipleOf: undefined,
+        }),
+        week: faker.number.int({
+          min: undefined,
+          max: undefined,
+          multipleOf: undefined,
+        }),
+        season: faker.number.int({
+          min: undefined,
+          max: undefined,
+          multipleOf: undefined,
+        }),
+        favorite_team: faker.string.alpha({ length: { min: 10, max: 20 } }),
+        underdog_team: faker.string.alpha({ length: { min: 10, max: 20 } }),
+        spread: faker.number.float({
+          min: undefined,
+          max: undefined,
+          fractionDigits: 2,
+        }),
+        start_time: `${faker.date.past().toISOString().split(".")[0]}Z`,
+        created_at: `${faker.date.past().toISOString().split(".")[0]}Z`,
+        updated_at: `${faker.date.past().toISOString().split(".")[0]}Z`,
+      },
+      undefined,
+    ]),
+    picked: faker.string.alpha({ length: { min: 10, max: 20 } }),
+    rank: faker.number.int({
+      min: undefined,
+      max: undefined,
+      multipleOf: undefined,
+    }),
+    quick_pick: faker.datatype.boolean(),
+    created_at: `${faker.date.past().toISOString().split(".")[0]}Z`,
+    updated_at: `${faker.date.past().toISOString().split(".")[0]}Z`,
+  })),
+  pagination: {
+    page: faker.number.int({
+      min: undefined,
+      max: undefined,
+      multipleOf: undefined,
+    }),
+    limit: faker.number.int({
+      min: undefined,
+      max: undefined,
+      multipleOf: undefined,
+    }),
+    total: faker.number.int({
+      min: undefined,
+      max: undefined,
+      multipleOf: undefined,
+    }),
+    pages: faker.number.int({
+      min: undefined,
+      max: undefined,
+      multipleOf: undefined,
+    }),
+  },
+  ...overrideResponse,
+});
+
+export const getAdminListPicksResponseMock401 = (
+  overrideResponse: Partial<ErrorResponse> = {},
+): ErrorResponse => ({
+  error: faker.string.alpha({ length: { min: 10, max: 20 } }),
+  message: faker.helpers.arrayElement([
+    faker.string.alpha({ length: { min: 10, max: 20 } }),
+    undefined,
+  ]),
   ...overrideResponse,
 });
 
@@ -553,6 +1025,136 @@ export const getAdminGetPicksByWeekResponseMock = (
   ...overrideResponse,
 });
 
+export const getAdminGetPicksByWeekResponseMock200 = (
+  overrideResponse: Partial<PickListResponse> = {},
+): PickListResponse => ({
+  picks: Array.from(
+    { length: faker.number.int({ min: 1, max: 10 }) },
+    (_, i) => i + 1,
+  ).map(() => ({
+    id: faker.number.int({
+      min: undefined,
+      max: undefined,
+      multipleOf: undefined,
+    }),
+    user_id: faker.number.int({
+      min: undefined,
+      max: undefined,
+      multipleOf: undefined,
+    }),
+    user: faker.helpers.arrayElement([
+      {
+        id: faker.number.int({
+          min: undefined,
+          max: undefined,
+          multipleOf: undefined,
+        }),
+        name: faker.string.alpha({ length: { min: 10, max: 20 } }),
+        email: faker.string.alpha({ length: { min: 10, max: 20 } }),
+        role: faker.string.alpha({ length: { min: 10, max: 20 } }),
+        player: faker.helpers.arrayElement([
+          {
+            id: faker.number.int({
+              min: undefined,
+              max: undefined,
+              multipleOf: undefined,
+            }),
+            user_id: faker.number.int({
+              min: undefined,
+              max: undefined,
+              multipleOf: undefined,
+            }),
+            name: faker.string.alpha({ length: { min: 10, max: 20 } }),
+            address: faker.string.alpha({ length: { min: 10, max: 20 } }),
+          },
+          undefined,
+        ]),
+        created_at: `${faker.date.past().toISOString().split(".")[0]}Z`,
+        updated_at: `${faker.date.past().toISOString().split(".")[0]}Z`,
+      },
+      undefined,
+    ]),
+    game_id: faker.number.int({
+      min: undefined,
+      max: undefined,
+      multipleOf: undefined,
+    }),
+    game: faker.helpers.arrayElement([
+      {
+        id: faker.number.int({
+          min: undefined,
+          max: undefined,
+          multipleOf: undefined,
+        }),
+        week: faker.number.int({
+          min: undefined,
+          max: undefined,
+          multipleOf: undefined,
+        }),
+        season: faker.number.int({
+          min: undefined,
+          max: undefined,
+          multipleOf: undefined,
+        }),
+        favorite_team: faker.string.alpha({ length: { min: 10, max: 20 } }),
+        underdog_team: faker.string.alpha({ length: { min: 10, max: 20 } }),
+        spread: faker.number.float({
+          min: undefined,
+          max: undefined,
+          fractionDigits: 2,
+        }),
+        start_time: `${faker.date.past().toISOString().split(".")[0]}Z`,
+        created_at: `${faker.date.past().toISOString().split(".")[0]}Z`,
+        updated_at: `${faker.date.past().toISOString().split(".")[0]}Z`,
+      },
+      undefined,
+    ]),
+    picked: faker.string.alpha({ length: { min: 10, max: 20 } }),
+    rank: faker.number.int({
+      min: undefined,
+      max: undefined,
+      multipleOf: undefined,
+    }),
+    quick_pick: faker.datatype.boolean(),
+    created_at: `${faker.date.past().toISOString().split(".")[0]}Z`,
+    updated_at: `${faker.date.past().toISOString().split(".")[0]}Z`,
+  })),
+  pagination: {
+    page: faker.number.int({
+      min: undefined,
+      max: undefined,
+      multipleOf: undefined,
+    }),
+    limit: faker.number.int({
+      min: undefined,
+      max: undefined,
+      multipleOf: undefined,
+    }),
+    total: faker.number.int({
+      min: undefined,
+      max: undefined,
+      multipleOf: undefined,
+    }),
+    pages: faker.number.int({
+      min: undefined,
+      max: undefined,
+      multipleOf: undefined,
+    }),
+  },
+  ...overrideResponse,
+});
+
+export const getAdminGetPicksByWeekResponseMock401 = (
+  overrideResponse: Partial<ErrorResponse> = {},
+): ErrorResponse => ({
+  error: faker.string.alpha({ length: { min: 10, max: 20 } }),
+  message: faker.helpers.arrayElement([
+    faker.string.alpha({ length: { min: 10, max: 20 } }),
+    undefined,
+  ]),
+  ...overrideResponse,
+});
+
 export const getAdminGetPicksByUserResponseMock = (
   overrideResponse: Partial<PickListResponse> = {},
 ): PickListResponse => ({
@@ -672,6 +1274,147 @@ export const getAdminGetPicksByUserResponseMock = (
   ...overrideResponse,
 });
 
+export const getAdminGetPicksByUserResponseMock200 = (
+  overrideResponse: Partial<PickListResponse> = {},
+): PickListResponse => ({
+  picks: Array.from(
+    { length: faker.number.int({ min: 1, max: 10 }) },
+    (_, i) => i + 1,
+  ).map(() => ({
+    id: faker.number.int({
+      min: undefined,
+      max: undefined,
+      multipleOf: undefined,
+    }),
+    user_id: faker.number.int({
+      min: undefined,
+      max: undefined,
+      multipleOf: undefined,
+    }),
+    user: faker.helpers.arrayElement([
+      {
+        id: faker.number.int({
+          min: undefined,
+          max: undefined,
+          multipleOf: undefined,
+        }),
+        name: faker.string.alpha({ length: { min: 10, max: 20 } }),
+        email: faker.string.alpha({ length: { min: 10, max: 20 } }),
+        role: faker.string.alpha({ length: { min: 10, max: 20 } }),
+        player: faker.helpers.arrayElement([
+          {
+            id: faker.number.int({
+              min: undefined,
+              max: undefined,
+              multipleOf: undefined,
+            }),
+            user_id: faker.number.int({
+              min: undefined,
+              max: undefined,
+              multipleOf: undefined,
+            }),
+            name: faker.string.alpha({ length: { min: 10, max: 20 } }),
+            address: faker.string.alpha({ length: { min: 10, max: 20 } }),
+          },
+          undefined,
+        ]),
+        created_at: `${faker.date.past().toISOString().split(".")[0]}Z`,
+        updated_at: `${faker.date.past().toISOString().split(".")[0]}Z`,
+      },
+      undefined,
+    ]),
+    game_id: faker.number.int({
+      min: undefined,
+      max: undefined,
+      multipleOf: undefined,
+    }),
+    game: faker.helpers.arrayElement([
+      {
+        id: faker.number.int({
+          min: undefined,
+          max: undefined,
+          multipleOf: undefined,
+        }),
+        week: faker.number.int({
+          min: undefined,
+          max: undefined,
+          multipleOf: undefined,
+        }),
+        season: faker.number.int({
+          min: undefined,
+          max: undefined,
+          multipleOf: undefined,
+        }),
+        favorite_team: faker.string.alpha({ length: { min: 10, max: 20 } }),
+        underdog_team: faker.string.alpha({ length: { min: 10, max: 20 } }),
+        spread: faker.number.float({
+          min: undefined,
+          max: undefined,
+          fractionDigits: 2,
+        }),
+        start_time: `${faker.date.past().toISOString().split(".")[0]}Z`,
+        created_at: `${faker.date.past().toISOString().split(".")[0]}Z`,
+        updated_at: `${faker.date.past().toISOString().split(".")[0]}Z`,
+      },
+      undefined,
+    ]),
+    picked: faker.string.alpha({ length: { min: 10, max: 20 } }),
+    rank: faker.number.int({
+      min: undefined,
+      max: undefined,
+      multipleOf: undefined,
+    }),
+    quick_pick: faker.datatype.boolean(),
+    created_at: `${faker.date.past().toISOString().split(".")[0]}Z`,
+    updated_at: `${faker.date.past().toISOString().split(".")[0]}Z`,
+  })),
+  pagination: {
+    page: faker.number.int({
+      min: undefined,
+      max: undefined,
+      multipleOf: undefined,
+    }),
+    limit: faker.number.int({
+      min: undefined,
+      max: undefined,
+      multipleOf: undefined,
+    }),
+    total: faker.number.int({
+      min: undefined,
+      max: undefined,
+      multipleOf: undefined,
+    }),
+    pages: faker.number.int({
+      min: undefined,
+      max: undefined,
+      multipleOf: undefined,
+    }),
+  },
+  ...overrideResponse,
+});
+
+export const getAdminGetPicksByUserResponseMock401 = (
+  overrideResponse: Partial<ErrorResponse> = {},
+): ErrorResponse => ({
+  error: faker.string.alpha({ length: { min: 10, max: 20 } }),
+  message: faker.helpers.arrayElement([
+    faker.string.alpha({ length: { min: 10, max: 20 } }),
+    undefined,
+  ]),
+  ...overrideResponse,
+});
+
+export const getAdminDeletePickResponseMock401 = (
+  overrideResponse: Partial<ErrorResponse> = {},
+): ErrorResponse => ({
+  error: faker.string.alpha({ length: { min: 10, max: 20 } }),
+  message: faker.helpers.arrayElement([
+    faker.string.alpha({ length: { min: 10, max: 20 } }),
+    undefined,
+  ]),
+  ...overrideResponse,
+});
+
 export const getGetPicksMockHandler = (
   overrideResponse?:
     | PickListResponse
@@ -680,7 +1423,7 @@ export const getGetPicksMockHandler = (
       ) => Promise<PickListResponse> | PickListResponse),
 ) => {
   return http.get("*/api/picks", async (info) => {
-    await delay(1000);
+    await delay(100);
 
     return new HttpResponse(
       JSON.stringify(
@@ -695,6 +1438,52 @@ export const getGetPicksMockHandler = (
   });
 };
 
+export const getGetPicksMockHandler200 = (
+  overrideResponse?:
+    | PickListResponse
+    | ((
+        info: Parameters<Parameters<typeof http.get>[1]>[0],
+      ) => Promise<PickListResponse> | PickListResponse),
+) => {
+  return http.get("*/api/picks", async (info) => {
+    await delay(100);
+
+    return new HttpResponse(
+      JSON.stringify(
+        overrideResponse !== undefined
+          ? typeof overrideResponse === "function"
+            ? await overrideResponse(info)
+            : overrideResponse
+          : getGetPicksResponseMock200(),
+      ),
+      { status: 200, headers: { "Content-Type": "application/json" } },
+    );
+  });
+};
+
+export const getGetPicksMockHandler401 = (
+  overrideResponse?:
+    | ErrorResponse
+    | ((
+        info: Parameters<Parameters<typeof http.get>[1]>[0],
+      ) => Promise<ErrorResponse> | ErrorResponse),
+) => {
+  return http.get("*/api/picks", async (info) => {
+    await delay(100);
+
+    return new HttpResponse(
+      JSON.stringify(
+        overrideResponse !== undefined
+          ? typeof overrideResponse === "function"
+            ? await overrideResponse(info)
+            : overrideResponse
+          : getGetPicksResponseMock401(),
+      ),
+      { status: 401, headers: { "Content-Type": "application/json" } },
+    );
+  });
+};
+
 export const getSubmitPicksMockHandler = (
   overrideResponse?:
     | PickResponse[]
@@ -703,7 +1492,7 @@ export const getSubmitPicksMockHandler = (
       ) => Promise<PickResponse[]> | PickResponse[]),
 ) => {
   return http.post("*/api/picks/submit", async (info) => {
-    await delay(1000);
+    await delay(100);
 
     return new HttpResponse(
       JSON.stringify(
@@ -718,6 +1507,52 @@ export const getSubmitPicksMockHandler = (
   });
 };
 
+export const getSubmitPicksMockHandler201 = (
+  overrideResponse?:
+    | PickResponse[]
+    | ((
+        info: Parameters<Parameters<typeof http.post>[1]>[0],
+      ) => Promise<PickResponse[]> | PickResponse[]),
+) => {
+  return http.post("*/api/picks/submit", async (info) => {
+    await delay(100);
+
+    return new HttpResponse(
+      JSON.stringify(
+        overrideResponse !== undefined
+          ? typeof overrideResponse === "function"
+            ? await overrideResponse(info)
+            : overrideResponse
+          : getSubmitPicksResponseMock201(),
+      ),
+      { status: 201, headers: { "Content-Type": "application/json" } },
+    );
+  });
+};
+
+export const getSubmitPicksMockHandler401 = (
+  overrideResponse?:
+    | ErrorResponse
+    | ((
+        info: Parameters<Parameters<typeof http.post>[1]>[0],
+      ) => Promise<ErrorResponse> | ErrorResponse),
+) => {
+  return http.post("*/api/picks/submit", async (info) => {
+    await delay(100);
+
+    return new HttpResponse(
+      JSON.stringify(
+        overrideResponse !== undefined
+          ? typeof overrideResponse === "function"
+            ? await overrideResponse(info)
+            : overrideResponse
+          : getSubmitPicksResponseMock401(),
+      ),
+      { status: 401, headers: { "Content-Type": "application/json" } },
+    );
+  });
+};
+
 export const getAdminSubmitPicksMockHandler = (
   overrideResponse?:
     | PickResponse[]
@@ -726,7 +1561,7 @@ export const getAdminSubmitPicksMockHandler = (
       ) => Promise<PickResponse[]> | PickResponse[]),
 ) => {
   return http.post("*/api/admin/picks/submit", async (info) => {
-    await delay(1000);
+    await delay(100);
 
     return new HttpResponse(
       JSON.stringify(
@@ -741,6 +1576,52 @@ export const getAdminSubmitPicksMockHandler = (
   });
 };
 
+export const getAdminSubmitPicksMockHandler201 = (
+  overrideResponse?:
+    | PickResponse[]
+    | ((
+        info: Parameters<Parameters<typeof http.post>[1]>[0],
+      ) => Promise<PickResponse[]> | PickResponse[]),
+) => {
+  return http.post("*/api/admin/picks/submit", async (info) => {
+    await delay(100);
+
+    return new HttpResponse(
+      JSON.stringify(
+        overrideResponse !== undefined
+          ? typeof overrideResponse === "function"
+            ? await overrideResponse(info)
+            : overrideResponse
+          : getAdminSubmitPicksResponseMock201(),
+      ),
+      { status: 201, headers: { "Content-Type": "application/json" } },
+    );
+  });
+};
+
+export const getAdminSubmitPicksMockHandler401 = (
+  overrideResponse?:
+    | ErrorResponse
+    | ((
+        info: Parameters<Parameters<typeof http.post>[1]>[0],
+      ) => Promise<ErrorResponse> | ErrorResponse),
+) => {
+  return http.post("*/api/admin/picks/submit", async (info) => {
+    await delay(100);
+
+    return new HttpResponse(
+      JSON.stringify(
+        overrideResponse !== undefined
+          ? typeof overrideResponse === "function"
+            ? await overrideResponse(info)
+            : overrideResponse
+          : getAdminSubmitPicksResponseMock401(),
+      ),
+      { status: 401, headers: { "Content-Type": "application/json" } },
+    );
+  });
+};
+
 export const getAdminListPicksMockHandler = (
   overrideResponse?:
     | PickListResponse
@@ -749,7 +1630,7 @@ export const getAdminListPicksMockHandler = (
       ) => Promise<PickListResponse> | PickListResponse),
 ) => {
   return http.get("*/api/admin/picks", async (info) => {
-    await delay(1000);
+    await delay(100);
 
     return new HttpResponse(
       JSON.stringify(
@@ -764,6 +1645,52 @@ export const getAdminListPicksMockHandler = (
   });
 };
 
+export const getAdminListPicksMockHandler200 = (
+  overrideResponse?:
+    | PickListResponse
+    | ((
+        info: Parameters<Parameters<typeof http.get>[1]>[0],
+      ) => Promise<PickListResponse> | PickListResponse),
+) => {
+  return http.get("*/api/admin/picks", async (info) => {
+    await delay(100);
+
+    return new HttpResponse(
+      JSON.stringify(
+        overrideResponse !== undefined
+          ? typeof overrideResponse === "function"
+            ? await overrideResponse(info)
+            : overrideResponse
+          : getAdminListPicksResponseMock200(),
+      ),
+      { status: 200, headers: { "Content-Type": "application/json" } },
+    );
+  });
+};
+
+export const getAdminListPicksMockHandler401 = (
+  overrideResponse?:
+    | ErrorResponse
+    | ((
+        info: Parameters<Parameters<typeof http.get>[1]>[0],
+      ) => Promise<ErrorResponse> | ErrorResponse),
+) => {
+  return http.get("*/api/admin/picks", async (info) => {
+    await delay(100);
+
+    return new HttpResponse(
+      JSON.stringify(
+        overrideResponse !== undefined
+          ? typeof overrideResponse === "function"
+            ? await overrideResponse(info)
+            : overrideResponse
+          : getAdminListPicksResponseMock401(),
+      ),
+      { status: 401, headers: { "Content-Type": "application/json" } },
+    );
+  });
+};
+
 export const getAdminGetPicksByWeekMockHandler = (
   overrideResponse?:
     | PickListResponse
@@ -772,7 +1699,7 @@ export const getAdminGetPicksByWeekMockHandler = (
       ) => Promise<PickListResponse> | PickListResponse),
 ) => {
   return http.get("*/api/admin/picks/week/:week", async (info) => {
-    await delay(1000);
+    await delay(100);
 
     return new HttpResponse(
       JSON.stringify(
@@ -787,6 +1714,52 @@ export const getAdminGetPicksByWeekMockHandler = (
   });
 };
 
+export const getAdminGetPicksByWeekMockHandler200 = (
+  overrideResponse?:
+    | PickListResponse
+    | ((
+        info: Parameters<Parameters<typeof http.get>[1]>[0],
+      ) => Promise<PickListResponse> | PickListResponse),
+) => {
+  return http.get("*/api/admin/picks/week/:week", async (info) => {
+    await delay(100);
+
+    return new HttpResponse(
+      JSON.stringify(
+        overrideResponse !== undefined
+          ? typeof overrideResponse === "function"
+            ? await overrideResponse(info)
+            : overrideResponse
+          : getAdminGetPicksByWeekResponseMock200(),
+      ),
+      { status: 200, headers: { "Content-Type": "application/json" } },
+    );
+  });
+};
+
+export const getAdminGetPicksByWeekMockHandler401 = (
+  overrideResponse?:
+    | ErrorResponse
+    | ((
+        info: Parameters<Parameters<typeof http.get>[1]>[0],
+      ) => Promise<ErrorResponse> | ErrorResponse),
+) => {
+  return http.get("*/api/admin/picks/week/:week", async (info) => {
+    await delay(100);
+
+    return new HttpResponse(
+      JSON.stringify(
+        overrideResponse !== undefined
+          ? typeof overrideResponse === "function"
+            ? await overrideResponse(info)
+            : overrideResponse
+          : getAdminGetPicksByWeekResponseMock401(),
+      ),
+      { status: 401, headers: { "Content-Type": "application/json" } },
+    );
+  });
+};
+
 export const getAdminGetPicksByUserMockHandler = (
   overrideResponse?:
     | PickListResponse
@@ -795,7 +1768,7 @@ export const getAdminGetPicksByUserMockHandler = (
       ) => Promise<PickListResponse> | PickListResponse),
 ) => {
   return http.get("*/api/admin/picks/user/:userId", async (info) => {
-    await delay(1000);
+    await delay(100);
 
     return new HttpResponse(
       JSON.stringify(
@@ -810,6 +1783,52 @@ export const getAdminGetPicksByUserMockHandler = (
   });
 };
 
+export const getAdminGetPicksByUserMockHandler200 = (
+  overrideResponse?:
+    | PickListResponse
+    | ((
+        info: Parameters<Parameters<typeof http.get>[1]>[0],
+      ) => Promise<PickListResponse> | PickListResponse),
+) => {
+  return http.get("*/api/admin/picks/user/:userId", async (info) => {
+    await delay(100);
+
+    return new HttpResponse(
+      JSON.stringify(
+        overrideResponse !== undefined
+          ? typeof overrideResponse === "function"
+            ? await overrideResponse(info)
+            : overrideResponse
+          : getAdminGetPicksByUserResponseMock200(),
+      ),
+      { status: 200, headers: { "Content-Type": "application/json" } },
+    );
+  });
+};
+
+export const getAdminGetPicksByUserMockHandler401 = (
+  overrideResponse?:
+    | ErrorResponse
+    | ((
+        info: Parameters<Parameters<typeof http.get>[1]>[0],
+      ) => Promise<ErrorResponse> | ErrorResponse),
+) => {
+  return http.get("*/api/admin/picks/user/:userId", async (info) => {
+    await delay(100);
+
+    return new HttpResponse(
+      JSON.stringify(
+        overrideResponse !== undefined
+          ? typeof overrideResponse === "function"
+            ? await overrideResponse(info)
+            : overrideResponse
+          : getAdminGetPicksByUserResponseMock401(),
+      ),
+      { status: 401, headers: { "Content-Type": "application/json" } },
+    );
+  });
+};
+
 export const getAdminDeletePickMockHandler = (
   overrideResponse?:
     | null
@@ -818,11 +1837,50 @@ export const getAdminDeletePickMockHandler = (
       ) => Promise<null> | null),
 ) => {
   return http.delete("*/api/admin/picks/:id", async (info) => {
-    await delay(1000);
+    await delay(100);
     if (typeof overrideResponse === "function") {
       await overrideResponse(info);
     }
-    return new HttpResponse(null, { status: 200 });
+    return new HttpResponse(null, { status: 204 });
+  });
+};
+
+export const getAdminDeletePickMockHandler204 = (
+  overrideResponse?:
+    | null
+    | ((
+        info: Parameters<Parameters<typeof http.delete>[1]>[0],
+      ) => Promise<null> | null),
+) => {
+  return http.delete("*/api/admin/picks/:id", async (info) => {
+    await delay(100);
+    if (typeof overrideResponse === "function") {
+      await overrideResponse(info);
+    }
+    return new HttpResponse(null, { status: 204 });
+  });
+};
+
+export const getAdminDeletePickMockHandler401 = (
+  overrideResponse?:
+    | ErrorResponse
+    | ((
+        info: Parameters<Parameters<typeof http.delete>[1]>[0],
+      ) => Promise<ErrorResponse> | ErrorResponse),
+) => {
+  return http.delete("*/api/admin/picks/:id", async (info) => {
+    await delay(100);
+
+    return new HttpResponse(
+      JSON.stringify(
+        overrideResponse !== undefined
+          ? typeof overrideResponse === "function"
+            ? await overrideResponse(info)
+            : overrideResponse
+          : getAdminDeletePickResponseMock401(),
+      ),
+      { status: 401, headers: { "Content-Type": "application/json" } },
+    );
   });
 };
 export const getPicksMock = () => [

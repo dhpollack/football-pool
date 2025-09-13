@@ -13,9 +13,12 @@ import (
 
 	"github.com/david/football-pool/internal/api"
 	"github.com/david/football-pool/internal/database"
+	"github.com/go-playground/validator/v10"
 	"github.com/golang-jwt/jwt/v5"
 	"golang.org/x/crypto/bcrypt"
 )
+
+var validate = validator.New()
 
 var jwtKey = []byte("my_secret_key")
 
@@ -138,8 +141,13 @@ func (a *Auth) Register(w http.ResponseWriter, r *http.Request) {
 		creds.Role = &role
 	}
 
-	slog.Debug("Hashed password:", "hash", string(hashedPassword))
 	user := database.User{Name: creds.Name, Email: creds.Email, Password: string(hashedPassword), Role: *creds.Role}
+	if err := validate.Struct(user); err != nil {
+		w.WriteHeader(http.StatusBadRequest)
+		_ = json.NewEncoder(w).Encode(api.ErrorResponse{Error: err.Error()})
+		return
+	}
+
 	if result := a.db.GetDB().Create(&user); result.Error != nil {
 		slog.Debug("Error creating user:", "error", result.Error)
 		w.WriteHeader(http.StatusInternalServerError)
@@ -151,6 +159,11 @@ func (a *Auth) Register(w http.ResponseWriter, r *http.Request) {
 		UserID:  user.ID,
 		Name:    creds.Name,
 		Address: "", // Default empty address
+	}
+	if err := validate.Struct(player); err != nil {
+		w.WriteHeader(http.StatusBadRequest)
+		_ = json.NewEncoder(w).Encode(api.ErrorResponse{Error: err.Error()})
+		return
 	}
 	if result := a.db.GetDB().Create(&player); result.Error != nil {
 		slog.Debug("Error creating player:", "error", result.Error)
@@ -201,16 +214,16 @@ func (a *Auth) Middleware(next http.Handler) http.Handler {
 				if err == http.ErrNoCookie {
 					w.WriteHeader(http.StatusUnauthorized)
 					if err := json.NewEncoder(w).Encode(api.ErrorResponse{
-					Error: "Unauthorized: No token provided",
-				}); err != nil {
+						Error: "Unauthorized: No token provided",
+					}); err != nil {
 						slog.Debug("Error encoding error response:", "error", err)
 					}
 					return
 				}
 				w.WriteHeader(http.StatusBadRequest)
 				if err := json.NewEncoder(w).Encode(api.ErrorResponse{
-				Error: "Bad Request: Invalid token cookie",
-			}); err != nil {
+					Error: "Bad Request: Invalid token cookie",
+				}); err != nil {
 					slog.Debug("Error encoding error response:", "error", err)
 				}
 				return

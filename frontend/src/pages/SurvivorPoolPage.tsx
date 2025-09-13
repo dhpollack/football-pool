@@ -33,14 +33,11 @@ const SurvivorPoolPage = () => {
       try {
         const token = localStorage.getItem("token");
         // Assuming an API endpoint to get available teams for survivor pool
-        const response = await fetch(
-          `${import.meta.env.VITE_BACKEND_URL}/api/survivor/teams`,
-          {
-            headers: {
-              Authorization: `Bearer ${token}`,
-            },
+        const response = await fetch("/api/survivor/teams", {
+          headers: {
+            Authorization: `Bearer ${token}`,
           },
-        );
+        });
 
         if (!response.ok) {
           throw new Error("Failed to fetch available teams");

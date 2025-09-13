@@ -8,7 +8,12 @@ import { faker } from "@faker-js/faker";
 
 import { HttpResponse, delay, http } from "msw";
 
-import type { ResultResponse, SeasonResult, WeeklyResult } from "../../model";
+import type {
+  ErrorResponse,
+  ResultResponse,
+  SeasonResult,
+  WeeklyResult,
+} from "../../model";
 
 export const getGetWeeklyResultsResponseMock = (): WeeklyResult[] =>
   Array.from(
@@ -28,6 +33,35 @@ export const getGetWeeklyResultsResponseMock = (): WeeklyResult[] =>
     }),
   }));
 
+export const getGetWeeklyResultsResponseMock200 = (): WeeklyResult[] =>
+  Array.from(
+    { length: faker.number.int({ min: 1, max: 10 }) },
+    (_, i) => i + 1,
+  ).map(() => ({
+    player_id: faker.number.int({
+      min: undefined,
+      max: undefined,
+      multipleOf: undefined,
+    }),
+    player_name: faker.string.alpha({ length: { min: 10, max: 20 } }),
+    score: faker.number.int({
+      min: undefined,
+      max: undefined,
+      multipleOf: undefined,
+    }),
+  }));
+
+export const getGetWeeklyResultsResponseMock401 = (
+  overrideResponse: Partial<ErrorResponse> = {},
+): ErrorResponse => ({
+  error: faker.string.alpha({ length: { min: 10, max: 20 } }),
+  message: faker.helpers.arrayElement([
+    faker.string.alpha({ length: { min: 10, max: 20 } }),
+    undefined,
+  ]),
+  ...overrideResponse,
+});
+
 export const getGetSeasonResultsResponseMock = (): SeasonResult[] =>
   Array.from(
     { length: faker.number.int({ min: 1, max: 10 }) },
@@ -45,6 +79,35 @@ export const getGetSeasonResultsResponseMock = (): SeasonResult[] =>
       multipleOf: undefined,
     }),
   }));
+
+export const getGetSeasonResultsResponseMock200 = (): SeasonResult[] =>
+  Array.from(
+    { length: faker.number.int({ min: 1, max: 10 }) },
+    (_, i) => i + 1,
+  ).map(() => ({
+    player_id: faker.number.int({
+      min: undefined,
+      max: undefined,
+      multipleOf: undefined,
+    }),
+    player_name: faker.string.alpha({ length: { min: 10, max: 20 } }),
+    score: faker.number.int({
+      min: undefined,
+      max: undefined,
+      multipleOf: undefined,
+    }),
+  }));
+
+export const getGetSeasonResultsResponseMock401 = (
+  overrideResponse: Partial<ErrorResponse> = {},
+): ErrorResponse => ({
+  error: faker.string.alpha({ length: { min: 10, max: 20 } }),
+  message: faker.helpers.arrayElement([
+    faker.string.alpha({ length: { min: 10, max: 20 } }),
+    undefined,
+  ]),
+  ...overrideResponse,
+});
 
 export const getSubmitResultResponseMock = (
   overrideResponse: Partial<ResultResponse> = {},
@@ -105,6 +168,76 @@ export const getSubmitResultResponseMock = (
   ...overrideResponse,
 });
 
+export const getSubmitResultResponseMock201 = (
+  overrideResponse: Partial<ResultResponse> = {},
+): ResultResponse => ({
+  id: faker.number.int({
+    min: undefined,
+    max: undefined,
+    multipleOf: undefined,
+  }),
+  game_id: faker.number.int({
+    min: undefined,
+    max: undefined,
+    multipleOf: undefined,
+  }),
+  game: faker.helpers.arrayElement([
+    {
+      id: faker.number.int({
+        min: undefined,
+        max: undefined,
+        multipleOf: undefined,
+      }),
+      week: faker.number.int({
+        min: undefined,
+        max: undefined,
+        multipleOf: undefined,
+      }),
+      season: faker.number.int({
+        min: undefined,
+        max: undefined,
+        multipleOf: undefined,
+      }),
+      favorite_team: faker.string.alpha({ length: { min: 10, max: 20 } }),
+      underdog_team: faker.string.alpha({ length: { min: 10, max: 20 } }),
+      spread: faker.number.float({
+        min: undefined,
+        max: undefined,
+        fractionDigits: 2,
+      }),
+      start_time: `${faker.date.past().toISOString().split(".")[0]}Z`,
+      created_at: `${faker.date.past().toISOString().split(".")[0]}Z`,
+      updated_at: `${faker.date.past().toISOString().split(".")[0]}Z`,
+    },
+    undefined,
+  ]),
+  favorite_score: faker.number.int({
+    min: undefined,
+    max: undefined,
+    multipleOf: undefined,
+  }),
+  underdog_score: faker.number.int({
+    min: undefined,
+    max: undefined,
+    multipleOf: undefined,
+  }),
+  outcome: faker.string.alpha({ length: { min: 10, max: 20 } }),
+  created_at: `${faker.date.past().toISOString().split(".")[0]}Z`,
+  updated_at: `${faker.date.past().toISOString().split(".")[0]}Z`,
+  ...overrideResponse,
+});
+
+export const getSubmitResultResponseMock401 = (
+  overrideResponse: Partial<ErrorResponse> = {},
+): ErrorResponse => ({
+  error: faker.string.alpha({ length: { min: 10, max: 20 } }),
+  message: faker.helpers.arrayElement([
+    faker.string.alpha({ length: { min: 10, max: 20 } }),
+    undefined,
+  ]),
+  ...overrideResponse,
+});
+
 export const getGetWeeklyResultsMockHandler = (
   overrideResponse?:
     | WeeklyResult[]
@@ -113,7 +246,7 @@ export const getGetWeeklyResultsMockHandler = (
       ) => Promise<WeeklyResult[]> | WeeklyResult[]),
 ) => {
   return http.get("*/api/results/week", async (info) => {
-    await delay(1000);
+    await delay(100);
 
     return new HttpResponse(
       JSON.stringify(
@@ -128,6 +261,52 @@ export const getGetWeeklyResultsMockHandler = (
   });
 };
 
+export const getGetWeeklyResultsMockHandler200 = (
+  overrideResponse?:
+    | WeeklyResult[]
+    | ((
+        info: Parameters<Parameters<typeof http.get>[1]>[0],
+      ) => Promise<WeeklyResult[]> | WeeklyResult[]),
+) => {
+  return http.get("*/api/results/week", async (info) => {
+    await delay(100);
+
+    return new HttpResponse(
+      JSON.stringify(
+        overrideResponse !== undefined
+          ? typeof overrideResponse === "function"
+            ? await overrideResponse(info)
+            : overrideResponse
+          : getGetWeeklyResultsResponseMock200(),
+      ),
+      { status: 200, headers: { "Content-Type": "application/json" } },
+    );
+  });
+};
+
+export const getGetWeeklyResultsMockHandler401 = (
+  overrideResponse?:
+    | ErrorResponse
+    | ((
+        info: Parameters<Parameters<typeof http.get>[1]>[0],
+      ) => Promise<ErrorResponse> | ErrorResponse),
+) => {
+  return http.get("*/api/results/week", async (info) => {
+    await delay(100);
+
+    return new HttpResponse(
+      JSON.stringify(
+        overrideResponse !== undefined
+          ? typeof overrideResponse === "function"
+            ? await overrideResponse(info)
+            : overrideResponse
+          : getGetWeeklyResultsResponseMock401(),
+      ),
+      { status: 401, headers: { "Content-Type": "application/json" } },
+    );
+  });
+};
+
 export const getGetSeasonResultsMockHandler = (
   overrideResponse?:
     | SeasonResult[]
@@ -136,7 +315,7 @@ export const getGetSeasonResultsMockHandler = (
       ) => Promise<SeasonResult[]> | SeasonResult[]),
 ) => {
   return http.get("*/api/results/season", async (info) => {
-    await delay(1000);
+    await delay(100);
 
     return new HttpResponse(
       JSON.stringify(
@@ -151,6 +330,52 @@ export const getGetSeasonResultsMockHandler = (
   });
 };
 
+export const getGetSeasonResultsMockHandler200 = (
+  overrideResponse?:
+    | SeasonResult[]
+    | ((
+        info: Parameters<Parameters<typeof http.get>[1]>[0],
+      ) => Promise<SeasonResult[]> | SeasonResult[]),
+) => {
+  return http.get("*/api/results/season", async (info) => {
+    await delay(100);
+
+    return new HttpResponse(
+      JSON.stringify(
+        overrideResponse !== undefined
+          ? typeof overrideResponse === "function"
+            ? await overrideResponse(info)
+            : overrideResponse
+          : getGetSeasonResultsResponseMock200(),
+      ),
+      { status: 200, headers: { "Content-Type": "application/json" } },
+    );
+  });
+};
+
+export const getGetSeasonResultsMockHandler401 = (
+  overrideResponse?:
+    | ErrorResponse
+    | ((
+        info: Parameters<Parameters<typeof http.get>[1]>[0],
+      ) => Promise<ErrorResponse> | ErrorResponse),
+) => {
+  return http.get("*/api/results/season", async (info) => {
+    await delay(100);
+
+    return new HttpResponse(
+      JSON.stringify(
+        overrideResponse !== undefined
+          ? typeof overrideResponse === "function"
+            ? await overrideResponse(info)
+            : overrideResponse
+          : getGetSeasonResultsResponseMock401(),
+      ),
+      { status: 401, headers: { "Content-Type": "application/json" } },
+    );
+  });
+};
+
 export const getSubmitResultMockHandler = (
   overrideResponse?:
     | ResultResponse
@@ -159,7 +384,7 @@ export const getSubmitResultMockHandler = (
       ) => Promise<ResultResponse> | ResultResponse),
 ) => {
   return http.post("*/api/results", async (info) => {
-    await delay(1000);
+    await delay(100);
 
     return new HttpResponse(
       JSON.stringify(
@@ -170,6 +395,52 @@ export const getSubmitResultMockHandler = (
           : getSubmitResultResponseMock(),
       ),
       { status: 201, headers: { "Content-Type": "application/json" } },
+    );
+  });
+};
+
+export const getSubmitResultMockHandler201 = (
+  overrideResponse?:
+    | ResultResponse
+    | ((
+        info: Parameters<Parameters<typeof http.post>[1]>[0],
+      ) => Promise<ResultResponse> | ResultResponse),
+) => {
+  return http.post("*/api/results", async (info) => {
+    await delay(100);
+
+    return new HttpResponse(
+      JSON.stringify(
+        overrideResponse !== undefined
+          ? typeof overrideResponse === "function"
+            ? await overrideResponse(info)
+            : overrideResponse
+          : getSubmitResultResponseMock201(),
+      ),
+      { status: 201, headers: { "Content-Type": "application/json" } },
+    );
+  });
+};
+
+export const getSubmitResultMockHandler401 = (
+  overrideResponse?:
+    | ErrorResponse
+    | ((
+        info: Parameters<Parameters<typeof http.post>[1]>[0],
+      ) => Promise<ErrorResponse> | ErrorResponse),
+) => {
+  return http.post("*/api/results", async (info) => {
+    await delay(100);
+
+    return new HttpResponse(
+      JSON.stringify(
+        overrideResponse !== undefined
+          ? typeof overrideResponse === "function"
+            ? await overrideResponse(info)
+            : overrideResponse
+          : getSubmitResultResponseMock401(),
+      ),
+      { status: 401, headers: { "Content-Type": "application/json" } },
     );
   });
 };

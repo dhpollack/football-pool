@@ -8,7 +8,7 @@ import { faker } from "@faker-js/faker";
 
 import { HttpResponse, delay, http } from "msw";
 
-import type { SurvivorPickResponse } from "../../model";
+import type { ErrorResponse, SurvivorPickResponse } from "../../model";
 
 export const getGetSurvivorPicksResponseMock = (): SurvivorPickResponse[] =>
   Array.from(
@@ -67,6 +67,74 @@ export const getGetSurvivorPicksResponseMock = (): SurvivorPickResponse[] =>
     updated_at: `${faker.date.past().toISOString().split(".")[0]}Z`,
   }));
 
+export const getGetSurvivorPicksResponseMock200 = (): SurvivorPickResponse[] =>
+  Array.from(
+    { length: faker.number.int({ min: 1, max: 10 }) },
+    (_, i) => i + 1,
+  ).map(() => ({
+    id: faker.number.int({
+      min: undefined,
+      max: undefined,
+      multipleOf: undefined,
+    }),
+    user_id: faker.number.int({
+      min: undefined,
+      max: undefined,
+      multipleOf: undefined,
+    }),
+    user: faker.helpers.arrayElement([
+      {
+        id: faker.number.int({
+          min: undefined,
+          max: undefined,
+          multipleOf: undefined,
+        }),
+        name: faker.string.alpha({ length: { min: 10, max: 20 } }),
+        email: faker.string.alpha({ length: { min: 10, max: 20 } }),
+        role: faker.string.alpha({ length: { min: 10, max: 20 } }),
+        player: faker.helpers.arrayElement([
+          {
+            id: faker.number.int({
+              min: undefined,
+              max: undefined,
+              multipleOf: undefined,
+            }),
+            user_id: faker.number.int({
+              min: undefined,
+              max: undefined,
+              multipleOf: undefined,
+            }),
+            name: faker.string.alpha({ length: { min: 10, max: 20 } }),
+            address: faker.string.alpha({ length: { min: 10, max: 20 } }),
+          },
+          undefined,
+        ]),
+        created_at: `${faker.date.past().toISOString().split(".")[0]}Z`,
+        updated_at: `${faker.date.past().toISOString().split(".")[0]}Z`,
+      },
+      undefined,
+    ]),
+    week: faker.number.int({
+      min: undefined,
+      max: undefined,
+      multipleOf: undefined,
+    }),
+    team: faker.string.alpha({ length: { min: 10, max: 20 } }),
+    created_at: `${faker.date.past().toISOString().split(".")[0]}Z`,
+    updated_at: `${faker.date.past().toISOString().split(".")[0]}Z`,
+  }));
+
+export const getGetSurvivorPicksResponseMock401 = (
+  overrideResponse: Partial<ErrorResponse> = {},
+): ErrorResponse => ({
+  error: faker.string.alpha({ length: { min: 10, max: 20 } }),
+  message: faker.helpers.arrayElement([
+    faker.string.alpha({ length: { min: 10, max: 20 } }),
+    undefined,
+  ]),
+  ...overrideResponse,
+});
+
 export const getSubmitSurvivorPickResponseMock = (
   overrideResponse: Partial<SurvivorPickResponse> = {},
 ): SurvivorPickResponse => ({
@@ -123,6 +191,73 @@ export const getSubmitSurvivorPickResponseMock = (
   ...overrideResponse,
 });
 
+export const getSubmitSurvivorPickResponseMock201 = (
+  overrideResponse: Partial<SurvivorPickResponse> = {},
+): SurvivorPickResponse => ({
+  id: faker.number.int({
+    min: undefined,
+    max: undefined,
+    multipleOf: undefined,
+  }),
+  user_id: faker.number.int({
+    min: undefined,
+    max: undefined,
+    multipleOf: undefined,
+  }),
+  user: faker.helpers.arrayElement([
+    {
+      id: faker.number.int({
+        min: undefined,
+        max: undefined,
+        multipleOf: undefined,
+      }),
+      name: faker.string.alpha({ length: { min: 10, max: 20 } }),
+      email: faker.string.alpha({ length: { min: 10, max: 20 } }),
+      role: faker.string.alpha({ length: { min: 10, max: 20 } }),
+      player: faker.helpers.arrayElement([
+        {
+          id: faker.number.int({
+            min: undefined,
+            max: undefined,
+            multipleOf: undefined,
+          }),
+          user_id: faker.number.int({
+            min: undefined,
+            max: undefined,
+            multipleOf: undefined,
+          }),
+          name: faker.string.alpha({ length: { min: 10, max: 20 } }),
+          address: faker.string.alpha({ length: { min: 10, max: 20 } }),
+        },
+        undefined,
+      ]),
+      created_at: `${faker.date.past().toISOString().split(".")[0]}Z`,
+      updated_at: `${faker.date.past().toISOString().split(".")[0]}Z`,
+    },
+    undefined,
+  ]),
+  week: faker.number.int({
+    min: undefined,
+    max: undefined,
+    multipleOf: undefined,
+  }),
+  team: faker.string.alpha({ length: { min: 10, max: 20 } }),
+  created_at: `${faker.date.past().toISOString().split(".")[0]}Z`,
+  updated_at: `${faker.date.past().toISOString().split(".")[0]}Z`,
+  ...overrideResponse,
+});
+
+export const getSubmitSurvivorPickResponseMock401 = (
+  overrideResponse: Partial<ErrorResponse> = {},
+): ErrorResponse => ({
+  error: faker.string.alpha({ length: { min: 10, max: 20 } }),
+  message: faker.helpers.arrayElement([
+    faker.string.alpha({ length: { min: 10, max: 20 } }),
+    undefined,
+  ]),
+  ...overrideResponse,
+});
+
 export const getGetSurvivorPicksMockHandler = (
   overrideResponse?:
     | SurvivorPickResponse[]
@@ -131,7 +266,7 @@ export const getGetSurvivorPicksMockHandler = (
       ) => Promise<SurvivorPickResponse[]> | SurvivorPickResponse[]),
 ) => {
   return http.get("*/api/survivor/picks", async (info) => {
-    await delay(1000);
+    await delay(100);
 
     return new HttpResponse(
       JSON.stringify(
@@ -146,6 +281,52 @@ export const getGetSurvivorPicksMockHandler = (
   });
 };
 
+export const getGetSurvivorPicksMockHandler200 = (
+  overrideResponse?:
+    | SurvivorPickResponse[]
+    | ((
+        info: Parameters<Parameters<typeof http.get>[1]>[0],
+      ) => Promise<SurvivorPickResponse[]> | SurvivorPickResponse[]),
+) => {
+  return http.get("*/api/survivor/picks", async (info) => {
+    await delay(100);
+
+    return new HttpResponse(
+      JSON.stringify(
+        overrideResponse !== undefined
+          ? typeof overrideResponse === "function"
+            ? await overrideResponse(info)
+            : overrideResponse
+          : getGetSurvivorPicksResponseMock200(),
+      ),
+      { status: 200, headers: { "Content-Type": "application/json" } },
+    );
+  });
+};
+
+export const getGetSurvivorPicksMockHandler401 = (
+  overrideResponse?:
+    | ErrorResponse
+    | ((
+        info: Parameters<Parameters<typeof http.get>[1]>[0],
+      ) => Promise<ErrorResponse> | ErrorResponse),
+) => {
+  return http.get("*/api/survivor/picks", async (info) => {
+    await delay(100);
+
+    return new HttpResponse(
+      JSON.stringify(
+        overrideResponse !== undefined
+          ? typeof overrideResponse === "function"
+            ? await overrideResponse(info)
+            : overrideResponse
+          : getGetSurvivorPicksResponseMock401(),
+      ),
+      { status: 401, headers: { "Content-Type": "application/json" } },
+    );
+  });
+};
+
 export const getSubmitSurvivorPickMockHandler = (
   overrideResponse?:
     | SurvivorPickResponse
@@ -154,7 +335,7 @@ export const getSubmitSurvivorPickMockHandler = (
       ) => Promise<SurvivorPickResponse> | SurvivorPickResponse),
 ) => {
   return http.post("*/api/survivor/picks/submit", async (info) => {
-    await delay(1000);
+    await delay(100);
 
     return new HttpResponse(
       JSON.stringify(
@@ -165,6 +346,52 @@ export const getSubmitSurvivorPickMockHandler = (
           : getSubmitSurvivorPickResponseMock(),
       ),
       { status: 201, headers: { "Content-Type": "application/json" } },
+    );
+  });
+};
+
+export const getSubmitSurvivorPickMockHandler201 = (
+  overrideResponse?:
+    | SurvivorPickResponse
+    | ((
+        info: Parameters<Parameters<typeof http.post>[1]>[0],
+      ) => Promise<SurvivorPickResponse> | SurvivorPickResponse),
+) => {
+  return http.post("*/api/survivor/picks/submit", async (info) => {
+    await delay(100);
+
+    return new HttpResponse(
+      JSON.stringify(
+        overrideResponse !== undefined
+          ? typeof overrideResponse === "function"
+            ? await overrideResponse(info)
+            : overrideResponse
+          : getSubmitSurvivorPickResponseMock201(),
+      ),
+      { status: 201, headers: { "Content-Type": "application/json" } },
+    );
+  });
+};
+
+export const getSubmitSurvivorPickMockHandler401 = (
+  overrideResponse?:
+    | ErrorResponse
+    | ((
+        info: Parameters<Parameters<typeof http.post>[1]>[0],
+      ) => Promise<ErrorResponse> | ErrorResponse),
+) => {
+  return http.post("*/api/survivor/picks/submit", async (info) => {
+    await delay(100);
+
+    return new HttpResponse(
+      JSON.stringify(
+        overrideResponse !== undefined
+          ? typeof overrideResponse === "function"
+            ? await overrideResponse(info)
+            : overrideResponse
+          : getSubmitSurvivorPickResponseMock401(),
+      ),
+      { status: 401, headers: { "Content-Type": "application/json" } },
     );
   });
 };

@@ -34,6 +34,7 @@ setup("authenticate as user", async ({ page, request }) => {
     {
       data: {
         email: userEmail,
+        name: E2E_CONFIG.TEST_USER_TEMPLATE.name,
         password: E2E_CONFIG.TEST_USER_TEMPLATE.password,
       },
     },

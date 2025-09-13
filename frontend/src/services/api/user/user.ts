@@ -26,6 +26,7 @@ import type {
   LoginRequest,
   LoginResponse,
   PlayerRequest,
+  PlayerResponse,
   RegisterRequest,
   RegisterResponse,
   UserListResponse,
@@ -308,7 +309,7 @@ export const getProfile = (
   options?: SecondParameter<typeof customInstance>,
   signal?: AbortSignal,
 ) => {
-  return customInstance<UserResponse>(
+  return customInstance<PlayerResponse>(
     { url: `/api/users/me`, method: "GET", signal },
     options,
   );
@@ -442,7 +443,7 @@ export const updateProfile = (
   playerRequest: PlayerRequest,
   options?: SecondParameter<typeof customInstance>,
 ) => {
-  return customInstance<UserResponse>(
+  return customInstance<PlayerResponse>(
     {
       url: `/api/users/me/update`,
       method: "PUT",
@@ -967,6 +968,100 @@ export const useAdminUpdateUser = <TError = ErrorResponse, TContext = unknown>(
   TContext
 > => {
   const mutationOptions = getAdminUpdateUserMutationOptions(options);
+
+  return useMutation(mutationOptions, queryClient);
+};
+/**
+ * @summary Create multiple users
+ */
+export const createUsers = (
+  userRequest: UserRequest[],
+  options?: SecondParameter<typeof customInstance>,
+  signal?: AbortSignal,
+) => {
+  return customInstance<UserResponse[]>(
+    {
+      url: `/api/admin/users/create`,
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      data: userRequest,
+      signal,
+    },
+    options,
+  );
+};
+
+export const getCreateUsersMutationOptions = <
+  TError = ErrorResponse | ErrorResponse | ErrorResponse,
+  TContext = unknown,
+>(options?: {
+  mutation?: UseMutationOptions<
+    Awaited<ReturnType<typeof createUsers>>,
+    TError,
+    { data: UserRequest[] },
+    TContext
+  >;
+  request?: SecondParameter<typeof customInstance>;
+}): UseMutationOptions<
+  Awaited<ReturnType<typeof createUsers>>,
+  TError,
+  { data: UserRequest[] },
+  TContext
+> => {
+  const mutationKey = ["createUsers"];
+  const { mutation: mutationOptions, request: requestOptions } = options
+    ? options.mutation &&
+      "mutationKey" in options.mutation &&
+      options.mutation.mutationKey
+      ? options
+      : { ...options, mutation: { ...options.mutation, mutationKey } }
+    : { mutation: { mutationKey }, request: undefined };
+
+  const mutationFn: MutationFunction<
+    Awaited<ReturnType<typeof createUsers>>,
+    { data: UserRequest[] }
+  > = (props) => {
+    const { data } = props ?? {};
+
+    return createUsers(data, requestOptions);
+  };
+
+  return { mutationFn, ...mutationOptions };
+};
+
+export type CreateUsersMutationResult = NonNullable<
+  Awaited<ReturnType<typeof createUsers>>
+>;
+export type CreateUsersMutationBody = UserRequest[];
+export type CreateUsersMutationError =
+  | ErrorResponse
+  | ErrorResponse
+  | ErrorResponse;
+
+/**
+ * @summary Create multiple users
+ */
+export const useCreateUsers = <
+  TError = ErrorResponse | ErrorResponse | ErrorResponse,
+  TContext = unknown,
+>(
+  options?: {
+    mutation?: UseMutationOptions<
+      Awaited<ReturnType<typeof createUsers>>,
+      TError,
+      { data: UserRequest[] },
+      TContext
+    >;
+    request?: SecondParameter<typeof customInstance>;
+  },
+  queryClient?: QueryClient,
+): UseMutationResult<
+  Awaited<ReturnType<typeof createUsers>>,
+  TError,
+  { data: UserRequest[] },
+  TContext
+> => {
+  const mutationOptions = getCreateUsersMutationOptions(options);
 
   return useMutation(mutationOptions, queryClient);
 };

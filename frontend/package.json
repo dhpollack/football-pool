@@ -12,7 +12,7 @@
     "format": "biome format --write .",
     "preview": "vite preview",
     "tailwind-init": "tailwindcss init -p",
-    "test": "vitest --coverage",
+    "test": "vitest",
     "test:ui": "vitest --ui",
     "test:e2e": "playwright test",
     "test:e2e:headed": "playwright test --headed",
