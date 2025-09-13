@@ -1,6 +1,18 @@
-import { render, screen } from "@testing-library/react";
+import { screen } from "@testing-library/react";
 import { vi } from "vitest";
+import { render } from "../test-utils";
 import OverallResultsPage from "./OverallResultsPage";
+
+// Mock the React Query hooks
+vi.mock("../services/api/results/results", () => ({
+  useGetSeasonResults: vi.fn().mockReturnValue({
+    data: null,
+    isLoading: true,
+    error: null,
+  }),
+}));
+
+import { useGetSeasonResults } from "../services/api/results/results";
 
 describe("OverallResultsPage", () => {
   it("renders the loading state", () => {
@@ -10,13 +22,11 @@ describe("OverallResultsPage", () => {
   });
 
   it("renders the error state", async () => {
-    global.fetch = vi.fn(() =>
-      Promise.resolve({
-        ok: false,
-        json: () =>
-          Promise.resolve({ message: "Failed to fetch overall results" }),
-      }),
-    ) as vi.Mock;
+    vi.mocked(useGetSeasonResults).mockReturnValue({
+      data: null,
+      isLoading: false,
+      error: new Error("Failed to fetch overall results"),
+    } as any);
 
     render(<OverallResultsPage />);
 
@@ -26,17 +36,16 @@ describe("OverallResultsPage", () => {
   });
 
   it("renders the results", async () => {
-    const mockResults = [
+    const mockSeasonResults = [
       { player_name: "Player 1", score: 100 },
       { player_name: "Player 2", score: 90 },
     ];
 
-    global.fetch = vi.fn(() =>
-      Promise.resolve({
-        ok: true,
-        json: () => Promise.resolve(mockResults),
-      }),
-    ) as vi.Mock;
+    vi.mocked(useGetSeasonResults).mockReturnValue({
+      data: mockSeasonResults,
+      isLoading: false,
+      error: null,
+    } as any);
 
     render(<OverallResultsPage />);
 

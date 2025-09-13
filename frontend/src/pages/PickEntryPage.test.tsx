@@ -1,20 +1,42 @@
-import { render, screen, fireEvent } from "@testing-library/react";
+import { screen, fireEvent, waitFor } from "@testing-library/react";
 import { vi } from "vitest";
+import { render } from "../test-utils";
 import PickEntryPage from "./PickEntryPage";
 
-describe("PickEntryPage", () => {
-  const mockGames = [
+// Mock the React Query hooks
+const mockGamesData = {
+  games: [
     { id: 1, favorite_team: "Team A", underdog_team: "Team B", spread: 3 },
     { id: 2, favorite_team: "Team C", underdog_team: "Team D", spread: 7 },
-  ];
+  ],
+};
 
+const mockSubmitPicks = vi.fn();
+vi.mock("../services/api/games/games", () => ({
+  useGetGames: () => ({
+    data: mockGamesData,
+    isLoading: false,
+    error: null,
+  }),
+}));
+
+vi.mock("../services/api/picks/picks", () => ({
+  useSubmitPicks: () => ({
+    mutateAsync: mockSubmitPicks,
+    isPending: false,
+  }),
+}));
+
+// Mock alert
+global.alert = vi.fn();
+
+describe("PickEntryPage", () => {
   beforeEach(() => {
-    global.fetch = vi.fn(() =>
-      Promise.resolve({
-        ok: true,
-        json: () => Promise.resolve(mockGames),
-      }),
-    ) as vi.Mock;
+    mockSubmitPicks.mockResolvedValue({});
+  });
+
+  afterEach(() => {
+    vi.clearAllMocks();
   });
 
   it("renders the games", async () => {
@@ -47,9 +69,20 @@ describe("PickEntryPage", () => {
 
     fireEvent.click(screen.getByText(/submit picks/i));
 
-    expect(global.fetch).toHaveBeenCalledWith(
-      "http://localhost:8080/api/picks",
-      expect.any(Object),
-    );
+    // Wait for the async operation to complete
+    await waitFor(() => {
+      expect(mockSubmitPicks).toHaveBeenCalledWith({
+        data: expect.arrayContaining([
+          expect.objectContaining({
+            game_id: expect.any(Number),
+            picked: expect.any(String),
+            rank: expect.any(Number),
+            quick_pick: expect.any(Boolean),
+          }),
+        ]),
+      });
+    });
+
+    expect(global.alert).toHaveBeenCalledWith("Picks submitted successfully!");
   });
 });

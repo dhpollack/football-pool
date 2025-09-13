@@ -13,8 +13,14 @@ build:
 dev:
     npm run dev
 
-test *args="--coverage":
+test *args="src/":
     CI=true npm run test {{ args }}
 
 test-e2e *args:
     CI=true npm run test:e2e {{ args }}
+
+generate:
+    npm run generate
+
+npm *args:
+    npm {{ args }}

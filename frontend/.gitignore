@@ -29,7 +29,7 @@ coverage/
 # Custom
 screenshots/
 auth-state.json
-
+**/.auth/
 
 # Playwright
 /playwright-report/

@@ -10,13 +10,13 @@ import {
   Box,
   Button,
 } from "@mui/material";
-import { useAuth } from "../contexts/AuthContext";
+import { useAuth } from "../hooks/useAuth";
 import UserMenu from "./UserMenu";
 
 const drawerWidth = 240;
 
 const Layout = () => {
-  const { isAuthenticated, loading } = useAuth();
+  const { isAuthenticated, isAdmin, loading } = useAuth();
 
   return (
     <Box sx={{ display: "flex" }}>
@@ -69,9 +69,11 @@ const Layout = () => {
                 <ListItem component={Link} to="/picks">
                   <ListItemText primary="Picks" />
                 </ListItem>
-                <ListItem component={Link} to="/results">
-                  <ListItemText primary="Results" />
-                </ListItem>
+                {isAdmin && (
+                  <ListItem component={Link} to="/results">
+                    <ListItemText primary="Results" />
+                  </ListItem>
+                )}
                 <ListItem component={Link} to="/weekly-results">
                   <ListItemText primary="Weekly Results" />
                 </ListItem>

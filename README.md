@@ -100,3 +100,6 @@ npm run dev
 
 The frontend application will open in your browser, usually at `http://localhost:5173`.
 
+## Notes
+
+We can get data about the games from espn api.  See: https://gist.github.com/nntrn/ee26cb2a0716de0947a0a4e9a157bc1c

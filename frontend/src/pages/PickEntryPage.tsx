@@ -1,5 +1,8 @@
-import { useState, useEffect, useId } from "react";
-import { api } from "../services/api";
+import React, { useState, useId } from "react";
+import { useGetGames } from "../services/api/games/games";
+import { useSubmitPicks } from "../services/api/picks/picks";
+import type { GameResponse, PickRequest } from "../services/model";
+import axios from "axios";
 import {
   Table,
   TableBody,
@@ -16,13 +19,6 @@ import {
   InputLabel,
 } from "@mui/material";
 
-interface Game {
-  id: number;
-  favorite_team: string;
-  underdog_team: string;
-  spread: number;
-}
-
 interface Pick {
   picked: string;
   rank: number;
@@ -32,35 +28,58 @@ interface Pick {
 const PickEntryPage = () => {
   const quickPickId = useId();
   const submitPicksId = useId();
-  const [games, setGames] = useState<Game[]>([]);
   const [picks, setPicks] = useState<{ [gameId: number]: Pick }>({});
   const [error, setError] = useState<string | null>(null);
-  const [loading, setLoading] = useState(true);
-  const [submitting, setSubmitting] = useState(false);
 
-  useEffect(() => {
-    const fetchGames = async () => {
-      try {
-        const data = await api.get<Game[]>("/api/games?week=1&season=2025");
-        setGames(data);
-        const initialPicks: { [gameId: number]: Pick } = {};
-        data.forEach((game: Game) => {
-          initialPicks[game.id] = { picked: "", rank: 0 };
-        });
-        setPicks(initialPicks);
-      } catch (error: unknown) {
-        if (error instanceof Error) {
-          setError(error.message);
-        } else {
-          setError("An unknown error occurred");
-        }
-      } finally {
-        setLoading(false);
+  // Use React Query hooks
+  const {
+    data: gamesData,
+    isLoading,
+    error: gamesError,
+  } = useGetGames({
+    week: 1,
+    season: 2025,
+  });
+  const { mutateAsync: submitPicks, isPending: isSubmitting } =
+    useSubmitPicks();
+
+  const games = gamesData?.games || [];
+  const sortedGames = React.useMemo(
+    () =>
+      [...games].sort(
+        (a, b) =>
+          new Date(a.start_time).getTime() - new Date(b.start_time).getTime(),
+      ),
+    [games],
+  );
+
+  // Initialize picks when games load
+  React.useEffect(() => {
+    if (games.length > 0) {
+      const initialPicks: { [gameId: number]: Pick } = {};
+      sortedGames.forEach((game: GameResponse) => {
+        initialPicks[game.id] = { picked: "", rank: 0 };
+      });
+      setPicks(initialPicks);
+    }
+  }, [sortedGames]);
+
+  // Handle games fetch error
+  React.useEffect(() => {
+    if (gamesError) {
+      if (axios.isAxiosError(gamesError)) {
+        setError(
+          gamesError.response?.data?.message ||
+            gamesError.message ||
+            "Failed to load games",
+        );
+      } else if (gamesError instanceof Error) {
+        setError(gamesError.message);
+      } else {
+        setError("An unknown error occurred");
       }
-    };
-
-    fetchGames();
-  }, []);
+    }
+  }, [gamesError]);
 
   const handleQuickPick = () => {
     const newPicks: { [gameId: number]: Pick } = {};
@@ -70,7 +89,7 @@ const PickEntryPage = () => {
     );
     const shuffledRanks = availableRanks.sort(() => Math.random() - 0.5);
 
-    games.forEach((game, index) => {
+    sortedGames.forEach((game, index) => {
       const pickOptions = ["favorite", "underdog"];
       const picked =
         pickOptions[Math.floor(Math.random() * pickOptions.length)];
@@ -99,29 +118,28 @@ const PickEntryPage = () => {
 
   const handleSubmitPicks = async () => {
     setError(null);
-    setSubmitting(true);
     try {
-      const picksToSubmit = Object.keys(picks).map((gameId) => ({
+      const picksToSubmit: PickRequest[] = Object.keys(picks).map((gameId) => ({
         game_id: parseInt(gameId, 10),
         picked: picks[parseInt(gameId, 10)].picked,
         rank: picks[parseInt(gameId, 10)].rank,
         quick_pick: picks[parseInt(gameId, 10)].quick_pick || false,
       }));
 
-      await api.post("/api/picks", picksToSubmit);
+      await submitPicks({ data: picksToSubmit });
       alert("Picks submitted successfully!");
     } catch (error: unknown) {
-      if (error instanceof Error) {
+      if (axios.isAxiosError(error)) {
+        setError(error.response?.data?.message || error.message);
+      } else if (error instanceof Error) {
         setError(error.message);
       } else {
         setError("An unknown error occurred");
       }
-    } finally {
-      setSubmitting(false);
     }
   };
 
-  if (loading) {
+  if (isLoading) {
     return (
       <div>
         <Typography variant="h4">Pick Entry</Typography>
@@ -146,9 +164,9 @@ const PickEntryPage = () => {
         sx={{ my: 2, ml: 2 }}
         onClick={handleSubmitPicks}
         id={submitPicksId}
-        disabled={submitting}
+        disabled={isSubmitting}
       >
-        {submitting ? "Submitting..." : "Submit Picks"}
+        {isSubmitting ? "Submitting..." : "Submit Picks"}
       </Button>
       {error && <Typography color="error">{error}</Typography>}
       <TableContainer component={Paper}>
@@ -163,7 +181,7 @@ const PickEntryPage = () => {
             </TableRow>
           </TableHead>
           <TableBody>
-            {games.map((game) => (
+            {sortedGames.map((game) => (
               <TableRow
                 key={game.id}
                 sx={{ "&:last-child td, &:last-child th": { border: 0 } }}
@@ -201,7 +219,7 @@ const PickEntryPage = () => {
                       data-testid={`rank-select-${game.id}`}
                     >
                       {Array.from(
-                        { length: games.length },
+                        { length: sortedGames.length },
                         (_, i) => i + 1,
                       ).map((rank) => (
                         <MenuItem

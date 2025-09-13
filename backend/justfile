@@ -1,7 +1,10 @@
 @default:
     @just -u -l
 
-build:
+generate:
+    go generate ./...
+
+build: generate
     go build -o football-pool ./cmd/main.go
 
 tidy:

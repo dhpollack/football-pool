@@ -13,9 +13,10 @@ COPY . .
 RUN npm run build
 
 # production stage
-FROM nginx:stable-alpine AS production-stage
-COPY nginx.conf /etc/nginx/nginx.conf
-COPY --from=build-stage /app/dist /usr/share/nginx/html
+FROM caddy:2-alpine AS production-stage
+COPY Caddyfile /etc/caddy/Caddyfile
+COPY --from=build-stage /app/dist /usr/share/caddy
 
 EXPOSE 80
-CMD ["nginx", "-g", "daemon off;"]
+EXPOSE 443
+CMD ["caddy", "run", "--config", "/etc/caddy/Caddyfile", "--adapter", "caddyfile"]

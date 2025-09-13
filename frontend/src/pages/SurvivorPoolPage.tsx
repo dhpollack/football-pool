@@ -8,6 +8,9 @@ import {
   InputLabel,
   Box,
 } from "@mui/material";
+import { useSubmitSurvivorPick } from "../services/api/survivor/survivor";
+import type { SurvivorPickRequest } from "../services/model";
+import axios from "axios";
 
 interface Team {
   id: number;
@@ -21,19 +24,20 @@ const SurvivorPoolPage = () => {
   const [selectedTeam, setSelectedTeam] = useState<string>("");
   const [error, setError] = useState<string | null>(null);
 
+  // React Query hook for submitting survivor picks
+  const { mutateAsync: submitSurvivorPick, isPending: isSubmitting } =
+    useSubmitSurvivorPick();
+
   useEffect(() => {
     const fetchAvailableTeams = async () => {
       try {
         const token = localStorage.getItem("token");
         // Assuming an API endpoint to get available teams for survivor pool
-        const response = await fetch(
-          `${import.meta.env.VITE_BACKEND_URL}/api/survivor/teams`,
-          {
-            headers: {
-              Authorization: `Bearer ${token}`,
-            },
+        const response = await fetch("/api/survivor/teams", {
+          headers: {
+            Authorization: `Bearer ${token}`,
           },
-        );
+        });
 
         if (!response.ok) {
           throw new Error("Failed to fetch available teams");
@@ -56,26 +60,18 @@ const SurvivorPoolPage = () => {
   const handleSubmitPick = async () => {
     setError(null);
     try {
-      const token = localStorage.getItem("token");
-      const response = await fetch(
-        `${import.meta.env.VITE_BACKEND_URL}/api/survivor/picks`,
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${token}`,
-          },
-          body: JSON.stringify({ team: selectedTeam }),
-        },
-      );
+      const survivorPickData: SurvivorPickRequest = {
+        week: 1, // TODO: Get current week dynamically
+        team: selectedTeam,
+      };
 
-      if (!response.ok) {
-        throw new Error("Failed to submit survivor pick");
-      }
-
+      await submitSurvivorPick({ data: survivorPickData });
       alert("Survivor pick submitted successfully!");
+      setSelectedTeam(""); // Clear selection after successful submission
     } catch (error: unknown) {
-      if (error instanceof Error) {
+      if (axios.isAxiosError(error)) {
+        setError(error.response?.data?.message || error.message);
+      } else if (error instanceof Error) {
         setError(error.message);
       } else {
         setError("An unknown error occurred");
@@ -106,9 +102,9 @@ const SurvivorPoolPage = () => {
       <Button
         variant="contained"
         onClick={handleSubmitPick}
-        disabled={!selectedTeam}
+        disabled={!selectedTeam || isSubmitting}
       >
-        Submit Survivor Pick
+        {isSubmitting ? "Submitting..." : "Submit Survivor Pick"}
       </Button>
     </Box>
   );

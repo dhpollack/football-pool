@@ -5,12 +5,16 @@ Based on the design documents, here is a plan to create the Football Pool web ap
 *   [x] **Backend:** Go with the standard `net/http` package for the API and GORM with SQLite for the database.
 *   [x] **Frontend:** Vite.js + Tailwind CSS.
 
+### Data Sources
+
+*   **Game and schedule data**: ESPN's unofficial API will be used to source NFL game schedules and results. The `backend/scripts/fetch_games.sh` script can be used to fetch the data.
+
 ### Backend Development Plan
 
 1.  [x] **Database Schema:** I will design the database schema based on the requirements. This will include tables for:
     *   `users` (id, name, email, password_hash, role)
     *   `players` (id, user_id, name, address)
-    *   `games` (id, week, season, favorite_team, underdog_team, spread)
+    *   `games` (id, week, season, favorite_team, underdog_team, spread, start_time)
     *   `picks` (id, user_id, game_id, picked_team, rank, quick_pick)
     *   `results` (id, game_id, favorite_score, underdog_score, outcome)
     *   `survivor_picks` (id, user_id, week, team)
@@ -96,3 +100,8 @@ We will aim for high test coverage for both the backend and frontend to ensure c
         *   [ ] Submitting picks for a week.
         *   [ ] Viewing weekly and season results.
         *   [ ] Submitting survivor picks.
+
+### Frontend Build
+
+*   [x] Fix frontend build errors.
+*   [x] Fix frontend unit tests.

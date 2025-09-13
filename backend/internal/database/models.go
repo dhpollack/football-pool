@@ -1,68 +1,72 @@
 package database
 
-import "gorm.io/gorm"
+import (
+	"gorm.io/gorm"
+	"time"
+)
 
 // User represents a user of the application
 // swagger:model
 type User struct {
 	gorm.Model
-	Name     string `json:"name"`
-	Email    string `json:"email" gorm:"unique"`
-	Password string `json:"-"`
-	Role     string `json:"role"`
+	Name     string `validate:"required"`
+	Email    string `gorm:"unique" validate:"required,email"`
+	Password string `validate:"required"`
+	Role     string `validate:"required"`
+	Player   Player
 }
 
 // Player represents a player in the football pool
 // swagger:model
 type Player struct {
 	gorm.Model
-	UserID  uint   `json:"user_id" gorm:"unique"`
-	User    User   `json:"user"`
-	Name    string `json:"name"`
-	Address string `json:"address"`
+	UserID  uint `gorm:"unique"`
+	Name    string
+	Address string
 }
 
 // Game represents a single game in a week
 // swagger:model
 type Game struct {
 	gorm.Model
-	Week         int     `json:"week" gorm:"index:idx_week_season"`
-	Season       int     `json:"season" gorm:"index:idx_week_season"`
-	FavoriteTeam string  `json:"favorite_team"`
-	UnderdogTeam string  `json:"underdog_team"`
-	Spread       float32 `json:"spread"`
+	Week         int `gorm:"index:idx_week_season" validate:"required,ne=0"`
+	Season       int `gorm:"index:idx_week_season" validate:"required,ne=0"`
+	FavoriteTeam string `validate:"required"`
+	UnderdogTeam string `validate:"required"`
+	Spread       float32 `validate:"required,ne=0"`
+	StartTime    time.Time `validate:"required"`
 }
 
 // Pick represents a user's pick for a game
 // swagger:model
 type Pick struct {
 	gorm.Model
-	UserID    uint   `json:"user_id" gorm:"index:idx_user_game,unique"`
-	User      User   `json:"user"`
-	GameID    uint   `json:"game_id" gorm:"index:idx_user_game,unique"`
-	Game      Game   `json:"game"`
-	Picked    string `json:"picked"`
-	Rank      int    `json:"rank"`
-	QuickPick bool   `json:"quick_pick"`
+	UserID    uint `gorm:"index:idx_user_game,unique" validate:"required"`
+	User      User `validate:"-"`
+	GameID    uint `gorm:"index:idx_user_game,unique" validate:"required"`
+	Game      Game `validate:"-"`
+	Picked    string `validate:"required"`
+	Rank      int `validate:"required"`
+	QuickPick bool
 }
 
 // Result represents the result of a game
 // swagger:model
 type Result struct {
 	gorm.Model
-	GameID        uint   `json:"game_id" gorm:"unique"`
-	Game          Game   `json:"game"`
-	FavoriteScore int    `json:"favorite_score"`
-	UnderdogScore int    `json:"underdog_score"`
-	Outcome       string `json:"outcome"`
+	GameID        uint `gorm:"unique"`
+	Game          Game
+	FavoriteScore int
+	UnderdogScore int
+	Outcome       string
 }
 
 // SurvivorPick represents a user's survivor pick for a week
 // swagger:model
 type SurvivorPick struct {
 	gorm.Model
-	UserID uint   `json:"user_id" gorm:"index:idx_user_week,unique"`
-	User   User   `json:"user"`
-	Week   int    `json:"week" gorm:"index:idx_user_week,unique"`
-	Team   string `json:"team"`
+	UserID uint `gorm:"index:idx_user_week,unique"`
+	User   User
+	Week   int `gorm:"index:idx_user_week,unique"`
+	Team   string
 }

@@ -1,28 +1,66 @@
 import { render, screen, fireEvent } from "@testing-library/react";
 import { vi } from "vitest";
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import ProfilePage from "./ProfilePage";
 
+import { getGetProfileResponseMock } from "../services/api/user/user.msw";
+
+// Mock the React Query hooks
+const mockProfileData = getGetProfileResponseMock({
+  name: "John Doe",
+  address: "123 Main St",
+});
+
+const mockUpdateProfile = vi.fn();
+vi.mock("../services/api/user/user", () => ({
+  useGetProfile: () => ({
+    data: mockProfileData,
+    error: null,
+    isLoading: false,
+  }),
+  useUpdateProfile: () => ({
+    mutateAsync: mockUpdateProfile,
+    isPending: false,
+  }),
+}));
+
+// Mock alert
+global.alert = vi.fn();
+
 describe("ProfilePage", () => {
-  const mockProfile = { name: "John Doe", address: "123 Main St" };
+  let queryClient: QueryClient;
 
   beforeEach(() => {
-    global.fetch = vi.fn(() =>
-      Promise.resolve({
-        ok: true,
-        json: () => Promise.resolve(mockProfile),
-      }),
-    ) as vi.Mock;
+    queryClient = new QueryClient({
+      defaultOptions: {
+        queries: { retry: false },
+        mutations: { retry: false },
+      },
+    });
+    mockUpdateProfile.mockResolvedValue({});
   });
 
+  afterEach(() => {
+    vi.clearAllMocks();
+  });
+
+  const renderWithProviders = () => {
+    return render(
+      <QueryClientProvider client={queryClient}>
+        <ProfilePage />
+      </QueryClientProvider>,
+    );
+  };
+
   it("renders the profile", async () => {
-    render(<ProfilePage />);
+    renderWithProviders();
 
     expect(await screen.findByDisplayValue(/john doe/i)).toBeInTheDocument();
     expect(await screen.findByDisplayValue(/123 main st/i)).toBeInTheDocument();
   });
 
   it("updates the profile", async () => {
-    render(<ProfilePage />);
+    renderWithProviders();
 
     await screen.findByDisplayValue(/john doe/i);
 
@@ -31,12 +69,13 @@ describe("ProfilePage", () => {
     });
     fireEvent.click(screen.getByText(/save/i));
 
-    expect(global.fetch).toHaveBeenCalledWith(
-      "http://localhost:8080/api/users/me",
-      expect.objectContaining({
-        method: "PUT",
-        body: JSON.stringify({ name: "Jane Doe", address: "123 Main St" }),
-      }),
-    );
+    // Wait for the async operation to complete
+    await vi.waitFor(() => {
+      expect(mockUpdateProfile).toHaveBeenCalledWith({
+        data: { name: "Jane Doe", address: "123 Main St" },
+      });
+    });
+
+    expect(global.alert).toHaveBeenCalledWith("Profile updated successfully!");
   });
 });
