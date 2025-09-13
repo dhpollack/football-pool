@@ -1,8 +1,10 @@
+// Package database provides data models and database operations for the football pool application.
 package database
 
 import (
-	"gorm.io/gorm"
 	"time"
+
+	"gorm.io/gorm"
 )
 
 // User represents a user of the application
@@ -29,11 +31,11 @@ type Player struct {
 // swagger:model
 type Game struct {
 	gorm.Model
-	Week         int `gorm:"index:idx_week_season" validate:"required,ne=0"`
-	Season       int `gorm:"index:idx_week_season" validate:"required,ne=0"`
-	FavoriteTeam string `validate:"required"`
-	UnderdogTeam string `validate:"required"`
-	Spread       float32 `validate:"required,ne=0"`
+	Week         int       `gorm:"index:idx_week_season" validate:"required,ne=0"`
+	Season       int       `gorm:"index:idx_week_season" validate:"required,ne=0"`
+	FavoriteTeam string    `validate:"required"`
+	UnderdogTeam string    `validate:"required"`
+	Spread       float32   `validate:"required,ne=0"`
 	StartTime    time.Time `validate:"required"`
 }
 
@@ -41,12 +43,12 @@ type Game struct {
 // swagger:model
 type Pick struct {
 	gorm.Model
-	UserID    uint `gorm:"index:idx_user_game,unique" validate:"required"`
-	User      User `validate:"-"`
-	GameID    uint `gorm:"index:idx_user_game,unique" validate:"required"`
-	Game      Game `validate:"-"`
+	UserID    uint   `gorm:"index:idx_user_game,unique" validate:"required"`
+	User      User   `validate:"-"`
+	GameID    uint   `gorm:"index:idx_user_game,unique" validate:"required"`
+	Game      Game   `validate:"-"`
 	Picked    string `validate:"required"`
-	Rank      int `validate:"required"`
+	Rank      int    `validate:"required"`
 	QuickPick bool
 }
 

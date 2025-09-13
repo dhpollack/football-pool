@@ -1,16 +1,20 @@
+// Package database provides database connection and initialization for the football pool application.
 package database
 
 import (
 	"fmt"
+	"log/slog"
+
 	"gorm.io/driver/sqlite"
 	"gorm.io/gorm"
-	"log/slog"
 )
 
+// Database represents a database connection with GORM ORM.
 type Database struct {
 	db *gorm.DB
 }
 
+// New creates a new Database connection with the provided DSN.
 func New(dsn string) (*Database, error) {
 	slog.Debug("Attempting to connect to database with DSN:", "dsn", dsn)
 	database, err := gorm.Open(sqlite.Open(dsn), &gorm.Config{})
@@ -30,6 +34,7 @@ func New(dsn string) (*Database, error) {
 	return db, nil
 }
 
+// Migrate performs database schema migrations for all models.
 func (d *Database) Migrate() error {
 	slog.Debug("Attempting to migrate database schema...")
 	err := d.db.AutoMigrate(&User{}, &Player{}, &Game{}, &Pick{}, &Result{}, &SurvivorPick{})
@@ -41,6 +46,7 @@ func (d *Database) Migrate() error {
 	return nil
 }
 
+// GetDB returns the underlying GORM database connection.
 func (d *Database) GetDB() *gorm.DB {
 	return d.db
 }

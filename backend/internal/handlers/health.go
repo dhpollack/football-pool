@@ -1,3 +1,4 @@
+// Package handlers provides HTTP request handlers for health check operations in the football pool application.
 package handlers
 
 import (
@@ -8,6 +9,7 @@ import (
 	"gorm.io/gorm"
 )
 
+// HealthCheck provides a health endpoint for monitoring application status.
 func HealthCheck(db *gorm.DB) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		// Log health check requests for debugging

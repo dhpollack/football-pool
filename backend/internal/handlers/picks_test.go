@@ -15,6 +15,10 @@ import (
 	"github.com/david/football-pool/internal/database"
 )
 
+const (
+	pickFavorite = "favorite"
+)
+
 func TestGetPicks(t *testing.T) {
 	// Set up test database
 	db, err := database.New("file::memory:")
@@ -65,9 +69,9 @@ func TestGetPicks(t *testing.T) {
 			len(picks), 1)
 	}
 
-	if picks[0].Picked != "favorite" {
+	if picks[0].Picked != pickFavorite {
 		t.Errorf("handler returned unexpected body: got %v want %v",
-			picks[0].Picked, "favorite")
+			picks[0].Picked, pickFavorite)
 	}
 }
 
@@ -125,9 +129,9 @@ func TestSubmitPicks(t *testing.T) {
 			len(dbPicks), 1)
 	}
 
-	if dbPicks[0].Picked != "favorite" {
+	if dbPicks[0].Picked != pickFavorite {
 		t.Errorf("handler returned unexpected body: got %v want %v",
-			dbPicks[0].Picked, "favorite")
+			dbPicks[0].Picked, pickFavorite)
 	}
 }
 

@@ -1,3 +1,4 @@
+// Package handlers provides HTTP request handlers for result-related operations in the football pool application.
 package handlers
 
 import (
@@ -10,6 +11,13 @@ import (
 	"gorm.io/gorm"
 )
 
+const (
+	outcomeFavorite = "favorite"
+	outcomeUnderdog = "underdog"
+	outcomePush     = "push"
+)
+
+// GetWeeklyResults handles retrieval of game results for a specific week and season.
 func GetWeeklyResults(db *gorm.DB) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		weekStr := r.URL.Query().Get("week")
@@ -67,9 +75,9 @@ func GetWeeklyResults(db *gorm.DB) http.HandlerFunc {
 				continue
 			}
 
-			if (pick.Picked == "favorite" && result.Outcome == "favorite") || (pick.Picked == "underdog" && result.Outcome == "underdog") {
+			if (pick.Picked == outcomeFavorite && result.Outcome == outcomeFavorite) || (pick.Picked == outcomeUnderdog && result.Outcome == outcomeUnderdog) {
 				playerScores[pick.UserID] += float32(pick.Rank)
-			} else if result.Outcome == "push" {
+			} else if result.Outcome == outcomePush {
 				playerScores[pick.UserID] += float32(pick.Rank) / 2
 			}
 		}
@@ -95,6 +103,7 @@ func GetWeeklyResults(db *gorm.DB) http.HandlerFunc {
 	}
 }
 
+// SubmitResult handles submission of game results (admin only).
 func SubmitResult(db *gorm.DB) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		var result database.Result
@@ -109,12 +118,13 @@ func SubmitResult(db *gorm.DB) http.HandlerFunc {
 			return
 		}
 
-		if float32(result.FavoriteScore)-game.Spread > float32(result.UnderdogScore) {
-			result.Outcome = "favorite"
-		} else if float32(result.UnderdogScore) > float32(result.FavoriteScore)-game.Spread {
-			result.Outcome = "underdog"
-		} else {
-			result.Outcome = "push"
+		switch {
+		case float32(result.FavoriteScore)-game.Spread > float32(result.UnderdogScore):
+			result.Outcome = outcomeFavorite
+		case float32(result.UnderdogScore) > float32(result.FavoriteScore)-game.Spread:
+			result.Outcome = outcomeUnderdog
+		default:
+			result.Outcome = outcomePush
 		}
 
 		if dbResult := db.Create(&result); dbResult.Error != nil {
@@ -129,6 +139,7 @@ func SubmitResult(db *gorm.DB) http.HandlerFunc {
 	}
 }
 
+// GetSeasonResults handles retrieval of season-wide results and standings.
 func GetSeasonResults(db *gorm.DB) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		seasonStr := r.URL.Query().Get("season")
@@ -179,9 +190,9 @@ func GetSeasonResults(db *gorm.DB) http.HandlerFunc {
 				continue
 			}
 
-			if (pick.Picked == "favorite" && result.Outcome == "favorite") || (pick.Picked == "underdog" && result.Outcome == "underdog") {
+			if (pick.Picked == outcomeFavorite && result.Outcome == outcomeFavorite) || (pick.Picked == outcomeUnderdog && result.Outcome == outcomeUnderdog) {
 				playerScores[pick.UserID] += float32(pick.Rank)
-			} else if result.Outcome == "push" {
+			} else if result.Outcome == outcomePush {
 				playerScores[pick.UserID] += float32(pick.Rank) / 2
 			}
 		}

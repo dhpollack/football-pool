@@ -506,8 +506,8 @@ func TestAdminCreateUsers(t *testing.T) {
 		expectedCount  int
 	}{
 		{
-			name: "success",
-			body: fmt.Sprintf(`[{"name": "New User 1", "email": "new1@test.com", "password": "%s", "role": "user"}, {"name": "New User 2", "email": "new2@test.com", "password": "%s", "role": "admin"}]`, password, password),
+			name:           "success",
+			body:           fmt.Sprintf(`[{"name": "New User 1", "email": "new1@test.com", "password": "%s", "role": "user"}, {"name": "New User 2", "email": "new2@test.com", "password": "%s", "role": "admin"}]`, password, password),
 			expectedStatus: http.StatusCreated,
 			expectedCount:  2,
 		},

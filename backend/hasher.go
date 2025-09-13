@@ -1,7 +1,8 @@
+// Package main provides a utility for hashing passwords.
 package main
 
 import (
-	"fmt"
+	"log/slog"
 	"os"
 
 	"golang.org/x/crypto/bcrypt"
@@ -9,16 +10,16 @@ import (
 
 func main() {
 	if len(os.Args) < 2 {
-		fmt.Println("Usage: go run hasher.go <password>")
+		slog.Error("Usage: go run hasher.go <password>")
 		return
 	}
 
 	password := os.Args[1]
 	hashedPassword, err := bcrypt.GenerateFromPassword([]byte(password), 8)
 	if err != nil {
-		fmt.Println(err)
+		slog.Error("Error hashing password", "error", err)
 		return
 	}
 
-	fmt.Println(string(hashedPassword))
+	slog.Info(string(hashedPassword))
 }

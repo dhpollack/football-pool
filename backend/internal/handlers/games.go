@@ -1,7 +1,10 @@
+// Package handlers provides HTTP request handlers for game-related operations in the football pool application.
 package handlers
 
 import (
 	"encoding/json"
+	"errors"
+	"log/slog"
 	"net/http"
 	"strconv"
 	"strings"
@@ -11,6 +14,7 @@ import (
 	"gorm.io/gorm"
 )
 
+// CreateGame handles creation of new game records.
 func CreateGame(db *gorm.DB) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		w.Header().Set("Content-Type", "application/json")
@@ -51,6 +55,7 @@ func CreateGame(db *gorm.DB) http.HandlerFunc {
 	}
 }
 
+// GetGames handles retrieval of game records with optional week and season filtering.
 func GetGames(db *gorm.DB) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		w.Header().Set("Content-Type", "application/json")
@@ -59,14 +64,18 @@ func GetGames(db *gorm.DB) http.HandlerFunc {
 
 		if weekStr == "" || seasonStr == "" {
 			w.WriteHeader(http.StatusBadRequest)
-			json.NewEncoder(w).Encode(api.ErrorResponse{Error: "Week and season parameters are required"})
+			if err := json.NewEncoder(w).Encode(api.ErrorResponse{Error: "Week and season parameters are required"}); err != nil {
+				slog.Error("Error encoding error response", "error", err)
+			}
 			return
 		}
 
 		week, err := strconv.Atoi(weekStr)
 		if err != nil {
 			w.WriteHeader(http.StatusBadRequest)
-			json.NewEncoder(w).Encode(api.ErrorResponse{Error: "Invalid week parameter"})
+			if err := json.NewEncoder(w).Encode(api.ErrorResponse{Error: "Invalid week parameter"}); err != nil {
+				slog.Error("Error encoding error response", "error", err)
+			}
 			return
 		}
 
@@ -108,7 +117,7 @@ func GetGames(db *gorm.DB) http.HandlerFunc {
 	}
 }
 
-// AdminListGames lists all games with optional pagination and filtering
+// AdminListGames lists all games with optional pagination and filtering.
 func AdminListGames(db *gorm.DB) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		w.Header().Set("Content-Type", "application/json")
@@ -188,7 +197,7 @@ func AdminListGames(db *gorm.DB) http.HandlerFunc {
 	}
 }
 
-// UpdateGame updates a specific game
+// UpdateGame updates a specific game.
 func UpdateGame(db *gorm.DB) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		w.Header().Set("Content-Type", "application/json")
@@ -207,7 +216,7 @@ func UpdateGame(db *gorm.DB) http.HandlerFunc {
 		// Check if game exists
 		var existingGame database.Game
 		if err := db.First(&existingGame, id).Error; err != nil {
-			if err == gorm.ErrRecordNotFound {
+			if errors.Is(err, gorm.ErrRecordNotFound) {
 				w.WriteHeader(http.StatusNotFound)
 				json.NewEncoder(w).Encode(api.ErrorResponse{Error: "Game not found"})
 			} else {
@@ -249,7 +258,7 @@ func UpdateGame(db *gorm.DB) http.HandlerFunc {
 	}
 }
 
-// DeleteGame deletes a specific game
+// DeleteGame deletes a specific game.
 func DeleteGame(db *gorm.DB) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		w.Header().Set("Content-Type", "application/json")
@@ -268,7 +277,7 @@ func DeleteGame(db *gorm.DB) http.HandlerFunc {
 		// Check if game exists
 		var game database.Game
 		if err := db.First(&game, id).Error; err != nil {
-			if err == gorm.ErrRecordNotFound {
+			if errors.Is(err, gorm.ErrRecordNotFound) {
 				w.WriteHeader(http.StatusNotFound)
 				json.NewEncoder(w).Encode(api.ErrorResponse{Error: "Game not found"})
 			} else {

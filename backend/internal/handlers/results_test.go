@@ -131,12 +131,13 @@ func TestGetWeeklyResults(t *testing.T) {
 
 	// Check the scores for each user
 	for _, result := range weeklyResults {
-		if result.PlayerName == "User 1" {
+		switch result.PlayerName {
+		case "User 1":
 			if result.Score != 16 {
 				t.Errorf("handler returned wrong score for User 1: got %v want %v",
 					result.Score, 16)
 			}
-		} else if result.PlayerName == "User 2" {
+		case "User 2":
 			if result.Score != 5 {
 				t.Errorf("handler returned wrong score for User 2: got %v want %v",
 					result.Score, 5)
@@ -217,12 +218,13 @@ func TestGetSeasonResults(t *testing.T) {
 
 	// Check the scores for each user
 	for _, result := range seasonResults {
-		if result.PlayerName == "User 1" {
+		switch result.PlayerName {
+		case "User 1":
 			if result.Score != 16 {
 				t.Errorf("handler returned wrong score for User 1: got %v want %v",
 					result.Score, 16)
 			}
-		} else if result.PlayerName == "User 2" {
+		case "User 2":
 			if result.Score != 5 {
 				t.Errorf("handler returned wrong score for User 2: got %v want %v",
 					result.Score, 5)
