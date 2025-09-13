@@ -138,9 +138,10 @@ func AdminListUsers(db *gorm.DB) http.HandlerFunc {
 		// Parse query parameters
 		query := db.Model(&database.User{}).Preload("Player")
 
-		// Search by email or name
+		// Search by email or player name
 		if search := r.URL.Query().Get("search"); search != "" {
-			query = query.Where("email LIKE ? OR name LIKE ?", "%"+search+"%", "%"+search+"%")
+			query = query.Joins("LEFT JOIN players ON users.id = players.user_id").
+				Where("users.email LIKE ? OR players.name LIKE ?", "%"+search+"%", "%"+search+"%")
 		}
 
 		// Filter by role
