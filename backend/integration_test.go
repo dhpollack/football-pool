@@ -1,3 +1,4 @@
+// Package main provides integration tests for the football pool backend API.
 package main
 
 import (
@@ -7,7 +8,6 @@ import (
 	"net/http"
 	"net/http/httptest"
 	"testing"
-
 	"time"
 
 	"github.com/david/football-pool/internal/api"
@@ -82,7 +82,9 @@ func createUser(t *testing.T, ts *httptest.Server, name, email, password, role s
 	if resp.StatusCode != http.StatusCreated {
 		bodyBytes, _ := io.ReadAll(resp.Body)
 		t.Logf("Create user response: %s", string(bodyBytes))
-		resp.Body.Close()
+		if err := resp.Body.Close(); err != nil {
+			t.Logf("Error closing response body: %v", err)
+		}
 	}
 
 	assert.Equal(t, http.StatusCreated, resp.StatusCode)

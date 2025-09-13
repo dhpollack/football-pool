@@ -1,3 +1,4 @@
+// Package server provides HTTP server configuration and routing for the football pool application.
 package server
 
 import (
@@ -5,6 +6,7 @@ import (
 	"log/slog"
 	"net/http"
 	"os"
+	"time"
 
 	"github.com/david/football-pool/internal/auth"
 	"github.com/david/football-pool/internal/database"
@@ -12,11 +14,13 @@ import (
 	"github.com/rs/cors"
 )
 
+// Server represents the HTTP server with database and authentication components.
 type Server struct {
 	db   *database.Database
 	auth *auth.Auth
 }
 
+// NewServer creates a new Server instance with the provided database connection.
 func NewServer(db *database.Database) *Server {
 	return &Server{
 		db:   db,
@@ -24,6 +28,7 @@ func NewServer(db *database.Database) *Server {
 	}
 }
 
+// NewRouter creates and configures the HTTP router with all application routes.
 func (s *Server) NewRouter() http.Handler {
 	c := cors.New(cors.Options{
 		AllowedOrigins:   []string{"http://localhost:13000", "https://localhost:13001", "http://localhost:5173"},
@@ -101,6 +106,7 @@ func (s *Server) NewRouter() http.Handler {
 	return c.Handler(mux)
 }
 
+// Start begins listening for HTTP requests and serves the application.
 func (s *Server) Start() {
 	port := os.Getenv("FOOTBALL_POOL_PORT")
 	if port == "" {
@@ -118,7 +124,15 @@ func (s *Server) Start() {
 	slog.Info(fmt.Sprintf("Starting server on http://%s", addr))
 	slog.Debug(fmt.Sprintf("Health endpoint: http://%s/api/health", addr))
 
-	if err := http.ListenAndServe(addr, s.NewRouter()); err != nil {
+	server := &http.Server{
+		Addr:         addr,
+		Handler:      s.NewRouter(),
+		ReadTimeout:  10 * time.Second,
+		WriteTimeout: 10 * time.Second,
+		IdleTimeout:  60 * time.Second,
+	}
+
+	if err := server.ListenAndServe(); err != nil {
 		panic(err)
 	}
 }

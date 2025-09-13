@@ -121,7 +121,7 @@ func TestLogin(t *testing.T) {
 
 	// Check the token is valid
 	claims := &Claims{}
-	tkn, err := jwt.ParseWithClaims(cookie.Value, claims, func(token *jwt.Token) (interface{}, error) {
+	tkn, err := jwt.ParseWithClaims(cookie.Value, claims, func(_ *jwt.Token) (interface{}, error) {
 		return jwtKey, nil
 	})
 	if err != nil {
@@ -144,7 +144,7 @@ func TestMiddleware(t *testing.T) {
 	auth := NewAuth(db)
 
 	// Create a handler to be protected by the middleware
-	protectedHandler := http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+	protectedHandler := http.HandlerFunc(func(w http.ResponseWriter, _ *http.Request) {
 		w.WriteHeader(http.StatusOK)
 	})
 
@@ -190,7 +190,7 @@ func TestAdminMiddleware(t *testing.T) {
 	auth := NewAuth(db)
 
 	// Create a handler to be protected by the middleware
-	protectedHandler := http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+	protectedHandler := http.HandlerFunc(func(w http.ResponseWriter, _ *http.Request) {
 		w.WriteHeader(http.StatusOK)
 	})
 
@@ -386,7 +386,7 @@ func TestMiddlewareErrors(t *testing.T) {
 	auth := NewAuth(db)
 
 	// Create a handler to be protected by the middleware
-	protectedHandler := http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+	protectedHandler := http.HandlerFunc(func(w http.ResponseWriter, _ *http.Request) {
 		w.WriteHeader(http.StatusOK)
 	})
 
@@ -460,7 +460,7 @@ func TestAdminMiddlewareErrors(t *testing.T) {
 	auth := NewAuth(db)
 
 	// Create a handler to be protected by the middleware
-	protectedHandler := http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+	protectedHandler := http.HandlerFunc(func(w http.ResponseWriter, _ *http.Request) {
 		w.WriteHeader(http.StatusOK)
 	})
 

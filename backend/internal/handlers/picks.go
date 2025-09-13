@@ -1,7 +1,9 @@
+// Package handlers provides HTTP request handlers for pick-related operations in the football pool application.
 package handlers
 
 import (
 	"encoding/json"
+	"errors"
 	"net/http"
 	"strconv"
 	"strings"
@@ -12,6 +14,7 @@ import (
 	"gorm.io/gorm"
 )
 
+// GetPicks handles retrieval of user picks for the current authenticated user.
 func GetPicks(db *gorm.DB) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		w.Header().Set("Content-Type", "application/json")
@@ -44,6 +47,7 @@ func GetPicks(db *gorm.DB) http.HandlerFunc {
 	}
 }
 
+// SubmitPicks handles submission of user picks for games.
 func SubmitPicks(db *gorm.DB) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		w.Header().Set("Content-Type", "application/json")
@@ -90,6 +94,7 @@ func SubmitPicks(db *gorm.DB) http.HandlerFunc {
 	}
 }
 
+// AdminSubmitPicks handles administrative submission of picks for any user.
 func AdminSubmitPicks(db *gorm.DB) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		w.Header().Set("Content-Type", "application/json")
@@ -125,7 +130,7 @@ func AdminSubmitPicks(db *gorm.DB) http.HandlerFunc {
 	}
 }
 
-// AdminListPicks lists all picks with optional filtering
+// AdminListPicks lists all picks with optional filtering.
 func AdminListPicks(db *gorm.DB) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		w.Header().Set("Content-Type", "application/json")
@@ -219,7 +224,7 @@ func AdminListPicks(db *gorm.DB) http.HandlerFunc {
 	}
 }
 
-// AdminGetPicksByWeek gets all picks for a specific week
+// AdminGetPicksByWeek gets all picks for a specific week.
 func AdminGetPicksByWeek(db *gorm.DB) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		w.Header().Set("Content-Type", "application/json")
@@ -268,7 +273,7 @@ func AdminGetPicksByWeek(db *gorm.DB) http.HandlerFunc {
 	}
 }
 
-// AdminGetPicksByUser gets all picks for a specific user
+// AdminGetPicksByUser gets all picks for a specific user.
 func AdminGetPicksByUser(db *gorm.DB) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		w.Header().Set("Content-Type", "application/json")
@@ -312,7 +317,7 @@ func AdminGetPicksByUser(db *gorm.DB) http.HandlerFunc {
 	}
 }
 
-// AdminDeletePick deletes a specific pick
+// AdminDeletePick deletes a specific pick.
 func AdminDeletePick(db *gorm.DB) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		w.Header().Set("Content-Type", "application/json")
@@ -331,7 +336,7 @@ func AdminDeletePick(db *gorm.DB) http.HandlerFunc {
 		// Check if pick exists
 		var pick database.Pick
 		if err := db.First(&pick, id).Error; err != nil {
-			if err == gorm.ErrRecordNotFound {
+			if errors.Is(err, gorm.ErrRecordNotFound) {
 				w.WriteHeader(http.StatusNotFound)
 				json.NewEncoder(w).Encode(api.ErrorResponse{Error: "Pick not found"})
 			} else {

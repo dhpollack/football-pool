@@ -1,3 +1,4 @@
+// Package handlers provides HTTP request handlers for survivor pool operations in the football pool application.
 package handlers
 
 import (
@@ -10,6 +11,7 @@ import (
 	"gorm.io/gorm"
 )
 
+// GetSurvivorPicks handles retrieval of survivor pool picks for the current user.
 func GetSurvivorPicks(db *gorm.DB) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		email := r.Context().Value(auth.EmailKey).(string)
@@ -37,6 +39,7 @@ func GetSurvivorPicks(db *gorm.DB) http.HandlerFunc {
 	}
 }
 
+// SubmitSurvivorPick handles submission of survivor pool picks.
 func SubmitSurvivorPick(db *gorm.DB) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		email := r.Context().Value(auth.EmailKey).(string)

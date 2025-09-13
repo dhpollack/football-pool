@@ -1,7 +1,9 @@
+// Package handlers provides HTTP request handlers for user-related operations in the football pool application.
 package handlers
 
 import (
 	"encoding/json"
+	"errors"
 	"log/slog"
 	"net/http"
 	"strconv"
@@ -14,6 +16,7 @@ import (
 	"gorm.io/gorm"
 )
 
+// GetProfile handles retrieval of the current user's profile information.
 func GetProfile(db *gorm.DB) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		w.Header().Set("Content-Type", "application/json")
@@ -42,6 +45,7 @@ func GetProfile(db *gorm.DB) http.HandlerFunc {
 	}
 }
 
+// UpdateProfile handles updating of the current user's profile information.
 func UpdateProfile(db *gorm.DB) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		w.Header().Set("Content-Type", "application/json")
@@ -86,6 +90,7 @@ func UpdateProfile(db *gorm.DB) http.HandlerFunc {
 	}
 }
 
+// DeleteUser handles administrative deletion of user accounts.
 func DeleteUser(db *gorm.DB) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		w.Header().Set("Content-Type", "application/json")
@@ -125,7 +130,7 @@ func DeleteUser(db *gorm.DB) http.HandlerFunc {
 	}
 }
 
-// AdminListUsers lists all users with pagination and search
+// AdminListUsers lists all users with pagination and search.
 func AdminListUsers(db *gorm.DB) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		w.Header().Set("Content-Type", "application/json")
@@ -209,7 +214,7 @@ func AdminListUsers(db *gorm.DB) http.HandlerFunc {
 	}
 }
 
-// AdminGetUser gets details for a specific user
+// AdminGetUser gets details for a specific user.
 func AdminGetUser(db *gorm.DB) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		w.Header().Set("Content-Type", "application/json")
@@ -228,7 +233,7 @@ func AdminGetUser(db *gorm.DB) http.HandlerFunc {
 		// Get user with player details
 		var user database.User
 		if err := db.Preload("Player").First(&user, id).Error; err != nil {
-			if err == gorm.ErrRecordNotFound {
+			if errors.Is(err, gorm.ErrRecordNotFound) {
 				w.WriteHeader(http.StatusNotFound)
 				json.NewEncoder(w).Encode(api.ErrorResponse{Error: "User not found"})
 			} else {
@@ -258,7 +263,7 @@ func AdminGetUser(db *gorm.DB) http.HandlerFunc {
 	}
 }
 
-// AdminUpdateUser updates a specific user
+// AdminUpdateUser updates a specific user.
 func AdminUpdateUser(db *gorm.DB) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		w.Header().Set("Content-Type", "application/json")
@@ -277,7 +282,7 @@ func AdminUpdateUser(db *gorm.DB) http.HandlerFunc {
 		// Check if user exists
 		var existingUser database.User
 		if err := db.First(&existingUser, id).Error; err != nil {
-			if err == gorm.ErrRecordNotFound {
+			if errors.Is(err, gorm.ErrRecordNotFound) {
 				w.WriteHeader(http.StatusNotFound)
 				json.NewEncoder(w).Encode(api.ErrorResponse{Error: "User not found"})
 			} else {
@@ -322,25 +327,7 @@ func AdminUpdateUser(db *gorm.DB) http.HandlerFunc {
 
 		// Update player info if provided
 		if updateData.PlayerName != "" || updateData.PlayerAddress != "" {
-			var player database.Player
-			if err := db.Where("user_id = ?", id).First(&player).Error; err != nil {
-				// Create player if doesn't exist
-				player = database.Player{
-					UserID:  uint(id),
-					Name:    updateData.PlayerName,
-					Address: updateData.PlayerAddress,
-				}
-				db.Create(&player)
-			} else {
-				// Update existing player
-				if updateData.PlayerName != "" {
-					player.Name = updateData.PlayerName
-				}
-				if updateData.PlayerAddress != "" {
-					player.Address = updateData.PlayerAddress
-				}
-				db.Save(&player)
-			}
+			updatePlayerInfo(db, uint(id), updateData.PlayerName, updateData.PlayerAddress)
 		}
 
 		// Return updated user as API response
@@ -353,7 +340,7 @@ func AdminUpdateUser(db *gorm.DB) http.HandlerFunc {
 	}
 }
 
-// AdminCreateUsers creates multiple users
+// AdminCreateUsers creates multiple users.
 func AdminCreateUsers(db *gorm.DB) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		w.Header().Set("Content-Type", "application/json")
@@ -429,5 +416,28 @@ func AdminCreateUsers(db *gorm.DB) http.HandlerFunc {
 
 		w.WriteHeader(http.StatusCreated)
 		_ = json.NewEncoder(w).Encode(userResponses)
+	}
+}
+
+// updatePlayerInfo updates or creates player information for a user.
+func updatePlayerInfo(db *gorm.DB, userID uint, playerName, playerAddress string) {
+	var player database.Player
+	if err := db.Where("user_id = ?", userID).First(&player).Error; err != nil {
+		// Create player if doesn't exist
+		player = database.Player{
+			UserID:  userID,
+			Name:    playerName,
+			Address: playerAddress,
+		}
+		db.Create(&player)
+	} else {
+		// Update existing player
+		if playerName != "" {
+			player.Name = playerName
+		}
+		if playerAddress != "" {
+			player.Address = playerAddress
+		}
+		db.Save(&player)
 	}
 }

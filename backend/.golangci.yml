@@ -1,0 +1,49 @@
+version: "2"
+formatters:
+  enable:
+    - gofmt
+    # - gci
+    - goimports
+  settings:
+    goimports:
+      local-prefixes:
+        - github.com/dhpollack/football-pool
+linters:
+  enable:
+    - dogsled
+    #- dupl
+    - errcheck
+    - errorlint
+    - exhaustive
+    - forbidigo
+    - goconst
+    - gocritic
+    - gocyclo
+    - godot
+    - goheader
+    - gomodguard
+    #- gosec
+    - govet
+    - importas
+    - ineffassign
+    - makezero
+    - misspell
+    - nakedret
+    - nestif
+    - nolintlint
+    - prealloc
+    - predeclared
+    - promlinter
+    - revive
+    - staticcheck
+    - unparam
+    - unused
+    - sloglint
+  settings:
+    errcheck:
+      check-type-assertions: false
+      check-blank: false
+      exclude-functions:
+        - (io.ReadCloser).Close
+        - (*encoding/json.Decoder).Decode
+        - (*encoding/json.Encoder).Encode

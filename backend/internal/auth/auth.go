@@ -1,3 +1,4 @@
+// Package auth provides authentication and authorization middleware for the football pool application.
 package auth
 
 import (
@@ -22,19 +23,23 @@ var validate = validator.New()
 
 var jwtKey = []byte("my_secret_key")
 
+// Auth provides authentication and authorization services.
 type Auth struct {
 	db *database.Database
 }
 
+// NewAuth creates a new Auth instance with the provided database connection.
 func NewAuth(db *database.Database) *Auth {
 	return &Auth{db: db}
 }
 
+// Claims represents JWT token claims for user authentication.
 type Claims struct {
 	Email string `json:"email"`
 	jwt.RegisteredClaims
 }
 
+// Login handles user authentication and issues JWT tokens.
 func (a *Auth) Login(w http.ResponseWriter, r *http.Request) {
 	var creds api.LoginRequest
 	if err := json.NewDecoder(r.Body).Decode(&creds); err != nil {
@@ -102,6 +107,7 @@ func (a *Auth) Login(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
+// Register handles new user registration.
 func (a *Auth) Register(w http.ResponseWriter, r *http.Request) {
 	var creds api.RegisterRequest
 	// Read the request body into a byte slice for logging
@@ -185,7 +191,8 @@ func (a *Auth) Register(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
-func (a *Auth) Logout(w http.ResponseWriter, r *http.Request) {
+// Logout handles user logout by clearing authentication cookies.
+func (a *Auth) Logout(w http.ResponseWriter, _ *http.Request) {
 	http.SetCookie(w, &http.Cookie{
 		Name:    "token",
 		Value:   "",
@@ -193,6 +200,7 @@ func (a *Auth) Logout(w http.ResponseWriter, r *http.Request) {
 	})
 }
 
+// Middleware provides authentication middleware for HTTP handlers.
 func (a *Auth) Middleware(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		tknStr := ""
@@ -208,60 +216,19 @@ func (a *Auth) Middleware(next http.Handler) http.Handler {
 
 		// If not in Authorization header, check for token in cookie
 		if tknStr == "" {
-			c, err := r.Cookie("token")
-			if err != nil {
-				w.Header().Set("Content-Type", "application/json")
-				if err == http.ErrNoCookie {
-					w.WriteHeader(http.StatusUnauthorized)
-					if err := json.NewEncoder(w).Encode(api.ErrorResponse{
-						Error: "Unauthorized: No token provided",
-					}); err != nil {
-						slog.Debug("Error encoding error response:", "error", err)
-					}
-					return
-				}
-				w.WriteHeader(http.StatusBadRequest)
-				if err := json.NewEncoder(w).Encode(api.ErrorResponse{
-					Error: "Bad Request: Invalid token cookie",
-				}); err != nil {
-					slog.Debug("Error encoding error response:", "error", err)
-				}
+			tknStr = a.getTokenFromCookie(w, r)
+			if tknStr == "" {
 				return
 			}
-			tknStr = c.Value
 		}
 
 		claims := &Claims{}
 
-		tkn, err := jwt.ParseWithClaims(tknStr, claims, func(token *jwt.Token) (interface{}, error) {
+		tkn, err := jwt.ParseWithClaims(tknStr, claims, func(_ *jwt.Token) (interface{}, error) {
 			return jwtKey, nil
 		})
 		if err != nil {
-			w.Header().Set("Content-Type", "application/json")
-			if errors.Is(err, jwt.ErrSignatureInvalid) {
-				w.WriteHeader(http.StatusUnauthorized)
-				if err := json.NewEncoder(w).Encode(api.ErrorResponse{
-					Error: "Unauthorized: Invalid token signature",
-				}); err != nil {
-					slog.Debug("Error encoding error response:", "error", err)
-				}
-				return
-			}
-			if errors.Is(err, jwt.ErrTokenExpired) {
-				w.WriteHeader(http.StatusUnauthorized)
-				if err := json.NewEncoder(w).Encode(api.ErrorResponse{
-					Error: "Unauthorized: Token expired",
-				}); err != nil {
-					slog.Debug("Error encoding error response:", "error", err)
-				}
-				return
-			}
-			w.WriteHeader(http.StatusBadRequest)
-			if err := json.NewEncoder(w).Encode(api.ErrorResponse{
-				Error: "Bad Request: Invalid token",
-			}); err != nil {
-				slog.Debug("Error encoding error response:", "error", err)
-			}
+			a.handleJWTError(w, err)
 			return
 		}
 		if !tkn.Valid {
@@ -280,6 +247,7 @@ func (a *Auth) Middleware(next http.Handler) http.Handler {
 	})
 }
 
+// AdminMiddleware provides authorization middleware for admin-only endpoints.
 func (a *Auth) AdminMiddleware(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		email := r.Context().Value(EmailKey).(string)
@@ -309,4 +277,58 @@ func (a *Auth) AdminMiddleware(next http.Handler) http.Handler {
 
 		next.ServeHTTP(w, r)
 	})
+}
+
+// getTokenFromCookie extracts the token from the cookie and handles any errors.
+func (a *Auth) getTokenFromCookie(w http.ResponseWriter, r *http.Request) string {
+	c, err := r.Cookie("token")
+	if err != nil {
+		w.Header().Set("Content-Type", "application/json")
+		if errors.Is(err, http.ErrNoCookie) {
+			w.WriteHeader(http.StatusUnauthorized)
+			if err := json.NewEncoder(w).Encode(api.ErrorResponse{
+				Error: "Unauthorized: No token provided",
+			}); err != nil {
+				slog.Debug("Error encoding error response:", "error", err)
+			}
+			return ""
+		}
+		w.WriteHeader(http.StatusBadRequest)
+		if err := json.NewEncoder(w).Encode(api.ErrorResponse{
+			Error: "Bad Request: Invalid token cookie",
+		}); err != nil {
+			slog.Debug("Error encoding error response:", "error", err)
+		}
+		return ""
+	}
+	return c.Value
+}
+
+// handleJWTError handles JWT validation errors with appropriate HTTP responses.
+func (a *Auth) handleJWTError(w http.ResponseWriter, err error) {
+	w.Header().Set("Content-Type", "application/json")
+	if errors.Is(err, jwt.ErrSignatureInvalid) {
+		w.WriteHeader(http.StatusUnauthorized)
+		if err := json.NewEncoder(w).Encode(api.ErrorResponse{
+			Error: "Unauthorized: Invalid token signature",
+		}); err != nil {
+			slog.Debug("Error encoding error response:", "error", err)
+		}
+		return
+	}
+	if errors.Is(err, jwt.ErrTokenExpired) {
+		w.WriteHeader(http.StatusUnauthorized)
+		if err := json.NewEncoder(w).Encode(api.ErrorResponse{
+			Error: "Unauthorized: Token expired",
+		}); err != nil {
+			slog.Debug("Error encoding error response:", "error", err)
+		}
+		return
+	}
+	w.WriteHeader(http.StatusBadRequest)
+	if err := json.NewEncoder(w).Encode(api.ErrorResponse{
+		Error: "Bad Request: Invalid token",
+	}); err != nil {
+		slog.Debug("Error encoding error response:", "error", err)
+	}
 }

@@ -1,3 +1,4 @@
+// Package api provides data conversion utilities between database models and API responses.
 package api
 
 import (
@@ -7,7 +8,7 @@ import (
 
 var validate = validator.New()
 
-// UserToResponse converts a database User to a UserResponse
+// UserToResponse converts a database User to a UserResponse.
 func UserToResponse(user database.User) UserResponse {
 	response := UserResponse{
 		Id:        user.ID,
@@ -31,7 +32,7 @@ func UserToResponse(user database.User) UserResponse {
 	return response
 }
 
-// UserWithStatsFromUser converts a database User to a UserWithStats
+// UserWithStatsFromUser converts a database User to a UserWithStats.
 func UserWithStatsFromUser(user database.User, pickCount, totalWins int) UserWithStats {
 	stats := UserWithStats{
 		Id:        user.ID,
@@ -44,7 +45,7 @@ func UserWithStatsFromUser(user database.User, pickCount, totalWins int) UserWit
 		UpdatedAt: user.UpdatedAt,
 	}
 
-	// Include player if it exists
+	// Include player if it exists.
 	if user.Player.ID != 0 {
 		stats.Player = &PlayerResponse{
 			Id:      user.Player.ID,
@@ -57,7 +58,7 @@ func UserWithStatsFromUser(user database.User, pickCount, totalWins int) UserWit
 	return stats
 }
 
-// UserFromRequest converts a UserRequest to a database User
+// UserFromRequest converts a UserRequest to a database User.
 func UserFromRequest(req UserRequest) (database.User, error) {
 	user := database.User{
 		Name:  req.Name,
@@ -77,7 +78,7 @@ func UserFromRequest(req UserRequest) (database.User, error) {
 	return user, nil
 }
 
-// GameToResponse converts a database Game to a GameResponse
+// GameToResponse converts a database Game to a GameResponse.
 func GameToResponse(game database.Game) GameResponse {
 	return GameResponse{
 		Id:           game.ID,
@@ -92,7 +93,7 @@ func GameToResponse(game database.Game) GameResponse {
 	}
 }
 
-// GameFromRequest converts a GameRequest to a database Game
+// GameFromRequest converts a GameRequest to a database Game.
 func GameFromRequest(req GameRequest) (database.Game, error) {
 	game := database.Game{
 		Week:         req.Week,
@@ -110,7 +111,7 @@ func GameFromRequest(req GameRequest) (database.Game, error) {
 	return game, nil
 }
 
-// PickToResponse converts a database Pick to a PickResponse
+// PickToResponse converts a database Pick to a PickResponse.
 func PickToResponse(pick database.Pick) PickResponse {
 	response := PickResponse{
 		Id:        pick.ID,
@@ -138,7 +139,7 @@ func PickToResponse(pick database.Pick) PickResponse {
 	return response
 }
 
-// PickFromRequest converts a PickRequest to a database Pick
+// PickFromRequest converts a PickRequest to a database Pick.
 func PickFromRequest(req PickRequest) (database.Pick, error) {
 	pick := database.Pick{
 		GameID:    req.GameId,
@@ -168,7 +169,7 @@ func PickFromRequest(req PickRequest) (database.Pick, error) {
 	return pick, nil
 }
 
-// PicksFromRequest converts multiple PickRequest to database Picks
+// PicksFromRequest converts multiple PickRequest to database Picks.
 func PicksFromRequest(reqs []PickRequest) ([]database.Pick, error) {
 	picks := make([]database.Pick, len(reqs))
 	for i, req := range reqs {
@@ -181,7 +182,7 @@ func PicksFromRequest(reqs []PickRequest) ([]database.Pick, error) {
 	return picks, nil
 }
 
-// ResultToResponse converts a database Result to a ResultResponse
+// ResultToResponse converts a database Result to a ResultResponse.
 func ResultToResponse(result database.Result) ResultResponse {
 	response := ResultResponse{
 		Id:            result.ID,
@@ -202,7 +203,7 @@ func ResultToResponse(result database.Result) ResultResponse {
 	return response
 }
 
-// ResultFromRequest converts a ResultRequest to a database Result
+// ResultFromRequest converts a ResultRequest to a database Result.
 func ResultFromRequest(req ResultRequest) database.Result {
 	return database.Result{
 		GameID:        req.GameId,
@@ -212,7 +213,7 @@ func ResultFromRequest(req ResultRequest) database.Result {
 	}
 }
 
-// SurvivorPickToResponse converts a database SurvivorPick to a SurvivorPickResponse
+// SurvivorPickToResponse converts a database SurvivorPick to a SurvivorPickResponse.
 func SurvivorPickToResponse(pick database.SurvivorPick) SurvivorPickResponse {
 	response := SurvivorPickResponse{
 		Id:        pick.ID,
@@ -232,7 +233,7 @@ func SurvivorPickToResponse(pick database.SurvivorPick) SurvivorPickResponse {
 	return response
 }
 
-// SurvivorPickFromRequest converts a SurvivorPickRequest to a database SurvivorPick
+// SurvivorPickFromRequest converts a SurvivorPickRequest to a database SurvivorPick.
 func SurvivorPickFromRequest(req SurvivorPickRequest) database.SurvivorPick {
 	pick := database.SurvivorPick{
 		Week: req.Week,
@@ -247,7 +248,7 @@ func SurvivorPickFromRequest(req SurvivorPickRequest) database.SurvivorPick {
 	return pick
 }
 
-// PlayerToResponse converts a database Player to a PlayerResponse
+// PlayerToResponse converts a database Player to a PlayerResponse.
 func PlayerToResponse(player database.Player) PlayerResponse {
 	return PlayerResponse{
 		Id:      player.ID,
@@ -257,7 +258,7 @@ func PlayerToResponse(player database.Player) PlayerResponse {
 	}
 }
 
-// PlayerFromRequest converts a PlayerRequest to a database Player
+// PlayerFromRequest converts a PlayerRequest to a database Player.
 func PlayerFromRequest(req PlayerRequest, userID uint) database.Player {
 	return database.Player{
 		UserID:  userID,
