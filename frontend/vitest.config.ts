@@ -9,7 +9,7 @@ export default defineConfig({
     setupFiles: "./src/setupTests.ts",
     include: ["src/**/*.test.{ts,tsx}", "tests/**/*.test.{ts,tsx}"],
     coverage: {
-      reporter: ["text", "html"],
+      reporter: ["text", "html", "json"],
       include: ["src/pages/**/*", "src/components/**/*"],
     },
   },
