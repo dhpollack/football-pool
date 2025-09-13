@@ -13,16 +13,16 @@ import {
   Alert,
 } from "@mui/material";
 
-interface Column {
+interface Column<T = unknown> {
   id: string;
   label: string;
   align?: "left" | "center" | "right";
-  format?: (value: any) => string | React.ReactNode;
+  format?: (value: T) => string | React.ReactNode;
 }
 
-interface AdminDataTableProps {
-  columns: Column[];
-  data: any[];
+interface AdminDataTableProps<T = unknown> {
+  columns: Column<T>[];
+  data: T[];
   loading?: boolean;
   error?: string | null;
   page: number;
@@ -33,7 +33,7 @@ interface AdminDataTableProps {
   emptyMessage?: string;
 }
 
-const AdminDataTable = ({
+const AdminDataTable = <T extends object>({
   columns,
   data,
   loading = false,
@@ -44,7 +44,7 @@ const AdminDataTable = ({
   onPageChange,
   onRowsPerPageChange,
   emptyMessage = "No data available",
-}: AdminDataTableProps) => {
+}: AdminDataTableProps<T>) => {
   const handleChangePage = (_: unknown, newPage: number) => {
     onPageChange(newPage);
   };
@@ -108,13 +108,18 @@ const AdminDataTable = ({
                 </TableCell>
               </TableRow>
             ) : (
-              data.map((row) => (
-                <TableRow hover key={row.id || JSON.stringify(row)}>
+              data.map((row, index) => (
+                <TableRow
+                  hover
+                  key={
+                    "id" in row ? String((row as { id: unknown }).id) : index
+                  }
+                >
                   {columns.map((column) => {
-                    const value = row[column.id];
+                    const value = (row as Record<string, unknown>)[column.id];
                     return (
                       <TableCell key={column.id} align={column.align || "left"}>
-                        {column.format ? column.format(row) : value}
+                        {column.format ? column.format(row) : String(value)}
                       </TableCell>
                     );
                   })}

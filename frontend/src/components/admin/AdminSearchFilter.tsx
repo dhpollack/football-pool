@@ -19,8 +19,8 @@ interface FilterField {
 interface AdminSearchFilterProps {
   searchTerm: string;
   onSearchChange: (value: string) => void;
-  filters: Record<string, any>;
-  onFilterChange: (name: string, value: any) => void;
+  filters: Record<string, string | number | undefined>;
+  onFilterChange: (name: string, value: string | number) => void;
   filterFields?: FilterField[];
   onClearFilters?: () => void;
   placeholder?: string;

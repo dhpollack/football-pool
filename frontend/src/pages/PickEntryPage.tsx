@@ -62,7 +62,7 @@ const PickEntryPage = () => {
       });
       setPicks(initialPicks);
     }
-  }, [sortedGames]);
+  }, [sortedGames, games.length]);
 
   // Handle games fetch error
   React.useEffect(() => {

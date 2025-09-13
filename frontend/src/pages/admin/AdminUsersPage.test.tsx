@@ -2,6 +2,7 @@ import { render, screen } from "@testing-library/react";
 import AdminUsersPage from "./AdminUsersPage";
 import { useAdminListUsers } from "../../services/api/user/user";
 import { getAdminListUsersResponseMock } from "../../services/api/user/user.msw";
+import type { User } from "../../services/model";
 
 // Mock the custom hooks
 vi.mock("../../services/api/user/user", async (importOriginal) => {
@@ -15,13 +16,21 @@ vi.mock("../../services/api/user/user", async (importOriginal) => {
 
 // Mock the admin components with simple implementations
 vi.mock("../../components/admin/AdminDataTable", () => ({
-  default: ({ data, loading, error }: any) => (
+  default: ({
+    data,
+    loading,
+    error,
+  }: {
+    data?: User[];
+    loading: boolean;
+    error?: string | null;
+  }) => (
     <div data-testid="admin-data-table">
       {loading && <div>Loading...</div>}
       {error && <div>Error: {error}</div>}
       {data && (
         <div>
-          {data.map((user: any) => (
+          {data.map((user) => (
             <div key={user.id} data-testid="user-row">
               <span data-testid="user-email">{user.email}</span>
               <span data-testid="user-name">{user.name}</span>
@@ -45,7 +54,7 @@ vi.mock("../../components/admin/AdminActionButtons", () => ({
 }));
 
 vi.mock("../../components/admin/AdminConfirmDialog", () => ({
-  default: ({ open }: any) =>
+  default: ({ open }: { open: boolean }) =>
     open && <div data-testid="confirm-dialog">Confirm Dialog</div>,
 }));
 

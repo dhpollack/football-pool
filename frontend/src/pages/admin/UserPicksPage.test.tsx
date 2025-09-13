@@ -33,13 +33,21 @@ const mockUseAdminGetUser = vi.mocked(useAdminGetUser);
 
 // Mock the admin components with simple implementations
 vi.mock("../../components/admin/AdminDataTable", () => ({
-  default: ({ data, loading, error }: any) => (
+  default: ({
+    data,
+    loading,
+    error,
+  }: {
+    data?: unknown[];
+    loading?: boolean;
+    error?: string | null;
+  }) => (
     <div data-testid="admin-data-table">
       {loading && <div>Loading...</div>}
       {error && <div>Error: {error}</div>}
       {data && (
         <div>
-          {data.map((pick: any) => (
+          {data.map((pick) => (
             <div key={pick.id} data-testid="pick-row">
               <span data-testid="pick-game">
                 {pick.game
@@ -67,8 +75,16 @@ vi.mock("react-router-dom", async () => {
 
 describe("UserPicksPage", () => {
   const mockRefetch = vi.fn();
+  let queryClient: QueryClient;
 
   beforeEach(() => {
+    queryClient = new QueryClient({
+      defaultOptions: {
+        queries: { retry: false },
+        mutations: { retry: false },
+      },
+    });
+
     mockUseAdminGetPicksByUser.mockReturnValue({
       data: null,
       error: null,
@@ -85,17 +101,6 @@ describe("UserPicksPage", () => {
 
   afterEach(() => {
     vi.clearAllMocks();
-  });
-
-  let queryClient: QueryClient;
-
-  beforeEach(() => {
-    queryClient = new QueryClient({
-      defaultOptions: {
-        queries: { retry: false },
-        mutations: { retry: false },
-      },
-    });
   });
 
   const renderWithRouter = () => {

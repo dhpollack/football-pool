@@ -2,6 +2,7 @@ package handlers
 
 import (
 	"encoding/json"
+	"log/slog"
 	"net/http"
 	"strconv"
 	"strings"
@@ -11,7 +12,6 @@ import (
 	"github.com/david/football-pool/internal/database"
 	"golang.org/x/crypto/bcrypt"
 	"gorm.io/gorm"
-	"log/slog"
 )
 
 func GetProfile(db *gorm.DB) http.HandlerFunc {
@@ -365,7 +365,6 @@ func AdminCreateUsers(db *gorm.DB) http.HandlerFunc {
 			return
 		}
 
-		var users []database.User
 		var userResponses []api.UserResponse
 
 		tx := db.Begin()
@@ -419,7 +418,6 @@ func AdminCreateUsers(db *gorm.DB) http.HandlerFunc {
 				return
 			}
 			user.Player = player
-			users = append(users, user)
 			userResponses = append(userResponses, api.UserToResponse(user))
 		}
 

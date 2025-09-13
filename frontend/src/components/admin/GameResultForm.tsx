@@ -117,7 +117,10 @@ const GameResultForm = ({
     }
   };
 
-  const handleInputChange = (field: keyof ResultRequest, value: any) => {
+  const handleInputChange = (
+    field: keyof ResultRequest,
+    value: string | number,
+  ) => {
     setFormData((prev) => ({
       ...prev,
       [field]: value,

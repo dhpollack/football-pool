@@ -8,7 +8,7 @@ import {
   CircularProgress,
   Alert,
 } from "@mui/material";
-import { ReactNode } from "react";
+import type { ReactNode } from "react";
 
 interface AdminConfirmDialogProps {
   open: boolean;

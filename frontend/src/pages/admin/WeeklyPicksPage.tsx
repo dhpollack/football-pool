@@ -14,11 +14,11 @@ import {
 import { Home, EmojiEvents, Search } from "@mui/icons-material";
 import { useAdminGetPicksByWeek } from "../../services/api/picks/picks";
 import AdminDataTable from "../../components/admin/AdminDataTable";
-import { PickResponse } from "../../services/model";
+import type { PickResponse } from "../../services/model";
 
 const WeeklyPicksPage = () => {
   const { week: weekParam } = useParams<{ week: string }>();
-  const [week, setWeek] = useState(weekParam ? parseInt(weekParam) : 1);
+  const [week, setWeek] = useState(weekParam ? parseInt(weekParam, 10) : 1);
   const [searchTerm, setSearchTerm] = useState("");
   const [season, setSeason] = useState(2024); // Default season
 
@@ -38,15 +38,15 @@ const WeeklyPicksPage = () => {
   const picks = picksData?.picks || [];
 
   const handleWeekChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    const newWeek = parseInt(event.target.value);
-    if (!isNaN(newWeek) && newWeek > 0) {
+    const newWeek = parseInt(event.target.value, 10);
+    if (!Number.isNaN(newWeek) && newWeek > 0) {
       setWeek(newWeek);
     }
   };
 
   const handleSeasonChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    const newSeason = parseInt(event.target.value);
-    if (!isNaN(newSeason) && newSeason > 0) {
+    const newSeason = parseInt(event.target.value, 10);
+    if (!Number.isNaN(newSeason) && newSeason > 0) {
       setSeason(newSeason);
     }
   };
@@ -90,10 +90,10 @@ const WeeklyPicksPage = () => {
       id: "picked",
       label: "Pick",
       align: "center" as const,
-      format: (picked: string) => (
+      format: (pick: PickResponse) => (
         <Chip
-          label={picked}
-          color={picked === "favorite" ? "primary" : "secondary"}
+          label={pick.picked}
+          color={pick.picked === "favorite" ? "primary" : "secondary"}
           size="small"
         />
       ),
@@ -115,7 +115,8 @@ const WeeklyPicksPage = () => {
     {
       id: "created_at",
       label: "Submitted",
-      format: (dateString: string) => new Date(dateString).toLocaleDateString(),
+      format: (pick: PickResponse) =>
+        new Date(pick.created_at).toLocaleDateString(),
     },
   ];
 

@@ -16,7 +16,7 @@ import { Home, People } from "@mui/icons-material";
 import { useAdminGetUser } from "../../services/api/user/user";
 import { useAdminGetPicksByUser } from "../../services/api/picks/picks";
 import AdminDataTable from "../../components/admin/AdminDataTable";
-import { UserResponse, PickResponse } from "../../services/model";
+import type { UserResponse, PickResponse } from "../../services/model";
 
 interface TabPanelProps {
   children?: React.ReactNode;
@@ -93,10 +93,10 @@ const UserDetailsPage = () => {
       id: "picked",
       label: "Pick",
       align: "center" as const,
-      format: (picked: string) => (
+      format: (pick: PickResponse) => (
         <Chip
-          label={picked}
-          color={picked === "favorite" ? "primary" : "secondary"}
+          label={pick.picked}
+          color={pick.picked === "favorite" ? "primary" : "secondary"}
           size="small"
         />
       ),
@@ -104,7 +104,8 @@ const UserDetailsPage = () => {
     {
       id: "created_at",
       label: "Submitted",
-      format: (dateString: string) => new Date(dateString).toLocaleDateString(),
+      format: (pick: PickResponse) =>
+        new Date(pick.created_at).toLocaleDateString(),
     },
   ];
 

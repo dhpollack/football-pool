@@ -1,4 +1,4 @@
-import { test, expect } from "@playwright/test";
+import { test, expect, type Page } from "@playwright/test";
 import { E2E_CONFIG } from "./e2e.config";
 
 // Test user credentials
@@ -9,7 +9,7 @@ const TEST_USER = {
 };
 
 // Helper function to set auth state in localStorage
-async function setAuthState(page: any, email: string, token: string) {
+async function _setAuthState(page: Page, email: string, token: string) {
   await page.evaluate(
     ({ email, token }) => {
       const authData = {
@@ -48,186 +48,182 @@ async function cleanupTestUser(email: string) {
 }
 
 // Optimized helper functions for authentication flow
-class AuthFlowHelpers {
-  static async registerUser(
-    page: any,
-    user: typeof TEST_USER,
-    expectSuccess = true,
-  ) {
-    // Only navigate if not already on register page
-    if (!page.url().endsWith("/register")) {
-      await page.goto("/register");
-    }
-
-    // Capture all console errors and network responses
-    page.on("console", (msg) => {
-      if (msg.type() === "error") {
-        console.log("Console error:", msg.text());
-      }
-    });
-
-    page.on("response", (response) => {
-      if (response.url().includes("/api/register")) {
-        console.log(
-          "Register response:",
-          response.status(),
-          response.statusText(),
-          response.url(),
-        );
-        response
-          .json()
-          .then((data) => {
-            console.log("Register response data:", JSON.stringify(data));
-          })
-          .catch(() => {
-            console.log("Register response text:", response.text());
-          });
-      }
-    });
-
-    // Fill registration form
-    await page.fill(E2E_CONFIG.SELECTORS.REGISTER.NAME, user.name);
-    await page.fill(E2E_CONFIG.SELECTORS.REGISTER.EMAIL, user.email);
-    await page.fill(E2E_CONFIG.SELECTORS.REGISTER.PASSWORD, user.password);
-
-    // Submit form
-    await page.click(E2E_CONFIG.SELECTORS.REGISTER.SUBMIT);
-
-    if (expectSuccess) {
-      // Wait for redirect to login page (successful registration)
-      await expect(page).toHaveURL("/login");
-      await expect(
-        page.locator(E2E_CONFIG.SELECTORS.LOGIN.EMAIL),
-      ).toBeVisible();
-    } else {
-      // For failed registrations, should stay on register or go to login
-      const currentUrl = page.url();
-      expect(
-        currentUrl.endsWith("/register") || currentUrl.endsWith("/login"),
-      ).toBeTruthy();
-    }
+async function _registerUser(
+  page: Page,
+  user: typeof TEST_USER,
+  expectSuccess = true,
+) {
+  // Only navigate if not already on register page
+  if (!page.url().endsWith("/register")) {
+    await page.goto("/register");
   }
 
-  static async loginUser(page: any, email: string, password: string) {
-    // Only navigate if not already on login page
-    if (!page.url().endsWith("/login")) {
-      await page.goto("/login");
+  // Capture all console errors and network responses
+  page.on("console", (msg) => {
+    if (msg.type() === "error") {
+      console.log("Console error:", msg.text());
     }
+  });
 
-    // Capture network requests and console logs
-    page.on("response", (response) => {
-      const url = response.url();
-      if (url.includes("/api/login")) {
-        console.log(
-          "Login response:",
-          response.status(),
-          response.statusText(),
-          url,
-        );
-        response
-          .json()
-          .then((data) => {
-            console.log("Login response data:", JSON.stringify(data));
-            // Check if the response has the expected structure
-            if (data && data.token && data.user) {
-              console.log("Login successful - token and user received");
-
-              // Store the token in localStorage for the React app
-              page
-                .evaluate((tokenData) => {
-                  const authData = {
-                    auth: {
-                      token: tokenData.token,
-                      type: "Bearer",
-                      expire: Date.now() + 3600000,
-                      refreshToken: null,
-                    },
-                    userState: tokenData.user,
-                    refresh: null,
-                    user: null,
-                  };
-                  localStorage.setItem("_auth", JSON.stringify(authData));
-                }, data)
-                .catch((err) => {
-                  console.log("Failed to store auth in localStorage:", err);
-                });
-            } else {
-              console.log(
-                "Login response missing expected fields:",
-                Object.keys(data),
-              );
-            }
-          })
-          .catch((error) => {
-            console.log("Login response parsing error:", error);
-            console.log("Login response text:", response.text());
-          });
-      } else if (url.includes("/api/") && response.status() === 401) {
-        console.log("401 Unauthorized on:", url);
-      }
-    });
-
-    page.on("console", (msg) => {
-      if (msg.type() === "error") {
-        console.log("Console error:", msg.text());
-      }
-    });
-
-    // Fill login form
-    await page.fill(E2E_CONFIG.SELECTORS.LOGIN.EMAIL, email);
-    await page.fill(E2E_CONFIG.SELECTORS.LOGIN.PASSWORD, password);
-
-    // Submit form
-    await page.click(E2E_CONFIG.SELECTORS.LOGIN.SUBMIT);
-
-    // Wait for navigation or state change
-    await page.waitForTimeout(3000);
-    const currentUrl = page.url();
-    console.log("Current URL after login attempt:", currentUrl);
-
-    // Check if we're still on login page (indicating failure)
-    if (currentUrl.endsWith("/login")) {
-      console.log("Login failed - still on login page");
-      // Check for error messages
-      const errorVisible = await page
-        .locator(E2E_CONFIG.SELECTORS.LOGIN.ERROR)
-        .isVisible();
-      console.log("Error message visible:", errorVisible);
-      if (errorVisible) {
-        const errorText = await page
-          .locator(E2E_CONFIG.SELECTORS.LOGIN.ERROR)
-          .textContent();
-        console.log("Error message:", errorText);
-      }
-      throw new Error("Login failed - user not redirected to home page");
+  page.on("response", (response) => {
+    if (response.url().includes("/api/register")) {
+      console.log(
+        "Register response:",
+        response.status(),
+        response.statusText(),
+        response.url(),
+      );
+      response
+        .json()
+        .then((data) => {
+          console.log("Register response data:", JSON.stringify(data));
+        })
+        .catch(() => {
+          console.log("Register response text:", response.text());
+        });
     }
+  });
 
-    // Wait for redirect to home page
-    await expect(page).toHaveURL("/");
-    await expect(page.locator("h4")).toBeVisible();
-  }
+  // Fill registration form
+  await page.fill(E2E_CONFIG.SELECTORS.REGISTER.NAME, user.name);
+  await page.fill(E2E_CONFIG.SELECTORS.REGISTER.EMAIL, user.email);
+  await page.fill(E2E_CONFIG.SELECTORS.REGISTER.PASSWORD, user.password);
 
-  static async logoutUser(page: any) {
-    // Wait for user menu button to appear (indicates user is authenticated)
-    await expect(
-      page.locator(E2E_CONFIG.SELECTORS.USER_MENU.BUTTON),
-    ).toBeVisible({ timeout: 5000 });
+  // Submit form
+  await page.click(E2E_CONFIG.SELECTORS.REGISTER.SUBMIT);
 
-    // Click user menu button
-    await page.click(E2E_CONFIG.SELECTORS.USER_MENU.BUTTON);
-
-    // Wait for menu to appear
-    await expect(page.locator(E2E_CONFIG.SELECTORS.USER_MENU.MENU)).toBeVisible(
-      { timeout: 3000 },
-    );
-
-    // Click logout button
-    await page.click(E2E_CONFIG.SELECTORS.USER_MENU.LOGOUT_BUTTON);
-
-    // Wait for redirect to login page
+  if (expectSuccess) {
+    // Wait for redirect to login page (successful registration)
     await expect(page).toHaveURL("/login");
     await expect(page.locator(E2E_CONFIG.SELECTORS.LOGIN.EMAIL)).toBeVisible();
+  } else {
+    // For failed registrations, should stay on register or go to login
+    const currentUrl = page.url();
+    expect(
+      currentUrl.endsWith("/register") || currentUrl.endsWith("/login"),
+    ).toBeTruthy();
   }
+}
+
+async function _loginUser(page: Page, email: string, password: string) {
+  // Only navigate if not already on login page
+  if (!page.url().endsWith("/login")) {
+    await page.goto("/login");
+  }
+
+  // Capture network requests and console logs
+  page.on("response", (response) => {
+    const url = response.url();
+    if (url.includes("/api/login")) {
+      console.log(
+        "Login response:",
+        response.status(),
+        response.statusText(),
+        url,
+      );
+      response
+        .json()
+        .then((data) => {
+          console.log("Login response data:", JSON.stringify(data));
+          // Check if the response has the expected structure
+          if (data?.token && data.user) {
+            console.log("Login successful - token and user received");
+
+            // Store the token in localStorage for the React app
+            page
+              .evaluate((tokenData) => {
+                const authData = {
+                  auth: {
+                    token: tokenData.token,
+                    type: "Bearer",
+                    expire: Date.now() + 3600000,
+                    refreshToken: null,
+                  },
+                  userState: tokenData.user,
+                  refresh: null,
+                  user: null,
+                };
+                localStorage.setItem("_auth", JSON.stringify(authData));
+              }, data)
+              .catch((err) => {
+                console.log("Failed to store auth in localStorage:", err);
+              });
+          } else {
+            console.log(
+              "Login response missing expected fields:",
+              Object.keys(data),
+            );
+          }
+        })
+        .catch((error) => {
+          console.log("Login response parsing error:", error);
+          console.log("Login response text:", response.text());
+        });
+    } else if (url.includes("/api/") && response.status() === 401) {
+      console.log("401 Unauthorized on:", url);
+    }
+  });
+
+  page.on("console", (msg) => {
+    if (msg.type() === "error") {
+      console.log("Console error:", msg.text());
+    }
+  });
+
+  // Fill login form
+  await page.fill(E2E_CONFIG.SELECTORS.LOGIN.EMAIL, email);
+  await page.fill(E2E_CONFIG.SELECTORS.LOGIN.PASSWORD, password);
+
+  // Submit form
+  await page.click(E2E_CONFIG.SELECTORS.LOGIN.SUBMIT);
+
+  // Wait for navigation or state change
+  await page.waitForTimeout(3000);
+  const currentUrl = page.url();
+  console.log("Current URL after login attempt:", currentUrl);
+
+  // Check if we're still on login page (indicating failure)
+  if (currentUrl.endsWith("/login")) {
+    console.log("Login failed - still on login page");
+    // Check for error messages
+    const errorVisible = await page
+      .locator(E2E_CONFIG.SELECTORS.LOGIN.ERROR)
+      .isVisible();
+    console.log("Error message visible:", errorVisible);
+    if (errorVisible) {
+      const errorText = await page
+        .locator(E2E_CONFIG.SELECTORS.LOGIN.ERROR)
+        .textContent();
+      console.log("Error message:", errorText);
+    }
+    throw new Error("Login failed - user not redirected to home page");
+  }
+
+  // Wait for redirect to home page
+  await expect(page).toHaveURL("/");
+  await expect(page.locator("h4")).toBeVisible();
+}
+
+async function _logoutUser(page: Page) {
+  // Wait for user menu button to appear (indicates user is authenticated)
+  await expect(page.locator(E2E_CONFIG.SELECTORS.USER_MENU.BUTTON)).toBeVisible(
+    { timeout: 5000 },
+  );
+
+  // Click user menu button
+  await page.click(E2E_CONFIG.SELECTORS.USER_MENU.BUTTON);
+
+  // Wait for menu to appear
+  await expect(page.locator(E2E_CONFIG.SELECTORS.USER_MENU.MENU)).toBeVisible({
+    timeout: 3000,
+  });
+
+  // Click logout button
+  await page.click(E2E_CONFIG.SELECTORS.USER_MENU.LOGOUT_BUTTON);
+
+  // Wait for redirect to login page
+  await expect(page).toHaveURL("/login");
+  await expect(page.locator(E2E_CONFIG.SELECTORS.LOGIN.EMAIL)).toBeVisible();
 }
 
 test.describe("Authentication Flow", () => {
@@ -409,7 +405,7 @@ test.describe("Authentication Flow", () => {
           .json()
           .then((data) => {
             console.log("Admin login response data:", JSON.stringify(data));
-            if (data && data.token && data.user) {
+            if (data?.token && data.user) {
               console.log("Admin login successful - token and user received");
 
               // Store the token in localStorage for the React app

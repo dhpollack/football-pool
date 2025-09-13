@@ -3,12 +3,10 @@ import AdminUsersPage from "./AdminUsersPage";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { setupServer } from "msw/node";
 import {
-  getAdminListUsersMockHandler,
   getAdminListUsersMockHandler200,
   getAdminListUsersMockHandler401,
   getAdminUpdateUserMockHandler,
   getDeleteUserMockHandler,
-  getAdminListUsersResponseMock,
   getCreateUsersMockHandler201,
 } from "../../services/api/user/user.msw";
 
@@ -112,8 +110,8 @@ describe("AdminUsersPage (Integration)", () => {
         const url = new URL(info.request.url);
         const page = url.searchParams.get("page");
         const limit = url.searchParams.get("limit");
-        currentPage = parseInt(page || "1");
-        const currentLimit = parseInt(limit || "10");
+        currentPage = parseInt(page || "1", 10);
+        const currentLimit = parseInt(limit || "10", 10);
 
         // Create 15 users for realistic pagination
         const totalUsers = 15;

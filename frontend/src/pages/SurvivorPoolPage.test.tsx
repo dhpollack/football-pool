@@ -29,7 +29,7 @@ describe("SurvivorPoolPage", () => {
 
   it("renders available teams", async () => {
     // Mock fetch response for teams
-    (global.fetch as any).mockResolvedValueOnce({
+    (global.fetch as jest.Mock).mockResolvedValueOnce({
       ok: true,
       json: async () => [
         { id: 1, name: "Team A" },
@@ -54,7 +54,7 @@ describe("SurvivorPoolPage", () => {
 
   it("submits a survivor pick", async () => {
     // Mock fetch response for teams
-    (global.fetch as any).mockResolvedValueOnce({
+    (global.fetch as jest.Mock).mockResolvedValueOnce({
       ok: true,
       json: async () => [
         { id: 1, name: "Team A" },

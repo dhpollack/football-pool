@@ -62,7 +62,7 @@ const GameForm = ({ open, onClose, onSuccess, game }: GameFormProps) => {
       });
     }
     setErrors({});
-  }, [game, open]);
+  }, [game]);
 
   const validateForm = (): boolean => {
     const newErrors: Partial<Record<keyof GameRequest, string>> = {};
@@ -128,7 +128,10 @@ const GameForm = ({ open, onClose, onSuccess, game }: GameFormProps) => {
     }
   };
 
-  const handleInputChange = (field: keyof GameRequest, value: any) => {
+  const handleInputChange = (
+    field: keyof GameRequest,
+    value: string | number,
+  ) => {
     setFormData((prev) => ({
       ...prev,
       [field]: value,

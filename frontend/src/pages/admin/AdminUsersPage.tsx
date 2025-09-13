@@ -18,13 +18,15 @@ import AdminDataTable from "../../components/admin/AdminDataTable";
 import AdminSearchFilter from "../../components/admin/AdminSearchFilter";
 import AdminActionButtons from "../../components/admin/AdminActionButtons";
 import AdminConfirmDialog from "../../components/admin/AdminConfirmDialog";
-import { UserWithStats, UserRequest } from "../../services/model";
+import type { UserWithStats, UserRequest } from "../../services/model";
 
 const AdminUsersPage = () => {
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(10);
   const [searchTerm, setSearchTerm] = useState("");
-  const [filters, setFilters] = useState<Record<string, any>>({});
+  const [filters, setFilters] = useState<
+    Record<string, string | number | undefined>
+  >({});
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
   const [editDialogOpen, setEditDialogOpen] = useState(false);
   const [selectedUser, setSelectedUser] = useState<UserWithStats | null>(null);
@@ -72,7 +74,7 @@ const AdminUsersPage = () => {
     setPage(0);
   };
 
-  const handleFilterChange = (name: string, value: any) => {
+  const handleFilterChange = (name: string, value: string | number) => {
     setFilters((prev) => ({ ...prev, [name]: value }));
     setPage(0);
   };

@@ -2,6 +2,7 @@ import { render, screen, fireEvent, waitFor } from "@testing-library/react";
 import { vi } from "vitest";
 import { BrowserRouter } from "react-router-dom";
 import UserMenu from "./UserMenu";
+import type { AuthUser } from "../lib/auth";
 
 // Mock the useAuth hook
 vi.mock("../hooks/useAuth", () => ({
@@ -23,7 +24,7 @@ const TestWrapper = ({
   user = mockUser,
 }: {
   children: React.ReactNode;
-  user?: any;
+  user?: AuthUser;
 }) => {
   (useAuth as jest.Mock).mockReturnValue({
     user,

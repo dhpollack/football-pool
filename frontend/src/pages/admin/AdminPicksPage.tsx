@@ -16,13 +16,15 @@ import { useQueryClient } from "@tanstack/react-query";
 import AdminDataTable from "../../components/admin/AdminDataTable";
 import AdminSearchFilter from "../../components/admin/AdminSearchFilter";
 import AdminConfirmDialog from "../../components/admin/AdminConfirmDialog";
-import { PickResponse } from "../../services/model";
+import type { PickResponse } from "../../services/model";
 
 const AdminPicksPage = () => {
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(25);
   const [searchTerm, setSearchTerm] = useState("");
-  const [filters, setFilters] = useState<Record<string, any>>({});
+  const [filters, setFilters] = useState<
+    Record<string, string | number | undefined>
+  >({});
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
   const [selectedPick, setSelectedPick] = useState<PickResponse | null>(null);
   const [snackbarOpen, setSnackbarOpen] = useState(false);
@@ -74,7 +76,7 @@ const AdminPicksPage = () => {
     setPage(0);
   };
 
-  const handleFilterChange = (name: string, value: any) => {
+  const handleFilterChange = (name: string, value: string | number) => {
     setFilters((prev) => ({ ...prev, [name]: value }));
     setPage(0);
   };
@@ -101,7 +103,7 @@ const AdminPicksPage = () => {
 
       setSnackbarMessage("Pick deleted successfully");
       setSnackbarOpen(true);
-    } catch (error) {
+    } catch (_error) {
       setSnackbarMessage("Error deleting pick");
       setSnackbarOpen(true);
     }
