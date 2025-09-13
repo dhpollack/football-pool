@@ -19,10 +19,12 @@ on:
 jobs:
   test:
     runs-on: ubuntu-latest
-
     defaults:
       run:
         working-directory: ./frontend
+    strategy:
+      matrix:
+        target: ["chrome", "firefox", "webkit"]
 
     steps:
       - uses: actions/checkout@v3
@@ -50,6 +52,6 @@ jobs:
         run: npx playwright install --with-deps
 
       - name: Run E2E tests
-        run: npm run test:e2e
+        run: npm run test:e2e:${{ matrix.target }}
         env:
-          CI: "1"
+          CI: "true"
