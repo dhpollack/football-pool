@@ -1,7 +1,7 @@
 localhost {
     route {
         handle /api/* {
-            reverse_proxy http://backend:8080
+            reverse_proxy {$VITE_BACKEND_URL:http://backend:8080}
         }
 
         handle {
