@@ -64,61 +64,73 @@ function App() {
                 <Route
                   path="profile"
                   element={
-                    <QueryErrorBoundary>
-                      <Suspense fallback={<LoadingSpinner />}>
-                        <ProfilePage />
-                      </Suspense>
-                    </QueryErrorBoundary>
+                    <ProtectedRoute>
+                      <QueryErrorBoundary>
+                        <Suspense fallback={<LoadingSpinner />}>
+                          <ProfilePage />
+                        </Suspense>
+                      </QueryErrorBoundary>
+                    </ProtectedRoute>
                   }
                 />
                 <Route
                   path="picks"
                   element={
-                    <QueryErrorBoundary>
-                      <Suspense fallback={<LoadingSpinner />}>
-                        <PickEntryPage />
-                      </Suspense>
-                    </QueryErrorBoundary>
+                    <ProtectedRoute>
+                      <QueryErrorBoundary>
+                        <Suspense fallback={<LoadingSpinner />}>
+                          <PickEntryPage />
+                        </Suspense>
+                      </QueryErrorBoundary>
+                    </ProtectedRoute>
                   }
                 />
                 <Route
                   path="results"
                   element={
-                    <QueryErrorBoundary>
-                      <Suspense fallback={<LoadingSpinner />}>
-                        <ResultEntryPage />
-                      </Suspense>
-                    </QueryErrorBoundary>
+                    <ProtectedRoute requireAdmin>
+                      <QueryErrorBoundary>
+                        <Suspense fallback={<LoadingSpinner />}>
+                          <ResultEntryPage />
+                        </Suspense>
+                      </QueryErrorBoundary>
+                    </ProtectedRoute>
                   }
                 />
                 <Route
                   path="weekly-results"
                   element={
-                    <QueryErrorBoundary>
-                      <Suspense fallback={<LoadingSpinner />}>
-                        <WeeklyResultsPage />
-                      </Suspense>
-                    </QueryErrorBoundary>
+                    <ProtectedRoute>
+                      <QueryErrorBoundary>
+                        <Suspense fallback={<LoadingSpinner />}>
+                          <WeeklyResultsPage />
+                        </Suspense>
+                      </QueryErrorBoundary>
+                    </ProtectedRoute>
                   }
                 />
                 <Route
                   path="overall-results"
                   element={
-                    <QueryErrorBoundary>
-                      <Suspense fallback={<LoadingSpinner />}>
-                        <OverallResultsPage />
-                      </Suspense>
-                    </QueryErrorBoundary>
+                    <ProtectedRoute>
+                      <QueryErrorBoundary>
+                        <Suspense fallback={<LoadingSpinner />}>
+                          <OverallResultsPage />
+                        </Suspense>
+                      </QueryErrorBoundary>
+                    </ProtectedRoute>
                   }
                 />
                 <Route
                   path="survivor-pool"
                   element={
-                    <QueryErrorBoundary>
-                      <Suspense fallback={<LoadingSpinner />}>
-                        <SurvivorPoolPage />
-                      </Suspense>
-                    </QueryErrorBoundary>
+                    <ProtectedRoute>
+                      <QueryErrorBoundary>
+                        <Suspense fallback={<LoadingSpinner />}>
+                          <SurvivorPoolPage />
+                        </Suspense>
+                      </QueryErrorBoundary>
+                    </ProtectedRoute>
                   }
                 />
               </Route>

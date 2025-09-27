@@ -7,6 +7,11 @@ docker-compose-up:
 docker-compose-down:
     docker compose down
 
+build-push-local:
+    # This builds the amd image local and the arm image on the orangepi5-max-ubuntu
+    just frontend build-push-local
+    just backend build-push-local
+
 _claude:
     claude
 

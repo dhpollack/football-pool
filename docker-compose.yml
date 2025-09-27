@@ -25,6 +25,8 @@ services:
       - "13001:443"
     #volumes:
     #  - ./frontend:/app
+    environment:
+      - VITE_BACKEND_URL=http://backend:8080
     depends_on:
       backend:
         condition: service_healthy

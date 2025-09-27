@@ -24,3 +24,7 @@ format:
 
 test *args="-cover -coverprofile=coverage.txt ./...":
     go test {{ args }}
+
+build-push-local:
+    # This builds the amd image local and the arm image on the orangepi5-max-ubuntu
+    docker buildx build --builder multiarch-builder --platform linux/arm64,linux/amd64 -t 192.168.8.1:5000/local/football-pool/backend:dev . --output type=registry,registry.insecure=true

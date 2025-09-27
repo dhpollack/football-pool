@@ -1,12 +1,14 @@
 package handlers
 
 import (
+	"bufio"
 	"bytes"
 	"encoding/json"
 	"fmt"
 	"net/http"
 	"net/http/httptest"
 	"os"
+	"strings"
 	"testing"
 	"time"
 
@@ -321,4 +323,64 @@ func TestDeleteGame(t *testing.T) {
 			t.Errorf("handler returned wrong status code: got %v want %v", status, http.StatusConflict)
 		}
 	})
+}
+
+func TestCreateGameFromSeed(t *testing.T) {
+	db, err := database.New("file::memory:")
+	if err != nil {
+		t.Fatalf("Failed to connect to database: %v", err)
+	}
+	gormDB := db.GetDB()
+	handler := CreateGame(gormDB)
+
+	// Read and process the seed file
+	file, err := os.Open("../../seed/games.jsonl")
+	if err != nil {
+		t.Fatalf("Failed to open seed file: %v", err)
+	}
+	defer file.Close()
+
+	var lines []string
+	scanner := bufio.NewScanner(file)
+	for scanner.Scan() {
+		line := strings.TrimSpace(scanner.Text())
+		if len(line) > 0 {
+			lines = append(lines, line)
+		}
+	}
+	if err := scanner.Err(); err != nil {
+		t.Fatalf("Failed to read seed file: %v", err)
+	}
+	seedBody := "[" + strings.Join(lines, ",") + "]"
+
+	// Let's try to unmarshal it here to see if it's valid
+	var gameRequests []api.GameRequest
+	if err := json.Unmarshal([]byte(seedBody), &gameRequests); err != nil {
+		t.Fatalf("Failed to unmarshal seed body: %v", err)
+	}
+
+	expectedCount := len(lines)
+
+	req, _ := http.NewRequest("POST", "/api/admin/games/create", bytes.NewBuffer([]byte(seedBody)))
+	rr := httptest.NewRecorder()
+	handler.ServeHTTP(rr, req)
+
+	if status := rr.Code; status != http.StatusCreated {
+		t.Fatalf("handler returned wrong status code: got %v want %v. Body: %s", status, http.StatusCreated, rr.Body.String())
+	}
+
+	var response []api.GameResponse
+	if err := json.NewDecoder(rr.Body).Decode(&response); err != nil {
+		t.Fatalf("Failed to decode response: %v", err)
+	}
+
+	if len(response) != expectedCount {
+		t.Errorf("expected %d games in response, got %d", expectedCount, len(response))
+	}
+
+	var count int64
+	gormDB.Model(&database.Game{}).Count(&count)
+	if count != int64(expectedCount) {
+		t.Errorf("expected %d games in db, got %d", expectedCount, count)
+	}
 }

@@ -31,11 +31,11 @@ type Player struct {
 // swagger:model
 type Game struct {
 	gorm.Model
-	Week         int       `gorm:"index:idx_week_season" validate:"required,ne=0"`
-	Season       int       `gorm:"index:idx_week_season" validate:"required,ne=0"`
-	FavoriteTeam string    `validate:"required"`
-	UnderdogTeam string    `validate:"required"`
-	Spread       float32   `validate:"required,ne=0"`
+	Week         int    `gorm:"index:idx_week_season" validate:"required,ne=0"`
+	Season       int    `gorm:"index:idx_week_season" validate:"required,ne=0"`
+	FavoriteTeam string `validate:"required"`
+	UnderdogTeam string `validate:"required"`
+	Spread       float32
 	StartTime    time.Time `validate:"required"`
 }
 

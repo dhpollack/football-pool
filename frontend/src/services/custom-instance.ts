@@ -1,6 +1,7 @@
 import Axios, {
   type AxiosRequestConfig,
   type InternalAxiosRequestConfig,
+  type AxiosResponse,
 } from "axios";
 
 export const AXIOS_INSTANCE = Axios.create({
@@ -11,11 +12,13 @@ export const AXIOS_INSTANCE = Axios.create({
 AXIOS_INSTANCE.interceptors.request.use(
   (config: InternalAxiosRequestConfig) => {
     try {
-      const authData = localStorage.getItem("_auth_auth");
-      if (authData) {
-        const authToken = authData.split("^&*&^")[1];
-        if (authToken) {
-          config.headers.Authorization = `Bearer ${authToken}`;
+      // Read from react-auth-kit v4 alpha internal storage format
+      const authToken = localStorage.getItem("_auth_auth");
+      if (authToken) {
+        // Extract token from format: "timestamp^&*&^token"
+        const token = authToken.split("^&*&^")[1];
+        if (token) {
+          config.headers.Authorization = `Bearer ${token}`;
         }
       }
     } catch (error) {
@@ -24,6 +27,27 @@ AXIOS_INSTANCE.interceptors.request.use(
     return config;
   },
   (error) => {
+    return Promise.reject(error);
+  },
+);
+
+// Add a response interceptor to handle 401 responses
+AXIOS_INSTANCE.interceptors.response.use(
+  (response: AxiosResponse) => {
+    return response;
+  },
+  (error) => {
+    if (error.response?.status === 401) {
+      // Authentication expired - let react-auth-kit handle the logout
+      console.log("Authentication expired, redirecting to login");
+
+      // Redirect to login page if we're in a browser environment
+      // The react-auth-kit will automatically clear the auth state
+      // when the user navigates to the login page
+      if (typeof window !== "undefined" && !window.location.pathname.includes("/login")) {
+        window.location.href = "/login";
+      }
+    }
     return Promise.reject(error);
   },
 );

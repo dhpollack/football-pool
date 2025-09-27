@@ -1,5 +1,7 @@
 import useAuthUser from "react-auth-kit/hooks/useAuthUser";
 import useSignOut from "react-auth-kit/hooks/useSignOut";
+import useIsAuthenticated from "react-auth-kit/hooks/useIsAuthenticated";
+import { useNavigate } from "react-router-dom";
 import type { AuthUser } from "../lib/auth";
 
 /**
@@ -8,7 +10,13 @@ import type { AuthUser } from "../lib/auth";
  */
 export const useAuth = () => {
   const user = useAuthUser<AuthUser>();
+  const isAuthenticated = useIsAuthenticated();
   const signOut = useSignOut();
+  const navigate = useNavigate();
+
+  // react-auth-kit v4 uses a different approach for loading state
+  // We need to check if the authentication state is still initializing
+  const loading = user === undefined && !isAuthenticated;
 
   return {
     user,
@@ -22,9 +30,11 @@ export const useAuth = () => {
     },
     logout: async () => {
       signOut();
+      // Redirect to login page after logout
+      navigate("/login");
     },
-    isAuthenticated: !!user,
+    isAuthenticated,
     isAdmin: user?.role === "admin",
-    loading: false, // react-auth-kit handles loading state internally
+    loading,
   };
 };
