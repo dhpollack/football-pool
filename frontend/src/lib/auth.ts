@@ -6,6 +6,5 @@ export type AuthUser = UserResponse;
 
 // Create the auth store
 export const authStore = createAuthStore<AuthUser>("localstorage", {
-  authName: "_auth",
   debug: import.meta.env.MODE === "development",
 });

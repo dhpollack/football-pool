@@ -1,4 +1,6 @@
 import type { ReactNode } from "react";
+import { useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 import { useAuth } from "../hooks/useAuth";
 import { CircularProgress, Box, Typography, Container } from "@mui/material";
 
@@ -12,6 +14,14 @@ const ProtectedRoute = ({
   requireAdmin = false,
 }: ProtectedRouteProps) => {
   const { isAuthenticated, isAdmin, loading } = useAuth();
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    if (!loading && !isAuthenticated) {
+      // Redirect to login if not authenticated
+      navigate("/login", { replace: true });
+    }
+  }, [isAuthenticated, loading, navigate]);
 
   if (loading) {
     return (
@@ -27,13 +37,14 @@ const ProtectedRoute = ({
   }
 
   if (!isAuthenticated) {
+    // This will be shown briefly before redirect
     return (
       <Container maxWidth="sm" sx={{ mt: 4 }}>
         <Typography variant="h4" color="error" align="center" gutterBottom>
           Authentication Required
         </Typography>
         <Typography variant="body1" align="center">
-          Please log in to access this page.
+          Redirecting to login...
         </Typography>
       </Container>
     );
