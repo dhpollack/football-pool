@@ -1,8 +1,10 @@
 import { render, screen, act } from "@testing-library/react";
 import { MemoryRouter } from "react-router-dom";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import AuthProvider from "react-auth-kit/AuthProvider";
 import { vi } from "vitest";
 import LoginPage from "./LoginPage";
+import { authStore } from "../lib/auth";
 
 // Mock the React Query hooks
 vi.mock("../services/api/user/user", () => ({
@@ -30,9 +32,11 @@ describe("LoginPage", () => {
     await act(async () => {
       render(
         <QueryClientProvider client={queryClient}>
-          <MemoryRouter>
-            <LoginPage />
-          </MemoryRouter>
+          <AuthProvider store={authStore} fallbackPath="/">
+            <MemoryRouter>
+              <LoginPage />
+            </MemoryRouter>
+          </AuthProvider>
         </QueryClientProvider>,
       );
     });
