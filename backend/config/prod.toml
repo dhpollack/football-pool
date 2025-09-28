@@ -1,0 +1,21 @@
+# Football Pool Backend Configuration
+
+[server]
+host = "localhost"
+port = "8080"
+
+[database]
+dsn = "football-pool.db"
+
+[logging]
+level = "info"
+
+[espn]
+base_url = "https://site.api.espn.com/apis/site/v2/sports/football/nfl"
+cache_dir = "assets/cache"
+sync_enabled = false
+sync_interval = "1h"
+cache_expiry = "24h"
+
+[e2e]
+test = false

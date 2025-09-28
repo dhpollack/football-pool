@@ -5,10 +5,10 @@ import (
 	"fmt"
 	"log/slog"
 	"net/http"
-	"os"
 	"time"
 
 	"github.com/david/football-pool/internal/auth"
+	"github.com/david/football-pool/internal/config"
 	"github.com/david/football-pool/internal/database"
 	"github.com/david/football-pool/internal/handlers"
 	"github.com/rs/cors"
@@ -18,13 +18,15 @@ import (
 type Server struct {
 	db   *database.Database
 	auth *auth.Auth
+	cfg  *config.Config
 }
 
 // NewServer creates a new Server instance with the provided database connection.
-func NewServer(db *database.Database) *Server {
+func NewServer(db *database.Database, cfg *config.Config) *Server {
 	return &Server{
 		db:   db,
 		auth: auth.NewAuth(db),
+		cfg:  cfg,
 	}
 }
 
@@ -108,17 +110,7 @@ func (s *Server) NewRouter() http.Handler {
 
 // Start begins listening for HTTP requests and serves the application.
 func (s *Server) Start() {
-	port := os.Getenv("FOOTBALL_POOL_PORT")
-	if port == "" {
-		port = "8080"
-	}
-
-	host := os.Getenv("FOOTBALL_POOL_HOST")
-	if host == "" {
-		host = "localhost"
-	}
-
-	addr := host + ":" + port
+	addr := s.cfg.Server.Host + ":" + s.cfg.Server.Port
 
 	// Log the server URL and port for debugging
 	slog.Info(fmt.Sprintf("Starting server on http://%s", addr))

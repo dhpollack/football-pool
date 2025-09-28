@@ -1,0 +1,22 @@
+# Football Pool Test Configuration
+
+[server]
+host = "localhost"
+port = "8080"      # Use port 0 for tests to get random available port
+
+[database]
+dsn = ":memory:"
+
+[logging]
+level = "error" # Keep test output clean
+
+[espn]
+base_url = "https://site.api.espn.com/apis/site/v2/sports/football/nfl"
+cache_dir = "/tmp/test-cache"
+sync_enabled = false
+sync_interval = "1h"
+cache_expiry = "24h"
+
+[e2e]
+test = false
+
