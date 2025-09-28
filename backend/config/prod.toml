@@ -13,9 +13,9 @@ level = "info"
 [espn]
 base_url = "https://site.api.espn.com/apis/site/v2/sports/football/nfl"
 cache_dir = "assets/cache"
-sync_enabled = false
+sync_enabled = true
 sync_interval = "1h"
-cache_expiry = "24h"
+cache_expiry = "1000h"
 
 [e2e]
 test = false

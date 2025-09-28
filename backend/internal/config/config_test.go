@@ -92,9 +92,9 @@ func TestLoadConfigProd(t *testing.T) {
 	assert.Equal(t, "info", cfg.Logging.Level)
 	assert.Equal(t, "https://site.api.espn.com/apis/site/v2/sports/football/nfl", cfg.ESPN.BaseURL)
 	assert.Equal(t, "assets/cache", cfg.ESPN.CacheDir)
-	assert.False(t, cfg.ESPN.SyncEnabled)
+	assert.True(t, cfg.ESPN.SyncEnabled)
 	assert.Equal(t, 1*time.Hour, cfg.ESPN.SyncInterval)
-	assert.Equal(t, 24*time.Hour, cfg.ESPN.CacheExpiry)
+	assert.Equal(t, 1000*time.Hour, cfg.ESPN.CacheExpiry)
 	assert.False(t, cfg.E2E.Test)
 }
 
