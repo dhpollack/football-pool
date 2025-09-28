@@ -4,19 +4,19 @@
 base_url = "https://site.api.espn.com"
 
 # Cache directory for storing API responses
-cache_dir = "./cache"
+cache_dir = "./assets/cache"
 
 # Enable/disable automatic synchronization
-sync_enabled = true
+sync_enabled = false
 
 # Sync interval in seconds (e.g., 3600 = 1 hour)
 sync_interval = 3600
 
 # Cache expiry in seconds (e.g., 86400 = 24 hours)
-cache_expiry = 86400
+cache_expiry = -1
 
 # Current NFL season year
-season_year = 2024
+season_year = 2025
 
 # Date of Week 1 first game (typically Thursday)
-week1_date = "2024-09-05T00:00:00Z"
+week1_date = "2025-09-05T00:00:00Z"

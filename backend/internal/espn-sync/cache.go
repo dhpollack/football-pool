@@ -49,8 +49,8 @@ func (c *Cache) Get(season, week int) ([]apiespn.Event, bool) {
 		return nil, false
 	}
 
-	// Check if cache is expired
-	if time.Since(info.ModTime()) > c.expiry {
+	// Check if cache is expired (skip if expiry is negative = never expire)
+	if c.expiry >= 0 && time.Since(info.ModTime()) > c.expiry {
 		os.Remove(path) // Remove expired cache
 		return nil, false
 	}
@@ -101,6 +101,11 @@ func (c *Cache) Set(season, week int, events []apiespn.Event) error {
 
 // ClearExpired removes all expired cache files.
 func (c *Cache) ClearExpired() error {
+	// Skip if expiry is negative (never expire)
+	if c.expiry < 0 {
+		return nil
+	}
+
 	entries, err := os.ReadDir(c.cacheDir)
 	if err != nil {
 		if os.IsNotExist(err) {
