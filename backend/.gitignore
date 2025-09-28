@@ -36,3 +36,4 @@ go.work.sum
 football-pool
 seed/**/*.json
 seed/**/*.jsonl
+assets/cache/*

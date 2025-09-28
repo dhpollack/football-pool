@@ -1,0 +1,22 @@
+# ESPN Sync Configuration
+[espn_sync]
+# ESPN API base URL
+base_url = "https://site.api.espn.com"
+
+# Cache directory for storing API responses
+cache_dir = "./cache"
+
+# Enable/disable automatic synchronization
+sync_enabled = true
+
+# Sync interval in seconds (e.g., 3600 = 1 hour)
+sync_interval = 3600
+
+# Cache expiry in seconds (e.g., 86400 = 24 hours)
+cache_expiry = 86400
+
+# Current NFL season year
+season_year = 2024
+
+# Date of Week 1 first game (typically Thursday)
+week1_date = "2024-09-05T00:00:00Z"
