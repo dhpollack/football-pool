@@ -41,9 +41,8 @@ export default defineConfig({
       debug: true,
       ignoreHTTPSErrors: true,
       env: {
-        FOOTBALL_POOL_DSN: "file::memory:",
+        FOOTBALL_POOL_ENV: "test",
         FOOTBALL_POOL_PORT: "18080",
-        FOOTBALL_POOL_HOST: "localhost",
       },
     },
     {

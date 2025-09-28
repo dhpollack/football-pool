@@ -11,19 +11,25 @@ import (
 	"time"
 
 	"github.com/david/football-pool/internal/api"
+	"github.com/david/football-pool/internal/config"
 	"github.com/david/football-pool/internal/database"
 	"github.com/david/football-pool/internal/server"
 	"github.com/stretchr/testify/assert"
 )
 
 func TestIntegration(t *testing.T) {
-	// Set up the test database
-	db, err := database.New("file::memory:?cache=shared")
+	// Set up the test configuration and database
+	t.Setenv("FOOTBALL_POOL_ENV", "test")
+	cfg, err := config.LoadConfig()
+	if err != nil {
+		t.Fatalf("Failed to load configuration: %v", err)
+	}
+	db, err := database.New(cfg.Database.DSN)
 	if err != nil {
 		t.Fatalf("Failed to connect to database: %v", err)
 	}
 	// Set up the server with database
-	srv := server.NewServer(db)
+	srv := server.NewServer(db, cfg)
 	router := srv.NewRouter()
 
 	// Create a new test server

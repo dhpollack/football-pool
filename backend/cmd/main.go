@@ -5,18 +5,26 @@ import (
 	"context"
 	"log/slog"
 	"os"
-	"time"
 
 	"golang.org/x/crypto/bcrypt"
 
+	"github.com/david/football-pool/internal/config"
 	"github.com/david/football-pool/internal/database"
-	"github.com/david/football-pool/internal/espn-sync"
+	espnsync "github.com/david/football-pool/internal/espn-sync"
 	"github.com/david/football-pool/internal/server"
 )
 
 func main() {
+	// Load configuration
+	cfg, err := config.LoadConfig()
+	if err != nil {
+		slog.Error("Failed to load configuration", "error", err)
+		os.Exit(1)
+	}
+
+	// Setup logging
 	var level slog.Level
-	switch os.Getenv("FOOTBALL_POOL_LOG_LEVEL") {
+	switch cfg.Logging.Level {
 	case "debug":
 		level = slog.LevelDebug
 	case "info":
@@ -33,12 +41,8 @@ func main() {
 		Level: level,
 	})))
 
-	dsn := "football-pool.db"
-	if dsnEnv, ok := os.LookupEnv("FOOTBALL_POOL_DSN"); ok {
-		dsn = dsnEnv
-	}
 	slog.Info("Connecting to database")
-	db, err := database.New(dsn)
+	db, err := database.New(cfg.Database.DSN)
 	if err != nil {
 		slog.Error("Failed to connect to database", "error", err)
 		os.Exit(1)
@@ -57,7 +61,7 @@ func main() {
 	}
 
 	// Initialize ESPN sync service
-	syncService, err := initSyncService(db)
+	syncService, err := initSyncService(db, cfg)
 	if err != nil {
 		slog.Error("Failed to initialize ESPN sync service", "error", err)
 		// Continue without sync service - it's not critical for server startup
@@ -66,12 +70,11 @@ func main() {
 	// Start background sync process if service was initialized
 	if syncService != nil {
 		ctx := context.Background()
-		syncInterval := getSyncInterval()
-		go syncService.Start(ctx, syncInterval)
+		go syncService.Start(ctx, cfg.ESPN.SyncInterval)
 	}
 
 	slog.Info("Starting server")
-	srv := server.NewServer(db)
+	srv := server.NewServer(db, cfg)
 	srv.Start()
 }
 
@@ -118,72 +121,27 @@ func handleAdminUserNotFound(err error, db *database.Database) error {
 	return nil
 }
 
-// initSyncService initializes the ESPN sync service with configuration from environment variables.
-func initSyncService(db *database.Database) (*espnsync.SyncService, error) {
-	espnBaseURL := os.Getenv("ESPN_BASE_URL")
-	if espnBaseURL == "" {
-		espnBaseURL = "https://site.api.espn.com/apis/site/v2/sports/football/nfl"
-	}
-
-	cacheDir := os.Getenv("ESPN_CACHE_DIR")
-	if cacheDir == "" {
-		cacheDir = "assets/cache"
-	}
-
-	// Sync service is disabled by default and must be explicitly enabled
-	// This ensures it doesn't run during E2E tests unless specifically configured
-	syncEnabled := os.Getenv("ESPN_SYNC_ENABLED") == "true"
-
+// initSyncService initializes the ESPN sync service with configuration.
+func initSyncService(db *database.Database, cfg *config.Config) (*espnsync.SyncService, error) {
 	// Disable sync service during E2E tests to avoid interference
-	if os.Getenv("E2E_TEST") == "true" {
+	syncEnabled := cfg.ESPN.SyncEnabled
+	if cfg.E2E.Test {
 		syncEnabled = false
 		slog.Info("ESPN sync service disabled for E2E tests")
 	}
 
 	config := espnsync.Config{
-		ESPNBaseURL: espnBaseURL,
-		CacheDir:    cacheDir,
+		ESPNBaseURL: cfg.ESPN.BaseURL,
+		CacheDir:    cfg.ESPN.CacheDir,
 		SyncEnabled: syncEnabled,
-		CacheExpiry: getCacheExpiry(),
+		CacheExpiry: cfg.ESPN.CacheExpiry,
 	}
 
 	slog.Info("Initializing ESPN sync service",
 		"enabled", syncEnabled,
-		"base_url", espnBaseURL,
-		"cache_dir", cacheDir,
+		"base_url", cfg.ESPN.BaseURL,
+		"cache_dir", cfg.ESPN.CacheDir,
 	)
 
 	return espnsync.NewSyncService(db, config)
-}
-
-// getSyncInterval returns the sync interval from environment variables.
-func getSyncInterval() time.Duration {
-	syncIntervalStr := os.Getenv("ESPN_SYNC_INTERVAL")
-	if syncIntervalStr == "" {
-		return time.Hour // Default to 1 hour
-	}
-
-	duration, err := time.ParseDuration(syncIntervalStr)
-	if err != nil {
-		slog.Warn("Invalid ESPN_SYNC_INTERVAL, using default", "value", syncIntervalStr, "error", err)
-		return time.Hour
-	}
-
-	return duration
-}
-
-// getCacheExpiry returns the cache expiry duration from environment variables.
-func getCacheExpiry() time.Duration {
-	cacheExpiryStr := os.Getenv("ESPN_CACHE_EXPIRY")
-	if cacheExpiryStr == "" {
-		return 24 * time.Hour // Default to 24 hours
-	}
-
-	duration, err := time.ParseDuration(cacheExpiryStr)
-	if err != nil {
-		slog.Warn("Invalid ESPN_CACHE_EXPIRY, using default", "value", cacheExpiryStr, "error", err)
-		return 24 * time.Hour
-	}
-
-	return duration
 }

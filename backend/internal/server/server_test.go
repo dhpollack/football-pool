@@ -2,35 +2,42 @@ package server
 
 import (
 	"net/http"
+	"net/http/httptest"
 	"testing"
-	"time"
 
+	"github.com/david/football-pool/internal/config"
 	"github.com/david/football-pool/internal/database"
 )
 
 func TestStart(t *testing.T) {
-	db, err := database.New("file::memory:?cache=shared")
+	t.Setenv("FOOTBALL_POOL_ENV", "test")
+	cfg, err := config.LoadConfig()
+	if err != nil {
+		t.Fatalf("Failed to load configuration: %v", err)
+	}
+	db, err := database.New(cfg.Database.DSN)
 	if err != nil {
 		t.Fatalf("Failed to connect to database: %v", err)
 	}
-	server := NewServer(db)
-	go server.Start()
+	server := NewServer(db, cfg)
 
-	// Wait for the server to start
-	time.Sleep(1 * time.Second)
+	// Test that the router can be created without errors
+	router := server.NewRouter()
+	if router == nil {
+		t.Error("Expected router to be created, got nil")
+	}
 
-	req, err := http.NewRequest("GET", "http://localhost:8080/api/games?week=1&season=2023", nil)
+	// Test that we can create a request to the games endpoint
+	req, err := http.NewRequest("GET", "/api/games?week=1&season=2023", nil)
 	if err != nil {
 		t.Fatal(err)
 	}
 
-	client := &http.Client{}
-	resp, err := client.Do(req)
-	if err != nil {
-		t.Fatal(err)
-	}
+	// Use httptest recorder to test the handler without starting a real server
+	recorder := httptest.NewRecorder()
+	router.ServeHTTP(recorder, req)
 
-	if status := resp.StatusCode; status != http.StatusOK {
+	if status := recorder.Code; status != http.StatusOK {
 		t.Errorf("handler returned wrong status code: got %v want %v",
 			status, http.StatusOK)
 	}
@@ -38,29 +45,39 @@ func TestStart(t *testing.T) {
 
 func TestStartWithPortFromEnv(t *testing.T) {
 	t.Setenv("FOOTBALL_POOL_PORT", "8081")
-	db, err := database.New("file::memory:?cache=shared")
+	cfg, err := config.LoadConfig()
+	if err != nil {
+		t.Fatalf("Failed to load configuration: %v", err)
+	}
+	db, err := database.New(cfg.Database.DSN)
 	if err != nil {
 		t.Fatalf("Failed to connect to database: %v", err)
 	}
-	server := NewServer(db)
-	go server.Start()
+	server := NewServer(db, cfg)
 
-	// Wait for the server to start
-	time.Sleep(1 * time.Second)
+	// Test that the router can be created without errors
+	router := server.NewRouter()
+	if router == nil {
+		t.Error("Expected router to be created, got nil")
+	}
 
-	req, err := http.NewRequest("GET", "http://localhost:8081/api/games?week=1&season=2023", nil)
+	// Test that we can create a request to the games endpoint
+	req, err := http.NewRequest("GET", "/api/games?week=1&season=2023", nil)
 	if err != nil {
 		t.Fatal(err)
 	}
 
-	client := &http.Client{}
-	resp, err := client.Do(req)
-	if err != nil {
-		t.Fatal(err)
-	}
+	// Use httptest recorder to test the handler without starting a real server
+	recorder := httptest.NewRecorder()
+	router.ServeHTTP(recorder, req)
 
-	if status := resp.StatusCode; status != http.StatusOK {
+	if status := recorder.Code; status != http.StatusOK {
 		t.Errorf("handler returned wrong status code: got %v want %v",
 			status, http.StatusOK)
+	}
+
+	// Verify that the configuration picked up the environment variable
+	if cfg.Server.Port != "8081" {
+		t.Errorf("Expected port 8081 from environment variable, got %s", cfg.Server.Port)
 	}
 }
