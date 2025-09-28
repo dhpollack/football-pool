@@ -19,7 +19,11 @@ import (
 
 func TestIntegration(t *testing.T) {
 	// Set up the test configuration and database
-	cfg := config.NewTestConfig()
+	t.Setenv("FOOTBALL_POOL_ENV", "test")
+	cfg, err := config.LoadConfig()
+	if err != nil {
+		t.Fatalf("Failed to load configuration: %v", err)
+	}
 	db, err := database.New(cfg.Database.DSN)
 	if err != nil {
 		t.Fatalf("Failed to connect to database: %v", err)

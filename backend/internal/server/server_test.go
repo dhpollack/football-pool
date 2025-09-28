@@ -10,7 +10,11 @@ import (
 )
 
 func TestStart(t *testing.T) {
-	cfg := config.NewTestConfig()
+	t.Setenv("FOOTBALL_POOL_ENV", "test")
+	cfg, err := config.LoadConfig()
+	if err != nil {
+		t.Fatalf("Failed to load configuration: %v", err)
+	}
 	db, err := database.New(cfg.Database.DSN)
 	if err != nil {
 		t.Fatalf("Failed to connect to database: %v", err)

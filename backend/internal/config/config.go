@@ -2,7 +2,6 @@ package config
 
 import (
 	"fmt"
-	"log/slog"
 	"os"
 	"time"
 
@@ -50,10 +49,13 @@ func LoadConfig() (*Config, error) {
 		env = "prod"
 	}
 
-	viper.SetConfigName(env)        // name of config file (without extension)
-	viper.SetConfigType("toml")     // or "yaml", "json", etc.
-	viper.AddConfigPath(".")        // look for config in the current directory
-	viper.AddConfigPath("./config") // look for config in the config directory
+	viper.SetConfigName(env)            // name of config file (without extension)
+	viper.SetConfigType("toml")         // or "yaml", "json", etc.
+	viper.AddConfigPath(".")            // look for config in the current directory
+	viper.AddConfigPath("./config")     // look for config in the config directory
+	viper.AddConfigPath("../")          // look for config in parent directory (for tests)
+	viper.AddConfigPath("../../")       // look for config in backend root directory (for tests)
+	viper.AddConfigPath("../../config") // look for config in backend config directory (for tests)
 
 	// Set default values
 	setDefaults()
@@ -63,11 +65,7 @@ func LoadConfig() (*Config, error) {
 
 	// Read config file (if exists)
 	if err := viper.ReadInConfig(); err != nil {
-		if _, ok := err.(viper.ConfigFileNotFoundError); ok {
-			slog.Info("No config file found, using environment variables and defaults", "env", env)
-		} else {
-			return nil, fmt.Errorf("error reading config file: %w", err)
-		}
+		return nil, fmt.Errorf("error reading config file: %w", err)
 	}
 
 	var config Config
@@ -76,17 +74,6 @@ func LoadConfig() (*Config, error) {
 	}
 
 	return &config, nil
-}
-
-// NewTestConfig creates a configuration suitable for testing
-func NewTestConfig() *Config {
-	// Set test environment and load config
-	os.Setenv("FOOTBALL_POOL_ENV", "test")
-	cfg, err := LoadConfig()
-	if err != nil {
-		panic(fmt.Sprintf("Failed to load test configuration: %v", err))
-	}
-	return cfg
 }
 
 func setDefaults() {
