@@ -1,0 +1,503 @@
+{
+  "openapi": "3.0.0",
+  "info": {
+    "title": "ESPN Site API",
+    "version": "v2",
+    "description": "OpenAPI spec for the ESPN Site API scoreboard endpoint"
+  },
+  "servers": [
+    {
+      "url": "https://site.api.espn.com/apis/site/v2/sports/football/nfl"
+    }
+  ],
+  "paths": {
+    "/scoreboard": {
+      "get": {
+        "summary": "Get NFL Scoreboard",
+        "description": "Get the NFL scoreboard with full event data for a specific date or week",
+        "parameters": [
+          {
+            "name": "dates",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            },
+            "description": "The date or date range for the scoreboard (e.g., 20250928)"
+          },
+          {
+            "name": "week",
+            "in": "query",
+            "schema": {
+              "type": "integer"
+            },
+            "description": "The week number"
+          },
+          {
+            "name": "seasontype",
+            "in": "query",
+            "schema": {
+              "type": "integer"
+            },
+            "description": "The season type (1=preseason, 2=regular, 3=postseason)"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Scoreboard data with full event information",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Scoreboard"
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "Scoreboard": {
+        "type": "object",
+        "properties": {
+          "leagues": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/League"
+            }
+          },
+          "season": {
+            "$ref": "#/components/schemas/SeasonInfo"
+          },
+          "week": {
+            "$ref": "#/components/schemas/WeekInfo"
+          },
+          "events": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Event"
+            }
+          }
+        }
+      },
+      "League": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "uid": {
+            "type": "string"
+          },
+          "name": {
+            "type": "string"
+          },
+          "abbreviation": {
+            "type": "string"
+          },
+          "slug": {
+            "type": "string"
+          },
+          "season": {
+            "$ref": "#/components/schemas/Season"
+          }
+        }
+      },
+      "Season": {
+        "type": "object",
+        "properties": {
+          "year": {
+            "type": "integer"
+          },
+          "startDate": {
+            "type": "string",
+            "format": "date-time",
+            "x-go-type": "ESPNDateTime"
+          },
+          "endDate": {
+            "type": "string",
+            "format": "date-time",
+            "x-go-type": "ESPNDateTime"
+          },
+          "displayName": {
+            "type": "string"
+          },
+          "type": {
+            "$ref": "#/components/schemas/SeasonType"
+          }
+        }
+      },
+      "SeasonType": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "type": {
+            "type": "integer"
+          },
+          "name": {
+            "type": "string"
+          },
+          "abbreviation": {
+            "type": "string"
+          }
+        }
+      },
+      "SeasonInfo": {
+        "type": "object",
+        "properties": {
+          "type": {
+            "type": "integer"
+          },
+          "year": {
+            "type": "integer"
+          }
+        }
+      },
+      "WeekInfo": {
+        "type": "object",
+        "properties": {
+          "number": {
+            "type": "integer"
+          }
+        }
+      },
+      "Event": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "uid": {
+            "type": "string"
+          },
+          "date": {
+            "type": "string",
+            "format": "date-time",
+            "x-go-type": "ESPNDateTime",
+            "x-go-type": "ESPNDateTime"
+          },
+          "name": {
+            "type": "string"
+          },
+          "shortName": {
+            "type": "string"
+          },
+          "season": {
+            "$ref": "#/components/schemas/EventSeason"
+          },
+          "week": {
+            "$ref": "#/components/schemas/EventWeek"
+          },
+          "competitions": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Competition"
+            }
+          },
+          "links": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Link"
+            }
+          },
+          "status": {
+            "$ref": "#/components/schemas/Status"
+          }
+        }
+      },
+      "EventSeason": {
+        "type": "object",
+        "properties": {
+          "year": {
+            "type": "integer"
+          },
+          "type": {
+            "type": "integer"
+          },
+          "slug": {
+            "type": "string"
+          }
+        }
+      },
+      "EventWeek": {
+        "type": "object",
+        "properties": {
+          "number": {
+            "type": "integer"
+          }
+        }
+      },
+      "Competition": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "uid": {
+            "type": "string"
+          },
+          "date": {
+            "type": "string",
+            "format": "date-time",
+            "x-go-type": "ESPNDateTime",
+            "x-go-type": "ESPNDateTime"
+          },
+          "attendance": {
+            "type": "integer"
+          },
+          "neutralSite": {
+            "type": "boolean"
+          },
+          "conferenceCompetition": {
+            "type": "boolean"
+          },
+          "competitors": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Competitor"
+            }
+          },
+          "venue": {
+            "$ref": "#/components/schemas/Venue"
+          },
+          "status": {
+            "$ref": "#/components/schemas/Status"
+          }
+        }
+      },
+      "Competitor": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "uid": {
+            "type": "string"
+          },
+          "type": {
+            "type": "string"
+          },
+          "order": {
+            "type": "integer"
+          },
+          "homeAway": {
+            "type": "string"
+          },
+          "winner": {
+            "type": "boolean"
+          },
+          "team": {
+            "$ref": "#/components/schemas/Team"
+          },
+          "score": {
+            "type": "string"
+          },
+          "linescores": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Linescore"
+            }
+          },
+          "statistics": {
+            "type": "array"
+          },
+          "records": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Record"
+            }
+          }
+        }
+      },
+      "Team": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "uid": {
+            "type": "string"
+          },
+          "location": {
+            "type": "string"
+          },
+          "name": {
+            "type": "string"
+          },
+          "abbreviation": {
+            "type": "string"
+          },
+          "displayName": {
+            "type": "string"
+          },
+          "shortDisplayName": {
+            "type": "string"
+          },
+          "color": {
+            "type": "string"
+          },
+          "alternateColor": {
+            "type": "string"
+          },
+          "isActive": {
+            "type": "boolean"
+          },
+          "venue": {
+            "type": "object",
+            "properties": {
+              "id": {
+                "type": "string"
+              }
+            }
+          },
+          "links": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Link"
+            }
+          },
+          "logo": {
+            "type": "string"
+          }
+        }
+      },
+      "Linescore": {
+        "type": "object",
+        "properties": {
+          "value": {
+            "type": "number"
+          },
+          "displayValue": {
+            "type": "string"
+          },
+          "period": {
+            "type": "integer"
+          }
+        }
+      },
+      "Record": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string"
+          },
+          "abbreviation": {
+            "type": "string"
+          },
+          "type": {
+            "type": "string"
+          },
+          "summary": {
+            "type": "string"
+          }
+        }
+      },
+      "Venue": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "fullName": {
+            "type": "string"
+          },
+          "address": {
+            "$ref": "#/components/schemas/Address"
+          },
+          "indoor": {
+            "type": "boolean"
+          }
+        }
+      },
+      "Address": {
+        "type": "object",
+        "properties": {
+          "city": {
+            "type": "string"
+          },
+          "state": {
+            "type": "string"
+          },
+          "country": {
+            "type": "string"
+          }
+        }
+      },
+      "Status": {
+        "type": "object",
+        "properties": {
+          "clock": {
+            "type": "number"
+          },
+          "displayClock": {
+            "type": "string"
+          },
+          "period": {
+            "type": "integer"
+          },
+          "type": {
+            "$ref": "#/components/schemas/StatusType"
+          }
+        }
+      },
+      "StatusType": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "name": {
+            "type": "string"
+          },
+          "state": {
+            "type": "string"
+          },
+          "completed": {
+            "type": "boolean"
+          },
+          "description": {
+            "type": "string"
+          },
+          "detail": {
+            "type": "string"
+          },
+          "shortDetail": {
+            "type": "string"
+          }
+        }
+      },
+      "Link": {
+        "type": "object",
+        "properties": {
+          "language": {
+            "type": "string"
+          },
+          "rel": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "href": {
+            "type": "string"
+          },
+          "text": {
+            "type": "string"
+          },
+          "shortText": {
+            "type": "string"
+          },
+          "isExternal": {
+            "type": "boolean"
+          },
+          "isPremium": {
+            "type": "boolean"
+          }
+        }
+      }
+    }
+  }
+}

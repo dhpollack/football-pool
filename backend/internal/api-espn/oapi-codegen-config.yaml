@@ -1,0 +1,5 @@
+package: apiespn
+output: espn-client.gen.go
+generate:
+  client: true
+  models: true

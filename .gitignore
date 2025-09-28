@@ -38,4 +38,3 @@ go.work.sum
 /logs/
 *.pid
 summary.context
-.gemini/settings.json

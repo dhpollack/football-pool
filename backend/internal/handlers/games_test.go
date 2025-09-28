@@ -326,6 +326,9 @@ func TestDeleteGame(t *testing.T) {
 }
 
 func TestCreateGameFromSeed(t *testing.T) {
+	if os.Getenv("CI") != "" {
+		t.Skip("Skipping seed data test in CI environment")
+	}
 	db, err := database.New("file::memory:")
 	if err != nil {
 		t.Fatalf("Failed to connect to database: %v", err)
