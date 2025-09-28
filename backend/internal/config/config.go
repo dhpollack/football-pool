@@ -33,6 +33,8 @@ type Config struct {
 		SyncEnabled  bool          `mapstructure:"sync_enabled"`
 		SyncInterval time.Duration `mapstructure:"sync_interval"`
 		CacheExpiry  time.Duration `mapstructure:"cache_expiry"`
+		SeasonYear   int           `mapstructure:"season_year"`
+		Week1Date    time.Time     `mapstructure:"week1_date"`
 	} `mapstructure:"espn"`
 
 	// E2E testing configuration
@@ -93,6 +95,8 @@ func setDefaults() {
 	viper.SetDefault("espn.sync_enabled", false)
 	viper.SetDefault("espn.sync_interval", "1h")
 	viper.SetDefault("espn.cache_expiry", "24h")
+	viper.SetDefault("espn.season_year", 2025)
+	viper.SetDefault("espn.week1_date", time.Date(2025, 9, 4, 0, 0, 0, 0, time.UTC))
 
 	// E2E testing defaults
 	viper.SetDefault("e2e.test", false)
@@ -115,6 +119,8 @@ func bindEnvVars() {
 	viper.BindEnv("espn.sync_enabled", "ESPN_SYNC_ENABLED")
 	viper.BindEnv("espn.sync_interval", "ESPN_SYNC_INTERVAL")
 	viper.BindEnv("espn.cache_expiry", "ESPN_CACHE_EXPIRY")
+	viper.BindEnv("espn.season_year", "ESPN_SEASON_YEAR")
+	viper.BindEnv("espn.week1_date", "ESPN_WEEK1_DATE")
 
 	// E2E testing environment variables
 	viper.BindEnv("e2e.test", "E2E_TEST")

@@ -130,12 +130,9 @@ func initSyncService(db *database.Database, cfg *config.Config) (*espnsync.SyncS
 		slog.Info("ESPN sync service disabled for E2E tests")
 	}
 
-	config := espnsync.Config{
-		ESPNBaseURL: cfg.ESPN.BaseURL,
-		CacheDir:    cfg.ESPN.CacheDir,
-		SyncEnabled: syncEnabled,
-		CacheExpiry: cfg.ESPN.CacheExpiry,
-	}
+	// Temporarily override sync enabled status for E2E tests
+	tempConfig := *cfg
+	tempConfig.ESPN.SyncEnabled = syncEnabled
 
 	slog.Info("Initializing ESPN sync service",
 		"enabled", syncEnabled,
@@ -143,5 +140,5 @@ func initSyncService(db *database.Database, cfg *config.Config) (*espnsync.SyncS
 		"cache_dir", cfg.ESPN.CacheDir,
 	)
 
-	return espnsync.NewSyncService(db, config)
+	return espnsync.NewSyncService(db, &tempConfig)
 }

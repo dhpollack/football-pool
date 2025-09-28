@@ -11,8 +11,22 @@ import (
 	"time"
 
 	"github.com/david/football-pool/internal/api-espn"
+	"github.com/david/football-pool/internal/config"
 	"github.com/david/football-pool/internal/database"
 )
+
+// testConfig returns a test configuration for use in tests
+func testConfig(t *testing.T) *config.Config {
+	config := &config.Config{}
+	config.ESPN.BaseURL = "https://test.api.espn.com"
+	config.ESPN.CacheDir = t.TempDir()
+	config.ESPN.SyncEnabled = false
+	config.ESPN.SyncInterval = time.Hour
+	config.ESPN.CacheExpiry = 24 * time.Hour
+	config.ESPN.SeasonYear = 2025
+	config.ESPN.Week1Date = time.Date(2025, 9, 4, 0, 0, 0, 0, time.UTC)
+	return config
+}
 
 // MockHTTPClient is a mock implementation of the HTTP client for testing
 type MockHTTPClient struct {
@@ -41,10 +55,7 @@ func TestSyncService_StartDisabled(t *testing.T) {
 		t.Fatalf("Failed to create database: %v", err)
 	}
 
-	config := DefaultConfig()
-	config.ESPNBaseURL = "https://test.api.espn.com"
-	config.CacheDir = t.TempDir()
-	config.SyncEnabled = false
+	config := testConfig(t)
 
 	service, err := NewSyncService(db, config)
 	if err != nil {
@@ -105,15 +116,15 @@ func TestSyncService_SyncNow(t *testing.T) {
 		},
 	}
 
-	config := DefaultConfig()
-	config.ESPNBaseURL = "https://test.api.espn.com"
-	config.CacheDir = t.TempDir()
-	config.SyncEnabled = true
-	config.SeasonYear = 2025                                       // Match the season year in the sample file
-	config.Week1Date = time.Date(2025, 9, 5, 0, 0, 0, 0, time.UTC) // Set Week 1 date to match the mock response
+	config := testConfig(t)
+	config.ESPN.BaseURL = "https://test.api.espn.com"
+	config.ESPN.CacheDir = t.TempDir()
+	config.ESPN.SyncEnabled = true
+	config.ESPN.SeasonYear = 2025                                       // Match the season year in the sample file
+	config.ESPN.Week1Date = time.Date(2025, 9, 5, 0, 0, 0, 0, time.UTC) // Set Week 1 date to match the mock response
 
 	// Create the ESPN client with our mock HTTP client
-	client, err := apiespn.NewClientWithResponses(config.ESPNBaseURL, apiespn.WithHTTPClient(mockHTTPClient))
+	client, err := apiespn.NewClientWithResponses(config.ESPN.BaseURL, apiespn.WithHTTPClient(mockHTTPClient))
 	if err != nil {
 		t.Fatalf("Failed to create ESPN client: %v", err)
 	}
@@ -173,15 +184,15 @@ func TestSyncService_SyncNowAPIError(t *testing.T) {
 		},
 	}
 
-	config := DefaultConfig()
-	config.ESPNBaseURL = "https://test.api.espn.com"
-	config.CacheDir = t.TempDir()
-	config.SyncEnabled = true
-	config.SeasonYear = 2024
-	config.Week1Date = time.Date(2024, 9, 5, 0, 0, 0, 0, time.UTC) // Set Week 1 date
+	config := testConfig(t)
+	config.ESPN.BaseURL = "https://test.api.espn.com"
+	config.ESPN.CacheDir = t.TempDir()
+	config.ESPN.SyncEnabled = true
+	config.ESPN.SeasonYear = 2024
+	config.ESPN.Week1Date = time.Date(2024, 9, 5, 0, 0, 0, 0, time.UTC) // Set Week 1 date
 
 	// Create the ESPN client with our mock HTTP client
-	client, err := apiespn.NewClientWithResponses(config.ESPNBaseURL, apiespn.WithHTTPClient(mockHTTPClient))
+	client, err := apiespn.NewClientWithResponses(config.ESPN.BaseURL, apiespn.WithHTTPClient(mockHTTPClient))
 	if err != nil {
 		t.Fatalf("Failed to create ESPN client: %v", err)
 	}
@@ -215,12 +226,12 @@ func TestSyncService_GetCurrentSeasonAndWeek(t *testing.T) {
 		t.Fatalf("Failed to create database: %v", err)
 	}
 
-	config := DefaultConfig()
-	config.ESPNBaseURL = "https://test.api.espn.com"
-	config.CacheDir = t.TempDir()
-	config.SyncEnabled = true
-	config.SeasonYear = 2023
-	config.Week1Date = time.Date(2023, 9, 7, 0, 0, 0, 0, time.UTC) // Week 1 Thursday
+	config := testConfig(t)
+	config.ESPN.BaseURL = "https://test.api.espn.com"
+	config.ESPN.CacheDir = t.TempDir()
+	config.ESPN.SyncEnabled = true
+	config.ESPN.SeasonYear = 2023
+	config.ESPN.Week1Date = time.Date(2023, 9, 7, 0, 0, 0, 0, time.UTC) // Week 1 Thursday
 
 	tests := []struct {
 		name         string
@@ -271,10 +282,10 @@ func TestSyncService_GetSyncStatus(t *testing.T) {
 		t.Fatalf("Failed to create database: %v", err)
 	}
 
-	config := DefaultConfig()
-	config.ESPNBaseURL = "https://test.api.espn.com"
-	config.CacheDir = t.TempDir()
-	config.SyncEnabled = true
+	config := testConfig(t)
+	config.ESPN.BaseURL = "https://test.api.espn.com"
+	config.ESPN.CacheDir = t.TempDir()
+	config.ESPN.SyncEnabled = true
 
 	service, err := NewSyncService(db, config)
 	if err != nil {
@@ -319,15 +330,15 @@ func TestSyncService_SyncNowWithSampleData(t *testing.T) {
 		},
 	}
 
-	config := DefaultConfig()
-	config.ESPNBaseURL = "https://test.api.espn.com"
-	config.CacheDir = t.TempDir()
-	config.SyncEnabled = true
-	config.SeasonYear = 2025                                       // Match the season year in the sample file
-	config.Week1Date = time.Date(2025, 9, 5, 0, 0, 0, 0, time.UTC) // Set Week 1 date to match the sample data
+	config := testConfig(t)
+	config.ESPN.BaseURL = "https://test.api.espn.com"
+	config.ESPN.CacheDir = t.TempDir()
+	config.ESPN.SyncEnabled = true
+	config.ESPN.SeasonYear = 2025                                       // Match the season year in the sample file
+	config.ESPN.Week1Date = time.Date(2025, 9, 5, 0, 0, 0, 0, time.UTC) // Set Week 1 date to match the sample data
 
 	// Create the ESPN client with our mock HTTP client
-	client, err := apiespn.NewClientWithResponses(config.ESPNBaseURL, apiespn.WithHTTPClient(mockHTTPClient))
+	client, err := apiespn.NewClientWithResponses(config.ESPN.BaseURL, apiespn.WithHTTPClient(mockHTTPClient))
 	if err != nil {
 		t.Fatalf("Failed to create ESPN client: %v", err)
 	}

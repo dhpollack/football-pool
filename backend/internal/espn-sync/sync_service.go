@@ -8,6 +8,7 @@ import (
 	"time"
 
 	"github.com/david/football-pool/internal/api-espn"
+	"github.com/david/football-pool/internal/config"
 	"github.com/david/football-pool/internal/database"
 )
 
@@ -31,26 +32,26 @@ type SyncService struct {
 	cache        *Cache
 	transformer  *Transformer
 	syncEnabled  bool
-	config       Config
+	config       *config.Config
 	timeProvider TimeProvider
 }
 
 // NewSyncService creates a new SyncService instance.
-func NewSyncService(db *database.Database, config Config) (*SyncService, error) {
+func NewSyncService(db *database.Database, config *config.Config) (*SyncService, error) {
 	return NewSyncServiceWithTimeProvider(db, config, RealTimeProvider{})
 }
 
 // NewSyncServiceWithTimeProvider creates a new SyncService instance with a custom time provider.
 // This is primarily for testing purposes.
-func NewSyncServiceWithTimeProvider(db *database.Database, config Config, timeProvider TimeProvider) (*SyncService, error) {
+func NewSyncServiceWithTimeProvider(db *database.Database, config *config.Config, timeProvider TimeProvider) (*SyncService, error) {
 	// Create ESPN client
-	client, err := apiespn.NewClientWithResponses(config.ESPNBaseURL)
+	client, err := apiespn.NewClientWithResponses(config.ESPN.BaseURL)
 	if err != nil {
 		return nil, err
 	}
 
 	// Create cache
-	cache := NewCache(config.CacheDir, config.CacheExpiry)
+	cache := NewCache(config.ESPN.CacheDir, config.ESPN.CacheExpiry)
 
 	// Create transformer
 	transformer := NewTransformer(db)
@@ -60,7 +61,7 @@ func NewSyncServiceWithTimeProvider(db *database.Database, config Config, timePr
 		espnClient:   client,
 		cache:        cache,
 		transformer:  transformer,
-		syncEnabled:  config.SyncEnabled,
+		syncEnabled:  config.ESPN.SyncEnabled,
 		config:       config,
 		timeProvider: timeProvider,
 	}, nil
@@ -248,12 +249,12 @@ func (s *SyncService) getCurrentSeasonAndWeek() (int, int) {
 	currentTime := s.timeProvider.Now()
 
 	// Use configured season year
-	season := s.config.SeasonYear
+	season := s.config.ESPN.SeasonYear
 
 	// Calculate week based on days since Week 1 date
 	// NFL Week 1 starts with the first game (typically Thursday)
 	// Weeks run from the first game through the following Monday
-	daysSinceWeek1 := int(currentTime.Sub(s.config.Week1Date).Hours() / 24)
+	daysSinceWeek1 := int(currentTime.Sub(s.config.ESPN.Week1Date).Hours() / 24)
 
 	// If we're before Week 1 first game, we're in Week 0 (preseason)
 	if daysSinceWeek1 < 0 {
