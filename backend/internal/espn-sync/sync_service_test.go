@@ -10,15 +10,17 @@ import (
 	"testing"
 	"time"
 
-	"github.com/david/football-pool/internal/api-espn"
-	"github.com/david/football-pool/internal/config"
-	"github.com/david/football-pool/internal/database"
+	apiespn "github.com/dhpollack/football-pool/internal/api-espn"
+	"github.com/dhpollack/football-pool/internal/config"
+	"github.com/dhpollack/football-pool/internal/database"
 )
 
-// testConfig returns a test configuration for use in tests
+const testAPIEspnCom = "https://test.api.espn.com"
+
+// testConfig returns a test configuration for use in tests.
 func testConfig(t *testing.T) *config.Config {
 	config := &config.Config{}
-	config.ESPN.BaseURL = "https://test.api.espn.com"
+	config.ESPN.BaseURL = testAPIEspnCom
 	config.ESPN.CacheDir = t.TempDir()
 	config.ESPN.SyncEnabled = false
 	config.ESPN.SyncInterval = time.Hour
@@ -28,7 +30,7 @@ func testConfig(t *testing.T) *config.Config {
 	return config
 }
 
-// MockHTTPClient is a mock implementation of the HTTP client for testing
+// MockHTTPClient is a mock implementation of the HTTP client for testing.
 type MockHTTPClient struct {
 	DoFunc func(req *http.Request) (*http.Response, error)
 }
@@ -37,7 +39,7 @@ func (m *MockHTTPClient) Do(req *http.Request) (*http.Response, error) {
 	return m.DoFunc(req)
 }
 
-// MockTimeProvider is a mock implementation of TimeProvider for testing
+// MockTimeProvider is a mock implementation of TimeProvider for testing.
 type MockTimeProvider struct {
 	NowFunc func() time.Time
 }
@@ -82,7 +84,7 @@ func TestSyncService_SyncNow(t *testing.T) {
 	}
 
 	mockHTTPClient := &MockHTTPClient{
-		DoFunc: func(req *http.Request) (*http.Response, error) {
+		DoFunc: func(_ *http.Request) (*http.Response, error) {
 			// Return a minimal valid response with all required fields
 			return &http.Response{
 				StatusCode: 200,
@@ -117,8 +119,6 @@ func TestSyncService_SyncNow(t *testing.T) {
 	}
 
 	config := testConfig(t)
-	config.ESPN.BaseURL = "https://test.api.espn.com"
-	config.ESPN.CacheDir = t.TempDir()
 	config.ESPN.SyncEnabled = true
 	config.ESPN.SeasonYear = 2025                                       // Match the season year in the sample file
 	config.ESPN.Week1Date = time.Date(2025, 9, 5, 0, 0, 0, 0, time.UTC) // Set Week 1 date to match the mock response
@@ -175,7 +175,7 @@ func TestSyncService_SyncNowAPIError(t *testing.T) {
 	}
 
 	mockHTTPClient := &MockHTTPClient{
-		DoFunc: func(req *http.Request) (*http.Response, error) {
+		DoFunc: func(_ *http.Request) (*http.Response, error) {
 			// Return a proper error response without valid JSON structure
 			return &http.Response{
 				StatusCode: 500,
@@ -185,8 +185,6 @@ func TestSyncService_SyncNowAPIError(t *testing.T) {
 	}
 
 	config := testConfig(t)
-	config.ESPN.BaseURL = "https://test.api.espn.com"
-	config.ESPN.CacheDir = t.TempDir()
 	config.ESPN.SyncEnabled = true
 	config.ESPN.SeasonYear = 2024
 	config.ESPN.Week1Date = time.Date(2024, 9, 5, 0, 0, 0, 0, time.UTC) // Set Week 1 date
@@ -213,7 +211,6 @@ func TestSyncService_SyncNowAPIError(t *testing.T) {
 
 	ctx := context.Background()
 	err = service.SyncNow(ctx)
-
 	// The sync service should handle API errors gracefully and return nil
 	if err != nil {
 		t.Errorf("SyncNow() unexpected error: %v", err)
@@ -227,8 +224,6 @@ func TestSyncService_GetCurrentSeasonAndWeek(t *testing.T) {
 	}
 
 	config := testConfig(t)
-	config.ESPN.BaseURL = "https://test.api.espn.com"
-	config.ESPN.CacheDir = t.TempDir()
 	config.ESPN.SyncEnabled = true
 	config.ESPN.SeasonYear = 2023
 	config.ESPN.Week1Date = time.Date(2023, 9, 7, 0, 0, 0, 0, time.UTC) // Week 1 Thursday
@@ -283,8 +278,6 @@ func TestSyncService_GetSyncStatus(t *testing.T) {
 	}
 
 	config := testConfig(t)
-	config.ESPN.BaseURL = "https://test.api.espn.com"
-	config.ESPN.CacheDir = t.TempDir()
 	config.ESPN.SyncEnabled = true
 
 	service, err := NewSyncService(db, config)
@@ -320,7 +313,7 @@ func TestSyncService_SyncNowWithSampleData(t *testing.T) {
 	}
 
 	mockHTTPClient := &MockHTTPClient{
-		DoFunc: func(req *http.Request) (*http.Response, error) {
+		DoFunc: func(_ *http.Request) (*http.Response, error) {
 			// Return the actual sample data as response
 			return &http.Response{
 				StatusCode: 200,
@@ -331,8 +324,6 @@ func TestSyncService_SyncNowWithSampleData(t *testing.T) {
 	}
 
 	config := testConfig(t)
-	config.ESPN.BaseURL = "https://test.api.espn.com"
-	config.ESPN.CacheDir = t.TempDir()
 	config.ESPN.SyncEnabled = true
 	config.ESPN.SeasonYear = 2025                                       // Match the season year in the sample file
 	config.ESPN.Week1Date = time.Date(2025, 9, 5, 0, 0, 0, 0, time.UTC) // Set Week 1 date to match the sample data

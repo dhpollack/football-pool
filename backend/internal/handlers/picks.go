@@ -8,9 +8,9 @@ import (
 	"strconv"
 	"strings"
 
-	"github.com/david/football-pool/internal/api"
-	"github.com/david/football-pool/internal/auth"
-	"github.com/david/football-pool/internal/database"
+	"github.com/dhpollack/football-pool/internal/api"
+	"github.com/dhpollack/football-pool/internal/auth"
+	"github.com/dhpollack/football-pool/internal/database"
 	"gorm.io/gorm"
 )
 
@@ -18,7 +18,13 @@ import (
 func GetPicks(db *gorm.DB) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		w.Header().Set("Content-Type", "application/json")
-		email := r.Context().Value(auth.EmailKey).(string)
+		emailValue := r.Context().Value(auth.EmailKey)
+		if emailValue == nil {
+			w.WriteHeader(http.StatusUnauthorized)
+			json.NewEncoder(w).Encode(api.ErrorResponse{Error: "Authentication required"})
+			return
+		}
+		email := emailValue.(string)
 
 		var user database.User
 		if result := db.Where("email = ?", email).First(&user); result.Error != nil {
@@ -106,8 +112,8 @@ func AdminSubmitPicks(db *gorm.DB) http.HandlerFunc {
 			return
 		}
 
-		// Convert to database models
-		picks, err := api.PicksFromRequest(pickRequests)
+		// Convert to database models - for admin operations, UserID is required
+		picks, err := api.PicksFromRequestWithOptions(pickRequests, true)
 		if err != nil {
 			w.WriteHeader(http.StatusBadRequest)
 			_ = json.NewEncoder(w).Encode(api.ErrorResponse{Error: err.Error()})

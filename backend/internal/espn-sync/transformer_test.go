@@ -4,11 +4,13 @@ import (
 	"testing"
 	"time"
 
-	"github.com/david/football-pool/internal/api-espn"
-	"github.com/david/football-pool/internal/database"
+	apiespn "github.com/dhpollack/football-pool/internal/api-espn"
+	"github.com/dhpollack/football-pool/internal/database"
 )
 
-// espnDateTime creates an ESPNDateTime pointer from a time.Time
+const favoriteRes = "favorite"
+
+// espnDateTime creates an ESPNDateTime pointer from a time.Time.
 func espnDateTime(t time.Time) *apiespn.ESPNDateTime {
 	return &apiespn.ESPNDateTime{Time: t}
 }
@@ -219,7 +221,7 @@ func TestTransformer_TransformEventWithScores(t *testing.T) {
 	if result.UnderdogScore != 20 {
 		t.Errorf("TransformEvent() underdogScore = %v, want 20", result.UnderdogScore)
 	}
-	if result.Outcome != "favorite" {
+	if result.Outcome != favoriteRes {
 		t.Errorf("TransformEvent() outcome = %v, want 'favorite'", result.Outcome)
 	}
 }
@@ -262,7 +264,7 @@ func TestTransformer_StoreGameAndResult(t *testing.T) {
 		Game:          *game,
 		FavoriteScore: 21,
 		UnderdogScore: 20,
-		Outcome:       "favorite",
+		Outcome:       favoriteRes,
 	}
 
 	err = transformer.StoreGameAndResult(game, result)
@@ -312,7 +314,7 @@ func TestTransformer_StoreGameAndResultUpdate(t *testing.T) {
 		Game:          *game,
 		FavoriteScore: 21,
 		UnderdogScore: 20,
-		Outcome:       "favorite",
+		Outcome:       favoriteRes,
 	}
 
 	err = transformer.StoreGameAndResult(game, result)

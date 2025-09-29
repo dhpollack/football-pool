@@ -8,8 +8,8 @@ import (
 	"net/http/httptest"
 	"testing"
 
-	"github.com/david/football-pool/internal/auth"
-	"github.com/david/football-pool/internal/database"
+	"github.com/dhpollack/football-pool/internal/auth"
+	"github.com/dhpollack/football-pool/internal/database"
 )
 
 func TestSubmitResult(t *testing.T) {

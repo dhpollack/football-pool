@@ -7,8 +7,8 @@ import (
 	"strconv"
 	"time"
 
-	"github.com/david/football-pool/internal/api-espn"
-	"github.com/david/football-pool/internal/database"
+	apiespn "github.com/dhpollack/football-pool/internal/api-espn"
+	"github.com/dhpollack/football-pool/internal/database"
 )
 
 // Transformer handles the transformation of ESPN API data to database models.
@@ -54,7 +54,7 @@ func (t *Transformer) TransformEvent(event apiespn.Event, season, week int) (*da
 	// Create Result model if scores are available
 	var result *database.Result
 	if competition.Competitors != nil && len(*competition.Competitors) == 2 {
-		result = t.extractResult(competition, game)
+		result = t.extractResult(competition)
 	}
 
 	return game, result, nil
@@ -108,11 +108,11 @@ func (t *Transformer) extractStartTime(competition apiespn.Competition, event ap
 	}
 
 	// Default to current time if no date available
-	return time.Now(), nil
+	return time.Time{}, fmt.Errorf("unable to determine the start date from competition or event")
 }
 
 // extractResult extracts game result from competition data.
-func (t *Transformer) extractResult(competition apiespn.Competition, game *database.Game) *database.Result {
+func (t *Transformer) extractResult(competition apiespn.Competition) *database.Result {
 	if competition.Competitors == nil || len(*competition.Competitors) != 2 {
 		return nil
 	}
@@ -152,11 +152,12 @@ func (t *Transformer) extractResult(competition apiespn.Competition, game *datab
 	// Determine outcome
 	if favoriteScore > 0 || underdogScore > 0 {
 		spread := float32(favoriteScore - underdogScore)
-		if spread > 0 {
+		switch {
+		case spread > 0:
 			outcome = "favorite"
-		} else if spread < 0 {
+		case spread < 0:
 			outcome = "underdog"
-		} else {
+		default:
 			outcome = "push"
 		}
 	}
@@ -199,26 +200,21 @@ func (t *Transformer) StoreGameAndResult(game *database.Game, result *database.R
 	}
 
 	// Store result if available
-	if result != nil {
-		result.GameID = game.ID
-
-		// Check if result already exists
-		var existingResult database.Result
-		err := t.db.GetDB().Where("game_id = ?", game.ID).First(&existingResult).Error
-
-		if err != nil {
-			// Result doesn't exist, create it
-			if err := t.db.GetDB().Create(result).Error; err != nil {
-				return err
-			}
-		} else {
-			// Result exists, update it
-			result.ID = existingResult.ID
-			if err := t.db.GetDB().Save(result).Error; err != nil {
-				return err
-			}
-		}
+	if result == nil {
+		return nil
 	}
 
-	return nil
+	result.GameID = game.ID
+
+	// Check if result already exists
+	var existingResult database.Result
+	err = t.db.GetDB().Where("game_id = ?", game.ID).First(&existingResult).Error
+	if err != nil {
+		// Result doesn't exist, create it
+		return t.db.GetDB().Create(result).Error
+	}
+
+	// Result exists, update it
+	result.ID = existingResult.ID
+	return t.db.GetDB().Save(result).Error
 }

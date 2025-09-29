@@ -8,10 +8,10 @@ import (
 
 	"golang.org/x/crypto/bcrypt"
 
-	"github.com/david/football-pool/internal/config"
-	"github.com/david/football-pool/internal/database"
-	espnsync "github.com/david/football-pool/internal/espn-sync"
-	"github.com/david/football-pool/internal/server"
+	"github.com/dhpollack/football-pool/internal/config"
+	"github.com/dhpollack/football-pool/internal/database"
+	espnsync "github.com/dhpollack/football-pool/internal/espn-sync"
+	"github.com/dhpollack/football-pool/internal/server"
 )
 
 func main() {

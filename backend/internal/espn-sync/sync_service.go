@@ -7,9 +7,9 @@ import (
 	"log/slog"
 	"time"
 
-	"github.com/david/football-pool/internal/api-espn"
-	"github.com/david/football-pool/internal/config"
-	"github.com/david/football-pool/internal/database"
+	"github.com/dhpollack/football-pool/internal/api-espn"
+	"github.com/dhpollack/football-pool/internal/config"
+	"github.com/dhpollack/football-pool/internal/database"
 )
 
 // TimeProvider defines an interface for getting the current time.
@@ -21,6 +21,7 @@ type TimeProvider interface {
 // RealTimeProvider provides the actual current time.
 type RealTimeProvider struct{}
 
+// Now returns the current time.
 func (r RealTimeProvider) Now() time.Time {
 	return time.Now()
 }

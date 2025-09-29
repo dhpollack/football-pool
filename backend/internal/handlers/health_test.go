@@ -5,7 +5,7 @@ import (
 	"net/http/httptest"
 	"testing"
 
-	"github.com/david/football-pool/internal/database"
+	"github.com/dhpollack/football-pool/internal/database"
 	"github.com/stretchr/testify/assert"
 )
 

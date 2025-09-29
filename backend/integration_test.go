@@ -10,10 +10,10 @@ import (
 	"testing"
 	"time"
 
-	"github.com/david/football-pool/internal/api"
-	"github.com/david/football-pool/internal/config"
-	"github.com/david/football-pool/internal/database"
-	"github.com/david/football-pool/internal/server"
+	"github.com/dhpollack/football-pool/internal/api"
+	"github.com/dhpollack/football-pool/internal/config"
+	"github.com/dhpollack/football-pool/internal/database"
+	"github.com/dhpollack/football-pool/internal/server"
 	"github.com/stretchr/testify/assert"
 )
 

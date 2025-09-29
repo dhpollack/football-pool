@@ -2,12 +2,6 @@ version: "2"
 formatters:
   enable:
     - gofmt
-    # - gci
-    - goimports
-  settings:
-    goimports:
-      local-prefixes:
-        - github.com/dhpollack/football-pool
 linters:
   enable:
     - dogsled
@@ -39,7 +33,14 @@ linters:
     - unparam
     - unused
     - sloglint
+  exclusions:
+    rules:
+      - path: _test\.go
+        linters:
+          - gocyclo
   settings:
+    staticcheck:
+      checks: ["all", "-QF1008"]
     errcheck:
       check-type-assertions: false
       check-blank: false
@@ -47,3 +48,6 @@ linters:
         - (io.ReadCloser).Close
         - (*encoding/json.Decoder).Decode
         - (*encoding/json.Encoder).Encode
+        - github.com/spf13/viper.BindEnv
+        - (*os.File).Close
+        - os.Remove
