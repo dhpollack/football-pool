@@ -14,7 +14,7 @@ import (
 
 func TestSubmitResult(t *testing.T) {
 	// Set up test database
-	db, err := database.New("file::memory:?cache=shared")
+	db, err := database.New("sqlite", "file::memory:?cache=shared")
 	if err != nil {
 		t.Fatalf("Failed to connect to database: %v", err)
 	}
@@ -62,7 +62,7 @@ func TestSubmitResult(t *testing.T) {
 
 func TestGetWeeklyResults(t *testing.T) {
 	// Set up test database
-	db, err := database.New("file::memory:?cache=shared")
+	db, err := database.New("sqlite", "file::memory:?cache=shared")
 	if err != nil {
 		t.Fatalf("Failed to connect to database: %v", err)
 	}
@@ -148,7 +148,7 @@ func TestGetWeeklyResults(t *testing.T) {
 
 func TestGetSeasonResults(t *testing.T) {
 	// Set up test database
-	db, err := database.New("file::memory:?cache=shared")
+	db, err := database.New("sqlite", "file::memory:?cache=shared")
 	if err != nil {
 		t.Fatalf("Failed to connect to database: %v", err)
 	}
@@ -235,7 +235,7 @@ func TestGetSeasonResults(t *testing.T) {
 
 func TestGetWeeklyResultsErrors(t *testing.T) {
 	// Set up test database
-	db, err := database.New("file::memory:?cache=shared")
+	db, err := database.New("sqlite", "file::memory:?cache=shared")
 	if err != nil {
 		t.Fatalf("Failed to connect to database: %v", err)
 	}
@@ -290,7 +290,7 @@ func TestGetWeeklyResultsErrors(t *testing.T) {
 
 func TestSubmitResultErrors(t *testing.T) {
 	// Set up test database
-	db, err := database.New("file::memory:?cache=shared")
+	db, err := database.New("sqlite", "file::memory:?cache=shared")
 	if err != nil {
 		t.Fatalf("Failed to connect to database: %v", err)
 	}
@@ -340,7 +340,7 @@ func TestSubmitResultErrors(t *testing.T) {
 
 func TestGetSeasonResultsErrors(t *testing.T) {
 	// Set up test database
-	db, err := database.New("file::memory:?cache=shared")
+	db, err := database.New("sqlite", "file::memory:?cache=shared")
 	if err != nil {
 		t.Fatalf("Failed to connect to database: %v", err)
 	}

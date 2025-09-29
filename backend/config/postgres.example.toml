@@ -1,0 +1,27 @@
+# Football Pool PostgreSQL Configuration Example
+# Copy this file to config/prod.toml and customize for your PostgreSQL setup
+
+[server]
+host = "localhost"
+port = "8080"
+
+[database]
+type = "postgres"
+# PostgreSQL connection string examples:
+# - Local PostgreSQL: "host=localhost port=5432 user=postgres password=password dbname=football_pool sslmode=disable"
+# - Docker PostgreSQL: "host=localhost port=5432 user=postgres password=password dbname=football_pool sslmode=disable"
+# - Cloud PostgreSQL: "host=your-db-host.com port=5432 user=your-user password=your-password dbname=football_pool sslmode=require"
+dsn = "host=localhost port=5432 user=postgres password=password dbname=football_pool sslmode=disable"
+
+[logging]
+level = "info"
+
+[espn]
+base_url = "https://site.api.espn.com/apis/site/v2/sports/football/nfl"
+cache_dir = "assets/cache"
+sync_enabled = true
+sync_interval = "1h"
+cache_expiry = "1000h"
+
+[e2e]
+test = false

@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"log/slog"
 
+	"gorm.io/driver/postgres"
 	"gorm.io/driver/sqlite"
 	"gorm.io/gorm"
 )
@@ -14,10 +15,22 @@ type Database struct {
 	db *gorm.DB
 }
 
-// New creates a new Database connection with the provided DSN.
-func New(dsn string) (*Database, error) {
-	slog.Debug("Attempting to connect to database with DSN:", "dsn", dsn)
-	database, err := gorm.Open(sqlite.Open(dsn), &gorm.Config{})
+// New creates a new Database connection with the provided database type and DSN.
+func New(dbType, dsn string) (*Database, error) {
+	slog.Debug("Attempting to connect to database", "type", dbType, "dsn", dsn)
+
+	var database *gorm.DB
+	var err error
+
+	switch dbType {
+	case "sqlite":
+		database, err = gorm.Open(sqlite.Open(dsn), &gorm.Config{})
+	case "postgres":
+		database, err = gorm.Open(postgres.Open(dsn), &gorm.Config{})
+	default:
+		return nil, fmt.Errorf("unsupported database type: %s", dbType)
+	}
+
 	if err != nil {
 		slog.Debug("Failed to connect database:", "error", err)
 		return nil, fmt.Errorf("failed to connect database: %w", err)

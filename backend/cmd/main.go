@@ -42,7 +42,7 @@ func main() {
 	})))
 
 	slog.Info("Connecting to database")
-	db, err := database.New(cfg.Database.DSN)
+	db, err := database.New(cfg.Database.Type, cfg.Database.DSN)
 	if err != nil {
 		slog.Error("Failed to connect to database", "error", err)
 		os.Exit(1)

@@ -16,7 +16,7 @@ func espnDateTime(t time.Time) *apiespn.ESPNDateTime {
 }
 
 func TestTransformer_TransformEvent(t *testing.T) {
-	db, err := database.New(":memory:")
+	db, err := database.New("sqlite", ":memory:")
 	if err != nil {
 		t.Fatalf("Failed to create database: %v", err)
 	}
@@ -169,7 +169,7 @@ func TestTransformer_TransformEvent(t *testing.T) {
 }
 
 func TestTransformer_TransformEventWithScores(t *testing.T) {
-	db, err := database.New(":memory:")
+	db, err := database.New("sqlite", ":memory:")
 	if err != nil {
 		t.Fatalf("Failed to create database: %v", err)
 	}
@@ -227,7 +227,7 @@ func TestTransformer_TransformEventWithScores(t *testing.T) {
 }
 
 func TestTransformer_StoreGameAndResult(t *testing.T) {
-	db, err := database.New(":memory:")
+	db, err := database.New("sqlite", ":memory:")
 	if err != nil {
 		t.Fatalf("Failed to create database: %v", err)
 	}
@@ -287,7 +287,7 @@ func TestTransformer_StoreGameAndResult(t *testing.T) {
 }
 
 func TestTransformer_StoreGameAndResultUpdate(t *testing.T) {
-	db, err := database.New(":memory:")
+	db, err := database.New("sqlite", ":memory:")
 	if err != nil {
 		t.Fatalf("Failed to create database: %v", err)
 	}

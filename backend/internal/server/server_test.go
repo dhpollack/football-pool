@@ -15,7 +15,7 @@ func TestStart(t *testing.T) {
 	if err != nil {
 		t.Fatalf("Failed to load configuration: %v", err)
 	}
-	db, err := database.New(cfg.Database.DSN)
+	db, err := database.New(cfg.Database.Type, cfg.Database.DSN)
 	if err != nil {
 		t.Fatalf("Failed to connect to database: %v", err)
 	}
@@ -49,7 +49,7 @@ func TestStartWithPortFromEnv(t *testing.T) {
 	if err != nil {
 		t.Fatalf("Failed to load configuration: %v", err)
 	}
-	db, err := database.New(cfg.Database.DSN)
+	db, err := database.New(cfg.Database.Type, cfg.Database.DSN)
 	if err != nil {
 		t.Fatalf("Failed to connect to database: %v", err)
 	}

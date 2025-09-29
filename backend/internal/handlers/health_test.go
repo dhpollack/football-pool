@@ -10,7 +10,7 @@ import (
 )
 
 func TestHealthCheck(t *testing.T) {
-	db, err := database.New(":memory:")
+	db, err := database.New("sqlite", ":memory:")
 	assert.NoError(t, err)
 
 	req, err := http.NewRequest("GET", "/api/health", nil)

@@ -14,7 +14,7 @@ import (
 
 func TestGetSurvivorPicks(t *testing.T) {
 	// Set up test database
-	db, err := database.New("file::memory:?cache=shared")
+	db, err := database.New("sqlite", "file::memory:?cache=shared")
 	if err != nil {
 		t.Fatalf("Failed to connect to database: %v", err)
 	}
@@ -69,7 +69,7 @@ func TestGetSurvivorPicks(t *testing.T) {
 
 func TestSubmitSurvivorPick(t *testing.T) {
 	// Set up test database
-	db, err := database.New("file::memory:?cache=shared")
+	db, err := database.New("sqlite", "file::memory:?cache=shared")
 	if err != nil {
 		t.Fatalf("Failed to connect to database: %v", err)
 	}
@@ -116,7 +116,7 @@ func TestSubmitSurvivorPick(t *testing.T) {
 
 func TestGetSurvivorPicksErrors(t *testing.T) {
 	// Set up test database
-	db, err := database.New("file::memory:?cache=shared")
+	db, err := database.New("sqlite", "file::memory:?cache=shared")
 	if err != nil {
 		t.Fatalf("Failed to connect to database: %v", err)
 	}
@@ -158,7 +158,7 @@ func TestGetSurvivorPicksErrors(t *testing.T) {
 
 func TestSubmitSurvivorPickErrors(t *testing.T) {
 	// Set up test database
-	db, err := database.New("file::memory:?cache=shared")
+	db, err := database.New("sqlite", "file::memory:?cache=shared")
 	if err != nil {
 		t.Fatalf("Failed to connect to database: %v", err)
 	}
