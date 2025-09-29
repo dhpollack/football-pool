@@ -15,7 +15,7 @@ import (
 
 func TestGetProfile(t *testing.T) {
 	// Set up test database
-	db, err := database.New("file::memory:")
+	db, err := database.New("sqlite", "file::memory:")
 	if err != nil {
 		t.Fatalf("Failed to connect to database: %v", err)
 	}
@@ -63,7 +63,7 @@ func TestGetProfile(t *testing.T) {
 
 func TestUpdateProfile(t *testing.T) {
 	// Set up test database
-	db, err := database.New("file::memory:")
+	db, err := database.New("sqlite", "file::memory:")
 	if err != nil {
 		t.Fatalf("Failed to connect to database: %v", err)
 	}
@@ -118,7 +118,7 @@ func TestUpdateProfile(t *testing.T) {
 
 func TestGetProfileErrors(t *testing.T) {
 	// Set up test database
-	db, err := database.New("file::memory:")
+	db, err := database.New("sqlite", "file::memory:")
 	if err != nil {
 		t.Fatalf("Failed to connect to database: %v", err)
 	}
@@ -168,7 +168,7 @@ func TestGetProfileErrors(t *testing.T) {
 
 func TestUpdateProfileErrors(t *testing.T) {
 	// Set up test database
-	db, err := database.New("file::memory:")
+	db, err := database.New("sqlite", "file::memory:")
 	if err != nil {
 		t.Fatalf("Failed to connect to database: %v", err)
 	}
@@ -232,7 +232,7 @@ func TestUpdateProfileErrors(t *testing.T) {
 
 func TestDeleteUser(t *testing.T) {
 	// Set up test database
-	db, err := database.New("file::memory:")
+	db, err := database.New("sqlite", "file::memory:")
 	if err != nil {
 		t.Fatalf("Failed to connect to database: %v", err)
 	}
@@ -280,7 +280,7 @@ func TestDeleteUser(t *testing.T) {
 
 func TestDeleteUserEdgeCases(t *testing.T) {
 	// Set up test database
-	db, err := database.New("file::memory:")
+	db, err := database.New("sqlite", "file::memory:")
 	if err != nil {
 		t.Fatalf("Failed to connect to database: %v", err)
 	}
@@ -371,7 +371,7 @@ func TestDeleteUserEdgeCases(t *testing.T) {
 }
 
 func TestAdminListUsers(t *testing.T) {
-	db, err := database.New("file::memory:")
+	db, err := database.New("sqlite", "file::memory:")
 	if err != nil {
 		t.Fatalf("Failed to connect to database: %v", err)
 	}
@@ -647,7 +647,7 @@ func TestAdminListUsers(t *testing.T) {
 }
 
 func TestAdminGetUser(t *testing.T) {
-	db, err := database.New("file::memory:")
+	db, err := database.New("sqlite", "file::memory:")
 	if err != nil {
 		t.Fatalf("Failed to connect to database: %v", err)
 	}
@@ -686,7 +686,7 @@ func TestAdminGetUser(t *testing.T) {
 }
 
 func TestAdminUpdateUser(t *testing.T) {
-	db, err := database.New("file::memory:")
+	db, err := database.New("sqlite", "file::memory:")
 	if err != nil {
 		t.Fatalf("Failed to connect to database: %v", err)
 	}
@@ -741,7 +741,7 @@ func TestAdminUpdateUser(t *testing.T) {
 }
 
 func TestAdminCreateUsers(t *testing.T) {
-	db, err := database.New("file::memory:")
+	db, err := database.New("sqlite", "file::memory:")
 	if err != nil {
 		t.Fatalf("Failed to connect to database: %v", err)
 	}
@@ -818,7 +818,7 @@ func TestAdminCreateUsers(t *testing.T) {
 }
 
 func TestUpdatePlayerInfo(t *testing.T) {
-	db, err := database.New("file::memory:")
+	db, err := database.New("sqlite", "file::memory:")
 	if err != nil {
 		t.Fatalf("Failed to connect to database: %v", err)
 	}

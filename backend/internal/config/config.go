@@ -19,7 +19,8 @@ type Config struct {
 
 	// Database configuration
 	Database struct {
-		DSN string `mapstructure:"dsn"`
+		Type string `mapstructure:"type"`
+		DSN  string `mapstructure:"dsn"`
 	} `mapstructure:"database"`
 
 	// Logging configuration
@@ -85,6 +86,7 @@ func setDefaults() {
 	viper.SetDefault("server.port", "8080")
 
 	// Database defaults
+	viper.SetDefault("database.type", "sqlite")
 	viper.SetDefault("database.dsn", "football-pool.db")
 
 	// Logging defaults
@@ -109,6 +111,7 @@ func bindEnvVars() {
 	viper.BindEnv("server.port", "FOOTBALL_POOL_PORT")
 
 	// Database environment variables
+	viper.BindEnv("database.type", "FOOTBALL_POOL_DB_TYPE")
 	viper.BindEnv("database.dsn", "FOOTBALL_POOL_DSN")
 
 	// Logging environment variables

@@ -23,7 +23,7 @@ func TestMain(m *testing.M) {
 }
 
 func TestCreateGame(t *testing.T) {
-	db, err := database.New("file::memory:")
+	db, err := database.New("sqlite", "file::memory:")
 	if err != nil {
 		t.Fatalf("Failed to connect to database: %v", err)
 	}
@@ -87,7 +87,7 @@ func TestCreateGame(t *testing.T) {
 
 func TestGetGames(t *testing.T) {
 	// Set up test database
-	db, err := database.New("file::memory:")
+	db, err := database.New("sqlite", "file::memory:")
 	if err != nil {
 		t.Fatalf("Failed to connect to database: %v", err)
 	}
@@ -135,7 +135,7 @@ func TestGetGames(t *testing.T) {
 
 func TestGetGamesErrors(t *testing.T) {
 	// Set up test database
-	db, err := database.New("file::memory:")
+	db, err := database.New("sqlite", "file::memory:")
 	if err != nil {
 		t.Fatalf("Failed to connect to database: %v", err)
 	}
@@ -189,7 +189,7 @@ func TestGetGamesErrors(t *testing.T) {
 }
 
 func TestAdminListGames(t *testing.T) {
-	db, err := database.New("file::memory:")
+	db, err := database.New("sqlite", "file::memory:")
 	if err != nil {
 		t.Fatalf("Failed to connect to database: %v", err)
 	}
@@ -238,7 +238,7 @@ func TestAdminListGames(t *testing.T) {
 }
 
 func TestUpdateGame(t *testing.T) {
-	db, err := database.New("file::memory:")
+	db, err := database.New("sqlite", "file::memory:")
 	if err != nil {
 		t.Fatalf("Failed to connect to database: %v", err)
 	}
@@ -308,7 +308,7 @@ func TestUpdateGame(t *testing.T) {
 }
 
 func TestDeleteGame(t *testing.T) {
-	db, err := database.New("file::memory:")
+	db, err := database.New("sqlite", "file::memory:")
 	if err != nil {
 		t.Fatalf("Failed to connect to database: %v", err)
 	}
@@ -375,7 +375,7 @@ func TestCreateGameFromSeed(t *testing.T) {
 	if os.Getenv("CI") != "" {
 		t.Skip("Skipping seed data test in CI environment")
 	}
-	db, err := database.New("file::memory:")
+	db, err := database.New("sqlite", "file::memory:")
 	if err != nil {
 		t.Fatalf("Failed to connect to database: %v", err)
 	}

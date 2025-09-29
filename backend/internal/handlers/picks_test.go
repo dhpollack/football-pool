@@ -22,7 +22,7 @@ const (
 
 func TestGetPicks(t *testing.T) {
 	// Set up test database
-	db, err := database.New("file::memory:")
+	db, err := database.New("sqlite", "file::memory:")
 	if err != nil {
 		t.Fatalf("Failed to connect to database: %v", err)
 	}
@@ -78,7 +78,7 @@ func TestGetPicks(t *testing.T) {
 
 func TestSubmitPicks(t *testing.T) {
 	// Set up test database
-	db, err := database.New("file::memory:")
+	db, err := database.New("sqlite", "file::memory:")
 	if err != nil {
 		t.Fatalf("Failed to connect to database: %v", err)
 	}
@@ -138,7 +138,7 @@ func TestSubmitPicks(t *testing.T) {
 
 func TestGetPicksErrors(t *testing.T) {
 	// Set up test database
-	db, err := database.New("file::memory:")
+	db, err := database.New("sqlite", "file::memory:")
 	if err != nil {
 		t.Fatalf("Failed to connect to database: %v", err)
 	}
@@ -180,7 +180,7 @@ func TestGetPicksErrors(t *testing.T) {
 
 func TestSubmitPicksErrors(t *testing.T) {
 	// Set up test database
-	db, err := database.New("file::memory:")
+	db, err := database.New("sqlite", "file::memory:")
 	if err != nil {
 		t.Fatalf("Failed to connect to database: %v", err)
 	}
@@ -233,7 +233,7 @@ func TestSubmitPicksErrors(t *testing.T) {
 
 func TestAdminListPicks(t *testing.T) {
 	// Set up test database
-	db, err := database.New("file::memory:")
+	db, err := database.New("sqlite", "file::memory:")
 	if err != nil {
 		t.Fatalf("Failed to connect to database: %v", err)
 	}
@@ -330,7 +330,7 @@ func TestAdminListPicks(t *testing.T) {
 
 func TestAdminDeletePick(t *testing.T) {
 	// Set up test database
-	db, err := database.New("file::memory:")
+	db, err := database.New("sqlite", "file::memory:")
 	if err != nil {
 		t.Fatalf("Failed to connect to database: %v", err)
 	}
@@ -372,7 +372,7 @@ func TestAdminDeletePick(t *testing.T) {
 
 func TestAdminSubmitPicks(t *testing.T) {
 	// Set up test database
-	db, err := database.New("file::memory:")
+	db, err := database.New("sqlite", "file::memory:")
 	if err != nil {
 		t.Fatalf("Failed to connect to database: %v", err)
 	}
@@ -430,7 +430,7 @@ func TestAdminSubmitPicks(t *testing.T) {
 
 func TestAdminGetPicksByWeek(t *testing.T) {
 	// Set up test database
-	db, err := database.New("file::memory:")
+	db, err := database.New("sqlite", "file::memory:")
 	if err != nil {
 		t.Fatalf("Failed to connect to database: %v", err)
 	}
@@ -525,7 +525,7 @@ func TestAdminGetPicksByWeek(t *testing.T) {
 
 func TestAdminGetPicksByUser(t *testing.T) {
 	// Set up test database
-	db, err := database.New("file::memory:")
+	db, err := database.New("sqlite", "file::memory:")
 	if err != nil {
 		t.Fatalf("Failed to connect to database: %v", err)
 	}
@@ -611,7 +611,7 @@ func TestAdminGetPicksByUser(t *testing.T) {
 
 func TestGetPicksEdgeCases(t *testing.T) {
 	// Set up test database
-	db, err := database.New("file::memory:")
+	db, err := database.New("sqlite", "file::memory:")
 	if err != nil {
 		t.Fatalf("Failed to connect to database: %v", err)
 	}
@@ -675,7 +675,7 @@ func TestGetPicksEdgeCases(t *testing.T) {
 
 func TestSubmitPicksEdgeCases(t *testing.T) {
 	// Set up test database
-	db, err := database.New("file::memory:")
+	db, err := database.New("sqlite", "file::memory:")
 	if err != nil {
 		t.Fatalf("Failed to connect to database: %v", err)
 	}
@@ -758,7 +758,7 @@ func TestSubmitPicksEdgeCases(t *testing.T) {
 
 func TestAdminSubmitPicksEdgeCases(t *testing.T) {
 	// Set up test database
-	db, err := database.New("file::memory:")
+	db, err := database.New("sqlite", "file::memory:")
 	if err != nil {
 		t.Fatalf("Failed to connect to database: %v", err)
 	}
@@ -829,7 +829,7 @@ func TestAdminSubmitPicksEdgeCases(t *testing.T) {
 
 func TestAdminListPicksEdgeCases(t *testing.T) {
 	// Set up test database
-	db, err := database.New("file::memory:")
+	db, err := database.New("sqlite", "file::memory:")
 	if err != nil {
 		t.Fatalf("Failed to connect to database: %v", err)
 	}
@@ -921,7 +921,7 @@ func TestAdminListPicksEdgeCases(t *testing.T) {
 
 func TestAdminDeletePickEdgeCases(t *testing.T) {
 	// Set up test database
-	db, err := database.New("file::memory:")
+	db, err := database.New("sqlite", "file::memory:")
 	if err != nil {
 		t.Fatalf("Failed to connect to database: %v", err)
 	}

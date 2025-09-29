@@ -5,6 +5,7 @@ host = "localhost"
 port = "8080"
 
 [database]
+type = "sqlite"
 dsn = "football-pool.db"
 
 [logging]

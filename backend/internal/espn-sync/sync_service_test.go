@@ -52,7 +52,7 @@ func (m MockTimeProvider) Now() time.Time {
 }
 
 func TestSyncService_StartDisabled(t *testing.T) {
-	db, err := database.New(":memory:")
+	db, err := database.New("sqlite", ":memory:")
 	if err != nil {
 		t.Fatalf("Failed to create database: %v", err)
 	}
@@ -78,7 +78,7 @@ func TestSyncService_StartDisabled(t *testing.T) {
 }
 
 func TestSyncService_SyncNow(t *testing.T) {
-	db, err := database.New(":memory:")
+	db, err := database.New("sqlite", ":memory:")
 	if err != nil {
 		t.Fatalf("Failed to create database: %v", err)
 	}
@@ -169,7 +169,7 @@ func TestSyncService_SyncNow(t *testing.T) {
 }
 
 func TestSyncService_SyncNowAPIError(t *testing.T) {
-	db, err := database.New(":memory:")
+	db, err := database.New("sqlite", ":memory:")
 	if err != nil {
 		t.Fatalf("Failed to create database: %v", err)
 	}
@@ -218,7 +218,7 @@ func TestSyncService_SyncNowAPIError(t *testing.T) {
 }
 
 func TestSyncService_GetCurrentSeasonAndWeek(t *testing.T) {
-	db, err := database.New(":memory:")
+	db, err := database.New("sqlite", ":memory:")
 	if err != nil {
 		t.Fatalf("Failed to create database: %v", err)
 	}
@@ -272,7 +272,7 @@ func TestSyncService_GetCurrentSeasonAndWeek(t *testing.T) {
 }
 
 func TestSyncService_GetSyncStatus(t *testing.T) {
-	db, err := database.New(":memory:")
+	db, err := database.New("sqlite", ":memory:")
 	if err != nil {
 		t.Fatalf("Failed to create database: %v", err)
 	}
@@ -301,7 +301,7 @@ func TestSyncService_SyncNowWithSampleData(t *testing.T) {
 	handler := slog.NewTextHandler(os.Stderr, &slog.HandlerOptions{Level: slog.LevelDebug})
 	slog.SetDefault(slog.New(handler))
 
-	db, err := database.New(":memory:")
+	db, err := database.New("sqlite", ":memory:")
 	if err != nil {
 		t.Fatalf("Failed to create database: %v", err)
 	}

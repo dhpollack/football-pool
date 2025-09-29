@@ -5,7 +5,7 @@ import (
 )
 
 func TestConnect(t *testing.T) {
-	db, err := New("/tmp/database.db")
+	db, err := New("sqlite", "/tmp/database.db")
 	if err != nil {
 		t.Fatalf("failed to connect to database: %v", err)
 	}
@@ -15,7 +15,7 @@ func TestConnect(t *testing.T) {
 }
 
 func TestConnectTestDB(t *testing.T) {
-	db, err := New("file::memory:?cache=shared")
+	db, err := New("sqlite", "file::memory:?cache=shared")
 	if err != nil {
 		t.Fatalf("failed to connect to test database: %v", err)
 	}
@@ -25,7 +25,7 @@ func TestConnectTestDB(t *testing.T) {
 }
 
 func TestAutoMigrate(t *testing.T) {
-	db, err := New("file::memory:?cache=shared")
+	db, err := New("sqlite", "file::memory:?cache=shared")
 	if err != nil {
 		t.Fatalf("failed to connect to database: %v", err)
 	}

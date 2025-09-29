@@ -20,6 +20,12 @@ jobs:
   test:
     runs-on: ubuntu-latest
 
+    services:
+      # Docker-in-Docker service for Testcontainers
+      docker:
+        image: docker:24.0
+        options: --privileged
+
     defaults:
       run:
         working-directory: ./backend
@@ -32,6 +38,17 @@ jobs:
         with:
           go-version: "1.25.1"
           cache-dependency-path: "**/*.sum"
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Start Docker daemon
+        run: |
+          dockerd &
+          sleep 10
+
+      - name: Verify Docker is running
+        run: docker info
 
       - name: Gather dependencies
         run: go mod download

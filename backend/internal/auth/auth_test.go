@@ -21,7 +21,7 @@ func TestMain(m *testing.M) {
 
 func TestRegister(t *testing.T) {
 	// Set up test database
-	db, err := database.New("file::memory:?cache=shared")
+	db, err := database.New("sqlite", "file::memory:?cache=shared")
 	if err != nil {
 		t.Fatalf("Failed to connect to database: %v", err)
 	}
@@ -87,7 +87,7 @@ func TestRegister(t *testing.T) {
 
 func TestLogin(t *testing.T) {
 	// Set up test database
-	db, err := database.New("file::memory:?cache=shared")
+	db, err := database.New("sqlite", "file::memory:?cache=shared")
 	if err != nil {
 		t.Fatalf("Failed to connect to database: %v", err)
 	}
@@ -137,7 +137,7 @@ func TestLogin(t *testing.T) {
 
 func TestMiddleware(t *testing.T) {
 	// Set up test database
-	db, err := database.New("file::memory:?cache=shared")
+	db, err := database.New("sqlite", "file::memory:?cache=shared")
 	if err != nil {
 		t.Fatalf("Failed to connect to database: %v", err)
 	}
@@ -213,7 +213,7 @@ func TestMiddleware(t *testing.T) {
 
 func TestAdminMiddleware(t *testing.T) {
 	// Set up test database
-	db, err := database.New("file::memory:?cache=shared")
+	db, err := database.New("sqlite", "file::memory:?cache=shared")
 	if err != nil {
 		t.Fatalf("Failed to connect to database: %v", err)
 	}
@@ -263,7 +263,7 @@ func TestAdminMiddleware(t *testing.T) {
 
 func TestLoginErrors(t *testing.T) {
 	// Set up test database
-	db, err := database.New("file::memory:?cache=shared")
+	db, err := database.New("sqlite", "file::memory:?cache=shared")
 	if err != nil {
 		t.Fatalf("Failed to connect to database: %v", err)
 	}
@@ -323,7 +323,7 @@ func TestLoginErrors(t *testing.T) {
 
 func TestRegisterErrors(t *testing.T) {
 	// Set up test database
-	db, err := database.New("file::memory:?cache=shared")
+	db, err := database.New("sqlite", "file::memory:?cache=shared")
 	if err != nil {
 		t.Fatalf("Failed to connect to database: %v", err)
 	}
@@ -377,7 +377,7 @@ func TestRegisterErrors(t *testing.T) {
 
 func TestLogout(t *testing.T) {
 	// Set up test database
-	db, err := database.New("file::memory:?cache=shared")
+	db, err := database.New("sqlite", "file::memory:?cache=shared")
 	if err != nil {
 		t.Fatalf("Failed to connect to database: %v", err)
 	}
@@ -409,7 +409,7 @@ func TestLogout(t *testing.T) {
 
 func TestMiddlewareErrors(t *testing.T) {
 	// Set up test database
-	db, err := database.New("file::memory:?cache=shared")
+	db, err := database.New("sqlite", "file::memory:?cache=shared")
 	if err != nil {
 		t.Fatalf("Failed to connect to database: %v", err)
 	}
@@ -483,7 +483,7 @@ func TestMiddlewareErrors(t *testing.T) {
 
 func TestAdminMiddlewareErrors(t *testing.T) {
 	// Set up test database
-	db, err := database.New("file::memory:?cache=shared")
+	db, err := database.New("sqlite", "file::memory:?cache=shared")
 	if err != nil {
 		t.Fatalf("Failed to connect to database: %v", err)
 	}
