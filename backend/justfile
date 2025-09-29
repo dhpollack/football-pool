@@ -25,6 +25,18 @@ format:
 test *args="-cover -coverprofile=coverage.txt ./...":
     go test {{ args }}
 
+download-toolchain:
+    #!/usr/bin/env bash
+    # Extract toolchain version from go.mod and download it
+    toolchain_version=$(grep 'toolchain go' go.mod | sed 's/toolchain go//' | tr -d '[:space:]')
+    if [ -z "$toolchain_version" ]; then
+      echo "No toolchain directive found in go.mod"
+      exit 1
+    fi
+    echo "Downloading Go toolchain version: $toolchain_version"
+    go install golang.org/dl/go$toolchain_version@latest
+    go$toolchain_version download
+
 build-push-local:
     # This builds the amd image local and the arm image on the orangepi5-max-ubuntu
     docker buildx build --builder multiarch-builder --platform linux/arm64,linux/amd64 -t 192.168.8.1:5000/local/football-pool/backend:dev . --output type=registry,registry.insecure=true
