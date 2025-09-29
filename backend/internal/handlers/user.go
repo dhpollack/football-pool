@@ -9,9 +9,9 @@ import (
 	"strconv"
 	"strings"
 
-	"github.com/david/football-pool/internal/api"
-	"github.com/david/football-pool/internal/auth"
-	"github.com/david/football-pool/internal/database"
+	"github.com/dhpollack/football-pool/internal/api"
+	"github.com/dhpollack/football-pool/internal/auth"
+	"github.com/dhpollack/football-pool/internal/database"
 	"golang.org/x/crypto/bcrypt"
 	"gorm.io/gorm"
 )
@@ -177,7 +177,7 @@ func AdminListUsers(db *gorm.DB) http.HandlerFunc {
 
 		// Get users with pagination
 		var users []database.User
-		if err := query.Offset(offset).Limit(limit).Order("created_at DESC").Find(&users).Error; err != nil {
+		if err := query.Offset(offset).Limit(limit).Order("users.created_at DESC").Find(&users).Error; err != nil {
 			w.WriteHeader(http.StatusInternalServerError)
 			json.NewEncoder(w).Encode(api.ErrorResponse{Error: "Database error"})
 			return

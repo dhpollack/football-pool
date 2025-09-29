@@ -1,4 +1,4 @@
-module github.com/david/football-pool
+module github.com/dhpollack/football-pool
 
 go 1.25
 

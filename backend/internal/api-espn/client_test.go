@@ -1,3 +1,4 @@
+// Package apiespn provides tests for the ESPN API client.
 package apiespn
 
 import (

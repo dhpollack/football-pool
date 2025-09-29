@@ -5,9 +5,9 @@ import (
 	"encoding/json"
 	"net/http"
 
-	"github.com/david/football-pool/internal/api"
-	"github.com/david/football-pool/internal/auth"
-	"github.com/david/football-pool/internal/database"
+	"github.com/dhpollack/football-pool/internal/api"
+	"github.com/dhpollack/football-pool/internal/auth"
+	"github.com/dhpollack/football-pool/internal/database"
 	"gorm.io/gorm"
 )
 

@@ -8,7 +8,7 @@ import (
 	"testing"
 	"time"
 
-	"github.com/david/football-pool/internal/database"
+	"github.com/dhpollack/football-pool/internal/database"
 	"github.com/golang-jwt/jwt/v5"
 	"golang.org/x/crypto/bcrypt"
 )
@@ -144,8 +144,13 @@ func TestMiddleware(t *testing.T) {
 	auth := NewAuth(db)
 
 	// Create a handler to be protected by the middleware
-	protectedHandler := http.HandlerFunc(func(w http.ResponseWriter, _ *http.Request) {
+	protectedHandler := http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		w.WriteHeader(http.StatusOK)
+		// check that the email is in the context
+		email := r.Context().Value(EmailKey)
+		if email == nil {
+			t.Errorf("email not found in context")
+		}
 	})
 
 	// Create a request with a valid token
@@ -159,25 +164,50 @@ func TestMiddleware(t *testing.T) {
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
 	tokenString, _ := token.SignedString(jwtKey)
 
-	req, err := http.NewRequest("GET", "/", nil)
-	if err != nil {
-		t.Fatal(err)
+	tests := []struct {
+		name           string
+		setupRequest   func(req *http.Request)
+		expectedStatus int
+	}{
+		{
+			name: "Token in cookie",
+			setupRequest: func(req *http.Request) {
+				req.AddCookie(&http.Cookie{Name: "token", Value: tokenString})
+			},
+			expectedStatus: http.StatusOK,
+		},
+		{
+			name: "Token in Authorization header",
+			setupRequest: func(req *http.Request) {
+				req.Header.Set("Authorization", "Bearer "+tokenString)
+			},
+			expectedStatus: http.StatusOK,
+		},
 	}
-	req.AddCookie(&http.Cookie{Name: "token", Value: tokenString})
 
-	// Create a ResponseRecorder
-	rr := httptest.NewRecorder()
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			req, err := http.NewRequest("GET", "/", nil)
+			if err != nil {
+				t.Fatal(err)
+			}
+			tt.setupRequest(req)
 
-	// Create the middleware handler
-	middlewareHandler := auth.Middleware(protectedHandler)
+			// Create a ResponseRecorder
+			rr := httptest.NewRecorder()
 
-	// Serve the request
-	middlewareHandler.ServeHTTP(rr, req)
+			// Create the middleware handler
+			middlewareHandler := auth.Middleware(protectedHandler)
 
-	// Check the status code
-	if status := rr.Code; status != http.StatusOK {
-		t.Errorf("handler returned wrong status code: got %v want %v",
-			status, http.StatusOK)
+			// Serve the request
+			middlewareHandler.ServeHTTP(rr, req)
+
+			// Check the status code
+			if status := rr.Code; status != tt.expectedStatus {
+				t.Errorf("handler returned wrong status code: got %v want %v",
+					status, tt.expectedStatus)
+			}
+		})
 	}
 }
 

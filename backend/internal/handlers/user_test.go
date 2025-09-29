@@ -9,8 +9,8 @@ import (
 	"net/http/httptest"
 	"testing"
 
-	"github.com/david/football-pool/internal/auth"
-	"github.com/david/football-pool/internal/database"
+	"github.com/dhpollack/football-pool/internal/auth"
+	"github.com/dhpollack/football-pool/internal/database"
 )
 
 func TestGetProfile(t *testing.T) {
@@ -380,8 +380,36 @@ func TestAdminListUsers(t *testing.T) {
 	// Seed data
 	user1 := database.User{Name: "Admin User", Email: "admin@test.com", Role: "admin"}
 	user2 := database.User{Name: "Player User", Email: "player@test.com", Role: "user"}
+	user3 := database.User{Name: "Another Player", Email: "another@test.com", Role: "user"}
 	gormDB.Create(&user1)
 	gormDB.Create(&user2)
+	gormDB.Create(&user3)
+
+	// Create player records for some users
+	player1 := database.Player{UserID: user1.ID, Name: "Admin Player", Address: "123 Admin St"}
+	player2 := database.Player{UserID: user2.ID, Name: "Player One", Address: "456 Player St"}
+	gormDB.Create(&player1)
+	gormDB.Create(&player2)
+
+	// Create games and picks for stats calculation
+	game1 := database.Game{Week: 1, Season: 2024, FavoriteTeam: "Lions", UnderdogTeam: "Chiefs"}
+	game2 := database.Game{Week: 2, Season: 2024, FavoriteTeam: "Packers", UnderdogTeam: "Bears"}
+	gormDB.Create(&game1)
+	gormDB.Create(&game2)
+
+	// Create picks and results for stats
+	pick1 := database.Pick{UserID: user1.ID, GameID: game1.ID, Picked: "favorite", Rank: 1}
+	pick2 := database.Pick{UserID: user1.ID, GameID: game2.ID, Picked: "underdog", Rank: 2}
+	pick3 := database.Pick{UserID: user2.ID, GameID: game1.ID, Picked: "favorite", Rank: 1}
+	gormDB.Create(&pick1)
+	gormDB.Create(&pick2)
+	gormDB.Create(&pick3)
+
+	// Create results (user1 has 1 win, user2 has 0 wins)
+	result1 := database.Result{GameID: game1.ID, Outcome: "favorite"}
+	result2 := database.Result{GameID: game2.ID, Outcome: "favorite"}
+	gormDB.Create(&result1)
+	gormDB.Create(&result2)
 
 	handler := AdminListUsers(gormDB)
 
@@ -397,8 +425,20 @@ func TestAdminListUsers(t *testing.T) {
 		var response map[string]interface{}
 		json.NewDecoder(rr.Body).Decode(&response)
 		users := response["users"].([]interface{})
-		if len(users) != 2 {
-			t.Errorf("expected 2 users, got %d", len(users))
+		if len(users) != 3 {
+			t.Errorf("expected 3 users, got %d", len(users))
+		}
+
+		// Verify pagination data
+		pagination := response["pagination"].(map[string]interface{})
+		if pagination["page"].(float64) != 1 {
+			t.Errorf("expected page 1, got %v", pagination["page"])
+		}
+		if pagination["limit"].(float64) != 20 {
+			t.Errorf("expected limit 20, got %v", pagination["limit"])
+		}
+		if pagination["total"].(float64) != 3 {
+			t.Errorf("expected total 3, got %v", pagination["total"])
 		}
 	})
 
@@ -412,6 +452,196 @@ func TestAdminListUsers(t *testing.T) {
 		users := response["users"].([]interface{})
 		if len(users) != 1 {
 			t.Errorf("expected 1 user, got %d", len(users))
+		}
+	})
+
+	t.Run("search by email", func(t *testing.T) {
+		req, _ := http.NewRequest("GET", "/api/admin/users?search=admin", nil)
+		rr := httptest.NewRecorder()
+		handler.ServeHTTP(rr, req)
+
+		var response map[string]interface{}
+		json.NewDecoder(rr.Body).Decode(&response)
+		users := response["users"].([]interface{})
+		if len(users) != 1 {
+			t.Errorf("expected 1 user, got %d", len(users))
+		}
+	})
+
+	t.Run("search by player name", func(t *testing.T) {
+		req, _ := http.NewRequest("GET", "/api/admin/users?search=Player", nil)
+		rr := httptest.NewRecorder()
+		handler.ServeHTTP(rr, req)
+
+		var response map[string]interface{}
+		json.NewDecoder(rr.Body).Decode(&response)
+		users := response["users"].([]interface{})
+		if len(users) != 2 {
+			t.Errorf("expected 2 users, got %d", len(users))
+		}
+	})
+
+	t.Run("pagination - page 1 with limit 2", func(t *testing.T) {
+		req, _ := http.NewRequest("GET", "/api/admin/users?page=1&limit=2", nil)
+		rr := httptest.NewRecorder()
+		handler.ServeHTTP(rr, req)
+
+		var response map[string]interface{}
+		json.NewDecoder(rr.Body).Decode(&response)
+		users := response["users"].([]interface{})
+		if len(users) != 2 {
+			t.Errorf("expected 2 users on page 1, got %d", len(users))
+		}
+
+		pagination := response["pagination"].(map[string]interface{})
+		if pagination["page"].(float64) != 1 {
+			t.Errorf("expected page 1, got %v", pagination["page"])
+		}
+		if pagination["limit"].(float64) != 2 {
+			t.Errorf("expected limit 2, got %v", pagination["limit"])
+		}
+		if pagination["pages"].(float64) != 2 {
+			t.Errorf("expected 2 total pages, got %v", pagination["pages"])
+		}
+	})
+
+	t.Run("pagination - page 2 with limit 2", func(t *testing.T) {
+		req, _ := http.NewRequest("GET", "/api/admin/users?page=2&limit=2", nil)
+		rr := httptest.NewRecorder()
+		handler.ServeHTTP(rr, req)
+
+		var response map[string]interface{}
+		json.NewDecoder(rr.Body).Decode(&response)
+		users := response["users"].([]interface{})
+		if len(users) != 1 {
+			t.Errorf("expected 1 user on page 2, got %d", len(users))
+		}
+	})
+
+	t.Run("empty search results", func(t *testing.T) {
+		req, _ := http.NewRequest("GET", "/api/admin/users?search=nonexistent", nil)
+		rr := httptest.NewRecorder()
+		handler.ServeHTTP(rr, req)
+
+		var response map[string]interface{}
+		json.NewDecoder(rr.Body).Decode(&response)
+		users := response["users"].([]interface{})
+		if len(users) != 0 {
+			t.Errorf("expected 0 users, got %d", len(users))
+		}
+	})
+
+	t.Run("invalid page parameter", func(t *testing.T) {
+		req, _ := http.NewRequest("GET", "/api/admin/users?page=invalid", nil)
+		rr := httptest.NewRecorder()
+		handler.ServeHTTP(rr, req)
+
+		if status := rr.Code; status != http.StatusOK {
+			t.Errorf("handler returned wrong status code: got %v want %v", status, http.StatusOK)
+		}
+
+		var response map[string]interface{}
+		json.NewDecoder(rr.Body).Decode(&response)
+		users := response["users"].([]interface{})
+		if len(users) != 3 {
+			t.Errorf("expected 3 users with invalid page, got %d", len(users))
+		}
+	})
+
+	t.Run("invalid limit parameter", func(t *testing.T) {
+		req, _ := http.NewRequest("GET", "/api/admin/users?limit=invalid", nil)
+		rr := httptest.NewRecorder()
+		handler.ServeHTTP(rr, req)
+
+		if status := rr.Code; status != http.StatusOK {
+			t.Errorf("handler returned wrong status code: got %v want %v", status, http.StatusOK)
+		}
+
+		var response map[string]interface{}
+		json.NewDecoder(rr.Body).Decode(&response)
+		users := response["users"].([]interface{})
+		if len(users) != 3 {
+			t.Errorf("expected 3 users with invalid limit, got %d", len(users))
+		}
+	})
+
+	t.Run("limit too high", func(t *testing.T) {
+		req, _ := http.NewRequest("GET", "/api/admin/users?limit=200", nil)
+		rr := httptest.NewRecorder()
+		handler.ServeHTTP(rr, req)
+
+		var response map[string]interface{}
+		json.NewDecoder(rr.Body).Decode(&response)
+		users := response["users"].([]interface{})
+		if len(users) != 3 {
+			t.Errorf("expected 3 users with high limit, got %d", len(users))
+		}
+
+		pagination := response["pagination"].(map[string]interface{})
+		if pagination["limit"].(float64) != 20 {
+			t.Errorf("expected limit to be capped at 20, got %v", pagination["limit"])
+		}
+	})
+
+	t.Run("verify user stats calculation", func(t *testing.T) {
+		req, _ := http.NewRequest("GET", "/api/admin/users", nil)
+		rr := httptest.NewRecorder()
+		handler.ServeHTTP(rr, req)
+
+		var response map[string]interface{}
+		json.NewDecoder(rr.Body).Decode(&response)
+
+		// Check if users field exists and is a slice
+		usersInterface, ok := response["users"]
+		if !ok {
+			t.Fatal("users field not found in response")
+		}
+		users, ok := usersInterface.([]interface{})
+		if !ok {
+			t.Fatal("users field is not a slice")
+		}
+
+		// Find admin user and verify stats
+		var adminUser map[string]interface{}
+		for _, u := range users {
+			user, ok := u.(map[string]interface{})
+			if !ok {
+				t.Fatal("user item is not a map")
+			}
+			if user["email"] == "admin@test.com" {
+				adminUser = user
+				break
+			}
+		}
+
+		if adminUser == nil {
+			t.Fatal("admin user not found in response")
+		}
+
+		// Check pick_count (snake_case in JSON response)
+		pickCountInterface, ok := adminUser["pick_count"]
+		if !ok {
+			t.Fatal("pick_count field not found in admin user")
+		}
+		pickCount, ok := pickCountInterface.(float64)
+		if !ok {
+			t.Fatalf("pick_count is not a float64, got %T", pickCountInterface)
+		}
+		if pickCount != 2 {
+			t.Errorf("expected admin user to have 2 picks, got %v", pickCount)
+		}
+
+		// Check total_wins (snake_case in JSON response)
+		totalWinsInterface, ok := adminUser["total_wins"]
+		if !ok {
+			t.Fatal("total_wins field not found in admin user")
+		}
+		totalWins, ok := totalWinsInterface.(float64)
+		if !ok {
+			t.Fatalf("total_wins is not a float64, got %T", totalWinsInterface)
+		}
+		if totalWins != 1 {
+			t.Errorf("expected admin user to have 1 win, got %v", totalWins)
 		}
 	})
 }
@@ -486,6 +716,28 @@ func TestAdminUpdateUser(t *testing.T) {
 			t.Errorf("expected user role to be updated, got %s", updatedUser.Role)
 		}
 	})
+
+	t.Run("user not found", func(t *testing.T) {
+		updatePayload := []byte(`{"name": "Updated Name"}`)
+		req, _ := http.NewRequest("PUT", "/api/admin/users/999", bytes.NewBuffer(updatePayload))
+		rr := httptest.NewRecorder()
+		handler.ServeHTTP(rr, req)
+
+		if status := rr.Code; status != http.StatusNotFound {
+			t.Errorf("handler returned wrong status code: got %v want %v", status, http.StatusNotFound)
+		}
+	})
+
+	t.Run("invalid json", func(t *testing.T) {
+		updatePayload := []byte(`{"name": "Updated Name"`) // Invalid JSON
+		req, _ := http.NewRequest("PUT", fmt.Sprintf("/api/admin/users/%d", user.ID), bytes.NewBuffer(updatePayload))
+		rr := httptest.NewRecorder()
+		handler.ServeHTTP(rr, req)
+
+		if status := rr.Code; status != http.StatusBadRequest {
+			t.Errorf("handler returned wrong status code: got %v want %v", status, http.StatusBadRequest)
+		}
+	})
 }
 
 func TestAdminCreateUsers(t *testing.T) {
@@ -523,6 +775,18 @@ func TestAdminCreateUsers(t *testing.T) {
 			expectedStatus: http.StatusBadRequest,
 			expectedCount:  0,
 		},
+		{
+			name:           "empty password",
+			body:           `[{"name": "New User 4", "email": "new4@test.com", "password": "", "role": "user"}]`,
+			expectedStatus: http.StatusBadRequest,
+			expectedCount:  0,
+		},
+		{
+			name:           "duplicate email",
+			body:           `[{"name": "New User 5", "email": "duplicate@test.com", "password": "password", "role": "user"}, {"name": "New User 6", "email": "duplicate@test.com", "password": "password", "role": "user"}]`,
+			expectedStatus: http.StatusInternalServerError,
+			expectedCount:  0,
+		},
 	}
 
 	for _, tt := range tests {
@@ -551,4 +815,82 @@ func TestAdminCreateUsers(t *testing.T) {
 			}
 		})
 	}
+}
+
+func TestUpdatePlayerInfo(t *testing.T) {
+	db, err := database.New("file::memory:")
+	if err != nil {
+		t.Fatalf("Failed to connect to database: %v", err)
+	}
+	gormDB := db.GetDB()
+
+	// Create a test user
+	user := database.User{Email: "player_test@test.com", Password: "password"}
+	gormDB.Create(&user)
+
+	t.Run("create new player", func(t *testing.T) {
+		updatePlayerInfo(gormDB, user.ID, "Test Player", "123 Test St")
+
+		var player database.Player
+		if err := gormDB.Where("user_id = ?", user.ID).First(&player).Error; err != nil {
+			t.Fatalf("Failed to find player: %v", err)
+		}
+
+		if player.Name != "Test Player" {
+			t.Errorf("expected player name to be 'Test Player', got %s", player.Name)
+		}
+		if player.Address != "123 Test St" {
+			t.Errorf("expected player address to be '123 Test St', got %s", player.Address)
+		}
+	})
+
+	t.Run("update existing player name only", func(t *testing.T) {
+		updatePlayerInfo(gormDB, user.ID, "Updated Player", "")
+
+		var player database.Player
+		if err := gormDB.Where("user_id = ?", user.ID).First(&player).Error; err != nil {
+			t.Fatalf("Failed to find player: %v", err)
+		}
+
+		if player.Name != "Updated Player" {
+			t.Errorf("expected player name to be 'Updated Player', got %s", player.Name)
+		}
+		// Address should remain unchanged
+		if player.Address != "123 Test St" {
+			t.Errorf("expected player address to remain '123 Test St', got %s", player.Address)
+		}
+	})
+
+	t.Run("update existing player address only", func(t *testing.T) {
+		updatePlayerInfo(gormDB, user.ID, "", "456 New St")
+
+		var player database.Player
+		if err := gormDB.Where("user_id = ?", user.ID).First(&player).Error; err != nil {
+			t.Fatalf("Failed to find player: %v", err)
+		}
+
+		// Name should remain unchanged
+		if player.Name != "Updated Player" {
+			t.Errorf("expected player name to remain 'Updated Player', got %s", player.Name)
+		}
+		if player.Address != "456 New St" {
+			t.Errorf("expected player address to be '456 New St', got %s", player.Address)
+		}
+	})
+
+	t.Run("update both name and address", func(t *testing.T) {
+		updatePlayerInfo(gormDB, user.ID, "Final Player", "789 Final St")
+
+		var player database.Player
+		if err := gormDB.Where("user_id = ?", user.ID).First(&player).Error; err != nil {
+			t.Fatalf("Failed to find player: %v", err)
+		}
+
+		if player.Name != "Final Player" {
+			t.Errorf("expected player name to be 'Final Player', got %s", player.Name)
+		}
+		if player.Address != "789 Final St" {
+			t.Errorf("expected player address to be '789 Final St', got %s", player.Address)
+		}
+	})
 }

@@ -7,10 +7,10 @@ import (
 	"net/http"
 	"time"
 
-	"github.com/david/football-pool/internal/auth"
-	"github.com/david/football-pool/internal/config"
-	"github.com/david/football-pool/internal/database"
-	"github.com/david/football-pool/internal/handlers"
+	"github.com/dhpollack/football-pool/internal/auth"
+	"github.com/dhpollack/football-pool/internal/config"
+	"github.com/dhpollack/football-pool/internal/database"
+	"github.com/dhpollack/football-pool/internal/handlers"
 	"github.com/rs/cors"
 )
 

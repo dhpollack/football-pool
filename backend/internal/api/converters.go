@@ -2,7 +2,9 @@
 package api
 
 import (
-	"github.com/david/football-pool/internal/database"
+	"fmt"
+
+	"github.com/dhpollack/football-pool/internal/database"
 	"github.com/go-playground/validator/v10"
 )
 
@@ -141,6 +143,12 @@ func PickToResponse(pick database.Pick) PickResponse {
 
 // PickFromRequest converts a PickRequest to a database Pick.
 func PickFromRequest(req PickRequest) (database.Pick, error) {
+	return PickFromRequestWithOptions(req, false)
+}
+
+// PickFromRequestWithOptions converts a PickRequest to a database Pick with additional options.
+// When requireUserID is true, UserId must be provided in the request.
+func PickFromRequestWithOptions(req PickRequest, requireUserID bool) (database.Pick, error) {
 	pick := database.Pick{
 		GameID:    req.GameId,
 		Picked:    req.Picked,
@@ -151,6 +159,11 @@ func PickFromRequest(req PickRequest) (database.Pick, error) {
 	// Handle optional UserId
 	if req.UserId != nil {
 		pick.UserID = *req.UserId
+	}
+
+	// For admin operations, UserID is required
+	if requireUserID && req.UserId == nil {
+		return database.Pick{}, fmt.Errorf("user id is required")
 	}
 
 	// Skip UserID validation when not provided in request
@@ -171,9 +184,15 @@ func PickFromRequest(req PickRequest) (database.Pick, error) {
 
 // PicksFromRequest converts multiple PickRequest to database Picks.
 func PicksFromRequest(reqs []PickRequest) ([]database.Pick, error) {
+	return PicksFromRequestWithOptions(reqs, false)
+}
+
+// PicksFromRequestWithOptions converts multiple PickRequest to database Picks with additional options.
+// When requireUserID is true, UserId must be provided in all requests.
+func PicksFromRequestWithOptions(reqs []PickRequest, requireUserID bool) ([]database.Pick, error) {
 	picks := make([]database.Pick, len(reqs))
 	for i, req := range reqs {
-		pick, err := PickFromRequest(req)
+		pick, err := PickFromRequestWithOptions(req, requireUserID)
 		if err != nil {
 			return nil, err
 		}

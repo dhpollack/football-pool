@@ -12,8 +12,8 @@ import (
 	"strings"
 	"time"
 
-	"github.com/david/football-pool/internal/api"
-	"github.com/david/football-pool/internal/database"
+	"github.com/dhpollack/football-pool/internal/api"
+	"github.com/dhpollack/football-pool/internal/database"
 	"github.com/go-playground/validator/v10"
 	"github.com/golang-jwt/jwt/v5"
 	"golang.org/x/crypto/bcrypt"

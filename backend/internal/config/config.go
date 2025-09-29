@@ -1,3 +1,4 @@
+// Package config provides configuration management for the football pool application.
 package config
 
 import (
@@ -8,7 +9,7 @@ import (
 	"github.com/spf13/viper"
 )
 
-// Config holds all configuration for the application
+// Config holds all configuration for the application.
 type Config struct {
 	// Server configuration
 	Server struct {
@@ -43,7 +44,7 @@ type Config struct {
 	} `mapstructure:"e2e"`
 }
 
-// LoadConfig loads configuration from environment variables and config file
+// LoadConfig loads configuration from environment variables and config file.
 func LoadConfig() (*Config, error) {
 	// Determine environment
 	env := os.Getenv("FOOTBALL_POOL_ENV")
