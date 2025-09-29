@@ -1,0 +1,47 @@
+{
+  "$schema": "https://docs.renovatebot.com/renovate-schema.json",
+  "extends": [
+    "config:recommended"
+  ],
+  "schedule": ["before 5am on monday"],
+  "packageRules": [
+    {
+      "matchManagers": ["gomod"],
+      "groupName": "backend dependencies",
+      "groupSlug": "backend",
+      "automerge": true,
+      "automergeType": "branch",
+      "minimumReleaseAge": "0 days"
+    },
+    {
+      "matchManagers": ["npm"],
+      "groupName": "frontend dependencies",
+      "groupSlug": "frontend",
+      "automerge": true,
+      "automergeType": "branch",
+      "minimumReleaseAge": "0 days"
+    },
+    {
+      "matchManagers": ["github-actions"],
+      "groupName": "github actions",
+      "groupSlug": "github-actions",
+      "automerge": true,
+      "automergeType": "branch",
+      "minimumReleaseAge": "0 days"
+    },
+    {
+      "matchManagers": ["dockerfile", "docker-compose"],
+      "groupName": "docker dependencies",
+      "groupSlug": "docker",
+      "automerge": true,
+      "automergeType": "branch",
+      "minimumReleaseAge": "0 days"
+    }
+  ],
+  "dependencyDashboard": true,
+  "dependencyDashboardAutoclose": true,
+  "rangeStrategy": "bump",
+  "prHourlyLimit": 0,
+  "prConcurrentLimit": 0,
+  "branchConcurrentLimit": 0
+}
