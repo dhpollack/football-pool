@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.2.1](https://github.com/dhpollack/football-pool/compare/football-pool-v0.2.0...football-pool-v0.2.1) (2025-10-03)
+
+
+### Bug Fixes
+
+* update helm chart configuration ([#46](https://github.com/dhpollack/football-pool/issues/46)) ([cb6fcdf](https://github.com/dhpollack/football-pool/commit/cb6fcdfcde8bb7a62ad6cdf24206d984d5645aa3))
+
 ## [0.2.0](https://github.com/dhpollack/football-pool/compare/football-pool-v0.1.0...football-pool-v0.2.0) (2025-10-03)
 
 
