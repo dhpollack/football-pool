@@ -3,6 +3,8 @@ module github.com/dhpollack/football-pool
 // renovate: datasource=github-releases depName=golang/go versioning=semver allowedVersions=1.x
 go 1.25
 
+// version: 0.1.0
+
 // renovate: datasource=github-releases depName=golang/go versioning=semver allowedVersions=1.25.x
 toolchain go1.25.1
 
