@@ -1,6 +1,6 @@
-# React + TypeScript + Vite
+# Football Pool Frontend
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+A React + TypeScript + Vite application for the Football Pool webapp. This frontend provides the user interface for managing football pools, making predictions, and viewing results.
 
 Currently, two official plugins are available:
 

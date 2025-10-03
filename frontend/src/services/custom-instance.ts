@@ -44,7 +44,10 @@ AXIOS_INSTANCE.interceptors.response.use(
       // Redirect to login page if we're in a browser environment
       // The react-auth-kit will automatically clear the auth state
       // when the user navigates to the login page
-      if (typeof window !== "undefined" && !window.location.pathname.includes("/login")) {
+      if (
+        typeof window !== "undefined" &&
+        !window.location.pathname.includes("/login")
+      ) {
         window.location.href = "/login";
       }
     }

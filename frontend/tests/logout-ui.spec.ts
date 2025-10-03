@@ -64,7 +64,9 @@ test.describe("Logout UI", () => {
     await page.waitForTimeout(2000);
 
     // After logout, login button should be visible again
-    await expect(page.locator(E2E_CONFIG.SELECTORS.LOGIN.BUTTON)).toBeVisible({ timeout: 10000 });
+    await expect(page.locator(E2E_CONFIG.SELECTORS.LOGIN.BUTTON)).toBeVisible({
+      timeout: 10000,
+    });
 
     // Verify the user menu is gone
     await expect(

@@ -77,12 +77,16 @@ const LoginPage = () => {
         console.error("Current localStorage _auth:", authData);
 
         // Add a more specific error message for debugging
-        setError(`Failed to store authentication data. Please check console for details.`);
+        setError(
+          `Failed to store authentication data. Please check console for details.`,
+        );
 
         // Force an error state that might be visible in tests
         setTimeout(() => {
           // This might help with debugging in test environment
-          console.error("AUTH_STORAGE_FAILED: react-auth-kit signIn returned false");
+          console.error(
+            "AUTH_STORAGE_FAILED: react-auth-kit signIn returned false",
+          );
         }, 100);
       }
     },
