@@ -100,6 +100,58 @@ npm run dev
 
 The frontend application will open in your browser, usually at `http://localhost:5173`.
 
+## Helm Chart
+
+This project includes a Helm chart for deploying the application to a Kubernetes cluster.
+
+### Prerequisites
+
+- Helm v3+
+- A Kubernetes cluster
+- `kubectl` configured to connect to your cluster
+
+### Installation
+
+1.  **Log in to the GitHub Container Registry:**
+
+    You need to be authenticated to pull the chart from `ghcr.io`.
+
+    ```bash
+    export CR_PAT=<your-github-pat>
+    echo $CR_PAT | helm registry login ghcr.io -u <your-github-username> --password-stdin
+    ```
+    Replace `<your-github-pat>` with a GitHub Personal Access Token with `read:packages` scope, and `<your-github-username>` with your GitHub username.
+
+2.  **Install the chart:**
+
+    Install the Helm chart from the OCI registry.
+
+    ```bash
+    helm install my-release oci://ghcr.io/dhpollack/football-pool --version 0.1.0
+    ```
+    Replace `dhpollack` with the repository owner if you are using a fork.
+
+### Configuration
+
+You can customize the installation by creating a `values.yaml` file and passing it with the `--values` flag.
+
+For example, to enable the managed PostgreSQL cluster:
+
+**`my-values.yaml`:**
+```yaml
+postgresql:
+  enabled: true
+  storage:
+    size: "5Gi"
+```
+
+**Install command:**
+```bash
+helm install my-release oci://ghcr.io/dhpollack/football-pool --version 0.1.0 -f my-values.yaml
+```
+
+See the `helm/football-pool/values.yaml` file for all available configuration options.
+
 ## Notes
 
 We can get data about the games from espn api.  See: https://gist.github.com/nntrn/ee26cb2a0716de0947a0a4e9a157bc1c

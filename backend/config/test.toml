@@ -6,7 +6,9 @@ port = "8080"      # Use port 0 for tests to get random available port
 
 [database]
 type = "sqlite"
-dsn = ":memory:"
+
+[database.config]
+file = ":memory:"
 
 [logging]
 level = "error" # Keep test output clean

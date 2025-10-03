@@ -1,0 +1,21 @@
+# Patterns to ignore when building packages.
+# This supports shell glob matching, relative path matching, and negation.
+# Example patterns:
+#
+# .DS_Store
+# .git/
+# .gitignore
+# .gitmodules
+# .hg/
+# .hgignore
+# .hgtags
+# .svn/
+# *.swp
+# *.bak
+# *.tmp
+# *~
+#
+# Chart.lock
+# charts/
+# templates/.DS_Store
+# templates/*.swp

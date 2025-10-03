@@ -4,10 +4,61 @@ package config
 import (
 	"fmt"
 	"os"
+	"reflect"
 	"time"
 
+	"github.com/mitchellh/mapstructure"
 	"github.com/spf13/viper"
 )
+
+// DatabaseConfig is the interface for database configurations.
+type DatabaseConfig interface {
+	GetDSN() string
+}
+
+// SQLiteConfig holds SQLite-specific database configuration.
+type SQLiteConfig struct {
+	// File path for the SQLite database file
+	File string `mapstructure:"file"`
+}
+
+// GetDSN returns the SQLite DSN string.
+func (s SQLiteConfig) GetDSN() string {
+	return s.File
+}
+
+// PostgresConfig holds PostgreSQL-specific database configuration.
+type PostgresConfig struct {
+	// Host is the database server hostname or IP address
+	Host string `mapstructure:"host"`
+	// Port is the database server port
+	Port int `mapstructure:"port"`
+	// User is the database username
+	User string `mapstructure:"user"`
+	// Password is the database password
+	Password string `mapstructure:"password"`
+	// DBName is the database name
+	DBName string `mapstructure:"dbname"`
+	// SSLMode is the SSL mode (disable, require, verify-ca, verify-full)
+	SSLMode string `mapstructure:"sslmode"`
+}
+
+// GetDSN returns the PostgreSQL DSN string.
+func (p PostgresConfig) GetDSN() string {
+	return fmt.Sprintf("host=%s port=%d user=%s password=%s dbname=%s sslmode=%s",
+		p.Host, p.Port, p.User, p.Password, p.DBName, p.SSLMode)
+}
+
+// DatabaseConfigWrapper is a wrapper that handles unmarshaling of database configurations.
+type DatabaseConfigWrapper struct {
+	Type   string         `mapstructure:"type"`
+	Config DatabaseConfig `mapstructure:"config"`
+}
+
+// GetConfig returns the appropriate DatabaseConfig based on the type.
+func (w DatabaseConfigWrapper) GetConfig() DatabaseConfig {
+	return w.Config
+}
 
 // Config holds all configuration for the application.
 type Config struct {
@@ -18,10 +69,7 @@ type Config struct {
 	} `mapstructure:"server"`
 
 	// Database configuration
-	Database struct {
-		Type string `mapstructure:"type"`
-		DSN  string `mapstructure:"dsn"`
-	} `mapstructure:"database"`
+	Database DatabaseConfigWrapper `mapstructure:"database"`
 
 	// Logging configuration
 	Logging struct {
@@ -73,7 +121,10 @@ func LoadConfig() (*Config, error) {
 	}
 
 	var config Config
-	if err := viper.Unmarshal(&config); err != nil {
+	if err := viper.Unmarshal(&config, viper.DecodeHook(mapstructure.ComposeDecodeHookFunc(
+		databaseDecodeHook(),
+		mapstructure.StringToTimeDurationHookFunc(),
+	))); err != nil {
 		return nil, fmt.Errorf("error unmarshaling config: %w", err)
 	}
 
@@ -85,9 +136,9 @@ func setDefaults() {
 	viper.SetDefault("server.host", "localhost")
 	viper.SetDefault("server.port", "8080")
 
-	// Database defaults
+	// Database defaults (SQLite by default)
 	viper.SetDefault("database.type", "sqlite")
-	viper.SetDefault("database.dsn", "football-pool.db")
+	viper.SetDefault("database.config.file", "football-pool.db")
 
 	// Logging defaults
 	viper.SetDefault("logging.level", "info")
@@ -112,7 +163,13 @@ func bindEnvVars() {
 
 	// Database environment variables
 	viper.BindEnv("database.type", "FOOTBALL_POOL_DB_TYPE")
-	viper.BindEnv("database.dsn", "FOOTBALL_POOL_DSN")
+	viper.BindEnv("database.config.file", "FOOTBALL_POOL_DB_FILE")
+	viper.BindEnv("database.config.host", "FOOTBALL_POOL_DB_HOST")
+	viper.BindEnv("database.config.port", "FOOTBALL_POOL_DB_PORT")
+	viper.BindEnv("database.config.user", "FOOTBALL_POOL_DB_USER")
+	viper.BindEnv("database.config.password", "FOOTBALL_POOL_DB_PASSWORD")
+	viper.BindEnv("database.config.dbname", "FOOTBALL_POOL_DB_NAME")
+	viper.BindEnv("database.config.sslmode", "FOOTBALL_POOL_DB_SSLMODE")
 
 	// Logging environment variables
 	viper.BindEnv("logging.level", "FOOTBALL_POOL_LOG_LEVEL")
@@ -128,4 +185,55 @@ func bindEnvVars() {
 
 	// E2E testing environment variables
 	viper.BindEnv("e2e.test", "E2E_TEST")
+}
+
+func databaseDecodeHook() mapstructure.DecodeHookFunc {
+	return func(
+		f reflect.Type,
+		t reflect.Type,
+		data interface{},
+	) (interface{}, error) {
+		if t != reflect.TypeOf(DatabaseConfigWrapper{}) {
+			return data, nil
+		}
+
+		m, ok := data.(map[string]interface{})
+		if !ok {
+			return nil, fmt.Errorf("data for DatabaseConfigWrapper is not a map")
+		}
+
+		dbType, ok := m["type"].(string)
+		if !ok {
+			// Default to sqlite if not present
+			dbType = "sqlite"
+		}
+
+		var dbConfig DatabaseConfig
+		configData, ok := m["config"]
+		if !ok {
+			configData = make(map[string]interface{})
+		}
+
+		switch dbType {
+		case "sqlite":
+			var sqliteCfg SQLiteConfig
+			if err := mapstructure.Decode(configData, &sqliteCfg); err != nil {
+				return nil, err
+			}
+			dbConfig = sqliteCfg
+		case "postgres":
+			var postgresCfg PostgresConfig
+			if err := mapstructure.Decode(configData, &postgresCfg); err != nil {
+				return nil, err
+			}
+			dbConfig = postgresCfg
+		default:
+			return nil, fmt.Errorf("unknown database type: %s", dbType)
+		}
+
+		return DatabaseConfigWrapper{
+			Type:   dbType,
+			Config: dbConfig,
+		}, nil
+	}
 }

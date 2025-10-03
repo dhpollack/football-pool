@@ -6,7 +6,9 @@ port = "8080"
 
 [database]
 type = "sqlite"
-dsn = "football-pool.db"
+
+[database.config]
+file = "football-pool.db"
 
 [logging]
 level = "info"

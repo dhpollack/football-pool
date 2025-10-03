@@ -3,6 +3,7 @@ package main
 
 import (
 	"context"
+	"fmt"
 	"log/slog"
 	"os"
 
@@ -42,22 +43,29 @@ func main() {
 	})))
 
 	slog.Info("Connecting to database")
-	db, err := database.New(cfg.Database.Type, cfg.Database.DSN)
+	dbConfig := cfg.Database.GetConfig()
+	if dbConfig == nil {
+		slog.Error("Invalid database configuration")
+		os.Exit(1)
+	}
+	db, err := database.New(cfg.Database.Type, dbConfig.GetDSN())
 	if err != nil {
 		slog.Error("Failed to connect to database", "error", err)
 		os.Exit(1)
 	}
 
-	// Check if admin user exists, if not, create it
-	var adminUser database.User
-	result := db.GetDB().Where("email = ?", "admin@test.com").First(&adminUser)
-	if result.Error != nil {
-		if err := handleAdminUserNotFound(result.Error, db); err != nil {
-			slog.Error("Error handling admin user creation", "error", err)
-			os.Exit(1)
-		}
-	} else {
-		slog.Info("Admin user already exists.")
+	// Load and create configured users
+	slog.Info("Loading user configuration")
+	users, err := config.LoadUserConfig()
+	if err != nil {
+		slog.Error("Failed to load user configuration", "error", err)
+		os.Exit(1)
+	}
+
+	// Create configured users if they don't exist
+	if err := createConfiguredUsers(users, db); err != nil {
+		slog.Error("Failed to create configured users", "error", err)
+		os.Exit(1)
 	}
 
 	// Initialize ESPN sync service
@@ -122,6 +130,63 @@ func handleAdminUserNotFound(err error, db *database.Database) error {
 }
 
 // initSyncService initializes the ESPN sync service with configuration.
+// createConfiguredUsers creates users from configuration if they don't already exist
+func createConfiguredUsers(users []config.UserConfig, db *database.Database) error {
+	for _, userCfg := range users {
+		// Check if user already exists
+		var existingUser database.User
+		result := db.GetDB().Where("email = ?", userCfg.Email).First(&existingUser)
+
+		if result.Error != nil {
+			// User doesn't exist, create it
+			if result.Error.Error() == "record not found" {
+				slog.Info("Creating configured user", "email", userCfg.Email)
+
+				// Hash the password
+				hashedPassword, err := bcrypt.GenerateFromPassword([]byte(userCfg.Password), 8)
+				if err != nil {
+					return fmt.Errorf("failed to hash password for user %s: %w", userCfg.Email, err)
+				}
+
+				// Create user
+				user := database.User{
+					Name:     userCfg.Name,
+					Email:    userCfg.Email,
+					Password: string(hashedPassword),
+					Role:     userCfg.Role,
+				}
+
+				if createResult := db.GetDB().Create(&user); createResult.Error != nil {
+					return fmt.Errorf("failed to create user %s: %w", userCfg.Email, createResult.Error)
+				}
+
+				// Create associated Player record
+				player := database.Player{
+					UserID:  user.ID,
+					Name:    userCfg.Name,
+					Address: "",
+				}
+
+				if createResult := db.GetDB().Create(&player); createResult.Error != nil {
+					slog.Warn("Failed to create player record for user", "email", userCfg.Email, "error", createResult.Error)
+					// Continue even if player creation fails - user can still function
+				} else {
+					slog.Info("Player record created successfully for user", "email", userCfg.Email)
+				}
+
+				slog.Info("User created successfully", "email", userCfg.Email)
+			} else {
+				// Some other error occurred
+				return fmt.Errorf("error checking for user %s: %w", userCfg.Email, result.Error)
+			}
+		} else {
+			slog.Info("User already exists", "email", userCfg.Email)
+		}
+	}
+
+	return nil
+}
+
 func initSyncService(db *database.Database, cfg *config.Config) (*espnsync.SyncService, error) {
 	// Disable sync service during E2E tests to avoid interference
 	syncEnabled := cfg.ESPN.SyncEnabled
