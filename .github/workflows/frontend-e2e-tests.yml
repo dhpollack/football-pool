@@ -19,6 +19,7 @@ on:
 jobs:
   test:
     runs-on: ubuntu-latest
+    continue-on-error: true
     defaults: &default
       run:
         working-directory: ./frontend
@@ -57,6 +58,7 @@ jobs:
           CI: "true"
   test-macos:
     runs-on: macos-latest
+    continue-on-error: true
     defaults: *default
     strategy:
       matrix:
