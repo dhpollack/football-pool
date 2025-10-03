@@ -1,16 +1,15 @@
 {
   "packages": {
-    ".": {
-      "release-type": "helm",
-      "chart-path": "helm/football-pool",
-      "version-file": "helm/football-pool/Chart.yaml",
-      "extra-files": [
-        {
-          "type": "json",
-          "path": "frontend/package.json",
-          "jsonpath": "$.version"
-        }
-      ]
+    "helm/football-pool": {
+      "release-type": "helm"
+    },
+    "frontend": {
+      "release-type": "node"
+    },
+    "backend": {
+      "release-type": "simple",
+      "version-file": "backend/go.mod",
+      "extra-files": []
     }
   }
 }
