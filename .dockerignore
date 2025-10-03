@@ -11,4 +11,12 @@ docker-compose.yml
 **/Dockerfile
 **/justfile
 
+# Release and development
+.github/
+CHANGELOG.md
+package.json
+package-lock.json
+node_modules/
+helm/
+
 
