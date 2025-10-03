@@ -15,8 +15,22 @@ jobs:
     name: Release
     runs-on: ubuntu-latest
     steps:
+      - name: Setup GitHub CLI
+        uses: actions/setup-cli@v1
+
+      - name: Install jq
+        run: sudo apt-get update && sudo apt-get install -y jq
+
       - name: Release Please
         uses: googleapis/release-please-action@v4
         with:
           config-file: release-please-config.json
           token: ${{ secrets.GH_PAT_RELEASE_PLEASE }}
+
+      - name: Enable Auto-Merge on Release PR
+        if: ${{ steps.release-please.outputs.pr }}
+        run: |
+          PR_NUMBER=$(echo '${{ steps.release-please.outputs.pr }}' | jq -r '.number')
+          gh pr merge $PR_NUMBER --auto --squash
+        env:
+          GH_TOKEN: ${{ secrets.GH_PAT_RELEASE_PLEASE }}
