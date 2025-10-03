@@ -1,0 +1,14 @@
+# Test User Configuration
+# This file defines users for the test environment
+
+[[users]]
+name = "Test Admin"
+email = "admin@test.com"
+password = "adminpassword"
+role = "admin"
+
+[[users]]
+name = "Test User"
+email = "user@test.com"
+password = "userpassword"
+role = "user"

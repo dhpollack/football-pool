@@ -7,11 +7,14 @@ port = "8080"
 
 [database]
 type = "postgres"
-# PostgreSQL connection string examples:
-# - Local PostgreSQL: "host=localhost port=5432 user=postgres password=password dbname=football_pool sslmode=disable"
-# - Docker PostgreSQL: "host=localhost port=5432 user=postgres password=password dbname=football_pool sslmode=disable"
-# - Cloud PostgreSQL: "host=your-db-host.com port=5432 user=your-user password=your-password dbname=football_pool sslmode=require"
-dsn = "host=localhost port=5432 user=postgres password=password dbname=football_pool sslmode=disable"
+
+[database.config]
+host = "localhost"
+port = 5432
+user = "postgres"
+password = "password"
+dbname = "football_pool"
+sslmode = "disable"
 
 [logging]
 level = "info"

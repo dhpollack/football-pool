@@ -1,0 +1,16 @@
+# User Configuration
+# This file defines users that should be created on application startup
+# Passwords are stored in plain text here and will be hashed with bcrypt before storage
+
+[[users]]
+name = "Admin User"
+email = "admin@test.com"
+password = "adminpassword"
+role = "admin"
+
+# Example additional users (commented out by default)
+# [[users]]
+# name = "Regular User"
+# email = "user@test.com"
+# password = "userpassword"
+# role = "user"

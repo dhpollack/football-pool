@@ -19,7 +19,9 @@ func TestLoadConfig(t *testing.T) {
 	// Verify config values from test.toml
 	assert.Equal(t, "localhost", cfg.Server.Host)
 	assert.Equal(t, "8080", cfg.Server.Port)
-	assert.Equal(t, ":memory:", cfg.Database.DSN)
+	dbConfig := cfg.Database.GetConfig()
+	require.NotNil(t, dbConfig)
+	assert.Equal(t, ":memory:", dbConfig.GetDSN())
 	assert.Equal(t, "error", cfg.Logging.Level)
 	assert.Equal(t, "https://site.api.espn.com/apis/site/v2/sports/football/nfl", cfg.ESPN.BaseURL)
 	assert.Equal(t, "/tmp/test-cache", cfg.ESPN.CacheDir)
@@ -33,7 +35,7 @@ func TestLoadConfigWithEnvironmentVariables(t *testing.T) {
 	// Set environment variables that should override config file
 	t.Setenv("FOOTBALL_POOL_ENV", "test")
 	t.Setenv("FOOTBALL_POOL_PORT", "9999")
-	t.Setenv("FOOTBALL_POOL_DSN", "test_override.db")
+	t.Setenv("FOOTBALL_POOL_DB_FILE", "test_override.db")
 	t.Setenv("FOOTBALL_POOL_LOG_LEVEL", "debug")
 	t.Setenv("ESPN_SYNC_ENABLED", "true")
 
@@ -43,7 +45,9 @@ func TestLoadConfigWithEnvironmentVariables(t *testing.T) {
 
 	// Verify environment variables override config file
 	assert.Equal(t, "9999", cfg.Server.Port)
-	assert.Equal(t, "test_override.db", cfg.Database.DSN)
+	dbConfig := cfg.Database.GetConfig()
+	require.NotNil(t, dbConfig)
+	assert.Equal(t, "test_override.db", dbConfig.GetDSN())
 	assert.Equal(t, "debug", cfg.Logging.Level)
 	assert.True(t, cfg.ESPN.SyncEnabled)
 }
@@ -67,7 +71,9 @@ func TestConfigDefaults(t *testing.T) {
 	// Verify default values (should match setDefaults())
 	assert.Equal(t, "localhost", cfg.Server.Host)
 	assert.Equal(t, "8080", cfg.Server.Port)
-	assert.Equal(t, "football-pool.db", cfg.Database.DSN)
+	dbConfig := cfg.Database.GetConfig()
+	require.NotNil(t, dbConfig)
+	assert.Equal(t, "football-pool.db", dbConfig.GetDSN())
 	assert.Equal(t, "info", cfg.Logging.Level)
 	assert.Equal(t, "https://site.api.espn.com/apis/site/v2/sports/football/nfl", cfg.ESPN.BaseURL)
 	assert.Equal(t, "assets/cache", cfg.ESPN.CacheDir)
@@ -88,7 +94,9 @@ func TestLoadConfigProd(t *testing.T) {
 	// Verify prod config values
 	assert.Equal(t, "localhost", cfg.Server.Host)
 	assert.Equal(t, "8080", cfg.Server.Port)
-	assert.Equal(t, "football-pool.db", cfg.Database.DSN)
+	dbConfig := cfg.Database.GetConfig()
+	require.NotNil(t, dbConfig)
+	assert.Equal(t, "football-pool.db", dbConfig.GetDSN())
 	assert.Equal(t, "info", cfg.Logging.Level)
 	assert.Equal(t, "https://site.api.espn.com/apis/site/v2/sports/football/nfl", cfg.ESPN.BaseURL)
 	assert.Equal(t, "assets/cache", cfg.ESPN.CacheDir)
@@ -103,7 +111,7 @@ func TestEnvironmentVariableBinding(t *testing.T) {
 	t.Setenv("FOOTBALL_POOL_ENV", "test")
 	t.Setenv("FOOTBALL_POOL_HOST", "test-host")
 	t.Setenv("FOOTBALL_POOL_PORT", "1234")
-	t.Setenv("FOOTBALL_POOL_DSN", "test-dsn")
+	t.Setenv("FOOTBALL_POOL_DB_FILE", "test-dsn")
 	t.Setenv("FOOTBALL_POOL_LOG_LEVEL", "warn")
 	t.Setenv("ESPN_BASE_URL", "http://test.example.com")
 	t.Setenv("ESPN_CACHE_DIR", "/test/cache")
@@ -118,7 +126,7 @@ func TestEnvironmentVariableBinding(t *testing.T) {
 	// Verify environment variables are properly bound
 	assert.Equal(t, "test-host", cfg.Server.Host)
 	assert.Equal(t, "1234", cfg.Server.Port)
-	assert.Equal(t, "test-dsn", cfg.Database.DSN)
+	assert.Equal(t, "test-dsn", cfg.Database.GetConfig().GetDSN())
 	assert.Equal(t, "warn", cfg.Logging.Level)
 	assert.Equal(t, "http://test.example.com", cfg.ESPN.BaseURL)
 	assert.Equal(t, "/test/cache", cfg.ESPN.CacheDir)
