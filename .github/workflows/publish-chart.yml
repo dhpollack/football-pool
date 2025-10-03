@@ -10,6 +10,7 @@ jobs:
     permissions:
       contents: read
       packages: write
+    if: startsWith(github.event.release.tag_name, 'football-pool-v')
     steps:
       - name: Checkout
         uses: actions/checkout@v4
