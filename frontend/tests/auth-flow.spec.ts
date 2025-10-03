@@ -121,7 +121,10 @@ async function _loginUser(page: Page, email: string, password: string) {
     console.log(`BROWSER CONSOLE [${msg.type()}]: ${text}`);
 
     // Look for specific auth-related messages
-    if (text.includes("AUTH_STORAGE_FAILED") || text.includes("signIn returned false")) {
+    if (
+      text.includes("AUTH_STORAGE_FAILED") ||
+      text.includes("signIn returned false")
+    ) {
       console.log("AUTH STORAGE FAILURE DETECTED IN BROWSER CONSOLE");
     }
   });
@@ -171,12 +174,17 @@ async function _loginUser(page: Page, email: string, password: string) {
 
   // Wait for navigation to complete - either to home page or back to login with error
   try {
-    await page.waitForURL((url) => {
-      return url.pathname === "/" || url.pathname === "/login";
-    }, { timeout: 10000 });
+    await page.waitForURL(
+      (url) => {
+        return url.pathname === "/" || url.pathname === "/login";
+      },
+      { timeout: 10000 },
+    );
   } catch (error) {
     console.log("Navigation timeout, current URL:", page.url());
-    throw new Error("Login navigation timeout - page didn't redirect to expected URLs");
+    throw new Error(
+      "Login navigation timeout - page didn't redirect to expected URLs",
+    );
   }
 
   // Check where we ended up
@@ -186,9 +194,15 @@ async function _loginUser(page: Page, email: string, password: string) {
   // Debug: check localStorage to see if auth data was stored
   const authData = await page.evaluate(() => {
     // Check all possible react-auth-kit storage keys and any other keys
-    const keys = ["_auth", "_auth_auth", "_auth_user", "_auth_refresh", "react-auth-kit"];
+    const keys = [
+      "_auth",
+      "_auth_auth",
+      "_auth_user",
+      "_auth_refresh",
+      "react-auth-kit",
+    ];
     const storageData: Record<string, string | null> = {};
-    keys.forEach(key => {
+    keys.forEach((key) => {
       storageData[key] = localStorage.getItem(key);
     });
 
@@ -224,9 +238,11 @@ async function _loginUser(page: Page, email: string, password: string) {
     }
 
     // If we have a token but still on login page, there might be a frontend issue
-    const hasAuthData = Object.values(authData).some(value => value !== null);
+    const hasAuthData = Object.values(authData).some((value) => value !== null);
     if (hasAuthData) {
-      console.log("Auth data found in localStorage but still on login page - frontend issue?");
+      console.log(
+        "Auth data found in localStorage but still on login page - frontend issue?",
+      );
       // Try to manually navigate to home page to see if we're actually authenticated
       await page.goto("/");
       const newUrl = page.url();
@@ -305,7 +321,10 @@ test.describe("Authentication Flow", () => {
     await expect(page).toHaveURL("/login");
 
     // Check if error message is visible, but don't fail if it's not
-    const errorVisible = await page.locator(E2E_CONFIG.SELECTORS.LOGIN.ERROR).isVisible().catch(() => false);
+    const errorVisible = await page
+      .locator(E2E_CONFIG.SELECTORS.LOGIN.ERROR)
+      .isVisible()
+      .catch(() => false);
     if (errorVisible) {
       console.log("Error message displayed for invalid login");
     } else {
@@ -313,12 +332,15 @@ test.describe("Authentication Flow", () => {
     }
 
     // 3. Login with correct credentials using API (workaround for react-auth-kit localStorage issues)
-    const loginResponse = await request.post(`${E2E_CONFIG.BACKEND_URL}/api/login`, {
-      data: {
-        email: testUser.email,
-        password: testUser.password,
+    const loginResponse = await request.post(
+      `${E2E_CONFIG.BACKEND_URL}/api/login`,
+      {
+        data: {
+          email: testUser.email,
+          password: testUser.password,
+        },
       },
-    });
+    );
 
     if (loginResponse.status() !== 200) {
       throw new Error(`Login failed with status: ${loginResponse.status()}`);
@@ -328,29 +350,39 @@ test.describe("Authentication Flow", () => {
     console.log("Login response data:", loginData);
 
     // Set authentication state manually using Playwright's addInitScript
-    await page.addInitScript((token, userData) => {
-      // Set react-auth-kit v4 format
-      const timestamp = Date.now();
-      localStorage.setItem("_auth_auth", `${timestamp}^&*&^${token}`);
-      localStorage.setItem("_auth_auth_type", `${timestamp}^&*&^Bearer`);
-      localStorage.setItem("_auth_state", `${timestamp}^&*&^${JSON.stringify({
-        id: userData.user.id,
-        name: userData.user.name,
-        email: userData.user.email,
-        role: userData.user.role,
-      })}`);
-      localStorage.setItem("_auth", JSON.stringify({
-        auth: { token, type: "Bearer" },
-        userState: {
-          id: userData.user.id,
-          name: userData.user.name,
-          email: userData.user.email,
-          role: userData.user.role,
-        },
-        isUsingRefreshToken: false,
-        isSignIn: true,
-      }));
-    }, loginData.token, loginData);
+    await page.addInitScript(
+      (token, userData) => {
+        // Set react-auth-kit v4 format
+        const timestamp = Date.now();
+        localStorage.setItem("_auth_auth", `${timestamp}^&*&^${token}`);
+        localStorage.setItem("_auth_auth_type", `${timestamp}^&*&^Bearer`);
+        localStorage.setItem(
+          "_auth_state",
+          `${timestamp}^&*&^${JSON.stringify({
+            id: userData.user.id,
+            name: userData.user.name,
+            email: userData.user.email,
+            role: userData.user.role,
+          })}`,
+        );
+        localStorage.setItem(
+          "_auth",
+          JSON.stringify({
+            auth: { token, type: "Bearer" },
+            userState: {
+              id: userData.user.id,
+              name: userData.user.name,
+              email: userData.user.email,
+              role: userData.user.role,
+            },
+            isUsingRefreshToken: false,
+            isSignIn: true,
+          }),
+        );
+      },
+      loginData.token,
+      loginData,
+    );
 
     console.log("Login successful - token and user received");
 
@@ -441,9 +473,11 @@ test.describe("Authentication Flow", () => {
       await _logoutUser(page);
 
       // After logout, login button should be visible
-      await expect(page.locator(E2E_CONFIG.SELECTORS.LOGIN.BUTTON)).toBeVisible({
-        timeout: 5000,
-      });
+      await expect(page.locator(E2E_CONFIG.SELECTORS.LOGIN.BUTTON)).toBeVisible(
+        {
+          timeout: 5000,
+        },
+      );
 
       // Verify the login button is actually clickable and functional
       await page.click(E2E_CONFIG.SELECTORS.LOGIN.BUTTON);
@@ -480,6 +514,4 @@ test.describe("Authentication Flow", () => {
       await expect(page).toHaveURL("/register");
     });
   });
-
-
 });

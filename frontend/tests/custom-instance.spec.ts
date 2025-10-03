@@ -8,17 +8,23 @@ test.describe("Custom Instance", () => {
     const timestamp = Date.now();
 
     // Set localStorage data in react-auth-kit v4 format
-    await page.evaluate(({ token, ts }) => {
-      // React-auth-kit v4 uses separate keys with timestamp^&*&^value format
-      localStorage.setItem("_auth_auth", `${ts}^&*&^${token}`);
-      localStorage.setItem("_auth_auth_type", `${ts}^&*&^Bearer`);
-      localStorage.setItem("_auth_state", `${ts}^&*&^${JSON.stringify({
-        id: 1,
-        name: "Test User",
-        email: "test@example.com",
-        role: "user",
-      })}`);
-    }, { token: testToken, ts: timestamp });
+    await page.evaluate(
+      ({ token, ts }) => {
+        // React-auth-kit v4 uses separate keys with timestamp^&*&^value format
+        localStorage.setItem("_auth_auth", `${ts}^&*&^${token}`);
+        localStorage.setItem("_auth_auth_type", `${ts}^&*&^Bearer`);
+        localStorage.setItem(
+          "_auth_state",
+          `${ts}^&*&^${JSON.stringify({
+            id: 1,
+            name: "Test User",
+            email: "test@example.com",
+            role: "user",
+          })}`,
+        );
+      },
+      { token: testToken, ts: timestamp },
+    );
 
     // Verify localStorage was set
     const storedAuth = await page.evaluate(() => {
