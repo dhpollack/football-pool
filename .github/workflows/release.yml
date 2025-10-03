@@ -25,6 +25,7 @@ jobs:
           config-file: release-please-config.json
           token: ${{ secrets.GH_PAT_RELEASE_PLEASE }}
 
+      - uses: actions/checkout@v4
       - name: Enable Auto-Merge on Release PR
         if: ${{ steps.release-please.outputs.prs_created }}
         run: |
