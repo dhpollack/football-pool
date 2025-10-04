@@ -18,5 +18,8 @@ _claude:
 claude:
     just -E .env-claude _claude
 
+helm-lint:
+    helm lint helm/football-pool
+
 mod backend 'backend/justfile'
 mod frontend 'frontend/justfile'
