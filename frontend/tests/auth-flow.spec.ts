@@ -39,7 +39,7 @@ async function _setAuthState(page: Page, email: string, token: string) {
 }
 
 // Admin user for existing account tests
-const ADMIN_USER = {
+const _ADMIN_USER = {
   email: E2E_CONFIG.ADMIN_CREDENTIALS.email,
   password: E2E_CONFIG.ADMIN_CREDENTIALS.password,
 };
@@ -180,7 +180,7 @@ async function _loginUser(page: Page, email: string, password: string) {
       },
       { timeout: 10000 },
     );
-  } catch (error) {
+  } catch (_error) {
     console.log("Navigation timeout, current URL:", page.url());
     throw new Error(
       "Login navigation timeout - page didn't redirect to expected URLs",

@@ -1,7 +1,36 @@
-localhost {
+# Production configuration - handles any hostname
+# Use environment variable to control HTTPS behavior
+{
+    http_port 80
+    https_port 443
+    auto_https {$AUTO_HTTPS:off}
+}
+
+:80 {
     route {
         handle /api/* {
-            reverse_proxy {$VITE_BACKEND_URL:http://backend:8080}
+            reverse_proxy {$FOOTBALL_POOL_BACKEND_URL}
+        }
+
+        handle {
+            root * /usr/share/caddy
+            try_files {path} /index.html
+            file_server
+        }
+    }
+    log
+}
+
+# HTTPS endpoint for environments that handle TLS directly
+:443 {
+    # Use internal CA for local development
+    tls internal {
+        on_demand
+    }
+
+    route {
+        handle /api/* {
+            reverse_proxy {$FOOTBALL_POOL_BACKEND_URL}
         }
 
         handle {
