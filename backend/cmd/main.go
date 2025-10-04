@@ -86,102 +86,61 @@ func main() {
 	srv.Start()
 }
 
-func handleAdminUserNotFound(err error, db *database.Database) error {
-	if err.Error() != "record not found" {
-		slog.Error("Error checking for admin user", "error", err)
-		return err
-	}
-
-	slog.Info("Admin user not found, creating...")
-	hashedPassword, err := bcrypt.GenerateFromPassword([]byte("adminpassword"), 8)
-	if err != nil {
-		slog.Error("Failed to hash admin password", "error", err)
-		return err
-	}
-
-	adminUser := database.User{
-		Name:     "Admin User",
-		Email:    "admin@test.com",
-		Password: string(hashedPassword),
-		Role:     "admin",
-	}
-
-	if createResult := db.GetDB().Create(&adminUser); createResult.Error != nil {
-		slog.Error("Failed to create admin user", "error", createResult.Error)
-		return createResult.Error
-	}
-
-	// Create associated Player record for admin user
-	adminPlayer := database.Player{
-		UserID:  adminUser.ID,
-		Name:    "Admin User",
-		Address: "",
-	}
-
-	if createResult := db.GetDB().Create(&adminPlayer); createResult.Error != nil {
-		slog.Error("Failed to create admin player record", "error", createResult.Error)
-		// Continue even if player creation fails - admin can still function
-	} else {
-		slog.Info("Admin player record created successfully.")
-	}
-
-	slog.Info("Admin user created successfully.")
-	return nil
-}
-
 // initSyncService initializes the ESPN sync service with configuration.
-// createConfiguredUsers creates users from configuration if they don't already exist
+// createConfiguredUsers creates users from configuration if they don't already exist.
 func createConfiguredUsers(users []config.UserConfig, db *database.Database) error {
 	for _, userCfg := range users {
 		// Check if user already exists
 		var existingUser database.User
 		result := db.GetDB().Where("email = ?", userCfg.Email).First(&existingUser)
 
-		if result.Error != nil {
-			// User doesn't exist, create it
-			if result.Error.Error() == "record not found" {
-				slog.Info("Creating configured user", "email", userCfg.Email)
-
-				// Hash the password
-				hashedPassword, err := bcrypt.GenerateFromPassword([]byte(userCfg.Password), 8)
-				if err != nil {
-					return fmt.Errorf("failed to hash password for user %s: %w", userCfg.Email, err)
-				}
-
-				// Create user
-				user := database.User{
-					Name:     userCfg.Name,
-					Email:    userCfg.Email,
-					Password: string(hashedPassword),
-					Role:     userCfg.Role,
-				}
-
-				if createResult := db.GetDB().Create(&user); createResult.Error != nil {
-					return fmt.Errorf("failed to create user %s: %w", userCfg.Email, createResult.Error)
-				}
-
-				// Create associated Player record
-				player := database.Player{
-					UserID:  user.ID,
-					Name:    userCfg.Name,
-					Address: "",
-				}
-
-				if createResult := db.GetDB().Create(&player); createResult.Error != nil {
-					slog.Warn("Failed to create player record for user", "email", userCfg.Email, "error", createResult.Error)
-					// Continue even if player creation fails - user can still function
-				} else {
-					slog.Info("Player record created successfully for user", "email", userCfg.Email)
-				}
-
-				slog.Info("User created successfully", "email", userCfg.Email)
-			} else {
-				// Some other error occurred
-				return fmt.Errorf("error checking for user %s: %w", userCfg.Email, result.Error)
-			}
-		} else {
+		// If no error, user already exists
+		if result.Error == nil {
 			slog.Info("User already exists", "email", userCfg.Email)
+			continue
 		}
+
+		// If error is not "record not found", return the error
+		if result.Error.Error() != "record not found" {
+			return fmt.Errorf("error checking for user %s: %w", userCfg.Email, result.Error)
+		}
+
+		// User doesn't exist, create it
+		slog.Info("Creating configured user", "email", userCfg.Email)
+
+		// Hash the password
+		hashedPassword, err := bcrypt.GenerateFromPassword([]byte(userCfg.Password), 8)
+		if err != nil {
+			return fmt.Errorf("failed to hash password for user %s: %w", userCfg.Email, err)
+		}
+
+		// Create user
+		user := database.User{
+			Name:     userCfg.Name,
+			Email:    userCfg.Email,
+			Password: string(hashedPassword),
+			Role:     userCfg.Role,
+		}
+
+		if createResult := db.GetDB().Create(&user); createResult.Error != nil {
+			return fmt.Errorf("failed to create user %s: %w", userCfg.Email, createResult.Error)
+		}
+
+		// Create associated Player record
+		player := database.Player{
+			UserID:  user.ID,
+			Name:    userCfg.Name,
+			Address: "",
+		}
+
+		if createResult := db.GetDB().Create(&player); createResult.Error != nil {
+			slog.Warn("Failed to create player record for user", "email", userCfg.Email, "error", createResult.Error)
+			// Continue even if player creation fails - user can still function
+		} else {
+			slog.Info("Player record created successfully for user", "email", userCfg.Email)
+		}
+
+		slog.Info("User created successfully", "email", userCfg.Email)
 	}
 
 	return nil

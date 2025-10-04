@@ -2,13 +2,14 @@
 package config
 
 import (
+	"errors"
 	"fmt"
 	"os"
 
 	"github.com/spf13/viper"
 )
 
-// UserConfig represents a user to be created on application startup
+// UserConfig represents a user to be created on application startup.
 type UserConfig struct {
 	Name     string `mapstructure:"name"`
 	Email    string `mapstructure:"email"`
@@ -43,7 +44,8 @@ func LoadUserConfig() ([]UserConfig, error) {
 	// Read config file (if exists)
 	if err := userViper.ReadInConfig(); err != nil {
 		// If file doesn't exist, return empty users (no error)
-		if _, ok := err.(viper.ConfigFileNotFoundError); ok {
+		var configFileNotFoundErr viper.ConfigFileNotFoundError
+		if errors.As(err, &configFileNotFoundErr) {
 			return []UserConfig{}, nil
 		}
 		return nil, fmt.Errorf("error reading user config file: %w", err)

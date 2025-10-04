@@ -92,7 +92,7 @@ func TestLoadConfigProd(t *testing.T) {
 	require.NotNil(t, cfg)
 
 	// Verify prod config values
-	assert.Equal(t, "localhost", cfg.Server.Host)
+	assert.Equal(t, "0.0.0.0", cfg.Server.Host)
 	assert.Equal(t, "8080", cfg.Server.Port)
 	dbConfig := cfg.Database.GetConfig()
 	require.NotNil(t, dbConfig)
@@ -134,4 +134,38 @@ func TestEnvironmentVariableBinding(t *testing.T) {
 	assert.Equal(t, 2*time.Hour, cfg.ESPN.SyncInterval)
 	assert.Equal(t, 48*time.Hour, cfg.ESPN.CacheExpiry)
 	assert.True(t, cfg.E2E.Test)
+}
+
+func TestPostgreSQLConfigurationWithStringPort(t *testing.T) {
+	// Test PostgreSQL configuration with string port values from environment variables
+	t.Setenv("FOOTBALL_POOL_ENV", "test")
+	t.Setenv("FOOTBALL_POOL_DB_TYPE", "postgres")
+	t.Setenv("FOOTBALL_POOL_DB_HOST", "localhost")
+	t.Setenv("FOOTBALL_POOL_DB_PORT", "5432") // String port value
+	t.Setenv("FOOTBALL_POOL_DB_USER", "testuser")
+	t.Setenv("FOOTBALL_POOL_DB_PASSWORD", "testpass")
+	t.Setenv("FOOTBALL_POOL_DB_NAME", "testdb")
+	t.Setenv("FOOTBALL_POOL_DB_SSLMODE", "disable")
+
+	cfg, err := LoadConfig()
+	require.NoError(t, err)
+	require.NotNil(t, cfg)
+
+	// Verify PostgreSQL configuration is properly loaded
+	assert.Equal(t, "postgres", cfg.Database.Type)
+
+	postgresConfig, ok := cfg.Database.GetConfig().(PostgresConfig)
+	require.True(t, ok, "Database config should be PostgresConfig")
+
+	// Verify all PostgreSQL fields are properly set
+	assert.Equal(t, "localhost", postgresConfig.Host)
+	assert.Equal(t, 5432, postgresConfig.Port) // Should be converted from string "5432" to int 5432
+	assert.Equal(t, "testuser", postgresConfig.User)
+	assert.Equal(t, "testpass", postgresConfig.Password)
+	assert.Equal(t, "testdb", postgresConfig.DBName)
+	assert.Equal(t, "disable", postgresConfig.SSLMode)
+
+	// Verify DSN is correctly formatted
+	expectedDSN := "host=localhost port=5432 user=testuser password=testpass dbname=testdb sslmode=disable"
+	assert.Equal(t, expectedDSN, postgresConfig.GetDSN())
 }

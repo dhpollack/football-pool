@@ -27,4 +27,4 @@ npm *args:
 
 build-push-local:
     # This builds the amd image local and the arm image on the orangepi5-max-ubuntu
-    docker buildx build --builder multiarch-builder --platform linux/arm64,linux/amd64 -t 192.168.8.1:5000/local/football-pool/frontend:dev --build-arg VITE_BACKEND_URL=http://backend:8080 . --output type=registry,registry.insecure=true
+    docker buildx build --builder multiarch-builder --platform linux/arm64,linux/amd64 -t 192.168.8.1:5000/local/football-pool/frontend:dev . --output type=registry,registry.insecure=true

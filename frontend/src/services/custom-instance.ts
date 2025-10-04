@@ -4,9 +4,23 @@ import Axios, {
   type AxiosResponse,
 } from "axios";
 
-export const AXIOS_INSTANCE = Axios.create({
-  baseURL: import.meta.env.VITE_BACKEND_URL || "/",
+// Get backend URL - environment variable takes precedence over config file
+const getBackendUrl = (): string => {
+  // Check for environment variable first (set by Docker/Kubernetes)
+  if (import.meta.env.VITE_BACKEND_URL) {
+    return import.meta.env.VITE_BACKEND_URL;
+  }
+
+  // For production (Kubernetes), use relative URL since ingress routes /api/* to backend
+  return "/";
+};
+
+// Create axios instance with the correct baseURL
+const AXIOS_INSTANCE = Axios.create({
+  baseURL: getBackendUrl(),
 });
+
+export { AXIOS_INSTANCE };
 
 // Add a request interceptor
 AXIOS_INSTANCE.interceptors.request.use(

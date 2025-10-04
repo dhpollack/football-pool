@@ -50,6 +50,8 @@ spec:
               value: {{ $val | quote }}
             {{- end }}
             {{- end }}
+            - name: CORS_ALLOWED_ORIGINS
+              value: {{ join "," .Values.backend.cors.allowedOrigins | quote }}
           livenessProbe:
             httpGet:
               path: /api/health

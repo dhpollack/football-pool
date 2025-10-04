@@ -189,7 +189,7 @@ func bindEnvVars() {
 
 func databaseDecodeHook() mapstructure.DecodeHookFunc {
 	return func(
-		f reflect.Type,
+		_ reflect.Type,
 		t reflect.Type,
 		data interface{},
 	) (interface{}, error) {
@@ -223,7 +223,15 @@ func databaseDecodeHook() mapstructure.DecodeHookFunc {
 			dbConfig = sqliteCfg
 		case "postgres":
 			var postgresCfg PostgresConfig
-			if err := mapstructure.Decode(configData, &postgresCfg); err != nil {
+			// Use a custom decoder with string-to-int conversion for postgres config
+			decoder, err := mapstructure.NewDecoder(&mapstructure.DecoderConfig{
+				Result:           &postgresCfg,
+				WeaklyTypedInput: true, // This allows string-to-int conversion
+			})
+			if err != nil {
+				return nil, err
+			}
+			if err := decoder.Decode(configData); err != nil {
 				return nil, err
 			}
 			dbConfig = postgresCfg

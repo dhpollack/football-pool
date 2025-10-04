@@ -68,6 +68,24 @@ export default tseslint.config([
 ])
 ```
 
+## Backend URL Configuration
+
+The frontend needs to know how to reach the backend API. This is configured differently depending on the environment:
+
+### Development (Docker Compose)
+- Uses `VITE_BACKEND_URL` environment variable set at build time
+- Defaults to `http://backend:8080` in the Dockerfile
+
+### Production (Kubernetes)
+- Uses relative URL `/` (configured via ingress routing)
+- The frontend makes API calls to `/api/*` which are routed to the backend service via ingress
+- **Note**: `VITE_BACKEND_URL` is a build-time variable and cannot be changed at runtime
+
+### Custom Configuration
+To change the backend URL in production, you must:
+1. Rebuild the frontend image with the desired `VITE_BACKEND_URL`
+2. Update the ingress configuration to route the new URL pattern
+
 ## Image
 
 A docker image for this can be found at `ghcr.io/dhpollack/football-pool/frontend`.

@@ -1,9 +1,6 @@
 # build stage
 FROM node:22.20.0-alpine AS build-stage
 
-ARG VITE_BACKEND_URL
-ENV VITE_BACKEND_URL=$VITE_BACKEND_URL
-
 WORKDIR /app
 
 COPY package*.json ./

@@ -2,7 +2,7 @@ replicaCount: 1
 
 backend:
   image:
-    repository: football-pool-backend
+    repository: ghcr.io/dhpollack/football-pool/backend
     pullPolicy: IfNotPresent
     tag: "latest"
   service:
@@ -15,6 +15,13 @@ backend:
     # FOOTBALL_POOL_PG_HOST: "my-postgres"
     # FOOTBALL_POOL_PG_PORT: "5432"
     env: {}
+  cors:
+    # CORS allowed origins for the backend API
+    allowedOrigins:
+      - "http://localhost:13000"
+      - "https://localhost:13001"
+      - "http://localhost:5173"
+      - "https://football-pool.local"
 
   usersTomlSecret:
     enabled: false
@@ -28,7 +35,7 @@ backend:
 
 frontend:
   image:
-    repository: football-pool-frontend
+    repository: ghcr.io/dhpollack/football-pool/frontend
     pullPolicy: IfNotPresent
     tag: "latest"
   service:
@@ -60,3 +67,7 @@ postgresql:
   username: "football_pool_user"
   storage:
     size: "1Gi"
+
+# Extra Kubernetes manifests to be applied alongside the main deployment
+# Useful for adding Traefik middlewares, additional resources, etc.
+extraManifests: []
