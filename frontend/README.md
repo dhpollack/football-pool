@@ -67,3 +67,7 @@ export default tseslint.config([
   },
 ])
 ```
+
+## Image
+
+A docker image for this can be found at `ghcr.io/dhpollack/football-pool/frontend`.
