@@ -1,5 +1,5 @@
 {
-  "helm/football-pool": "0.3.1",
-  "frontend": "0.2.3",
-  "backend": "1.0.3"
+  "helm/football-pool": "0.3.2",
+  "frontend": "0.2.4",
+  "backend": "1.0.4"
 }

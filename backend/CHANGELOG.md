@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.0.4](https://github.com/dhpollack/football-pool/compare/v1.0.3...v1.0.4) (2025-10-04)
+
+
+### Bug Fixes
+
+* Various Kubernetes deployment issues and backend linting ([#63](https://github.com/dhpollack/football-pool/issues/63)) ([35708d9](https://github.com/dhpollack/football-pool/commit/35708d921ce86f80f6b1e54354e25bc369e1f918))
+
 ## [1.0.3](https://github.com/dhpollack/football-pool/compare/v1.0.2...v1.0.3) (2025-10-04)
 
 
