@@ -20,13 +20,14 @@ services:
       dockerfile: Dockerfile
       args:
         BUILDKIT_INLINE_CACHE: "1"
+        VITE_BACKEND_URL: http://backend:8080
     ports:
       - "13000:80"
       - "13001:443"
     #volumes:
     #  - ./frontend:/app
     environment:
-      - VITE_BACKEND_URL=http://backend:8080
+      - FOOTBALL_POOL_BACKEND_URL=http://backend:8080
     depends_on:
       backend:
         condition: service_healthy
