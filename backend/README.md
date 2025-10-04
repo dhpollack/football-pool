@@ -1,6 +1,6 @@
 # Football Pool Backend
 
-A Go-based backend API for the Football Pool application. This service provides RESTful APIs for user management, game predictions, scoring, and administrative functions.
+A Golang backend API for the Football Pool application. This service provides RESTful APIs for user management, game predictions, scoring, and administrative functions.
 
 ## Features
 

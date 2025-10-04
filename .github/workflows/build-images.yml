@@ -17,7 +17,7 @@ jobs:
       contents: read
       packages: write
     if: |
-      startsWith(github.event.release.tag_name, 'backend-') ||
+      startsWith(github.event.release.tag_name, 'v') ||
       startsWith(github.event.release.tag_name, 'frontend-')
 
     steps:
@@ -34,14 +34,30 @@ jobs:
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
 
+      - name: Extract version without prefix
+        id: extract_version
+        run: |
+          TAG_NAME="${{ github.event.release.tag_name }}"
+          if [[ "$TAG_NAME" == v* ]]; then
+            # Remove 'v' prefix for backend
+            VERSION="${TAG_NAME#v}"
+            echo "version=$VERSION" >> $GITHUB_OUTPUT
+          elif [[ "$TAG_NAME" == frontend-v* ]]; then
+            # Remove 'frontend-v' prefix for frontend
+            VERSION="${TAG_NAME#frontend-v}"
+            echo "version=$VERSION" >> $GITHUB_OUTPUT
+          else
+            echo "version=$TAG_NAME" >> $GITHUB_OUTPUT
+          fi
+
       - name: Build and push Backend image
-        if: startsWith(github.event.release.tag_name, 'backend-')
+        if: startsWith(github.event.release.tag_name, 'v')
         uses: docker/build-push-action@v5
         with:
           context: ./backend
           platforms: linux/amd64,linux/arm64
           push: true
-          tags: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME_BACKEND }}:${{ github.event.release.tag_name }}
+          tags: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME_BACKEND }}:${{ steps.extract_version.outputs.version }}
           cache-from: type=gha
           cache-to: type=gha,mode=max
 
@@ -52,7 +68,7 @@ jobs:
           context: ./frontend
           platforms: linux/amd64,linux/arm64
           push: true
-          tags: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME_FRONTEND }}:${{ github.event.release.tag_name }}
+          tags: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME_FRONTEND }}:${{ steps.extract_version.outputs.version }}
           cache-from: type=gha
           cache-to: type=gha,mode=max
           build-args: |
