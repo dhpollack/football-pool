@@ -5,6 +5,8 @@ import (
 	"fmt"
 	"log/slog"
 	"net/http"
+	"os"
+	"strings"
 	"time"
 
 	"github.com/dhpollack/football-pool/internal/auth"
@@ -32,8 +34,14 @@ func NewServer(db *database.Database, cfg *config.Config) *Server {
 
 // NewRouter creates and configures the HTTP router with all application routes.
 func (s *Server) NewRouter() http.Handler {
+	// Get CORS allowed origins from environment variable or use defaults
+	allowedOrigins := []string{"http://localhost:13000", "https://localhost:13001", "http://localhost:5173"}
+	if corsEnv := os.Getenv("CORS_ALLOWED_ORIGINS"); corsEnv != "" {
+		allowedOrigins = strings.Split(corsEnv, ",")
+	}
+
 	c := cors.New(cors.Options{
-		AllowedOrigins:   []string{"http://localhost:13000", "https://localhost:13001", "http://localhost:5173"},
+		AllowedOrigins:   allowedOrigins,
 		AllowCredentials: true,
 		AllowedHeaders:   []string{"Authorization", "Content-Type"},
 		AllowedMethods:   []string{"GET", "POST", "PUT", "DELETE", "OPTIONS"},
