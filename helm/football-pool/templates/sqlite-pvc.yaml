@@ -1,0 +1,18 @@
+{{- if and (not .Values.postgresql.enabled) .Values.backend.sqlite.persistence.enabled }}
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: {{ include "football-pool.fullname" . }}-sqlite
+  labels:
+    {{- include "football-pool.labels" . | nindent 4 }}
+    app.kubernetes.io/component: backend
+spec:
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: {{ .Values.backend.sqlite.persistence.size | default "128Mi" }}
+  {{- if .Values.backend.sqlite.persistence.storageClass }}
+  storageClassName: {{ .Values.backend.sqlite.persistence.storageClass }}
+  {{- end }}
+{{- end }}

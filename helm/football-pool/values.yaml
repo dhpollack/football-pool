@@ -20,6 +20,12 @@ backend:
     enabled: false
     secretName: "" # Name of the secret containing the users.toml file
 
+  sqlite:
+    persistence:
+      enabled: true
+      size: "128Mi"
+      # storageClass: "" # Optional: specify a storage class
+
 frontend:
   image:
     repository: football-pool-frontend

@@ -56,16 +56,27 @@ spec:
             httpGet:
               path: /api/health
               port: http
-          {{- if .Values.backend.usersTomlSecret.enabled }}
+          {{- if or .Values.backend.usersTomlSecret.enabled (and (not .Values.postgresql.enabled) .Values.backend.sqlite.persistence.enabled) }}
           volumeMounts:
+            {{- if .Values.backend.usersTomlSecret.enabled }}
             - name: users-toml
               mountPath: "/app/config/users.toml"
               subPath: "users.toml"
               readOnly: true
+            {{- end }}
+            {{- if and (not .Values.postgresql.enabled) .Values.backend.sqlite.persistence.enabled }}
+            - name: sqlite-data
+              mountPath: "/app/data"
+            {{- end }}
           {{- end }}
-      {{- if .Values.backend.usersTomlSecret.enabled }}
       volumes:
+        {{- if .Values.backend.usersTomlSecret.enabled }}
         - name: users-toml
           secret:
             secretName: {{ .Values.backend.usersTomlSecret.secretName }}
-      {{- end }}
+        {{- end }}
+        {{- if and (not .Values.postgresql.enabled) .Values.backend.sqlite.persistence.enabled }}
+        - name: sqlite-data
+          persistentVolumeClaim:
+            claimName: {{ include "football-pool.fullname" . }}-sqlite
+        {{- end }}
