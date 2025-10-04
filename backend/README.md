@@ -13,3 +13,7 @@ A Go-based backend API for the Football Pool application. This service provides 
 ## Development
 
 See the main project README for development setup and commands.
+
+## Image
+
+A docker image for this can be found at `ghcr.io/dhpollack/football-pool/backend`.

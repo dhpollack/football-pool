@@ -112,24 +112,11 @@ This project includes a Helm chart for deploying the application to a Kubernetes
 
 ### Installation
 
-1.  **Log in to the GitHub Container Registry:**
+Install the Helm chart from the public OCI registry:
 
-    You need to be authenticated to pull the chart from `ghcr.io`.
-
-    ```bash
-    export CR_PAT=<your-github-pat>
-    echo $CR_PAT | helm registry login ghcr.io -u <your-github-username> --password-stdin
-    ```
-    Replace `<your-github-pat>` with a GitHub Personal Access Token with `read:packages` scope, and `<your-github-username>` with your GitHub username.
-
-2.  **Install the chart:**
-
-    Install the Helm chart from the OCI registry.
-
-    ```bash
-    helm install my-release oci://ghcr.io/dhpollack/football-pool --version 0.1.0
-    ```
-    Replace `dhpollack` with the repository owner if you are using a fork.
+```bash
+helm install my-release oci://ghcr.io/dhpollack/football-pool --version 0.2.1
+```
 
 ### Configuration
 
@@ -147,10 +134,27 @@ postgresql:
 
 **Install command:**
 ```bash
-helm install my-release oci://ghcr.io/dhpollack/football-pool --version 0.1.0 -f my-values.yaml
+helm install my-release oci://ghcr.io/dhpollack/football-pool --version 0.2.1 -f my-values.yaml
 ```
 
 See the `helm/football-pool/values.yaml` file for all available configuration options.
+
+### Terraform Usage
+
+You can also deploy the Helm chart using Terraform:
+
+```hcl
+resource "helm_release" "football_pool" {
+  name       = "football-pool"
+  repository = "oci://ghcr.io/dhpollack"
+  chart      = "football-pool"
+  version    = "0.2.1"
+
+  values = [
+    file("${path.module}/values.yaml")
+  ]
+}
+```
 
 ## Notes
 
