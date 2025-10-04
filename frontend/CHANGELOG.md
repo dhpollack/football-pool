@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.2.3](https://github.com/dhpollack/football-pool/compare/frontend-v0.2.2...frontend-v0.2.3) (2025-10-04)
+
+
+### Bug Fixes
+
+* add docker build to gh actions ([#58](https://github.com/dhpollack/football-pool/issues/58)) ([8bb8115](https://github.com/dhpollack/football-pool/commit/8bb8115f721693efa8b7e44bb1cb0890ef683b0c))
+
 ## [0.2.2](https://github.com/dhpollack/football-pool/compare/frontend-v0.2.1...frontend-v0.2.2) (2025-10-04)
 
 

@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.0.2](https://github.com/dhpollack/football-pool/compare/v1.0.1...v1.0.2) (2025-10-04)
+
+
+### Bug Fixes
+
+* add docker build to gh actions ([#58](https://github.com/dhpollack/football-pool/issues/58)) ([8bb8115](https://github.com/dhpollack/football-pool/commit/8bb8115f721693efa8b7e44bb1cb0890ef683b0c))
+
 ## [1.0.1](https://github.com/dhpollack/football-pool/compare/v1.0.0...v1.0.1) (2025-10-03)
 
 
