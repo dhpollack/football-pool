@@ -29,19 +29,21 @@ spec:
             {{- if .Values.postgresql.enabled }}
             - name: FOOTBALL_POOL_DB_TYPE
               value: "postgres"
-            - name: FOOTBALL_POOL_PG_HOST
+            - name: FOOTBALL_POOL_DB_HOST
               value: "{{ .Values.postgresql.clusterName }}-rw"
-            - name: FOOTBALL_POOL_PG_PORT
+            - name: FOOTBALL_POOL_DB_PORT
               value: "5432"
-            - name: FOOTBALL_POOL_PG_DBNAME
+            - name: FOOTBALL_POOL_DB_NAME
               value: {{ .Values.postgresql.database | quote }}
-            - name: FOOTBALL_POOL_PG_USER
+            - name: FOOTBALL_POOL_DB_USER
               value: {{ .Values.postgresql.username | quote }}
-            - name: FOOTBALL_POOL_PG_PASSWORD
+            - name: FOOTBALL_POOL_DB_PASSWORD
               valueFrom:
                 secretKeyRef:
                   name: {{ .Values.postgresql.clusterName }}-app
                   key: password
+            - name: FOOTBALL_POOL_DB_SSLMODE
+              value: "disable"
             {{- else }}
             {{- range $key, $val := .Values.backend.config.env }}
             - name: {{ $key }}
