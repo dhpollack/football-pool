@@ -25,3 +25,8 @@ spec:
             - name: http
               containerPort: {{ .Values.frontend.service.port }}
               protocol: TCP
+          env:
+            - name: AUTO_HTTPS
+              value: "disable_redirects"
+            - name: FOOTBALL_POOL_BACKEND_URL
+              value: "http://{{ include "football-pool.fullname" . }}-backend"
