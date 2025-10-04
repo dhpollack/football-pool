@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.3.0](https://github.com/dhpollack/football-pool/compare/football-pool-v0.2.1...football-pool-v0.3.0) (2025-10-04)
+
+
+### Features
+
+* add PVC for SQLite database persistence ([#57](https://github.com/dhpollack/football-pool/issues/57)) ([2cf0bfd](https://github.com/dhpollack/football-pool/commit/2cf0bfd4ef074c4515a3548f4f9abb0254e99f28))
+
 ## [0.2.1](https://github.com/dhpollack/football-pool/compare/football-pool-v0.2.0...football-pool-v0.2.1) (2025-10-03)
 
 
