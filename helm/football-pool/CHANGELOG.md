@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.3.1](https://github.com/dhpollack/football-pool/compare/football-pool-v0.3.0...football-pool-v0.3.1) (2025-10-04)
+
+
+### Bug Fixes
+
+* use correct env vars and fix image build ([#60](https://github.com/dhpollack/football-pool/issues/60)) ([5111ba6](https://github.com/dhpollack/football-pool/commit/5111ba6ba5ed3440923524c3375f1334516b7f9e))
+
 ## [0.3.0](https://github.com/dhpollack/football-pool/compare/football-pool-v0.2.1...football-pool-v0.3.0) (2025-10-04)
 
 
