@@ -656,12 +656,15 @@ func TestAdminGetUser(t *testing.T) {
 	user := database.User{Name: "Test User", Email: "test@test.com", Role: "user"}
 	gormDB.Create(&user)
 
-	handler := AdminGetUser(gormDB)
+	// Create router for testing
+	mux := http.NewServeMux()
+	mux.Handle("GET /api/admin/users/{id}", AdminGetUser(gormDB))
+	router := mux
 
 	t.Run("get existing user", func(t *testing.T) {
 		req, _ := http.NewRequest("GET", fmt.Sprintf("/api/admin/users/%d", user.ID), nil)
 		rr := httptest.NewRecorder()
-		handler.ServeHTTP(rr, req)
+		router.ServeHTTP(rr, req)
 
 		if status := rr.Code; status != http.StatusOK {
 			t.Errorf("handler returned wrong status code: got %v want %v", status, http.StatusOK)
@@ -677,7 +680,7 @@ func TestAdminGetUser(t *testing.T) {
 	t.Run("user not found", func(t *testing.T) {
 		req, _ := http.NewRequest("GET", "/api/admin/users/999", nil)
 		rr := httptest.NewRecorder()
-		handler.ServeHTTP(rr, req)
+		router.ServeHTTP(rr, req)
 
 		if status := rr.Code; status != http.StatusNotFound {
 			t.Errorf("handler returned wrong status code: got %v want %v", status, http.StatusNotFound)

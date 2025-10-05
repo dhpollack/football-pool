@@ -4,10 +4,8 @@ package handlers
 import (
 	"encoding/json"
 	"errors"
-	"log/slog"
 	"net/http"
 	"strconv"
-	"strings"
 
 	"github.com/dhpollack/football-pool/internal/api"
 	"github.com/dhpollack/football-pool/internal/auth"
@@ -94,38 +92,47 @@ func UpdateProfile(db *gorm.DB) http.HandlerFunc {
 func DeleteUser(db *gorm.DB) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		w.Header().Set("Content-Type", "application/json")
-		email := r.URL.Query().Get("email")
-		slog.Debug("Attempting to delete user:", "email", email)
-		if email == "" {
-			slog.Debug("Error: Email is empty for delete request.")
+
+		// Extract user ID from URL path using PathValue
+		idStr := extractPathParam(r, "id")
+		if idStr == "" {
 			w.WriteHeader(http.StatusBadRequest)
-			json.NewEncoder(w).Encode(api.ErrorResponse{Error: "Email parameter is required"})
+			json.NewEncoder(w).Encode(api.ErrorResponse{Error: "No user ID found in path"})
 			return
 		}
 
-		// First, find the user to get their ID
+		id, err := strconv.ParseUint(idStr, 10, 32)
+		if err != nil {
+			w.WriteHeader(http.StatusBadRequest)
+			json.NewEncoder(w).Encode(api.ErrorResponse{Error: "Invalid user ID"})
+			return
+		}
+
+		// Check if user exists
 		var user database.User
-		if result := db.Where("email = ?", email).First(&user); result.Error != nil {
-			slog.Debug("User not found:", "email", email, "error", result.Error)
-			w.WriteHeader(http.StatusNotFound)
-			json.NewEncoder(w).Encode(api.ErrorResponse{Error: "User not found"})
+		if result := db.First(&user, id); result.Error != nil {
+			if errors.Is(result.Error, gorm.ErrRecordNotFound) {
+				w.WriteHeader(http.StatusNotFound)
+				json.NewEncoder(w).Encode(api.ErrorResponse{Error: "User not found"})
+			} else {
+				w.WriteHeader(http.StatusInternalServerError)
+				json.NewEncoder(w).Encode(api.ErrorResponse{Error: "Database error"})
+			}
 			return
 		}
 
 		// Delete associated player record first (due to foreign key constraints)
-		if result := db.Unscoped().Where("user_id = ?", user.ID).Delete(&database.Player{}); result.Error != nil {
-			slog.Debug("Error deleting player:", "email", email, "error", result.Error)
+		if result := db.Unscoped().Where("user_id = ?", id).Delete(&database.Player{}); result.Error != nil {
 			// Continue with user deletion even if player deletion fails
+			_ = result.Error // Ignore player deletion errors
 		}
 
 		// Delete the user record
-		if result := db.Unscoped().Where("email = ?", email).Delete(&database.User{}); result.Error != nil {
-			slog.Debug("Error deleting user:", "email", email, "error", result.Error)
+		if result := db.Unscoped().Delete(&user); result.Error != nil {
 			w.WriteHeader(http.StatusInternalServerError)
 			json.NewEncoder(w).Encode(api.ErrorResponse{Error: "Failed to delete user"})
 			return
 		}
-		slog.Debug("User and associated player deleted successfully:", "email", email)
 		w.WriteHeader(http.StatusNoContent)
 	}
 }
@@ -220,9 +227,13 @@ func AdminGetUser(db *gorm.DB) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		w.Header().Set("Content-Type", "application/json")
 
-		// Extract user ID from URL path
-		path := strings.TrimPrefix(r.URL.Path, "/api/admin/users/")
-		idStr := strings.Split(path, "/")[0]
+		// Extract user ID from URL path using PathValue
+		idStr := extractPathParam(r, "id")
+		if idStr == "" {
+			w.WriteHeader(http.StatusBadRequest)
+			json.NewEncoder(w).Encode(api.ErrorResponse{Error: "No user ID found in path"})
+			return
+		}
 
 		id, err := strconv.ParseUint(idStr, 10, 32)
 		if err != nil {
@@ -269,9 +280,13 @@ func AdminUpdateUser(db *gorm.DB) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		w.Header().Set("Content-Type", "application/json")
 
-		// Extract user ID from URL path
-		path := strings.TrimPrefix(r.URL.Path, "/api/admin/users/")
-		idStr := strings.Split(path, "/")[0]
+		// Extract user ID from URL path using PathValue
+		idStr := extractPathParam(r, "id")
+		if idStr == "" {
+			w.WriteHeader(http.StatusBadRequest)
+			json.NewEncoder(w).Encode(api.ErrorResponse{Error: "No user ID found in path"})
+			return
+		}
 
 		id, err := strconv.ParseUint(idStr, 10, 32)
 		if err != nil {

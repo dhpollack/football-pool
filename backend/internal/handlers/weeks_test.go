@@ -18,7 +18,6 @@ func TestListWeeks(t *testing.T) {
 		t.Fatalf("Failed to connect to database: %v", err)
 	}
 	gormDB := db.GetDB()
-	handler := ListWeeks(gormDB)
 
 	// Create test weeks
 	weeks := []database.Week{
@@ -47,7 +46,7 @@ func TestListWeeks(t *testing.T) {
 	req := httptest.NewRequest("GET", "/api/admin/weeks", nil)
 	w := httptest.NewRecorder()
 
-	handler.ServeHTTP(w, req)
+	ListWeeks(gormDB)(w, req)
 
 	if w.Code != http.StatusOK {
 		t.Errorf("Expected status %d, got %d", http.StatusOK, w.Code)
@@ -88,7 +87,6 @@ func TestCreateWeek(t *testing.T) {
 		t.Fatalf("Failed to connect to database: %v", err)
 	}
 	gormDB := db.GetDB()
-	handler := CreateWeek(gormDB)
 
 	weekRequest := api.WeekRequest{
 		WeekNumber:    3,
@@ -103,7 +101,7 @@ func TestCreateWeek(t *testing.T) {
 	req.Header.Set("Content-Type", "application/json")
 	w := httptest.NewRecorder()
 
-	handler.ServeHTTP(w, req)
+	CreateWeek(gormDB)(w, req)
 
 	if w.Code != http.StatusCreated {
 		t.Errorf("Expected status %d, got %d", http.StatusCreated, w.Code)
@@ -137,14 +135,13 @@ func TestCreateWeek_InvalidRequest(t *testing.T) {
 		t.Fatalf("Failed to connect to database: %v", err)
 	}
 	gormDB := db.GetDB()
-	handler := CreateWeek(gormDB)
 
 	// Invalid JSON
 	req := httptest.NewRequest("POST", "/api/admin/weeks", bytes.NewBuffer([]byte("invalid json")))
 	req.Header.Set("Content-Type", "application/json")
 	w := httptest.NewRecorder()
 
-	handler.ServeHTTP(w, req)
+	CreateWeek(gormDB)(w, req)
 
 	if w.Code != http.StatusBadRequest {
 		t.Errorf("Expected status %d, got %d", http.StatusBadRequest, w.Code)
@@ -157,7 +154,6 @@ func TestUpdateWeek(t *testing.T) {
 		t.Fatalf("Failed to connect to database: %v", err)
 	}
 	gormDB := db.GetDB()
-	handler := UpdateWeek(gormDB)
 
 	// Create a test week
 	week := database.Week{
@@ -183,12 +179,9 @@ func TestUpdateWeek(t *testing.T) {
 	req := httptest.NewRequest("PUT", "/api/admin/weeks/1", bytes.NewBuffer(body))
 	req.Header.Set("Content-Type", "application/json")
 
-	// Set the path variable
-	req = mux.SetURLVars(req, map[string]string{"id": "1"})
-
 	w := httptest.NewRecorder()
 
-	handler.ServeHTTP(w, req)
+	UpdateWeek(gormDB)(w, req)
 
 	if w.Code != http.StatusOK {
 		t.Errorf("Expected status %d, got %d", http.StatusOK, w.Code)
@@ -220,7 +213,6 @@ func TestUpdateWeek_NotFound(t *testing.T) {
 		t.Fatalf("Failed to connect to database: %v", err)
 	}
 	gormDB := db.GetDB()
-	handler := UpdateWeek(gormDB)
 
 	weekRequest := api.WeekRequest{
 		WeekNumber:    1,
@@ -235,7 +227,7 @@ func TestUpdateWeek_NotFound(t *testing.T) {
 	req.Header.Set("Content-Type", "application/json")
 	w := httptest.NewRecorder()
 
-	handler.ServeHTTP(w, req)
+	UpdateWeek(gormDB)(w, req)
 
 	if w.Code != http.StatusNotFound {
 		t.Errorf("Expected status %d, got %d", http.StatusNotFound, w.Code)
@@ -248,7 +240,6 @@ func TestDeleteWeek(t *testing.T) {
 		t.Fatalf("Failed to connect to database: %v", err)
 	}
 	gormDB := db.GetDB()
-	handler := DeleteWeek(gormDB)
 
 	// Create a test week
 	week := database.Week{
@@ -265,7 +256,7 @@ func TestDeleteWeek(t *testing.T) {
 	req := httptest.NewRequest("DELETE", "/api/admin/weeks/1", nil)
 	w := httptest.NewRecorder()
 
-	handler.ServeHTTP(w, req)
+	DeleteWeek(gormDB)(w, req)
 
 	if w.Code != http.StatusNoContent {
 		t.Errorf("Expected status %d, got %d", http.StatusNoContent, w.Code)
@@ -284,12 +275,11 @@ func TestDeleteWeek_NotFound(t *testing.T) {
 		t.Fatalf("Failed to connect to database: %v", err)
 	}
 	gormDB := db.GetDB()
-	handler := DeleteWeek(gormDB)
 
 	req := httptest.NewRequest("DELETE", "/api/admin/weeks/999", nil)
 	w := httptest.NewRecorder()
 
-	handler.ServeHTTP(w, req)
+	DeleteWeek(gormDB)(w, req)
 
 	if w.Code != http.StatusNotFound {
 		t.Errorf("Expected status %d, got %d", http.StatusNotFound, w.Code)
@@ -302,7 +292,6 @@ func TestActivateWeek(t *testing.T) {
 		t.Fatalf("Failed to connect to database: %v", err)
 	}
 	gormDB := db.GetDB()
-	handler := ActivateWeek(gormDB)
 
 	// Create test weeks
 	weeks := []database.Week{
@@ -331,7 +320,7 @@ func TestActivateWeek(t *testing.T) {
 	req := httptest.NewRequest("POST", "/api/admin/weeks/2/activate", nil)
 	w := httptest.NewRecorder()
 
-	handler.ServeHTTP(w, req)
+	ActivateWeek(gormDB)(w, req)
 
 	if w.Code != http.StatusOK {
 		t.Errorf("Expected status %d, got %d", http.StatusOK, w.Code)
@@ -370,12 +359,11 @@ func TestActivateWeek_NotFound(t *testing.T) {
 		t.Fatalf("Failed to connect to database: %v", err)
 	}
 	gormDB := db.GetDB()
-	handler := ActivateWeek(gormDB)
 
 	req := httptest.NewRequest("POST", "/api/admin/weeks/999/activate", nil)
 	w := httptest.NewRecorder()
 
-	handler.ServeHTTP(w, req)
+	ActivateWeek(gormDB)(w, req)
 
 	if w.Code != http.StatusNotFound {
 		t.Errorf("Expected status %d, got %d", http.StatusNotFound, w.Code)
@@ -388,12 +376,11 @@ func TestActivateWeek_InvalidID(t *testing.T) {
 		t.Fatalf("Failed to connect to database: %v", err)
 	}
 	gormDB := db.GetDB()
-	handler := ActivateWeek(gormDB)
 
 	req := httptest.NewRequest("POST", "/api/admin/weeks/invalid/activate", nil)
 	w := httptest.NewRecorder()
 
-	handler.ServeHTTP(w, req)
+	ActivateWeek(gormDB)(w, req)
 
 	if w.Code != http.StatusBadRequest {
 		t.Errorf("Expected status %d, got %d", http.StatusBadRequest, w.Code)

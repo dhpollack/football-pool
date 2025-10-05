@@ -347,10 +347,8 @@ func TestAdminDeletePick(t *testing.T) {
 	gormDB.Create(&pick)
 
 	// Test deleting the pick
-	req, err := http.NewRequest("DELETE", fmt.Sprintf("/api/admin/picks/%d", pick.ID), nil)
-	if err != nil {
-		t.Fatal(err)
-	}
+	pathParams := map[string]string{"id": fmt.Sprintf("%d", pick.ID)}
+	req := createRequestWithPathParams("DELETE", fmt.Sprintf("/api/admin/picks/%d", pick.ID), nil, pathParams)
 
 	rr := httptest.NewRecorder()
 	handler := AdminDeletePick(gormDB)
@@ -493,10 +491,8 @@ func TestAdminGetPicksByWeek(t *testing.T) {
 			if tt.season != "" {
 				url += fmt.Sprintf("?season=%s", tt.season)
 			}
-			req, err := http.NewRequest("GET", url, nil)
-			if err != nil {
-				t.Fatal(err)
-			}
+			pathParams := map[string]string{"week": tt.week}
+			req := createRequestWithPathParams("GET", url, nil, pathParams)
 
 			rr := httptest.NewRecorder()
 			handler := AdminGetPicksByWeek(gormDB)
@@ -579,10 +575,9 @@ func TestAdminGetPicksByUser(t *testing.T) {
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			req, err := http.NewRequest("GET", fmt.Sprintf("/api/admin/picks/user/%s", tt.userID), nil)
-			if err != nil {
-				t.Fatal(err)
-			}
+			url := fmt.Sprintf("/api/admin/picks/user/%s", tt.userID)
+			pathParams := map[string]string{"userID": tt.userID}
+			req := createRequestWithPathParams("GET", url, nil, pathParams)
 
 			rr := httptest.NewRecorder()
 			handler := AdminGetPicksByUser(gormDB)
@@ -949,10 +944,9 @@ func TestAdminDeletePickEdgeCases(t *testing.T) {
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			req, err := http.NewRequest("DELETE", fmt.Sprintf("/api/admin/picks/%s", tt.pickID), nil)
-			if err != nil {
-				t.Fatal(err)
-			}
+			url := fmt.Sprintf("/api/admin/picks/%s", tt.pickID)
+			pathParams := map[string]string{"id": tt.pickID}
+			req := createRequestWithPathParams("DELETE", url, nil, pathParams)
 
 			rr := httptest.NewRecorder()
 			handler := AdminDeletePick(gormDB)

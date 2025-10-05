@@ -247,11 +247,6 @@ type AdminSubmitPicksJSONBody = []PickRequest
 // CreateUsersJSONBody defines parameters for CreateUsers.
 type CreateUsersJSONBody = []UserRequest
 
-// DeleteUserParams defines parameters for DeleteUser.
-type DeleteUserParams struct {
-	Email string `form:"email" json:"email"`
-}
-
 // GetGamesParams defines parameters for GetGames.
 type GetGamesParams struct {
 	Week   int `form:"week" json:"week"`

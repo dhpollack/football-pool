@@ -7,7 +7,6 @@ import (
 	"log/slog"
 	"net/http"
 	"strconv"
-	"strings"
 
 	"github.com/dhpollack/football-pool/internal/api"
 	"github.com/dhpollack/football-pool/internal/database"
@@ -202,9 +201,13 @@ func UpdateGame(db *gorm.DB) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		w.Header().Set("Content-Type", "application/json")
 
-		// Extract game ID from URL path
-		path := strings.TrimPrefix(r.URL.Path, "/api/admin/games/")
-		idStr := strings.Split(path, "/")[0]
+		// Extract game ID from URL path using PathValue
+		idStr := extractPathParam(r, "id")
+		if idStr == "" {
+			w.WriteHeader(http.StatusBadRequest)
+			json.NewEncoder(w).Encode(api.ErrorResponse{Error: "No game ID found in path"})
+			return
+		}
 
 		id, err := strconv.ParseUint(idStr, 10, 32)
 		if err != nil {
@@ -263,9 +266,13 @@ func DeleteGame(db *gorm.DB) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		w.Header().Set("Content-Type", "application/json")
 
-		// Extract game ID from URL path
-		path := strings.TrimPrefix(r.URL.Path, "/api/admin/games/")
-		idStr := strings.Split(path, "/")[0]
+		// Extract game ID from URL path using PathValue
+		idStr := extractPathParam(r, "id")
+		if idStr == "" {
+			w.WriteHeader(http.StatusBadRequest)
+			json.NewEncoder(w).Encode(api.ErrorResponse{Error: "No game ID found in path"})
+			return
+		}
 
 		id, err := strconv.ParseUint(idStr, 10, 32)
 		if err != nil {

@@ -6,7 +6,6 @@ import (
 	"errors"
 	"net/http"
 	"strconv"
-	"strings"
 
 	"github.com/dhpollack/football-pool/internal/api"
 	"github.com/dhpollack/football-pool/internal/database"
@@ -69,13 +68,10 @@ func CreateWeek(db *gorm.DB) http.HandlerFunc {
 	}
 }
 
-// extractIDFromPath extracts the ID from URL path after the base path
-func extractIDFromPath(path, basePath string) (uint, error) {
-	// Remove the base path prefix
-	idPath := strings.TrimPrefix(path, basePath)
-
-	// Extract the ID part before any additional path segments
-	idStr := strings.Split(idPath, "/")[0]
+// extractIDFromPath extracts the ID from URL path using PathValue.
+func extractIDFromPath(r *http.Request) (uint, error) {
+	// Use PathValue to get the "id" parameter from the path
+	idStr := extractPathParam(r, "id")
 	if idStr == "" {
 		return 0, errors.New("no ID found in path")
 	}
@@ -95,7 +91,7 @@ func UpdateWeek(db *gorm.DB) http.HandlerFunc {
 		w.Header().Set("Content-Type", "application/json")
 
 		// Extract week ID from URL path
-		id, err := extractIDFromPath(r.URL.Path, "/api/admin/weeks/")
+		id, err := extractIDFromPath(r)
 		if err != nil {
 			w.WriteHeader(http.StatusBadRequest)
 			_ = json.NewEncoder(w).Encode(api.ErrorResponse{Error: "Invalid week ID"})
@@ -148,7 +144,7 @@ func DeleteWeek(db *gorm.DB) http.HandlerFunc {
 		w.Header().Set("Content-Type", "application/json")
 
 		// Extract week ID from URL path
-		id, err := extractIDFromPath(r.URL.Path, "/api/admin/weeks/")
+		id, err := extractIDFromPath(r)
 		if err != nil {
 			w.WriteHeader(http.StatusBadRequest)
 			_ = json.NewEncoder(w).Encode(api.ErrorResponse{Error: "Invalid week ID"})
@@ -184,7 +180,7 @@ func ActivateWeek(db *gorm.DB) http.HandlerFunc {
 		w.Header().Set("Content-Type", "application/json")
 
 		// Extract week ID from URL path
-		id, err := extractIDFromPath(r.URL.Path, "/api/admin/weeks/")
+		id, err := extractIDFromPath(r)
 		if err != nil {
 			w.WriteHeader(http.StatusBadRequest)
 			_ = json.NewEncoder(w).Encode(api.ErrorResponse{Error: "Invalid week ID"})
