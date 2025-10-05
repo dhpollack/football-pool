@@ -4,6 +4,18 @@
 
 We are creating a webapp for a football pool.  The technical design details exist as markdown files in the `design` directory.
 
+While running:
+
+- Prefer `just` recipes over direct commands.
+- For the frontend, you can use `npm` recipes directly or via `just`
+- Never run `playwright` with `npx`
+- NEVER RUN `playwright` WITH `npx`!!!
+
+### Agents
+
+- `backend-agent`:  a golang expert that should handle all backend tasks
+- `docs-updater`:  a simple agent that uses gemini to update documentation
+
 ## Quality Controls
 
 - All code should be properly formatted and linted

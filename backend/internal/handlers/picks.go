@@ -6,7 +6,6 @@ import (
 	"errors"
 	"net/http"
 	"strconv"
-	"strings"
 
 	"github.com/dhpollack/football-pool/internal/api"
 	"github.com/dhpollack/football-pool/internal/auth"
@@ -235,9 +234,13 @@ func AdminGetPicksByWeek(db *gorm.DB) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		w.Header().Set("Content-Type", "application/json")
 
-		// Extract week from URL path
-		path := strings.TrimPrefix(r.URL.Path, "/api/admin/picks/week/")
-		weekStr := strings.Split(path, "/")[0]
+		// Extract week from URL path using PathValue
+		weekStr := extractPathParam(r, "week")
+		if weekStr == "" {
+			w.WriteHeader(http.StatusBadRequest)
+			json.NewEncoder(w).Encode(api.ErrorResponse{Error: "No week found in path"})
+			return
+		}
 
 		week, err := strconv.Atoi(weekStr)
 		if err != nil {
@@ -284,9 +287,13 @@ func AdminGetPicksByUser(db *gorm.DB) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		w.Header().Set("Content-Type", "application/json")
 
-		// Extract user ID from URL path
-		path := strings.TrimPrefix(r.URL.Path, "/api/admin/picks/user/")
-		userIDStr := strings.Split(path, "/")[0]
+		// Extract user ID from URL path using PathValue
+		userIDStr := extractPathParam(r, "userID")
+		if userIDStr == "" {
+			w.WriteHeader(http.StatusBadRequest)
+			json.NewEncoder(w).Encode(api.ErrorResponse{Error: "No user ID found in path"})
+			return
+		}
 
 		userID, err := strconv.ParseUint(userIDStr, 10, 32)
 		if err != nil {
@@ -328,9 +335,13 @@ func AdminDeletePick(db *gorm.DB) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		w.Header().Set("Content-Type", "application/json")
 
-		// Extract pick ID from URL path
-		path := strings.TrimPrefix(r.URL.Path, "/api/admin/picks/")
-		idStr := strings.Split(path, "/")[0]
+		// Extract pick ID from URL path using PathValue
+		idStr := extractPathParam(r, "id")
+		if idStr == "" {
+			w.WriteHeader(http.StatusBadRequest)
+			json.NewEncoder(w).Encode(api.ErrorResponse{Error: "No pick ID found in path"})
+			return
+		}
 
 		id, err := strconv.ParseUint(idStr, 10, 32)
 		if err != nil {

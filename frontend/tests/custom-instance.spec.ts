@@ -1,8 +1,11 @@
 import { test, expect } from "@playwright/test";
+import { E2E_CONFIG } from "./e2e.config";
 
 // Simple test to verify custom instance works
 test.describe("Custom Instance", () => {
   test("should extract token from localStorage", async ({ page }) => {
+    // Navigate to the application first to establish a proper origin for localStorage
+    await page.goto(E2E_CONFIG.FRONTEND_URL);
     // Set up auth data in localStorage using react-auth-kit v4 format
     const testToken = "test-token-123";
     const timestamp = Date.now();

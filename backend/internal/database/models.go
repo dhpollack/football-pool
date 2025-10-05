@@ -31,8 +31,8 @@ type Player struct {
 // swagger:model
 type Game struct {
 	gorm.Model
-	Week         int    `gorm:"index:idx_week_season" validate:"required,ne=0"`
-	Season       int    `gorm:"index:idx_week_season" validate:"required,ne=0"`
+	Week         int    `gorm:"index:idx_game_week_season" validate:"required,ne=0"`
+	Season       int    `gorm:"index:idx_game_week_season" validate:"required,ne=0"`
 	FavoriteTeam string `validate:"required"`
 	UnderdogTeam string `validate:"required"`
 	Spread       float32
@@ -71,4 +71,15 @@ type SurvivorPick struct {
 	User   User
 	Week   int `gorm:"index:idx_user_week,unique"`
 	Team   string
+}
+
+// Week represents a week in the football season
+// swagger:model
+type Week struct {
+	gorm.Model
+	WeekNumber    int       `gorm:"index:idx_week_number_season,unique" validate:"required,ne=0"`
+	Season        int       `gorm:"index:idx_week_number_season,unique" validate:"required,ne=0"`
+	WeekStartTime time.Time `validate:"required"`
+	WeekEndTime   time.Time `validate:"required"`
+	IsActive      bool      `gorm:"default:false"`
 }

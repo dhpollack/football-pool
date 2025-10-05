@@ -77,13 +77,27 @@ async function _registerUser(
         response.statusText(),
         response.url(),
       );
+      // Safely log response body for debugging - handle WebKit's stricter response body access
+      const status = response.status();
+      console.log("Register response status:", status);
+
+      // Only try to access response body if it's available
       response
-        .json()
-        .then((data) => {
-          console.log("Register response data:", JSON.stringify(data));
+        .body()
+        .then((body) => {
+          if (body && body.length > 0) {
+            try {
+              const jsonData = JSON.parse(body.toString());
+              console.log("Register response data:", JSON.stringify(jsonData));
+            } catch {
+              console.log("Register response text:", body.toString());
+            }
+          } else {
+            console.log("Register response: No body available");
+          }
         })
-        .catch(() => {
-          console.log("Register response text:", response.text());
+        .catch((error) => {
+          console.log("Register response: Could not access body -", error.message);
         });
     }
   });

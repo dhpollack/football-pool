@@ -12,11 +12,11 @@ build-push-local:
     just frontend build-push-local
     just backend build-push-local
 
-_claude:
-    claude
+_claude *args:
+    claude {{ args }}
 
-claude:
-    just -E .env-claude _claude
+claude *args:
+    just -E .env-claude _claude {{ args }}
 
 helm-lint:
     helm lint helm/football-pool

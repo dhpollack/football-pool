@@ -6,7 +6,7 @@ import {
   getAdminListUsersMockHandler200,
   getAdminListUsersMockHandler401,
   getAdminUpdateUserMockHandler,
-  getDeleteUserMockHandler,
+  getDeleteUserByEmailMockHandler,
   getCreateUsersMockHandler201,
 } from "../../services/api/user/user.msw";
 
@@ -321,7 +321,7 @@ describe("AdminUsersPage (Integration)", () => {
         users: [initialUser],
         pagination: { total: 1, page: 1, limit: 20 },
       }),
-      getDeleteUserMockHandler({}),
+      getDeleteUserByEmailMockHandler({}),
     );
 
     render(<AdminUsersPage />, { wrapper });

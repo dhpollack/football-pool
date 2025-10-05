@@ -150,6 +150,7 @@ export const createTestPick = async (
     picked: "favorite" | "underdog";
     rank: number;
     quick_pick: boolean;
+    user_id?: number;
   },
 ): Promise<number> => {
   try {
@@ -174,6 +175,13 @@ export const createTestPick = async (
         );
       } catch (error) {
         console.error("Error creating test pick in browser context:", error);
+        console.error("AxiosError details:", {
+          message: error.message,
+          response: error.response?.data,
+          status: error.response?.status,
+          statusText: error.response?.statusText,
+          config: error.config,
+        });
         throw error;
       }
     }, pickData);
@@ -236,6 +244,7 @@ export const createTestGameWithPick = async (
     picked: "favorite",
     rank: 1,
     quick_pick: false,
+    user_id: 1, // Use a test user ID
   });
 
   return { gameId, pickId };

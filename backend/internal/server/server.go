@@ -6,7 +6,6 @@ import (
 	"log/slog"
 	"net/http"
 	"os"
-	"strings"
 	"time"
 
 	"github.com/dhpollack/football-pool/internal/auth"
@@ -37,7 +36,20 @@ func (s *Server) NewRouter() http.Handler {
 	// Get CORS allowed origins from environment variable or use defaults
 	allowedOrigins := []string{"http://localhost:13000", "https://localhost:13001", "http://localhost:5173"}
 	if corsEnv := os.Getenv("CORS_ALLOWED_ORIGINS"); corsEnv != "" {
-		allowedOrigins = strings.Split(corsEnv, ",")
+		// Split comma-separated origins without using strings package
+		origins := []string{}
+		start := 0
+		for i, char := range corsEnv {
+			if char == ',' {
+				origins = append(origins, corsEnv[start:i])
+				start = i + 1
+			}
+		}
+		// Add the last segment
+		if start < len(corsEnv) {
+			origins = append(origins, corsEnv[start:])
+		}
+		allowedOrigins = origins
 	}
 
 	c := cors.New(cors.Options{
@@ -48,70 +60,55 @@ func (s *Server) NewRouter() http.Handler {
 	})
 
 	mux := http.NewServeMux()
-	mux.HandleFunc("/api/login", s.auth.Login)
-	mux.HandleFunc("/api/logout", s.auth.Logout)
-	mux.HandleFunc("/api/register", s.auth.Register)
-	mux.HandleFunc("/api/health", handlers.HealthCheck(s.db.GetDB()))
+	mux.HandleFunc("POST /api/login", s.auth.Login)
+	mux.HandleFunc("POST /api/logout", s.auth.Logout)
+	mux.HandleFunc("POST /api/register", s.auth.Register)
+	mux.HandleFunc("GET /api/health", handlers.HealthCheck(s.db.GetDB()))
 
-	mux.Handle("/api/users/me", s.auth.Middleware(handlers.GetProfile(s.db.GetDB())))
-	mux.Handle("/api/users/me/update", s.auth.Middleware(handlers.UpdateProfile(s.db.GetDB())))
+	mux.Handle("GET /api/users/me", s.auth.Middleware(handlers.GetProfile(s.db.GetDB())))
+	mux.Handle("PUT /api/users/me/update", s.auth.Middleware(handlers.UpdateProfile(s.db.GetDB())))
 
-	mux.HandleFunc("/api/games", handlers.GetGames(s.db.GetDB()))
+	mux.HandleFunc("GET /api/games", handlers.GetGames(s.db.GetDB()))
 
 	// Admin game management endpoints
-	mux.Handle("/api/admin/games", s.auth.Middleware(s.auth.AdminMiddleware(handlers.AdminListGames(s.db.GetDB()))))
-	mux.Handle("/api/admin/games/create", s.auth.Middleware(s.auth.AdminMiddleware(handlers.CreateGame(s.db.GetDB()))))
-	mux.Handle("/api/admin/games/", s.auth.Middleware(s.auth.AdminMiddleware(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		switch r.Method {
-		case "PUT":
-			handlers.UpdateGame(s.db.GetDB())(w, r)
-		case "DELETE":
-			handlers.DeleteGame(s.db.GetDB())(w, r)
-		default:
-			w.WriteHeader(http.StatusMethodNotAllowed)
-		}
-	}))))
+	mux.Handle("GET /api/admin/games", s.auth.Middleware(s.auth.AdminMiddleware(handlers.AdminListGames(s.db.GetDB()))))
+	mux.Handle("POST /api/admin/games/create", s.auth.Middleware(s.auth.AdminMiddleware(handlers.CreateGame(s.db.GetDB()))))
+	mux.Handle("PUT /api/admin/games/{id}", s.auth.Middleware(s.auth.AdminMiddleware(handlers.UpdateGame(s.db.GetDB()))))
+	mux.Handle("DELETE /api/admin/games/{id}", s.auth.Middleware(s.auth.AdminMiddleware(handlers.DeleteGame(s.db.GetDB()))))
 
-	mux.Handle("/api/picks", s.auth.Middleware(handlers.GetPicks(s.db.GetDB())))
-	mux.Handle("/api/picks/submit", s.auth.Middleware(handlers.SubmitPicks(s.db.GetDB())))
-	mux.Handle("/api/admin/picks/submit", s.auth.Middleware(s.auth.AdminMiddleware(handlers.AdminSubmitPicks(s.db.GetDB()))))
+	mux.Handle("GET /api/picks", s.auth.Middleware(handlers.GetPicks(s.db.GetDB())))
+	mux.Handle("POST /api/picks/submit", s.auth.Middleware(handlers.SubmitPicks(s.db.GetDB())))
+	mux.Handle("POST /api/admin/picks/submit", s.auth.Middleware(s.auth.AdminMiddleware(handlers.AdminSubmitPicks(s.db.GetDB()))))
 
 	// Admin pick management endpoints
-	mux.Handle("/api/admin/picks", s.auth.Middleware(s.auth.AdminMiddleware(handlers.AdminListPicks(s.db.GetDB()))))
-	mux.Handle("/api/admin/picks/week/", s.auth.Middleware(s.auth.AdminMiddleware(handlers.AdminGetPicksByWeek(s.db.GetDB()))))
-	mux.Handle("/api/admin/picks/user/", s.auth.Middleware(s.auth.AdminMiddleware(handlers.AdminGetPicksByUser(s.db.GetDB()))))
-	mux.Handle("/api/admin/picks/", s.auth.Middleware(s.auth.AdminMiddleware(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		switch r.Method {
-		case "DELETE":
-			handlers.AdminDeletePick(s.db.GetDB())(w, r)
-		default:
-			w.WriteHeader(http.StatusMethodNotAllowed)
-		}
-	}))))
+	mux.Handle("GET /api/admin/picks", s.auth.Middleware(s.auth.AdminMiddleware(handlers.AdminListPicks(s.db.GetDB()))))
+	mux.Handle("GET /api/admin/picks/week/{week}", s.auth.Middleware(s.auth.AdminMiddleware(handlers.AdminGetPicksByWeek(s.db.GetDB()))))
+	mux.Handle("GET /api/admin/picks/user/{userID}", s.auth.Middleware(s.auth.AdminMiddleware(handlers.AdminGetPicksByUser(s.db.GetDB()))))
+	mux.Handle("DELETE /api/admin/picks/{id}", s.auth.Middleware(s.auth.AdminMiddleware(handlers.AdminDeletePick(s.db.GetDB()))))
 
-	mux.HandleFunc("/api/results/week", handlers.GetWeeklyResults(s.db.GetDB()))
-	mux.HandleFunc("/api/results/season", handlers.GetSeasonResults(s.db.GetDB()))
+	mux.HandleFunc("GET /api/results/week", handlers.GetWeeklyResults(s.db.GetDB()))
+	mux.HandleFunc("GET /api/results/season", handlers.GetSeasonResults(s.db.GetDB()))
 
-	mux.Handle("/api/results", s.auth.Middleware(s.auth.AdminMiddleware(handlers.SubmitResult(s.db.GetDB()))))
+	mux.Handle("POST /api/results", s.auth.Middleware(s.auth.AdminMiddleware(handlers.SubmitResult(s.db.GetDB()))))
 
-	mux.Handle("/api/survivor/picks", s.auth.Middleware(handlers.GetSurvivorPicks(s.db.GetDB())))
-	mux.Handle("/api/survivor/picks/submit", s.auth.Middleware(handlers.SubmitSurvivorPick(s.db.GetDB())))
+	mux.Handle("GET /api/survivor/picks", s.auth.Middleware(handlers.GetSurvivorPicks(s.db.GetDB())))
+	mux.Handle("POST /api/survivor/picks/submit", s.auth.Middleware(handlers.SubmitSurvivorPick(s.db.GetDB())))
 
-	mux.Handle("/api/admin/users/delete", s.auth.Middleware(s.auth.AdminMiddleware(handlers.DeleteUser(s.db.GetDB()))))
+	mux.Handle("DELETE /api/admin/users/{id}", s.auth.Middleware(s.auth.AdminMiddleware(handlers.DeleteUser(s.db.GetDB()))))
+	mux.Handle("DELETE /api/admin/users/delete", s.auth.Middleware(s.auth.AdminMiddleware(handlers.DeleteUserByEmail(s.db.GetDB()))))
 
 	// Admin user management endpoints
-	mux.Handle("/api/admin/users", s.auth.Middleware(s.auth.AdminMiddleware(handlers.AdminListUsers(s.db.GetDB()))))
-	mux.Handle("/api/admin/users/create", s.auth.Middleware(s.auth.AdminMiddleware(handlers.AdminCreateUsers(s.db.GetDB()))))
-	mux.Handle("/api/admin/users/", s.auth.Middleware(s.auth.AdminMiddleware(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		switch r.Method {
-		case "GET":
-			handlers.AdminGetUser(s.db.GetDB())(w, r)
-		case "PUT":
-			handlers.AdminUpdateUser(s.db.GetDB())(w, r)
-		default:
-			w.WriteHeader(http.StatusMethodNotAllowed)
-		}
-	}))))
+	mux.Handle("GET /api/admin/users", s.auth.Middleware(s.auth.AdminMiddleware(handlers.AdminListUsers(s.db.GetDB()))))
+	mux.Handle("POST /api/admin/users/create", s.auth.Middleware(s.auth.AdminMiddleware(handlers.AdminCreateUsers(s.db.GetDB()))))
+	mux.Handle("GET /api/admin/users/{id}", s.auth.Middleware(s.auth.AdminMiddleware(handlers.AdminGetUser(s.db.GetDB()))))
+	mux.Handle("PUT /api/admin/users/{id}", s.auth.Middleware(s.auth.AdminMiddleware(handlers.AdminUpdateUser(s.db.GetDB()))))
+
+	// Week management endpoints
+	mux.Handle("GET /api/admin/weeks", s.auth.Middleware(s.auth.AdminMiddleware(handlers.ListWeeks(s.db.GetDB()))))
+	mux.Handle("POST /api/admin/weeks", s.auth.Middleware(s.auth.AdminMiddleware(handlers.CreateWeek(s.db.GetDB()))))
+	mux.Handle("PUT /api/admin/weeks/{id}", s.auth.Middleware(s.auth.AdminMiddleware(handlers.UpdateWeek(s.db.GetDB()))))
+	mux.Handle("DELETE /api/admin/weeks/{id}", s.auth.Middleware(s.auth.AdminMiddleware(handlers.DeleteWeek(s.db.GetDB()))))
+	mux.Handle("POST /api/admin/weeks/{id}/activate", s.auth.Middleware(s.auth.AdminMiddleware(handlers.ActivateWeek(s.db.GetDB()))))
 
 	return c.Handler(mux)
 }

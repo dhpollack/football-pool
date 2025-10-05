@@ -5,7 +5,6 @@ import {
   getRegisterUserMockHandler,
   getGetProfileMockHandler,
   getUpdateProfileMockHandler,
-  getDeleteUserMockHandler,
   getAdminListUsersMockHandler,
   getAdminGetUserMockHandler,
   getAdminUpdateUserMockHandler,

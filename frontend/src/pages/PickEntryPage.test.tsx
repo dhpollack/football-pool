@@ -2,8 +2,13 @@ import { screen, fireEvent, waitFor } from "@testing-library/react";
 import { vi } from "vitest";
 import { render } from "../test-utils";
 import PickEntryPage from "./PickEntryPage";
+import { useListWeeks } from "../services/api/admin/admin";
 
 // Mock the React Query hooks
+const mockWeeksData = {
+  weeks: [{ id: 1, week_number: 1, season: 2023, is_active: true }],
+};
+
 const mockGamesData = {
   games: [
     { id: 1, favorite_team: "Team A", underdog_team: "Team B", spread: 3 },
@@ -12,6 +17,10 @@ const mockGamesData = {
 };
 
 const mockSubmitPicks = vi.fn();
+vi.mock("../services/api/admin/admin", () => ({
+  useListWeeks: vi.fn(),
+}));
+
 vi.mock("../services/api/games/games", () => ({
   useGetGames: () => ({
     data: mockGamesData,
@@ -33,6 +42,11 @@ global.alert = vi.fn();
 describe("PickEntryPage", () => {
   beforeEach(() => {
     mockSubmitPicks.mockResolvedValue({});
+    vi.mocked(useListWeeks).mockReturnValue({
+      data: mockWeeksData,
+      isLoading: false,
+      error: null,
+    });
   });
 
   afterEach(() => {
@@ -84,5 +98,37 @@ describe("PickEntryPage", () => {
     });
 
     expect(global.alert).toHaveBeenCalledWith("Picks submitted successfully!");
+  });
+
+  it("shows a message if no active week is found", async () => {
+    // Mock the hook to return no active weeks
+    vi.mocked(useListWeeks).mockReturnValue({
+      data: {
+        weeks: [{ id: 1, week_number: 1, season: 2023, is_active: false }],
+      },
+      isLoading: false,
+      error: null,
+    });
+
+    render(<PickEntryPage />);
+
+    expect(
+      await screen.findByText(/no active week found/i),
+    ).toBeInTheDocument();
+  });
+
+  it("shows a message if no weeks are returned", async () => {
+    // Mock the hook to return no weeks
+    vi.mocked(useListWeeks).mockReturnValue({
+      data: { weeks: [] },
+      isLoading: false,
+      error: null,
+    });
+
+    render(<PickEntryPage />);
+
+    expect(
+      await screen.findByText(/no active week found/i),
+    ).toBeInTheDocument();
   });
 });

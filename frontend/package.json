@@ -10,6 +10,7 @@
     "build": "tsc -b && vite build",
     "lint": "biome lint .",
     "format": "biome format --write .",
+    "biome-migrate": "biome migrate",
     "preview": "vite preview",
     "tailwind-init": "tailwindcss init -p",
     "test": "vitest",

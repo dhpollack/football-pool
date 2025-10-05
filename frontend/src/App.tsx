@@ -25,6 +25,7 @@ const AdminDashboard = lazy(() => import("./pages/admin/AdminDashboard"));
 const AdminGamesPage = lazy(() => import("./pages/admin/AdminGamesPage"));
 const AdminUsersPage = lazy(() => import("./pages/admin/AdminUsersPage"));
 const AdminPicksPage = lazy(() => import("./pages/admin/AdminPicksPage"));
+const AdminWeeksPage = lazy(() => import("./pages/admin/AdminWeeksPage"));
 const UserDetailsPage = lazy(() => import("./pages/admin/UserDetailsPage"));
 const WeeklyPicksPage = lazy(() => import("./pages/admin/WeeklyPicksPage"));
 const UserPicksPage = lazy(() => import("./pages/admin/UserPicksPage"));
@@ -158,6 +159,16 @@ function App() {
                     <QueryErrorBoundary>
                       <Suspense fallback={<LoadingSpinner />}>
                         <AdminGamesPage />
+                      </Suspense>
+                    </QueryErrorBoundary>
+                  }
+                />
+                <Route
+                  path="weeks"
+                  element={
+                    <QueryErrorBoundary>
+                      <Suspense fallback={<LoadingSpinner />}>
+                        <AdminWeeksPage />
                       </Suspense>
                     </QueryErrorBoundary>
                   }

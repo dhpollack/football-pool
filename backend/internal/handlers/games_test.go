@@ -246,13 +246,18 @@ func TestUpdateGame(t *testing.T) {
 	game := database.Game{Week: 1, Season: 2023, FavoriteTeam: "Old Team", UnderdogTeam: "Old Underdog", Spread: 3.5, StartTime: time.Now()}
 	gormDB.Create(&game)
 
-	handler := UpdateGame(gormDB)
+	// Create router directly for testing
+	mux := http.NewServeMux()
+	mux.Handle("PUT /api/admin/games/{id}", UpdateGame(gormDB))
+	mux.Handle("DELETE /api/admin/games/{id}", DeleteGame(gormDB))
+	router := mux
 
 	t.Run("successful update", func(t *testing.T) {
 		updatePayload := []byte(`{"week": 1, "season": 2023, "favorite_team": "New Team", "underdog_team": "Old Underdog", "spread": 3.5, "start_time": "2023-09-11T20:15:00Z"}`)
 		req, _ := http.NewRequest("PUT", fmt.Sprintf("/api/admin/games/%d", game.ID), bytes.NewBuffer(updatePayload))
+		req.Header.Set("Content-Type", "application/json")
 		rr := httptest.NewRecorder()
-		handler.ServeHTTP(rr, req)
+		router.ServeHTTP(rr, req)
 
 		if status := rr.Code; status != http.StatusOK {
 			t.Errorf("handler returned wrong status code: got %v want %v", status, http.StatusOK)
@@ -268,8 +273,9 @@ func TestUpdateGame(t *testing.T) {
 	t.Run("invalid json", func(t *testing.T) {
 		updatePayload := []byte(`{"week": 1, "season": 2023, "favorite_team": "New Team", "underdog_team": "Old Underdog", "spread": 3.5, "start_time": "2023-09-11T20:15:00Z"`) // Invalid JSON
 		req, _ := http.NewRequest("PUT", fmt.Sprintf("/api/admin/games/%d", game.ID), bytes.NewBuffer(updatePayload))
+		req.Header.Set("Content-Type", "application/json")
 		rr := httptest.NewRecorder()
-		handler.ServeHTTP(rr, req)
+		router.ServeHTTP(rr, req)
 
 		if status := rr.Code; status != http.StatusBadRequest {
 			t.Errorf("handler returned wrong status code: got %v want %v", status, http.StatusBadRequest)
@@ -278,8 +284,9 @@ func TestUpdateGame(t *testing.T) {
 
 	t.Run("game not found", func(t *testing.T) {
 		req, _ := http.NewRequest("PUT", "/api/admin/games/999", bytes.NewBuffer([]byte(`{"week": 1, "season": 2023, "favorite_team": "New Team", "underdog_team": "Old Underdog", "spread": 3.5, "start_time": "2023-09-11T20:15:00Z"}`)))
+		req.Header.Set("Content-Type", "application/json")
 		rr := httptest.NewRecorder()
-		handler.ServeHTTP(rr, req)
+		router.ServeHTTP(rr, req)
 
 		if status := rr.Code; status != http.StatusNotFound {
 			t.Errorf("handler returned wrong status code: got %v want %v", status, http.StatusNotFound)
@@ -288,8 +295,9 @@ func TestUpdateGame(t *testing.T) {
 
 	t.Run("invalid game ID format", func(t *testing.T) {
 		req, _ := http.NewRequest("PUT", "/api/admin/games/abc", bytes.NewBuffer([]byte(`{"week": 1, "season": 2023, "favorite_team": "New Team", "underdog_team": "Old Underdog", "spread": 3.5, "start_time": "2023-09-11T20:15:00Z"}`)))
+		req.Header.Set("Content-Type", "application/json")
 		rr := httptest.NewRecorder()
-		handler.ServeHTTP(rr, req)
+		router.ServeHTTP(rr, req)
 
 		if status := rr.Code; status != http.StatusBadRequest {
 			t.Errorf("handler returned wrong status code: got %v want %v", status, http.StatusBadRequest)
@@ -298,8 +306,9 @@ func TestUpdateGame(t *testing.T) {
 
 	t.Run("validation error - missing required fields", func(t *testing.T) {
 		req, _ := http.NewRequest("PUT", fmt.Sprintf("/api/admin/games/%d", game.ID), bytes.NewBuffer([]byte(`{"week": 1, "season": 2023, "spread": 3.5, "start_time": "2023-09-11T20:15:00Z"}`)))
+		req.Header.Set("Content-Type", "application/json")
 		rr := httptest.NewRecorder()
-		handler.ServeHTTP(rr, req)
+		router.ServeHTTP(rr, req)
 
 		if status := rr.Code; status != http.StatusBadRequest {
 			t.Errorf("handler returned wrong status code: got %v want %v", status, http.StatusBadRequest)
@@ -313,7 +322,11 @@ func TestDeleteGame(t *testing.T) {
 		t.Fatalf("Failed to connect to database: %v", err)
 	}
 	gormDB := db.GetDB()
-	handler := DeleteGame(gormDB)
+
+	// Create router for testing
+	mux := http.NewServeMux()
+	mux.Handle("DELETE /api/admin/games/{id}", DeleteGame(gormDB))
+	router := mux
 
 	t.Run("successful deletion", func(t *testing.T) {
 		game := database.Game{Week: 1, Season: 2025, FavoriteTeam: "Deletable", UnderdogTeam: "Team"}
@@ -321,7 +334,7 @@ func TestDeleteGame(t *testing.T) {
 
 		req, _ := http.NewRequest("DELETE", fmt.Sprintf("/api/admin/games/%d", game.ID), nil)
 		rr := httptest.NewRecorder()
-		handler.ServeHTTP(rr, req)
+		router.ServeHTTP(rr, req)
 
 		if status := rr.Code; status != http.StatusNoContent {
 			t.Errorf("handler returned wrong status code: got %v want %v", status, http.StatusNoContent)
@@ -331,7 +344,7 @@ func TestDeleteGame(t *testing.T) {
 	t.Run("game not found", func(t *testing.T) {
 		req, _ := http.NewRequest("DELETE", "/api/admin/games/999", nil)
 		rr := httptest.NewRecorder()
-		handler.ServeHTTP(rr, req)
+		router.ServeHTTP(rr, req)
 
 		if status := rr.Code; status != http.StatusNotFound {
 			t.Errorf("handler returned wrong status code: got %v want %v", status, http.StatusNotFound)
@@ -348,7 +361,7 @@ func TestDeleteGame(t *testing.T) {
 
 		req, _ := http.NewRequest("DELETE", fmt.Sprintf("/api/admin/games/%d", game.ID), nil)
 		rr := httptest.NewRecorder()
-		handler.ServeHTTP(rr, req)
+		router.ServeHTTP(rr, req)
 
 		if status := rr.Code; status != http.StatusConflict {
 			t.Errorf("handler returned wrong status code: got %v want %v", status, http.StatusConflict)
@@ -363,7 +376,7 @@ func TestDeleteGame(t *testing.T) {
 
 		req, _ := http.NewRequest("DELETE", fmt.Sprintf("/api/admin/games/%d", game.ID), nil)
 		rr := httptest.NewRecorder()
-		handler.ServeHTTP(rr, req)
+		router.ServeHTTP(rr, req)
 
 		if status := rr.Code; status != http.StatusConflict {
 			t.Errorf("handler returned wrong status code: got %v want %v", status, http.StatusConflict)

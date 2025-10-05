@@ -205,6 +205,32 @@ type UserWithStats struct {
 	UpdatedAt time.Time       `json:"updated_at"`
 }
 
+// WeekListResponse defines model for WeekListResponse.
+type WeekListResponse struct {
+	Weeks []WeekResponse `json:"weeks"`
+}
+
+// WeekRequest defines model for WeekRequest.
+type WeekRequest struct {
+	IsActive      bool      `json:"is_active"`
+	Season        int       `json:"season"`
+	WeekEndTime   time.Time `json:"week_end_time"`
+	WeekNumber    int       `json:"week_number"`
+	WeekStartTime time.Time `json:"week_start_time"`
+}
+
+// WeekResponse defines model for WeekResponse.
+type WeekResponse struct {
+	CreatedAt     time.Time `json:"created_at"`
+	Id            uint      `json:"id"`
+	IsActive      bool      `json:"is_active"`
+	Season        int       `json:"season"`
+	UpdatedAt     time.Time `json:"updated_at"`
+	WeekEndTime   time.Time `json:"week_end_time"`
+	WeekNumber    int       `json:"week_number"`
+	WeekStartTime time.Time `json:"week_start_time"`
+}
+
 // WeeklyResult defines model for WeeklyResult.
 type WeeklyResult struct {
 	PlayerId   uint   `json:"player_id"`
@@ -221,8 +247,8 @@ type AdminSubmitPicksJSONBody = []PickRequest
 // CreateUsersJSONBody defines parameters for CreateUsers.
 type CreateUsersJSONBody = []UserRequest
 
-// DeleteUserParams defines parameters for DeleteUser.
-type DeleteUserParams struct {
+// DeleteUserByEmailParams defines parameters for DeleteUserByEmail.
+type DeleteUserByEmailParams struct {
 	Email string `form:"email" json:"email"`
 }
 
@@ -260,6 +286,12 @@ type CreateUsersJSONRequestBody = CreateUsersJSONBody
 
 // AdminUpdateUserJSONRequestBody defines body for AdminUpdateUser for application/json ContentType.
 type AdminUpdateUserJSONRequestBody = UserRequest
+
+// CreateWeekJSONRequestBody defines body for CreateWeek for application/json ContentType.
+type CreateWeekJSONRequestBody = WeekRequest
+
+// UpdateWeekJSONRequestBody defines body for UpdateWeek for application/json ContentType.
+type UpdateWeekJSONRequestBody = WeekRequest
 
 // LoginUserJSONRequestBody defines body for LoginUser for application/json ContentType.
 type LoginUserJSONRequestBody = LoginRequest

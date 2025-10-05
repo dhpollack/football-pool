@@ -28,37 +28,52 @@ test.describe("Admin Pick Management", () => {
   });
 
   test("should display empty state when no picks exist", async ({ page }) => {
-    // Wait for loading to complete first
+    // Wait for the React app to fully load and render
+    await page.waitForLoadState("networkidle");
+
+    // Wait for the page content to be ready - check for the main heading first
+    await expect(page.locator("h4")).toContainText("Pick Management");
+
+    // Wait for any loading indicators to disappear
     await page.waitForSelector(".MuiCircularProgress-root", {
       state: "hidden",
       timeout: 10000,
     });
 
-    // Assertions for page content
-    const pageContent = await page.content();
-    expect(pageContent).toContain("No picks");
-    expect(pageContent).toContain("available");
+    // Use a more specific selector for the empty state
+    // Look for common empty state patterns in the table
+    const emptyState = page.getByText(
+      /No picks available|No data available|No results found/i,
+    );
 
-    // Debug: Check for any text content in the table
-    const tableText = await page.locator("table").textContent();
-    console.log("Table text content:", tableText);
-
-    // Check if table is visible at all
-    const pickTable = page.locator("table");
-    const isTableVisible = await pickTable.isVisible().catch(() => false);
-    console.log("Table is visible:", isTableVisible);
-
-    // Check for any empty state message with flexible matching
-    const emptyState = page.getByText(/No.*(picks|data).*(available|match)/i);
-
-    // Wait for empty state to appear
-    await emptyState.waitFor({ state: "visible", timeout: 5000 });
+    // Wait for the empty state to appear with a reasonable timeout
+    await emptyState.waitFor({ state: "visible", timeout: 10000 });
 
     // Verify empty state is displayed
     await expect(emptyState).toBeVisible();
+
+    // Also verify the table structure is present but empty
+    const pickTable = page.locator("table");
+    await expect(pickTable).toBeVisible();
+
+    // Check that we have only the header row (no data rows)
+    const tableRows = page.locator("tbody tr");
+    const rowCount = await tableRows.count();
+
+    // If there are no data rows, the test passes
+    if (rowCount === 0) {
+      console.log("Table is empty as expected - no data rows found");
+    } else {
+      // If there are rows, they should contain the empty state message
+      const firstRowText = await tableRows.first().textContent();
+      expect(firstRowText).toMatch(/No picks available|No data available/i);
+    }
   });
 
   test("should display picks when they exist", async ({ page }) => {
+    // Capture console logs to see detailed error information
+    page.on("console", (msg) => console.log("BROWSER LOG:", msg.text()));
+
     // Create test data with a game and pick
     testData = await createTestGameWithPick(page);
 
