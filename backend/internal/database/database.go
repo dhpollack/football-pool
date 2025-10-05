@@ -50,7 +50,7 @@ func New(dbType, dsn string) (*Database, error) {
 // Migrate performs database schema migrations for all models.
 func (d *Database) Migrate() error {
 	slog.Debug("Attempting to migrate database schema...")
-	err := d.db.AutoMigrate(&User{}, &Player{}, &Game{}, &Pick{}, &Result{}, &SurvivorPick{})
+	err := d.db.AutoMigrate(&User{}, &Player{}, &Game{}, &Pick{}, &Result{}, &SurvivorPick{}, &Week{})
 	if err != nil {
 		slog.Debug("Failed to migrate database:", "error", err)
 		return err

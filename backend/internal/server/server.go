@@ -113,6 +113,37 @@ func (s *Server) NewRouter() http.Handler {
 		}
 	}))))
 
+	// Week management endpoints
+	mux.Handle("/api/admin/weeks", s.auth.Middleware(s.auth.AdminMiddleware(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		switch r.Method {
+		case "GET":
+			handlers.ListWeeks(s.db.GetDB())(w, r)
+		case "POST":
+			handlers.CreateWeek(s.db.GetDB())(w, r)
+		default:
+			w.WriteHeader(http.StatusMethodNotAllowed)
+		}
+	}))))
+
+	mux.Handle("/api/admin/weeks/{id}", s.auth.Middleware(s.auth.AdminMiddleware(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		switch r.Method {
+		case "PUT":
+			handlers.UpdateWeek(s.db.GetDB())(w, r)
+		case "DELETE":
+			handlers.DeleteWeek(s.db.GetDB())(w, r)
+		default:
+			w.WriteHeader(http.StatusMethodNotAllowed)
+		}
+	}))))
+
+	mux.Handle("/api/admin/weeks/{id}/activate", s.auth.Middleware(s.auth.AdminMiddleware(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		if r.Method == "POST" {
+			handlers.ActivateWeek(s.db.GetDB())(w, r)
+		} else {
+			w.WriteHeader(http.StatusMethodNotAllowed)
+		}
+	}))))
+
 	return c.Handler(mux)
 }
 

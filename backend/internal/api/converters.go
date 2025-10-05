@@ -285,3 +285,35 @@ func PlayerFromRequest(req PlayerRequest, userID uint) database.Player {
 		Address: req.Address,
 	}
 }
+
+// WeekToResponse converts a database Week to a WeekResponse.
+func WeekToResponse(week database.Week) WeekResponse {
+	return WeekResponse{
+		Id:            week.ID,
+		WeekNumber:    week.WeekNumber,
+		Season:        week.Season,
+		WeekStartTime: week.WeekStartTime,
+		WeekEndTime:   week.WeekEndTime,
+		IsActive:      week.IsActive,
+		CreatedAt:     week.CreatedAt,
+		UpdatedAt:     week.UpdatedAt,
+	}
+}
+
+// WeekFromRequest converts a WeekRequest to a database Week.
+func WeekFromRequest(req WeekRequest) (database.Week, error) {
+	week := database.Week{
+		WeekNumber:    req.WeekNumber,
+		Season:        req.Season,
+		WeekStartTime: req.WeekStartTime,
+		WeekEndTime:   req.WeekEndTime,
+		IsActive:      req.IsActive,
+	}
+
+	// Validate the week
+	if err := validate.Struct(week); err != nil {
+		return database.Week{}, fmt.Errorf("invalid week data: %w", err)
+	}
+
+	return week, nil
+}
