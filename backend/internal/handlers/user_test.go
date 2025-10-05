@@ -246,11 +246,9 @@ func TestDeleteUser(t *testing.T) {
 	playerToDelete := database.Player{UserID: userToDelete.ID, Name: "Delete Player", Address: "123 Delete St"}
 	gormDB.Create(&playerToDelete)
 
-	// Create a request to the DeleteUser endpoint
-	req, err := http.NewRequest("DELETE", "/admin/users/delete?email=delete_me@test.com", nil)
-	if err != nil {
-		t.Fatal(err)
-	}
+	// Create a request to the DeleteUser endpoint with path parameter
+	pathParams := map[string]string{"id": fmt.Sprintf("%d", userToDelete.ID)}
+	req := createRequestWithPathParams("DELETE", fmt.Sprintf("/admin/users/%d", userToDelete.ID), nil, pathParams)
 
 	// Create a ResponseRecorder
 	rr := httptest.NewRecorder()
@@ -288,28 +286,28 @@ func TestDeleteUserEdgeCases(t *testing.T) {
 
 	tests := []struct {
 		name           string
-		email          string
+		userID         string
 		setupUser      bool
 		setupPlayer    bool
 		expectedStatus int
 	}{
 		{
 			name:           "Delete user without player",
-			email:          "no_player@test.com",
+			userID:         "1",
 			setupUser:      true,
 			setupPlayer:    false,
 			expectedStatus: http.StatusNoContent,
 		},
 		{
 			name:           "Delete non-existent user",
-			email:          "nonexistent@test.com",
+			userID:         "999",
 			setupUser:      false,
 			setupPlayer:    false,
 			expectedStatus: http.StatusNotFound,
 		},
 		{
-			name:           "Empty email parameter",
-			email:          "",
+			name:           "Invalid user ID format",
+			userID:         "invalid",
 			setupUser:      false,
 			setupPlayer:    false,
 			expectedStatus: http.StatusBadRequest,
@@ -320,7 +318,7 @@ func TestDeleteUserEdgeCases(t *testing.T) {
 		t.Run(tt.name, func(t *testing.T) {
 			var userToDelete database.User
 			if tt.setupUser {
-				userToDelete = database.User{Email: tt.email, Password: "password", Name: "Test User", Role: "player"}
+				userToDelete = database.User{Email: fmt.Sprintf("test_%s@test.com", tt.name), Password: "password", Name: "Test User", Role: "player"}
 				gormDB.Create(&userToDelete)
 
 				if tt.setupPlayer {
@@ -329,15 +327,15 @@ func TestDeleteUserEdgeCases(t *testing.T) {
 				}
 			}
 
-			// Create a request to the DeleteUser endpoint
-			url := "/admin/users/delete"
-			if tt.email != "" {
-				url += "?email=" + tt.email
+			// Create a request to the DeleteUser endpoint with path parameter
+			var userID string
+			if tt.setupUser {
+				userID = fmt.Sprintf("%d", userToDelete.ID)
+			} else {
+				userID = tt.userID
 			}
-			req, err := http.NewRequest("DELETE", url, nil)
-			if err != nil {
-				t.Fatal(err)
-			}
+			pathParams := map[string]string{"id": userID}
+			req := createRequestWithPathParams("DELETE", fmt.Sprintf("/admin/users/%s", userID), nil, pathParams)
 
 			// Create a ResponseRecorder
 			rr := httptest.NewRecorder()
@@ -355,7 +353,7 @@ func TestDeleteUserEdgeCases(t *testing.T) {
 			// If deletion was successful, verify cleanup
 			if tt.expectedStatus == http.StatusNoContent && tt.setupUser {
 				var user database.User
-				if result := gormDB.Where("email = ?", tt.email).First(&user); result.Error == nil {
+				if result := gormDB.Where("id = ?", userToDelete.ID).First(&user); result.Error == nil {
 					t.Errorf("user was not deleted from the database")
 				}
 
@@ -702,7 +700,8 @@ func TestAdminUpdateUser(t *testing.T) {
 
 	t.Run("update existing user", func(t *testing.T) {
 		updatePayload := []byte(`{"name": "Updated Name", "role": "admin"}`)
-		req, _ := http.NewRequest("PUT", fmt.Sprintf("/api/admin/users/%d", user.ID), bytes.NewBuffer(updatePayload))
+		pathParams := map[string]string{"id": fmt.Sprintf("%d", user.ID)}
+		req := createRequestWithPathParams("PUT", fmt.Sprintf("/api/admin/users/%d", user.ID), bytes.NewBuffer(updatePayload), pathParams)
 		rr := httptest.NewRecorder()
 		handler.ServeHTTP(rr, req)
 
@@ -722,7 +721,8 @@ func TestAdminUpdateUser(t *testing.T) {
 
 	t.Run("user not found", func(t *testing.T) {
 		updatePayload := []byte(`{"name": "Updated Name"}`)
-		req, _ := http.NewRequest("PUT", "/api/admin/users/999", bytes.NewBuffer(updatePayload))
+		pathParams := map[string]string{"id": "999"}
+		req := createRequestWithPathParams("PUT", "/api/admin/users/999", bytes.NewBuffer(updatePayload), pathParams)
 		rr := httptest.NewRecorder()
 		handler.ServeHTTP(rr, req)
 
@@ -733,7 +733,8 @@ func TestAdminUpdateUser(t *testing.T) {
 
 	t.Run("invalid json", func(t *testing.T) {
 		updatePayload := []byte(`{"name": "Updated Name"`) // Invalid JSON
-		req, _ := http.NewRequest("PUT", fmt.Sprintf("/api/admin/users/%d", user.ID), bytes.NewBuffer(updatePayload))
+		pathParams := map[string]string{"id": fmt.Sprintf("%d", user.ID)}
+		req := createRequestWithPathParams("PUT", fmt.Sprintf("/api/admin/users/%d", user.ID), bytes.NewBuffer(updatePayload), pathParams)
 		rr := httptest.NewRecorder()
 		handler.ServeHTTP(rr, req)
 
@@ -896,4 +897,168 @@ func TestUpdatePlayerInfo(t *testing.T) {
 			t.Errorf("expected player address to be '789 Final St', got %s", player.Address)
 		}
 	})
+}
+
+func TestDeleteUserByEmail(t *testing.T) {
+	// Set up test database
+	db, err := database.New("sqlite", "file::memory:")
+	if err != nil {
+		t.Fatalf("Failed to connect to database: %v", err)
+	}
+	gormDB := db.GetDB()
+
+	// Create a user to delete
+	userToDelete := database.User{Email: "delete_by_email@test.com", Password: "password", Name: "Delete Email User", Role: "player"}
+	gormDB.Create(&userToDelete)
+
+	// Create associated player record
+	playerToDelete := database.Player{UserID: userToDelete.ID, Name: "Delete Email Player", Address: "123 Delete Email St"}
+	gormDB.Create(&playerToDelete)
+
+	// Create a request to the DeleteUserByEmail endpoint with query parameter
+	req, err := http.NewRequest("DELETE", "/api/admin/users/delete?email=delete_by_email@test.com", nil)
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	// Create a ResponseRecorder
+	rr := httptest.NewRecorder()
+	handler := DeleteUserByEmail(gormDB)
+
+	// Serve the request
+	handler.ServeHTTP(rr, req)
+
+	// Check the status code (DeleteUserByEmail returns NoContent for successful deletion)
+	if status := rr.Code; status != http.StatusNoContent {
+		t.Errorf("handler returned wrong status code: got %v want %v",
+			status, http.StatusNoContent)
+	}
+
+	// Verify the user is deleted from the database
+	var user database.User
+	if result := gormDB.Where("email = ?", "delete_by_email@test.com").First(&user); result.Error == nil {
+		t.Errorf("user was not deleted from the database")
+	}
+
+	// Verify the associated player is also deleted from the database
+	var player database.Player
+	if result := gormDB.Where("user_id = ?", userToDelete.ID).First(&player); result.Error == nil {
+		t.Errorf("associated player was not deleted from the database")
+	}
+}
+
+func TestDeleteUserByEmailEdgeCases(t *testing.T) {
+	// Set up test database
+	db, err := database.New("sqlite", "file::memory:")
+	if err != nil {
+		t.Fatalf("Failed to connect to database: %v", err)
+	}
+	gormDB := db.GetDB()
+
+	tests := []struct {
+		name           string
+		email          string
+		setupUser      bool
+		setupPlayer    bool
+		expectedStatus int
+		expectedError  string
+	}{
+		{
+			name:           "Missing email parameter",
+			email:          "",
+			setupUser:      false,
+			setupPlayer:    false,
+			expectedStatus: http.StatusBadRequest,
+			expectedError:  "Email parameter is required",
+		},
+		{
+			name:           "User not found by email",
+			email:          "nonexistent@test.com",
+			setupUser:      false,
+			setupPlayer:    false,
+			expectedStatus: http.StatusNotFound,
+			expectedError:  "User not found",
+		},
+		{
+			name:           "Delete user without player",
+			email:          "no_player@test.com",
+			setupUser:      true,
+			setupPlayer:    false,
+			expectedStatus: http.StatusNoContent,
+			expectedError:  "",
+		},
+		{
+			name:           "Delete user with player",
+			email:          "with_player@test.com",
+			setupUser:      true,
+			setupPlayer:    true,
+			expectedStatus: http.StatusNoContent,
+			expectedError:  "",
+		},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			var userToDelete database.User
+			if tt.setupUser {
+				userToDelete = database.User{Email: tt.email, Password: "password", Name: "Test User", Role: "player"}
+				gormDB.Create(&userToDelete)
+
+				if tt.setupPlayer {
+					player := database.Player{UserID: userToDelete.ID, Name: "Test Player", Address: "123 Test St"}
+					gormDB.Create(&player)
+				}
+			}
+
+			// Create a request to the DeleteUserByEmail endpoint with query parameter
+			url := "/api/admin/users/delete"
+			if tt.email != "" {
+				url = fmt.Sprintf("%s?email=%s", url, tt.email)
+			}
+			req, err := http.NewRequest("DELETE", url, nil)
+			if err != nil {
+				t.Fatal(err)
+			}
+
+			// Create a ResponseRecorder
+			rr := httptest.NewRecorder()
+			handler := DeleteUserByEmail(gormDB)
+
+			// Serve the request
+			handler.ServeHTTP(rr, req)
+
+			// Check the status code
+			if status := rr.Code; status != tt.expectedStatus {
+				t.Errorf("handler returned wrong status code: got %v want %v",
+					status, tt.expectedStatus)
+			}
+
+			// Check error response for error cases
+			if tt.expectedStatus >= 400 && tt.expectedStatus < 500 {
+				var response map[string]interface{}
+				if err := json.NewDecoder(rr.Body).Decode(&response); err != nil {
+					t.Fatalf("Failed to decode error response: %v", err)
+				}
+				if errorMsg, ok := response["error"].(string); ok && errorMsg != tt.expectedError {
+					t.Errorf("handler returned unexpected error message: got %v want %v",
+						errorMsg, tt.expectedError)
+				}
+			}
+
+			// If deletion was successful, verify cleanup
+			if tt.expectedStatus == http.StatusNoContent && tt.setupUser {
+				var user database.User
+				if result := gormDB.Where("email = ?", tt.email).First(&user); result.Error == nil {
+					t.Errorf("user was not deleted from the database")
+				}
+
+				if tt.setupPlayer {
+					var player database.Player
+					if result := gormDB.Where("user_id = ?", userToDelete.ID).First(&player); result.Error == nil {
+						t.Errorf("associated player was not deleted from the database")
+					}
+				}
+			}
+		})
+	}
 }

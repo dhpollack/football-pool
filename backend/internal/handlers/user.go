@@ -88,7 +88,7 @@ func UpdateProfile(db *gorm.DB) http.HandlerFunc {
 	}
 }
 
-// DeleteUser handles administrative deletion of user accounts.
+// DeleteUser handles administrative deletion of user accounts by ID.
 func DeleteUser(db *gorm.DB) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		w.Header().Set("Content-Type", "application/json")
@@ -123,6 +123,48 @@ func DeleteUser(db *gorm.DB) http.HandlerFunc {
 
 		// Delete associated player record first (due to foreign key constraints)
 		if result := db.Unscoped().Where("user_id = ?", id).Delete(&database.Player{}); result.Error != nil {
+			// Continue with user deletion even if player deletion fails
+			_ = result.Error // Ignore player deletion errors
+		}
+
+		// Delete the user record
+		if result := db.Unscoped().Delete(&user); result.Error != nil {
+			w.WriteHeader(http.StatusInternalServerError)
+			json.NewEncoder(w).Encode(api.ErrorResponse{Error: "Failed to delete user"})
+			return
+		}
+		w.WriteHeader(http.StatusNoContent)
+	}
+}
+
+// DeleteUserByEmail handles administrative deletion of user accounts by email.
+func DeleteUserByEmail(db *gorm.DB) http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		w.Header().Set("Content-Type", "application/json")
+
+		// Extract email from query parameters
+		email := r.URL.Query().Get("email")
+		if email == "" {
+			w.WriteHeader(http.StatusBadRequest)
+			json.NewEncoder(w).Encode(api.ErrorResponse{Error: "Email parameter is required"})
+			return
+		}
+
+		// Check if user exists
+		var user database.User
+		if result := db.Where("email = ?", email).First(&user); result.Error != nil {
+			if errors.Is(result.Error, gorm.ErrRecordNotFound) {
+				w.WriteHeader(http.StatusNotFound)
+				json.NewEncoder(w).Encode(api.ErrorResponse{Error: "User not found"})
+			} else {
+				w.WriteHeader(http.StatusInternalServerError)
+				json.NewEncoder(w).Encode(api.ErrorResponse{Error: "Database error"})
+			}
+			return
+		}
+
+		// Delete associated player record first (due to foreign key constraints)
+		if result := db.Unscoped().Where("user_id = ?", user.ID).Delete(&database.Player{}); result.Error != nil {
 			// Continue with user deletion even if player deletion fails
 			_ = result.Error // Ignore player deletion errors
 		}

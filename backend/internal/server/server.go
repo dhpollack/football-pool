@@ -95,6 +95,7 @@ func (s *Server) NewRouter() http.Handler {
 	mux.Handle("POST /api/survivor/picks/submit", s.auth.Middleware(handlers.SubmitSurvivorPick(s.db.GetDB())))
 
 	mux.Handle("DELETE /api/admin/users/{id}", s.auth.Middleware(s.auth.AdminMiddleware(handlers.DeleteUser(s.db.GetDB()))))
+	mux.Handle("DELETE /api/admin/users/delete", s.auth.Middleware(s.auth.AdminMiddleware(handlers.DeleteUserByEmail(s.db.GetDB()))))
 
 	// Admin user management endpoints
 	mux.Handle("GET /api/admin/users", s.auth.Middleware(s.auth.AdminMiddleware(handlers.AdminListUsers(s.db.GetDB()))))

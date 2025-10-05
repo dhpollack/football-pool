@@ -176,8 +176,8 @@ func TestUpdateWeek(t *testing.T) {
 	}
 
 	body, _ := json.Marshal(weekRequest)
-	req := httptest.NewRequest("PUT", "/api/admin/weeks/1", bytes.NewBuffer(body))
-	req.Header.Set("Content-Type", "application/json")
+	pathParams := map[string]string{"id": "1"}
+	req := createRequestWithPathParams("PUT", "/api/admin/weeks/1", bytes.NewBuffer(body), pathParams)
 
 	w := httptest.NewRecorder()
 
@@ -223,8 +223,8 @@ func TestUpdateWeek_NotFound(t *testing.T) {
 	}
 
 	body, _ := json.Marshal(weekRequest)
-	req := httptest.NewRequest("PUT", "/api/admin/weeks/999", bytes.NewBuffer(body))
-	req.Header.Set("Content-Type", "application/json")
+	pathParams := map[string]string{"id": "999"}
+	req := createRequestWithPathParams("PUT", "/api/admin/weeks/999", bytes.NewBuffer(body), pathParams)
 	w := httptest.NewRecorder()
 
 	UpdateWeek(gormDB)(w, req)
@@ -253,7 +253,8 @@ func TestDeleteWeek(t *testing.T) {
 		t.Fatalf("Failed to create test week: %v", result.Error)
 	}
 
-	req := httptest.NewRequest("DELETE", "/api/admin/weeks/1", nil)
+	pathParams := map[string]string{"id": "1"}
+	req := createRequestWithPathParams("DELETE", "/api/admin/weeks/1", nil, pathParams)
 	w := httptest.NewRecorder()
 
 	DeleteWeek(gormDB)(w, req)
@@ -276,7 +277,8 @@ func TestDeleteWeek_NotFound(t *testing.T) {
 	}
 	gormDB := db.GetDB()
 
-	req := httptest.NewRequest("DELETE", "/api/admin/weeks/999", nil)
+	pathParams := map[string]string{"id": "999"}
+	req := createRequestWithPathParams("DELETE", "/api/admin/weeks/999", nil, pathParams)
 	w := httptest.NewRecorder()
 
 	DeleteWeek(gormDB)(w, req)
@@ -317,7 +319,8 @@ func TestActivateWeek(t *testing.T) {
 		}
 	}
 
-	req := httptest.NewRequest("POST", "/api/admin/weeks/2/activate", nil)
+	pathParams := map[string]string{"id": "2"}
+	req := createRequestWithPathParams("POST", "/api/admin/weeks/2/activate", nil, pathParams)
 	w := httptest.NewRecorder()
 
 	ActivateWeek(gormDB)(w, req)
@@ -360,7 +363,8 @@ func TestActivateWeek_NotFound(t *testing.T) {
 	}
 	gormDB := db.GetDB()
 
-	req := httptest.NewRequest("POST", "/api/admin/weeks/999/activate", nil)
+	pathParams := map[string]string{"id": "999"}
+	req := createRequestWithPathParams("POST", "/api/admin/weeks/999/activate", nil, pathParams)
 	w := httptest.NewRecorder()
 
 	ActivateWeek(gormDB)(w, req)
