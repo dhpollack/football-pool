@@ -4,7 +4,7 @@ module.exports = {
     output: {
       mock: {
         type: "msw",
-        delay: 100,
+        delay: 10,
         generateEachHttpStatus: true,
         indexMockFiles: true,
       },

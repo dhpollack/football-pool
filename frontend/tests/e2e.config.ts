@@ -95,7 +95,7 @@ export const E2E_CONFIG = {
         GAME_ACTIONS: "td:nth-child(7)", // Actions column
         CREATE_BUTTON: "button:has-text('Add Game')",
         EDIT_BUTTON: "button svg[data-testid='EditIcon']",
-        DELETE_BUTTON: "button[data-testid='delete-pick-button']",
+        DELETE_BUTTON: "button svg[data-testid='DeleteIcon']",
       },
       GAME_FORM: {
         FAVORITE_TEAM: "input[data-testid='favorite-team-input']",

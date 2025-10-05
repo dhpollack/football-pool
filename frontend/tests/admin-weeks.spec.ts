@@ -388,7 +388,6 @@ test.describe("Admin Week Management", () => {
     const cancelButton = page.getByRole("button", { name: /cancel/i });
     await cancelButton.click();
   });
-
 });
 
 test.describe("Admin Week Management - Access Control", () => {

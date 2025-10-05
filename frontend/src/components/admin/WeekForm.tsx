@@ -190,10 +190,7 @@ const WeekForm = ({ open, onClose, onSuccess, week }: WeekFormProps) => {
                 type="number"
                 value={formData.season}
                 onChange={(e) =>
-                  handleInputChange(
-                    "season",
-                    parseInt(e.target.value, 10) || 0,
-                  )
+                  handleInputChange("season", parseInt(e.target.value, 10) || 0)
                 }
                 error={!!errors.season}
                 helperText={errors.season}

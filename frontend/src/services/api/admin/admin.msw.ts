@@ -258,7 +258,7 @@ export const getListWeeksMockHandler = (
   return http.get(
     "*/api/admin/weeks",
     async (info) => {
-      await delay(100);
+      await delay(10);
 
       return new HttpResponse(
         JSON.stringify(
@@ -286,7 +286,7 @@ export const getListWeeksMockHandler200 = (
   return http.get(
     "*/api/admin/weeks",
     async (info) => {
-      await delay(100);
+      await delay(10);
 
       return new HttpResponse(
         JSON.stringify(
@@ -314,7 +314,7 @@ export const getListWeeksMockHandler401 = (
   return http.get(
     "*/api/admin/weeks",
     async (info) => {
-      await delay(100);
+      await delay(10);
 
       return new HttpResponse(
         JSON.stringify(
@@ -342,7 +342,7 @@ export const getCreateWeekMockHandler = (
   return http.post(
     "*/api/admin/weeks",
     async (info) => {
-      await delay(100);
+      await delay(10);
 
       return new HttpResponse(
         JSON.stringify(
@@ -370,7 +370,7 @@ export const getCreateWeekMockHandler201 = (
   return http.post(
     "*/api/admin/weeks",
     async (info) => {
-      await delay(100);
+      await delay(10);
 
       return new HttpResponse(
         JSON.stringify(
@@ -398,7 +398,7 @@ export const getCreateWeekMockHandler400 = (
   return http.post(
     "*/api/admin/weeks",
     async (info) => {
-      await delay(100);
+      await delay(10);
 
       return new HttpResponse(
         JSON.stringify(
@@ -426,7 +426,7 @@ export const getCreateWeekMockHandler401 = (
   return http.post(
     "*/api/admin/weeks",
     async (info) => {
-      await delay(100);
+      await delay(10);
 
       return new HttpResponse(
         JSON.stringify(
@@ -454,7 +454,7 @@ export const getUpdateWeekMockHandler = (
   return http.put(
     "*/api/admin/weeks/:id",
     async (info) => {
-      await delay(100);
+      await delay(10);
 
       return new HttpResponse(
         JSON.stringify(
@@ -482,7 +482,7 @@ export const getUpdateWeekMockHandler200 = (
   return http.put(
     "*/api/admin/weeks/:id",
     async (info) => {
-      await delay(100);
+      await delay(10);
 
       return new HttpResponse(
         JSON.stringify(
@@ -510,7 +510,7 @@ export const getUpdateWeekMockHandler400 = (
   return http.put(
     "*/api/admin/weeks/:id",
     async (info) => {
-      await delay(100);
+      await delay(10);
 
       return new HttpResponse(
         JSON.stringify(
@@ -538,7 +538,7 @@ export const getUpdateWeekMockHandler401 = (
   return http.put(
     "*/api/admin/weeks/:id",
     async (info) => {
-      await delay(100);
+      await delay(10);
 
       return new HttpResponse(
         JSON.stringify(
@@ -566,7 +566,7 @@ export const getUpdateWeekMockHandler404 = (
   return http.put(
     "*/api/admin/weeks/:id",
     async (info) => {
-      await delay(100);
+      await delay(10);
 
       return new HttpResponse(
         JSON.stringify(
@@ -594,7 +594,7 @@ export const getDeleteWeekMockHandler = (
   return http.delete(
     "*/api/admin/weeks/:id",
     async (info) => {
-      await delay(100);
+      await delay(10);
       if (typeof overrideResponse === "function") {
         await overrideResponse(info);
       }
@@ -615,7 +615,7 @@ export const getDeleteWeekMockHandler204 = (
   return http.delete(
     "*/api/admin/weeks/:id",
     async (info) => {
-      await delay(100);
+      await delay(10);
       if (typeof overrideResponse === "function") {
         await overrideResponse(info);
       }
@@ -636,7 +636,7 @@ export const getDeleteWeekMockHandler401 = (
   return http.delete(
     "*/api/admin/weeks/:id",
     async (info) => {
-      await delay(100);
+      await delay(10);
 
       return new HttpResponse(
         JSON.stringify(
@@ -664,7 +664,7 @@ export const getDeleteWeekMockHandler404 = (
   return http.delete(
     "*/api/admin/weeks/:id",
     async (info) => {
-      await delay(100);
+      await delay(10);
 
       return new HttpResponse(
         JSON.stringify(
@@ -692,7 +692,7 @@ export const getActivateWeekMockHandler = (
   return http.post(
     "*/api/admin/weeks/:id/activate",
     async (info) => {
-      await delay(100);
+      await delay(10);
 
       return new HttpResponse(
         JSON.stringify(
@@ -720,7 +720,7 @@ export const getActivateWeekMockHandler200 = (
   return http.post(
     "*/api/admin/weeks/:id/activate",
     async (info) => {
-      await delay(100);
+      await delay(10);
 
       return new HttpResponse(
         JSON.stringify(
@@ -748,7 +748,7 @@ export const getActivateWeekMockHandler401 = (
   return http.post(
     "*/api/admin/weeks/:id/activate",
     async (info) => {
-      await delay(100);
+      await delay(10);
 
       return new HttpResponse(
         JSON.stringify(
@@ -776,7 +776,7 @@ export const getActivateWeekMockHandler404 = (
   return http.post(
     "*/api/admin/weeks/:id/activate",
     async (info) => {
-      await delay(100);
+      await delay(10);
 
       return new HttpResponse(
         JSON.stringify(

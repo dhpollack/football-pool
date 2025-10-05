@@ -162,7 +162,7 @@ export const getGetWeeklyResultsMockHandler = (
   return http.get(
     "*/api/results/week",
     async (info) => {
-      await delay(100);
+      await delay(10);
 
       return new HttpResponse(
         JSON.stringify(
@@ -190,7 +190,7 @@ export const getGetWeeklyResultsMockHandler200 = (
   return http.get(
     "*/api/results/week",
     async (info) => {
-      await delay(100);
+      await delay(10);
 
       return new HttpResponse(
         JSON.stringify(
@@ -218,7 +218,7 @@ export const getGetWeeklyResultsMockHandler401 = (
   return http.get(
     "*/api/results/week",
     async (info) => {
-      await delay(100);
+      await delay(10);
 
       return new HttpResponse(
         JSON.stringify(
@@ -246,7 +246,7 @@ export const getGetSeasonResultsMockHandler = (
   return http.get(
     "*/api/results/season",
     async (info) => {
-      await delay(100);
+      await delay(10);
 
       return new HttpResponse(
         JSON.stringify(
@@ -274,7 +274,7 @@ export const getGetSeasonResultsMockHandler200 = (
   return http.get(
     "*/api/results/season",
     async (info) => {
-      await delay(100);
+      await delay(10);
 
       return new HttpResponse(
         JSON.stringify(
@@ -302,7 +302,7 @@ export const getGetSeasonResultsMockHandler401 = (
   return http.get(
     "*/api/results/season",
     async (info) => {
-      await delay(100);
+      await delay(10);
 
       return new HttpResponse(
         JSON.stringify(
@@ -330,7 +330,7 @@ export const getSubmitResultMockHandler = (
   return http.post(
     "*/api/results",
     async (info) => {
-      await delay(100);
+      await delay(10);
 
       return new HttpResponse(
         JSON.stringify(
@@ -358,7 +358,7 @@ export const getSubmitResultMockHandler201 = (
   return http.post(
     "*/api/results",
     async (info) => {
-      await delay(100);
+      await delay(10);
 
       return new HttpResponse(
         JSON.stringify(
@@ -386,7 +386,7 @@ export const getSubmitResultMockHandler401 = (
   return http.post(
     "*/api/results",
     async (info) => {
-      await delay(100);
+      await delay(10);
 
       return new HttpResponse(
         JSON.stringify(

@@ -279,7 +279,7 @@ export const getGetGamesMockHandler = (
   return http.get(
     "*/api/games",
     async (info) => {
-      await delay(100);
+      await delay(10);
 
       return new HttpResponse(
         JSON.stringify(
@@ -307,7 +307,7 @@ export const getGetGamesMockHandler200 = (
   return http.get(
     "*/api/games",
     async (info) => {
-      await delay(100);
+      await delay(10);
 
       return new HttpResponse(
         JSON.stringify(
@@ -335,7 +335,7 @@ export const getGetGamesMockHandler401 = (
   return http.get(
     "*/api/games",
     async (info) => {
-      await delay(100);
+      await delay(10);
 
       return new HttpResponse(
         JSON.stringify(
@@ -363,7 +363,7 @@ export const getCreateGameMockHandler = (
   return http.post(
     "*/api/admin/games/create",
     async (info) => {
-      await delay(100);
+      await delay(10);
 
       return new HttpResponse(
         JSON.stringify(
@@ -391,7 +391,7 @@ export const getCreateGameMockHandler201 = (
   return http.post(
     "*/api/admin/games/create",
     async (info) => {
-      await delay(100);
+      await delay(10);
 
       return new HttpResponse(
         JSON.stringify(
@@ -419,7 +419,7 @@ export const getCreateGameMockHandler401 = (
   return http.post(
     "*/api/admin/games/create",
     async (info) => {
-      await delay(100);
+      await delay(10);
 
       return new HttpResponse(
         JSON.stringify(
@@ -447,7 +447,7 @@ export const getAdminListGamesMockHandler = (
   return http.get(
     "*/api/admin/games",
     async (info) => {
-      await delay(100);
+      await delay(10);
 
       return new HttpResponse(
         JSON.stringify(
@@ -475,7 +475,7 @@ export const getAdminListGamesMockHandler200 = (
   return http.get(
     "*/api/admin/games",
     async (info) => {
-      await delay(100);
+      await delay(10);
 
       return new HttpResponse(
         JSON.stringify(
@@ -503,7 +503,7 @@ export const getAdminListGamesMockHandler401 = (
   return http.get(
     "*/api/admin/games",
     async (info) => {
-      await delay(100);
+      await delay(10);
 
       return new HttpResponse(
         JSON.stringify(
@@ -531,7 +531,7 @@ export const getUpdateGameMockHandler = (
   return http.put(
     "*/api/admin/games/:id",
     async (info) => {
-      await delay(100);
+      await delay(10);
 
       return new HttpResponse(
         JSON.stringify(
@@ -559,7 +559,7 @@ export const getUpdateGameMockHandler200 = (
   return http.put(
     "*/api/admin/games/:id",
     async (info) => {
-      await delay(100);
+      await delay(10);
 
       return new HttpResponse(
         JSON.stringify(
@@ -587,7 +587,7 @@ export const getUpdateGameMockHandler401 = (
   return http.put(
     "*/api/admin/games/:id",
     async (info) => {
-      await delay(100);
+      await delay(10);
 
       return new HttpResponse(
         JSON.stringify(
@@ -615,7 +615,7 @@ export const getDeleteGameMockHandler = (
   return http.delete(
     "*/api/admin/games/:id",
     async (info) => {
-      await delay(100);
+      await delay(10);
       if (typeof overrideResponse === "function") {
         await overrideResponse(info);
       }
@@ -636,7 +636,7 @@ export const getDeleteGameMockHandler204 = (
   return http.delete(
     "*/api/admin/games/:id",
     async (info) => {
-      await delay(100);
+      await delay(10);
       if (typeof overrideResponse === "function") {
         await overrideResponse(info);
       }
@@ -657,7 +657,7 @@ export const getDeleteGameMockHandler401 = (
   return http.delete(
     "*/api/admin/games/:id",
     async (info) => {
-      await delay(100);
+      await delay(10);
 
       return new HttpResponse(
         JSON.stringify(

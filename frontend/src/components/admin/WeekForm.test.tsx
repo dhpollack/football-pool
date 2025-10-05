@@ -109,7 +109,9 @@ describe("WeekForm", () => {
 
       // Check for the validation error message
       await waitFor(() => {
-        expect(screen.getByText("Week number must be between 1 and 18")).toBeInTheDocument();
+        expect(
+          screen.getByText("Week number must be between 1 and 18"),
+        ).toBeInTheDocument();
       });
 
       // Test invalid week number 19
@@ -119,7 +121,9 @@ describe("WeekForm", () => {
       fireEvent.submit(form);
 
       await waitFor(() => {
-        expect(screen.getByText("Week number must be between 1 and 18")).toBeInTheDocument();
+        expect(
+          screen.getByText("Week number must be between 1 and 18"),
+        ).toBeInTheDocument();
       });
     });
 
@@ -143,7 +147,9 @@ describe("WeekForm", () => {
       fireEvent.submit(form);
 
       await waitFor(() => {
-        expect(screen.getByText("Season must be a valid year")).toBeInTheDocument();
+        expect(
+          screen.getByText("Season must be a valid year"),
+        ).toBeInTheDocument();
       });
     });
 
@@ -169,7 +175,9 @@ describe("WeekForm", () => {
 
       await waitFor(() => {
         // Look for helper text in Material-UI TextField
-        const helperText = screen.getByText("Week end time must be after start time");
+        const helperText = screen.getByText(
+          "Week end time must be after start time",
+        );
         expect(helperText).toBeInTheDocument();
       });
     });

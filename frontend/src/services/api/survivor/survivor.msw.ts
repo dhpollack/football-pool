@@ -174,7 +174,7 @@ export const getGetSurvivorPicksMockHandler = (
   return http.get(
     "*/api/survivor/picks",
     async (info) => {
-      await delay(100);
+      await delay(10);
 
       return new HttpResponse(
         JSON.stringify(
@@ -202,7 +202,7 @@ export const getGetSurvivorPicksMockHandler200 = (
   return http.get(
     "*/api/survivor/picks",
     async (info) => {
-      await delay(100);
+      await delay(10);
 
       return new HttpResponse(
         JSON.stringify(
@@ -230,7 +230,7 @@ export const getGetSurvivorPicksMockHandler401 = (
   return http.get(
     "*/api/survivor/picks",
     async (info) => {
-      await delay(100);
+      await delay(10);
 
       return new HttpResponse(
         JSON.stringify(
@@ -258,7 +258,7 @@ export const getSubmitSurvivorPickMockHandler = (
   return http.post(
     "*/api/survivor/picks/submit",
     async (info) => {
-      await delay(100);
+      await delay(10);
 
       return new HttpResponse(
         JSON.stringify(
@@ -286,7 +286,7 @@ export const getSubmitSurvivorPickMockHandler201 = (
   return http.post(
     "*/api/survivor/picks/submit",
     async (info) => {
-      await delay(100);
+      await delay(10);
 
       return new HttpResponse(
         JSON.stringify(
@@ -314,7 +314,7 @@ export const getSubmitSurvivorPickMockHandler401 = (
   return http.post(
     "*/api/survivor/picks/submit",
     async (info) => {
-      await delay(100);
+      await delay(10);
 
       return new HttpResponse(
         JSON.stringify(

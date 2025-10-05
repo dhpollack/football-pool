@@ -33,7 +33,7 @@ export const getHealthCheckMockHandler = (
   return http.get(
     "*/api/health",
     async (info) => {
-      await delay(100);
+      await delay(10);
       if (typeof overrideResponse === "function") {
         await overrideResponse(info);
       }
@@ -54,7 +54,7 @@ export const getHealthCheckMockHandler200 = (
   return http.get(
     "*/api/health",
     async (info) => {
-      await delay(100);
+      await delay(10);
       if (typeof overrideResponse === "function") {
         await overrideResponse(info);
       }
@@ -75,7 +75,7 @@ export const getHealthCheckMockHandler400 = (
   return http.get(
     "*/api/health",
     async (info) => {
-      await delay(100);
+      await delay(10);
 
       return new HttpResponse(
         JSON.stringify(

@@ -525,7 +525,7 @@ export const getLoginUserMockHandler = (
   return http.post(
     "*/api/login",
     async (info) => {
-      await delay(100);
+      await delay(10);
 
       return new HttpResponse(
         JSON.stringify(
@@ -553,7 +553,7 @@ export const getLoginUserMockHandler200 = (
   return http.post(
     "*/api/login",
     async (info) => {
-      await delay(100);
+      await delay(10);
 
       return new HttpResponse(
         JSON.stringify(
@@ -581,7 +581,7 @@ export const getLoginUserMockHandler400 = (
   return http.post(
     "*/api/login",
     async (info) => {
-      await delay(100);
+      await delay(10);
 
       return new HttpResponse(
         JSON.stringify(
@@ -609,7 +609,7 @@ export const getLoginUserMockHandler401 = (
   return http.post(
     "*/api/login",
     async (info) => {
-      await delay(100);
+      await delay(10);
 
       return new HttpResponse(
         JSON.stringify(
@@ -637,7 +637,7 @@ export const getLoginUserMockHandler500 = (
   return http.post(
     "*/api/login",
     async (info) => {
-      await delay(100);
+      await delay(10);
 
       return new HttpResponse(
         JSON.stringify(
@@ -665,7 +665,7 @@ export const getLogoutUserMockHandler = (
   return http.post(
     "*/api/logout",
     async (info) => {
-      await delay(100);
+      await delay(10);
       if (typeof overrideResponse === "function") {
         await overrideResponse(info);
       }
@@ -686,7 +686,7 @@ export const getLogoutUserMockHandler200 = (
   return http.post(
     "*/api/logout",
     async (info) => {
-      await delay(100);
+      await delay(10);
       if (typeof overrideResponse === "function") {
         await overrideResponse(info);
       }
@@ -707,7 +707,7 @@ export const getLogoutUserMockHandler400 = (
   return http.post(
     "*/api/logout",
     async (info) => {
-      await delay(100);
+      await delay(10);
 
       return new HttpResponse(
         JSON.stringify(
@@ -735,7 +735,7 @@ export const getRegisterUserMockHandler = (
   return http.post(
     "*/api/register",
     async (info) => {
-      await delay(100);
+      await delay(10);
 
       return new HttpResponse(
         JSON.stringify(
@@ -763,7 +763,7 @@ export const getRegisterUserMockHandler201 = (
   return http.post(
     "*/api/register",
     async (info) => {
-      await delay(100);
+      await delay(10);
 
       return new HttpResponse(
         JSON.stringify(
@@ -791,7 +791,7 @@ export const getRegisterUserMockHandler400 = (
   return http.post(
     "*/api/register",
     async (info) => {
-      await delay(100);
+      await delay(10);
 
       return new HttpResponse(
         JSON.stringify(
@@ -819,7 +819,7 @@ export const getRegisterUserMockHandler500 = (
   return http.post(
     "*/api/register",
     async (info) => {
-      await delay(100);
+      await delay(10);
 
       return new HttpResponse(
         JSON.stringify(
@@ -847,7 +847,7 @@ export const getGetProfileMockHandler = (
   return http.get(
     "*/api/users/me",
     async (info) => {
-      await delay(100);
+      await delay(10);
 
       return new HttpResponse(
         JSON.stringify(
@@ -875,7 +875,7 @@ export const getGetProfileMockHandler200 = (
   return http.get(
     "*/api/users/me",
     async (info) => {
-      await delay(100);
+      await delay(10);
 
       return new HttpResponse(
         JSON.stringify(
@@ -903,7 +903,7 @@ export const getGetProfileMockHandler401 = (
   return http.get(
     "*/api/users/me",
     async (info) => {
-      await delay(100);
+      await delay(10);
 
       return new HttpResponse(
         JSON.stringify(
@@ -931,7 +931,7 @@ export const getGetProfileMockHandler404 = (
   return http.get(
     "*/api/users/me",
     async (info) => {
-      await delay(100);
+      await delay(10);
 
       return new HttpResponse(
         JSON.stringify(
@@ -959,7 +959,7 @@ export const getUpdateProfileMockHandler = (
   return http.put(
     "*/api/users/me/update",
     async (info) => {
-      await delay(100);
+      await delay(10);
 
       return new HttpResponse(
         JSON.stringify(
@@ -987,7 +987,7 @@ export const getUpdateProfileMockHandler200 = (
   return http.put(
     "*/api/users/me/update",
     async (info) => {
-      await delay(100);
+      await delay(10);
 
       return new HttpResponse(
         JSON.stringify(
@@ -1015,7 +1015,7 @@ export const getUpdateProfileMockHandler401 = (
   return http.put(
     "*/api/users/me/update",
     async (info) => {
-      await delay(100);
+      await delay(10);
 
       return new HttpResponse(
         JSON.stringify(
@@ -1043,7 +1043,7 @@ export const getAdminGetUserMockHandler = (
   return http.get(
     "*/api/admin/users/:id",
     async (info) => {
-      await delay(100);
+      await delay(10);
 
       return new HttpResponse(
         JSON.stringify(
@@ -1071,7 +1071,7 @@ export const getAdminGetUserMockHandler200 = (
   return http.get(
     "*/api/admin/users/:id",
     async (info) => {
-      await delay(100);
+      await delay(10);
 
       return new HttpResponse(
         JSON.stringify(
@@ -1099,7 +1099,7 @@ export const getAdminGetUserMockHandler401 = (
   return http.get(
     "*/api/admin/users/:id",
     async (info) => {
-      await delay(100);
+      await delay(10);
 
       return new HttpResponse(
         JSON.stringify(
@@ -1127,7 +1127,7 @@ export const getAdminUpdateUserMockHandler = (
   return http.put(
     "*/api/admin/users/:id",
     async (info) => {
-      await delay(100);
+      await delay(10);
 
       return new HttpResponse(
         JSON.stringify(
@@ -1155,7 +1155,7 @@ export const getAdminUpdateUserMockHandler200 = (
   return http.put(
     "*/api/admin/users/:id",
     async (info) => {
-      await delay(100);
+      await delay(10);
 
       return new HttpResponse(
         JSON.stringify(
@@ -1183,7 +1183,7 @@ export const getAdminUpdateUserMockHandler401 = (
   return http.put(
     "*/api/admin/users/:id",
     async (info) => {
-      await delay(100);
+      await delay(10);
 
       return new HttpResponse(
         JSON.stringify(
@@ -1211,7 +1211,7 @@ export const getDeleteUserByEmailMockHandler = (
   return http.delete(
     "*/api/admin/users/delete",
     async (info) => {
-      await delay(100);
+      await delay(10);
       if (typeof overrideResponse === "function") {
         await overrideResponse(info);
       }
@@ -1232,7 +1232,7 @@ export const getDeleteUserByEmailMockHandler204 = (
   return http.delete(
     "*/api/admin/users/delete",
     async (info) => {
-      await delay(100);
+      await delay(10);
       if (typeof overrideResponse === "function") {
         await overrideResponse(info);
       }
@@ -1253,7 +1253,7 @@ export const getDeleteUserByEmailMockHandler400 = (
   return http.delete(
     "*/api/admin/users/delete",
     async (info) => {
-      await delay(100);
+      await delay(10);
 
       return new HttpResponse(
         JSON.stringify(
@@ -1281,7 +1281,7 @@ export const getDeleteUserByEmailMockHandler401 = (
   return http.delete(
     "*/api/admin/users/delete",
     async (info) => {
-      await delay(100);
+      await delay(10);
 
       return new HttpResponse(
         JSON.stringify(
@@ -1309,7 +1309,7 @@ export const getDeleteUserByEmailMockHandler404 = (
   return http.delete(
     "*/api/admin/users/delete",
     async (info) => {
-      await delay(100);
+      await delay(10);
 
       return new HttpResponse(
         JSON.stringify(
@@ -1337,7 +1337,7 @@ export const getAdminListUsersMockHandler = (
   return http.get(
     "*/api/admin/users",
     async (info) => {
-      await delay(100);
+      await delay(10);
 
       return new HttpResponse(
         JSON.stringify(
@@ -1365,7 +1365,7 @@ export const getAdminListUsersMockHandler200 = (
   return http.get(
     "*/api/admin/users",
     async (info) => {
-      await delay(100);
+      await delay(10);
 
       return new HttpResponse(
         JSON.stringify(
@@ -1393,7 +1393,7 @@ export const getAdminListUsersMockHandler401 = (
   return http.get(
     "*/api/admin/users",
     async (info) => {
-      await delay(100);
+      await delay(10);
 
       return new HttpResponse(
         JSON.stringify(
@@ -1421,7 +1421,7 @@ export const getCreateUsersMockHandler = (
   return http.post(
     "*/api/admin/users/create",
     async (info) => {
-      await delay(100);
+      await delay(10);
 
       return new HttpResponse(
         JSON.stringify(
@@ -1449,7 +1449,7 @@ export const getCreateUsersMockHandler201 = (
   return http.post(
     "*/api/admin/users/create",
     async (info) => {
-      await delay(100);
+      await delay(10);
 
       return new HttpResponse(
         JSON.stringify(
@@ -1477,7 +1477,7 @@ export const getCreateUsersMockHandler400 = (
   return http.post(
     "*/api/admin/users/create",
     async (info) => {
-      await delay(100);
+      await delay(10);
 
       return new HttpResponse(
         JSON.stringify(
@@ -1505,7 +1505,7 @@ export const getCreateUsersMockHandler401 = (
   return http.post(
     "*/api/admin/users/create",
     async (info) => {
-      await delay(100);
+      await delay(10);
 
       return new HttpResponse(
         JSON.stringify(
@@ -1533,7 +1533,7 @@ export const getCreateUsersMockHandler500 = (
   return http.post(
     "*/api/admin/users/create",
     async (info) => {
-      await delay(100);
+      await delay(10);
 
       return new HttpResponse(
         JSON.stringify(

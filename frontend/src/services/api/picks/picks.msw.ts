@@ -819,7 +819,7 @@ export const getGetPicksMockHandler = (
   return http.get(
     "*/api/picks",
     async (info) => {
-      await delay(100);
+      await delay(10);
 
       return new HttpResponse(
         JSON.stringify(
@@ -847,7 +847,7 @@ export const getGetPicksMockHandler200 = (
   return http.get(
     "*/api/picks",
     async (info) => {
-      await delay(100);
+      await delay(10);
 
       return new HttpResponse(
         JSON.stringify(
@@ -875,7 +875,7 @@ export const getGetPicksMockHandler401 = (
   return http.get(
     "*/api/picks",
     async (info) => {
-      await delay(100);
+      await delay(10);
 
       return new HttpResponse(
         JSON.stringify(
@@ -903,7 +903,7 @@ export const getSubmitPicksMockHandler = (
   return http.post(
     "*/api/picks/submit",
     async (info) => {
-      await delay(100);
+      await delay(10);
 
       return new HttpResponse(
         JSON.stringify(
@@ -931,7 +931,7 @@ export const getSubmitPicksMockHandler201 = (
   return http.post(
     "*/api/picks/submit",
     async (info) => {
-      await delay(100);
+      await delay(10);
 
       return new HttpResponse(
         JSON.stringify(
@@ -959,7 +959,7 @@ export const getSubmitPicksMockHandler401 = (
   return http.post(
     "*/api/picks/submit",
     async (info) => {
-      await delay(100);
+      await delay(10);
 
       return new HttpResponse(
         JSON.stringify(
@@ -987,7 +987,7 @@ export const getAdminSubmitPicksMockHandler = (
   return http.post(
     "*/api/admin/picks/submit",
     async (info) => {
-      await delay(100);
+      await delay(10);
 
       return new HttpResponse(
         JSON.stringify(
@@ -1015,7 +1015,7 @@ export const getAdminSubmitPicksMockHandler201 = (
   return http.post(
     "*/api/admin/picks/submit",
     async (info) => {
-      await delay(100);
+      await delay(10);
 
       return new HttpResponse(
         JSON.stringify(
@@ -1043,7 +1043,7 @@ export const getAdminSubmitPicksMockHandler401 = (
   return http.post(
     "*/api/admin/picks/submit",
     async (info) => {
-      await delay(100);
+      await delay(10);
 
       return new HttpResponse(
         JSON.stringify(
@@ -1071,7 +1071,7 @@ export const getAdminListPicksMockHandler = (
   return http.get(
     "*/api/admin/picks",
     async (info) => {
-      await delay(100);
+      await delay(10);
 
       return new HttpResponse(
         JSON.stringify(
@@ -1099,7 +1099,7 @@ export const getAdminListPicksMockHandler200 = (
   return http.get(
     "*/api/admin/picks",
     async (info) => {
-      await delay(100);
+      await delay(10);
 
       return new HttpResponse(
         JSON.stringify(
@@ -1127,7 +1127,7 @@ export const getAdminListPicksMockHandler401 = (
   return http.get(
     "*/api/admin/picks",
     async (info) => {
-      await delay(100);
+      await delay(10);
 
       return new HttpResponse(
         JSON.stringify(
@@ -1155,7 +1155,7 @@ export const getAdminGetPicksByWeekMockHandler = (
   return http.get(
     "*/api/admin/picks/week/:week",
     async (info) => {
-      await delay(100);
+      await delay(10);
 
       return new HttpResponse(
         JSON.stringify(
@@ -1183,7 +1183,7 @@ export const getAdminGetPicksByWeekMockHandler200 = (
   return http.get(
     "*/api/admin/picks/week/:week",
     async (info) => {
-      await delay(100);
+      await delay(10);
 
       return new HttpResponse(
         JSON.stringify(
@@ -1211,7 +1211,7 @@ export const getAdminGetPicksByWeekMockHandler401 = (
   return http.get(
     "*/api/admin/picks/week/:week",
     async (info) => {
-      await delay(100);
+      await delay(10);
 
       return new HttpResponse(
         JSON.stringify(
@@ -1239,7 +1239,7 @@ export const getAdminGetPicksByUserMockHandler = (
   return http.get(
     "*/api/admin/picks/user/:userID",
     async (info) => {
-      await delay(100);
+      await delay(10);
 
       return new HttpResponse(
         JSON.stringify(
@@ -1267,7 +1267,7 @@ export const getAdminGetPicksByUserMockHandler200 = (
   return http.get(
     "*/api/admin/picks/user/:userID",
     async (info) => {
-      await delay(100);
+      await delay(10);
 
       return new HttpResponse(
         JSON.stringify(
@@ -1295,7 +1295,7 @@ export const getAdminGetPicksByUserMockHandler401 = (
   return http.get(
     "*/api/admin/picks/user/:userID",
     async (info) => {
-      await delay(100);
+      await delay(10);
 
       return new HttpResponse(
         JSON.stringify(
@@ -1323,7 +1323,7 @@ export const getAdminDeletePickMockHandler = (
   return http.delete(
     "*/api/admin/picks/:id",
     async (info) => {
-      await delay(100);
+      await delay(10);
       if (typeof overrideResponse === "function") {
         await overrideResponse(info);
       }
@@ -1344,7 +1344,7 @@ export const getAdminDeletePickMockHandler204 = (
   return http.delete(
     "*/api/admin/picks/:id",
     async (info) => {
-      await delay(100);
+      await delay(10);
       if (typeof overrideResponse === "function") {
         await overrideResponse(info);
       }
@@ -1365,7 +1365,7 @@ export const getAdminDeletePickMockHandler401 = (
   return http.delete(
     "*/api/admin/picks/:id",
     async (info) => {
-      await delay(100);
+      await delay(10);
 
       return new HttpResponse(
         JSON.stringify(
