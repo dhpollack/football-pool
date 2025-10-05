@@ -4,9 +4,8 @@
  * Football Pool API
  * OpenAPI spec version: 1.0.0
  */
+import type { WeekResponse } from "./weekResponse";
 
-export interface SeasonResult {
-  player_id: number;
-  player_name: string;
-  score: number;
+export interface WeekListResponse {
+  weeks: WeekResponse[];
 }

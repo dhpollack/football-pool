@@ -5,8 +5,6 @@
  * OpenAPI spec version: 1.0.0
  */
 
-export interface SeasonResult {
-  player_id: number;
-  player_name: string;
-  score: number;
-}
+export type DeleteUserByEmailParams = {
+  email: string;
+};

@@ -56,6 +56,7 @@ export const E2E_CONFIG = {
         USERS_LINK: "a[href*='/users']",
         GAMES_LINK: "a[href*='/games']",
         PICKS_LINK: "a[href*='/picks']",
+        WEEKS_LINK: "a[href*='/weeks']",
       },
       USERS: {
         SEARCH_INPUT: "input[placeholder*='Search']",
@@ -127,6 +128,30 @@ export const E2E_CONFIG = {
         FILTER_WEEK: "#week-filter",
         FILTER_SEASON: "#season-filter",
       },
+      WEEKS: {
+        SEARCH_INPUT: "input[placeholder*='Search']",
+        WEEK_ROW: ".MuiTableRow-root",
+        WEEK_ID: "td:nth-child(1)", // ID column
+        WEEK_NUMBER: "td:nth-child(2)", // Week column
+        WEEK_SEASON: "td:nth-child(3)", // Season column
+        WEEK_START_TIME: "td:nth-child(4)", // Start Time column
+        WEEK_END_TIME: "td:nth-child(5)", // End Time column
+        WEEK_STATUS: "td:nth-child(6)", // Status column
+        WEEK_ACTIONS: "td:nth-child(7)", // Actions column
+        CREATE_BUTTON: "button:has-text('Add Week')",
+        EDIT_BUTTON: "button svg[data-testid='EditIcon']",
+        DELETE_BUTTON: "button[data-testid='delete-pick-button']",
+        ACTIVATE_BUTTON: "button svg[data-testid='PlayArrowIcon']",
+      },
+      WEEK_FORM: {
+        WEEK_NUMBER: "input[data-testid='week-number-input']",
+        SEASON: "input[data-testid='season-input']",
+        START_TIME: "input[data-testid='week-start-time-input']",
+        END_TIME: "input[data-testid='week-end-time-input']",
+        IS_ACTIVE: "input[name='is_active']",
+        SUBMIT_BUTTON: "button:has-text('Submit')",
+        CANCEL_BUTTON: "button:has-text('Cancel')",
+      },
     },
   },
 
@@ -141,6 +166,7 @@ export const E2E_CONFIG = {
     ADMIN_USERS: "/admin/users",
     ADMIN_GAMES: "/admin/games",
     ADMIN_PICKS: "/admin/picks",
+    ADMIN_WEEKS: "/admin/weeks",
     ADMIN_USER_DETAILS: "/admin/users/",
     PROTECTED: [
       "/profile",
@@ -150,6 +176,7 @@ export const E2E_CONFIG = {
       "/admin/users",
       "/admin/games",
       "/admin/picks",
+      "/admin/weeks",
     ],
     PUBLIC: ["/login", "/register", "/"],
   },

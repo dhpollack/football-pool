@@ -5,11 +5,10 @@
  * OpenAPI spec version: 1.0.0
  */
 
-export interface GameRequest {
-  week: number;
+export interface WeekRequest {
+  week_number: number;
   season: number;
-  favorite_team: string;
-  underdog_team: string;
-  spread: number;
-  start_time: string;
+  week_start_time: string;
+  week_end_time: string;
+  is_active: boolean;
 }

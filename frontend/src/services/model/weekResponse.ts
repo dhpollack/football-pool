@@ -5,14 +5,13 @@
  * OpenAPI spec version: 1.0.0
  */
 
-export interface GameResponse {
+export interface WeekResponse {
   id: number;
-  week: number;
+  week_number: number;
   season: number;
-  favorite_team: string;
-  underdog_team: string;
-  spread: number;
-  start_time: string;
+  week_start_time: string;
+  week_end_time: string;
+  is_active: boolean;
   created_at: string;
   updated_at: string;
 }

@@ -1,7 +1,12 @@
 import React, { useState, useId } from "react";
 import { useGetGames } from "../services/api/games/games";
 import { useSubmitPicks } from "../services/api/picks/picks";
-import type { GameResponse, PickRequest } from "../services/model";
+import { useListWeeks } from "../services/api/admin/admin";
+import type {
+  GameResponse,
+  PickRequest,
+  WeekResponse,
+} from "../services/model";
 import axios from "axios";
 import {
   Table,
@@ -33,12 +38,23 @@ const PickEntryPage = () => {
 
   // Use React Query hooks
   const {
+    data: weeksData,
+    isLoading: weeksLoading,
+    error: weeksError,
+  } = useListWeeks();
+
+  // Find the active week
+  const activeWeek = weeksData?.weeks?.find(
+    (week: WeekResponse) => week.is_active,
+  );
+
+  const {
     data: gamesData,
-    isLoading,
+    isLoading: gamesLoading,
     error: gamesError,
   } = useGetGames({
-    week: 1,
-    season: 2025,
+    week: activeWeek?.week_number || 1,
+    season: activeWeek?.season || new Date().getFullYear(),
   });
   const { mutateAsync: submitPicks, isPending: isSubmitting } =
     useSubmitPicks();
@@ -64,22 +80,23 @@ const PickEntryPage = () => {
     }
   }, [sortedGames, games.length]);
 
-  // Handle games fetch error
+  // Handle weeks and games fetch errors
   React.useEffect(() => {
-    if (gamesError) {
-      if (axios.isAxiosError(gamesError)) {
+    if (weeksError || gamesError) {
+      const error = weeksError || gamesError;
+      if (axios.isAxiosError(error)) {
         setError(
-          gamesError.response?.data?.message ||
-            gamesError.message ||
-            "Failed to load games",
+          error.response?.data?.message ||
+            error.message ||
+            "Failed to load data",
         );
-      } else if (gamesError instanceof Error) {
-        setError(gamesError.message);
+      } else if (error instanceof Error) {
+        setError(error.message);
       } else {
         setError("An unknown error occurred");
       }
     }
-  }, [gamesError]);
+  }, [weeksError, gamesError]);
 
   const handleQuickPick = () => {
     const newPicks: { [gameId: number]: Pick } = {};
@@ -139,11 +156,25 @@ const PickEntryPage = () => {
     }
   };
 
+  const isLoading = weeksLoading || gamesLoading;
+
   if (isLoading) {
     return (
       <div>
         <Typography variant="h4">Pick Entry</Typography>
-        <Typography>Loading games...</Typography>
+        <Typography>Loading data...</Typography>
+      </div>
+    );
+  }
+
+  if (!activeWeek) {
+    return (
+      <div>
+        <Typography variant="h4">Pick Entry</Typography>
+        <Typography color="error">
+          No active week found. Please contact an administrator to set an active
+          week.
+        </Typography>
       </div>
     );
   }
@@ -151,6 +182,9 @@ const PickEntryPage = () => {
   return (
     <div>
       <Typography variant="h4">Pick Entry</Typography>
+      <Typography variant="h6" color="text.secondary" sx={{ mb: 2 }}>
+        Week {activeWeek.week_number} - Season {activeWeek.season}
+      </Typography>
       <Button
         variant="contained"
         sx={{ my: 2 }}

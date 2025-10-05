@@ -16,6 +16,7 @@ import {
   EmojiEvents,
   BarChart,
   Settings,
+  CalendarMonth,
 } from "@mui/icons-material";
 
 const AdminNavigation = () => {
@@ -31,6 +32,11 @@ const AdminNavigation = () => {
       text: "Game Management",
       icon: <SportsFootball />,
       path: "/admin/games",
+    },
+    {
+      text: "Week Management",
+      icon: <CalendarMonth />,
+      path: "/admin/weeks",
     },
     {
       text: "User Management",
