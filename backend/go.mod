@@ -1,15 +1,12 @@
 module github.com/dhpollack/football-pool
 
 // renovate: datasource=github-releases depName=golang/go versioning=semver allowedVersions=1.x
-go 1.25
+go 1.25.1
 
 // version: 0.1.0
 
-// renovate: datasource=github-releases depName=golang/go versioning=semver allowedVersions=1.25.x
-toolchain go1.25.1
-
 require (
-	github.com/go-playground/validator/v10 v10.27.0
+	github.com/go-playground/validator/v10 v10.28.0
 	github.com/golang-jwt/jwt/v5 v5.3.0
 	github.com/mitchellh/mapstructure v1.5.0
 	github.com/oapi-codegen/runtime v1.1.2
@@ -44,7 +41,7 @@ require (
 	github.com/ebitengine/purego v0.8.4 // indirect
 	github.com/felixge/httpsnoop v1.0.4 // indirect
 	github.com/fsnotify/fsnotify v1.9.0 // indirect
-	github.com/gabriel-vasile/mimetype v1.4.8 // indirect
+	github.com/gabriel-vasile/mimetype v1.4.10 // indirect
 	github.com/getkin/kin-openapi v0.132.0 // indirect
 	github.com/go-logr/logr v1.4.3 // indirect
 	github.com/go-logr/stdr v1.2.2 // indirect
