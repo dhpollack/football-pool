@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.1.1](https://github.com/dhpollack/football-pool/compare/v1.1.0...v1.1.1) (2025-10-07)
+
+
+### Bug Fixes
+
+* **deps:** update backend dependencies ([#72](https://github.com/dhpollack/football-pool/issues/72)) ([dd0b6d0](https://github.com/dhpollack/football-pool/commit/dd0b6d0ac60011a71e4c776c6371abfb01a5d00d))
+
 ## [1.1.0](https://github.com/dhpollack/football-pool/compare/v1.0.4...v1.1.0) (2025-10-05)
 
 
