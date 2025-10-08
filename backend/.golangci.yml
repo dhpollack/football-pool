@@ -51,3 +51,4 @@ linters:
         - github.com/spf13/viper.BindEnv
         - (*os.File).Close
         - os.Remove
+        - fmt.Sscanf

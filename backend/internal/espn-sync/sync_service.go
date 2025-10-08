@@ -80,6 +80,9 @@ func (s *SyncService) Start(ctx context.Context, interval time.Duration) {
 	// Run initial sync
 	s.syncData(ctx)
 
+	// Backfill missing weeks
+	go s.BackfillWeeks(ctx)
+
 	// Start periodic sync
 	ticker := time.NewTicker(interval)
 	defer ticker.Stop()
@@ -95,6 +98,28 @@ func (s *SyncService) Start(ctx context.Context, interval time.Duration) {
 	}
 }
 
+// BackfillWeeks checks for missing games in the database for all weeks of the season and syncs them if necessary.
+// This is a one-time operation at startup.
+func (s *SyncService) BackfillWeeks(ctx context.Context) {
+	slog.Info("Starting backfill of missing weeks")
+	season := s.config.ESPN.SeasonYear
+	for week := 1; week <= 18; week++ {
+		hasGames, err := s.db.WeekHasGames(season, week)
+		if err != nil {
+			slog.Error("Failed to check if week has games", "season", season, "week", week, "error", err)
+			continue
+		}
+
+		if !hasGames {
+			slog.Info("Backfilling data for week", "season", season, "week", week)
+			if err := s.SyncWeekData(ctx, season, week); err != nil {
+				slog.Error("Failed to backfill week data", "season", season, "week", week, "error", err)
+			}
+		}
+	}
+	slog.Info("Finished backfill of missing weeks")
+}
+
 // syncData performs a single synchronization cycle.
 func (s *SyncService) syncData(ctx context.Context) {
 	slog.Info("Starting ESPN data sync")
@@ -103,7 +128,7 @@ func (s *SyncService) syncData(ctx context.Context) {
 	currentSeason, currentWeek := s.getCurrentSeasonAndWeek()
 
 	// Sync data for current week
-	if err := s.syncWeekData(ctx, currentSeason, currentWeek); err != nil {
+	if err := s.SyncWeekData(ctx, currentSeason, currentWeek); err != nil {
 		slog.Error("Failed to sync week data", "season", currentSeason, "week", currentWeek, "error", err)
 		return
 	}
@@ -111,8 +136,8 @@ func (s *SyncService) syncData(ctx context.Context) {
 	slog.Info("ESPN data sync completed successfully")
 }
 
-// syncWeekData syncs data for a specific week and season.
-func (s *SyncService) syncWeekData(ctx context.Context, season, week int) error {
+// SyncWeekData syncs data for a specific week and season.
+func (s *SyncService) SyncWeekData(ctx context.Context, season, week int) error {
 	slog.Info("Syncing week data", "season", season, "week", week)
 
 	// Fetch events from ESPN API

@@ -2,6 +2,7 @@ package espnsync
 
 import (
 	"context"
+	"fmt"
 	"io"
 	"log/slog"
 	"net/http"
@@ -293,6 +294,70 @@ func TestSyncService_GetSyncStatus(t *testing.T) {
 
 	if _, ok := status["last_sync"].(time.Time); !ok {
 		t.Error("GetSyncStatus() last_sync should be a time.Time")
+	}
+}
+
+func TestSyncService_BackfillWeeks(t *testing.T) {
+	db, err := database.New("sqlite", ":memory:")
+	if err != nil {
+		t.Fatalf("Failed to create database: %v", err)
+	}
+
+	// Add a game for week 2 to simulate existing data
+	season := 2025
+	weekWithGame := 2
+	game := &database.Game{Season: season, Week: weekWithGame, FavoriteTeam: "Team A", UnderdogTeam: "Team B"}
+	if err := db.GetDB().Create(game).Error; err != nil {
+		t.Fatalf("failed to create game: %v", err)
+	}
+
+	// Track the weeks for which the sync was called
+	syncedWeeks := make(map[int]bool)
+	mockHTTPClient := &MockHTTPClient{
+		DoFunc: func(req *http.Request) (*http.Response, error) {
+			weekStr := req.URL.Query().Get("week")
+			if weekStr != "" {
+				var week int
+				fmt.Sscanf(weekStr, "%d", &week)
+				syncedWeeks[week] = true
+			}
+			return &http.Response{
+				StatusCode: 200,
+				Header:     http.Header{"Content-Type": []string{"application/json"}},
+				Body:       io.NopCloser(strings.NewReader("{}")),
+			}, nil
+		},
+	}
+
+	config := testConfig(t)
+	config.ESPN.SyncEnabled = true
+	config.ESPN.SeasonYear = season
+
+	client, err := apiespn.NewClientWithResponses(config.ESPN.BaseURL, apiespn.WithHTTPClient(mockHTTPClient))
+	if err != nil {
+		t.Fatalf("Failed to create ESPN client: %v", err)
+	}
+
+	service, err := NewSyncService(db, config)
+	if err != nil {
+		t.Fatalf("NewSyncService() error = %v", err)
+	}
+	service.espnClient = client
+
+	// Run the backfill process
+	service.BackfillWeeks(context.Background())
+
+	// Check that sync was called for all weeks except the one with existing data
+	for week := 1; week <= 18; week++ {
+		if week == weekWithGame {
+			if syncedWeeks[week] {
+				t.Errorf("Expected sync to be skipped for week %d, but it was called", week)
+			}
+		} else {
+			if !syncedWeeks[week] {
+				t.Errorf("Expected sync to be called for week %d, but it was skipped", week)
+			}
+		}
 	}
 }
 
