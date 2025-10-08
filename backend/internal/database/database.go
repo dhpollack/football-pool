@@ -63,3 +63,13 @@ func (d *Database) Migrate() error {
 func (d *Database) GetDB() *gorm.DB {
 	return d.db
 }
+
+// WeekHasGames checks if a given week has any games in the database.
+func (d *Database) WeekHasGames(season int, week int) (bool, error) {
+	var count int64
+	err := d.db.Model(&Game{}).Where("season = ? AND week = ?", season, week).Count(&count).Error
+	if err != nil {
+		return false, err
+	}
+	return count > 0, nil
+}
