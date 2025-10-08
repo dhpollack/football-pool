@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.1.2](https://github.com/dhpollack/football-pool/compare/v1.1.1...v1.1.2) (2025-10-08)
+
+
+### Bug Fixes
+
+* add sync service backfill ([#78](https://github.com/dhpollack/football-pool/issues/78)) ([7ddc23f](https://github.com/dhpollack/football-pool/commit/7ddc23f8092041ac1932bbf0ea4409c8c083761a))
+
 ## [1.1.1](https://github.com/dhpollack/football-pool/compare/v1.1.0...v1.1.1) (2025-10-07)
 
 
