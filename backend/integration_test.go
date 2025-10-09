@@ -68,8 +68,8 @@ func TestIntegration(t *testing.T) {
 	err = json.NewDecoder(resp.Body).Decode(&gameListResponse)
 	assert.NoError(t, err)
 	assert.Len(t, gameListResponse.Games, 2)
-	assert.Equal(t, "Team A", gameListResponse.Games[0].FavoriteTeam)
-	assert.Equal(t, "Team C", gameListResponse.Games[1].FavoriteTeam)
+	assert.Equal(t, "Team A", gameListResponse.Games[0].HomeTeam)
+	assert.Equal(t, "Team C", gameListResponse.Games[1].HomeTeam)
 }
 
 func createUser(t *testing.T, ts *httptest.Server, name, email, password, role string) {
@@ -123,9 +123,11 @@ func loginUser(t *testing.T, ts *httptest.Server, email, password string) string
 }
 
 func createGames(t *testing.T, ts *httptest.Server, token string) {
+	favoriteHome := api.Home
+	underdogAway := api.Away
 	games := []api.GameRequest{
-		{Week: 1, Season: 2023, FavoriteTeam: "Team A", UnderdogTeam: "Team B", Spread: 3.5, StartTime: time.Now()},
-		{Week: 1, Season: 2023, FavoriteTeam: "Team C", UnderdogTeam: "Team D", Spread: 7.0, StartTime: time.Now()},
+		{Week: 1, Season: 2023, HomeTeam: "Team A", AwayTeam: "Team B", Spread: 3.5, StartTime: time.Now(), Favorite: &favoriteHome, Underdog: &underdogAway},
+		{Week: 1, Season: 2023, HomeTeam: "Team C", AwayTeam: "Team D", Spread: 7.0, StartTime: time.Now(), Favorite: &favoriteHome, Underdog: &underdogAway},
 	}
 	body, _ := json.Marshal(games)
 	req, _ := http.NewRequest("POST", ts.URL+"/api/admin/games/create", bytes.NewBuffer(body))

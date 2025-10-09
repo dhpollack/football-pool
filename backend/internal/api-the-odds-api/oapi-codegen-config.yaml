@@ -3,3 +3,7 @@ output: the-odds-api-client.gen.go
 generate:
   client: true
   models: true
+output-options:
+  include-operation-ids:
+    - GetOdds
+    - GetHistoricalOdds

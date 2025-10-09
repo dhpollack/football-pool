@@ -59,12 +59,12 @@ func TestTransformer_TransformEvent(t *testing.T) {
 			season: 2023,
 			week:   1,
 			wantGame: &database.Game{
-				Week:         1,
-				Season:       2023,
-				FavoriteTeam: "Chiefs",
-				UnderdogTeam: "Lions",
-				Spread:       0.0,
-				StartTime:    time.Date(2023, 9, 10, 13, 0, 0, 0, time.UTC),
+				Week:      1,
+				Season:    2023,
+				HomeTeam:  "Chiefs",
+				AwayTeam:  "Lions",
+				Spread:    0.0,
+				StartTime: time.Date(2023, 9, 10, 13, 0, 0, 0, time.UTC),
 			},
 			wantErr: false,
 		},
@@ -145,11 +145,17 @@ func TestTransformer_TransformEvent(t *testing.T) {
 			if game.Season != tt.wantGame.Season {
 				t.Errorf("TransformEvent() season = %v, want %v", game.Season, tt.wantGame.Season)
 			}
-			if game.FavoriteTeam != tt.wantGame.FavoriteTeam {
-				t.Errorf("TransformEvent() favoriteTeam = %v, want %v", game.FavoriteTeam, tt.wantGame.FavoriteTeam)
+			if game.HomeTeam != tt.wantGame.HomeTeam {
+				t.Errorf("TransformEvent() homeTeam = %v, want %v", game.HomeTeam, tt.wantGame.HomeTeam)
 			}
-			if game.UnderdogTeam != tt.wantGame.UnderdogTeam {
-				t.Errorf("TransformEvent() underdogTeam = %v, want %v", game.UnderdogTeam, tt.wantGame.UnderdogTeam)
+			if game.AwayTeam != tt.wantGame.AwayTeam {
+				t.Errorf("TransformEvent() awayTeam = %v, want %v", game.AwayTeam, tt.wantGame.AwayTeam)
+			}
+			if game.Favorite != tt.wantGame.Favorite {
+				t.Errorf("TransformEvent() favorite = %v, want %v", game.Favorite, tt.wantGame.Favorite)
+			}
+			if game.Underdog != tt.wantGame.Underdog {
+				t.Errorf("TransformEvent() underdog = %v, want %v", game.Underdog, tt.wantGame.Underdog)
 			}
 			if game.Spread != tt.wantGame.Spread {
 				t.Errorf("TransformEvent() spread = %v, want %v", game.Spread, tt.wantGame.Spread)
@@ -234,12 +240,12 @@ func TestTransformer_StoreGameAndResult(t *testing.T) {
 	transformer := NewTransformer(db)
 
 	game := &database.Game{
-		Week:         1,
-		Season:       2023,
-		FavoriteTeam: "Chiefs",
-		UnderdogTeam: "Lions",
-		Spread:       0.0,
-		StartTime:    time.Date(2023, 9, 10, 13, 0, 0, 0, time.UTC),
+		Week:      1,
+		Season:    2023,
+		HomeTeam:  "Chiefs",
+		AwayTeam:  "Lions",
+		Spread:    0.0,
+		StartTime: time.Date(2023, 9, 10, 13, 0, 0, 0, time.UTC),
 	}
 
 	// Test storing new game
@@ -294,12 +300,12 @@ func TestTransformer_StoreGameAndResultUpdate(t *testing.T) {
 	transformer := NewTransformer(db)
 
 	game := &database.Game{
-		Week:         1,
-		Season:       2023,
-		FavoriteTeam: "Chiefs",
-		UnderdogTeam: "Lions",
-		Spread:       0.0,
-		StartTime:    time.Date(2023, 9, 10, 13, 0, 0, 0, time.UTC),
+		Week:      1,
+		Season:    2023,
+		HomeTeam:  "Chiefs",
+		AwayTeam:  "Lions",
+		Spread:    0.0,
+		StartTime: time.Date(2023, 9, 10, 13, 0, 0, 0, time.UTC),
 	}
 
 	// Store game initially

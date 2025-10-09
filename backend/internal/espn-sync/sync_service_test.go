@@ -306,7 +306,7 @@ func TestSyncService_BackfillWeeks(t *testing.T) {
 	// Add a game for week 2 to simulate existing data
 	season := 2025
 	weekWithGame := 2
-	game := &database.Game{Season: season, Week: weekWithGame, FavoriteTeam: "Team A", UnderdogTeam: "Team B"}
+	game := &database.Game{Season: season, Week: weekWithGame, HomeTeam: "Team A", AwayTeam: "Team B"}
 	if err := db.GetDB().Create(game).Error; err != nil {
 		t.Fatalf("failed to create game: %v", err)
 	}
@@ -434,8 +434,8 @@ func TestSyncService_SyncNowWithSampleData(t *testing.T) {
 	// Debug: print all stored games
 	t.Logf("Stored %d games:", len(games))
 	for i, game := range games {
-		t.Logf("Game %d: Season=%d, Week=%d, Favorite=%s, Underdog=%s",
-			i+1, game.Season, game.Week, game.FavoriteTeam, game.UnderdogTeam)
+		t.Logf("Game %d: Season=%d, Week=%d, Home=%s, Away=%s",
+			i+1, game.Season, game.Week, game.HomeTeam, game.AwayTeam)
 	}
 
 	// Verify that at least one specific game from the sample was stored
@@ -453,11 +453,11 @@ func TestSyncService_SyncNowWithSampleData(t *testing.T) {
 	if game.Week != 1 {
 		t.Errorf("Expected week 1, got %v", game.Week)
 	}
-	if game.FavoriteTeam != "Philadelphia Eagles" {
-		t.Errorf("Expected favorite team 'Philadelphia Eagles', got '%v'", game.FavoriteTeam)
+	if game.HomeTeam != "Philadelphia Eagles" {
+		t.Errorf("Expected home team 'Philadelphia Eagles', got '%v'", game.HomeTeam)
 	}
-	if game.UnderdogTeam != "Dallas Cowboys" {
-		t.Errorf("Expected underdog team 'Dallas Cowboys', got '%v'", game.UnderdogTeam)
+	if game.AwayTeam != "Dallas Cowboys" {
+		t.Errorf("Expected away team 'Dallas Cowboys', got '%v'", game.AwayTeam)
 	}
 
 	// Verify that results were stored for games with scores

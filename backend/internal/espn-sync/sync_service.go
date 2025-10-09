@@ -10,6 +10,7 @@ import (
 	"github.com/dhpollack/football-pool/internal/api-espn"
 	"github.com/dhpollack/football-pool/internal/config"
 	"github.com/dhpollack/football-pool/internal/database"
+	"github.com/dhpollack/football-pool/internal/odds-sync"
 )
 
 // TimeProvider defines an interface for getting the current time.
@@ -30,6 +31,7 @@ func (r RealTimeProvider) Now() time.Time {
 type SyncService struct {
 	db           *database.Database
 	espnClient   *apiespn.ClientWithResponses
+	oddsService  *oddssync.OddsService
 	cache        *Cache
 	transformer  *Transformer
 	syncEnabled  bool
@@ -51,6 +53,12 @@ func NewSyncServiceWithTimeProvider(db *database.Database, config *config.Config
 		return nil, err
 	}
 
+	// Create odds service
+	oddsService, err := oddssync.NewOddsServiceWithTimeProvider(db, config, timeProvider)
+	if err != nil {
+		return nil, err
+	}
+
 	// Create cache
 	cache := NewCache(config.ESPN.CacheDir, config.ESPN.CacheExpiry)
 
@@ -60,6 +68,7 @@ func NewSyncServiceWithTimeProvider(db *database.Database, config *config.Config
 	return &SyncService{
 		db:           db,
 		espnClient:   client,
+		oddsService:  oddsService,
 		cache:        cache,
 		transformer:  transformer,
 		syncEnabled:  config.ESPN.SyncEnabled,
@@ -82,6 +91,12 @@ func (s *SyncService) Start(ctx context.Context, interval time.Duration) {
 
 	// Backfill missing weeks
 	go s.BackfillWeeks(ctx)
+
+	// Check and update spreads for current and past week
+	go s.CheckAndUpdateSpreads(ctx)
+
+	// Start weekly spread updates at Monday 11pm EST
+	go s.StartWeeklySpreadUpdates(ctx)
 
 	// Start periodic sync
 	ticker := time.NewTicker(interval)
@@ -246,21 +261,21 @@ func (s *SyncService) transformAndStoreEvents(events []apiespn.Event, season, we
 		}
 
 		// Check for duplicate games by team combination
-		gameKey := fmt.Sprintf("%d-%d-%s-%s", season, week, game.FavoriteTeam, game.UnderdogTeam)
+		gameKey := fmt.Sprintf("%d-%d-%s-%s", season, week, game.HomeTeam, game.AwayTeam)
 		if seenGames[gameKey] {
-			slog.Warn("Skipping duplicate game", "season", season, "week", week, "favorite", game.FavoriteTeam, "underdog", game.UnderdogTeam)
+			slog.Warn("Skipping duplicate game", "season", season, "week", week, "home", game.HomeTeam, "away", game.AwayTeam)
 			continue
 		}
 		seenGames[gameKey] = true
 
 		// Store game and result in database
-		slog.Debug("About to store game", "season", season, "week", week, "favorite", game.FavoriteTeam, "underdog", game.UnderdogTeam, "has_result", result != nil)
+		slog.Debug("About to store game", "season", season, "week", week, "home", game.HomeTeam, "away", game.AwayTeam, "has_result", result != nil)
 		if err := s.transformer.StoreGameAndResult(game, result); err != nil {
 			slog.Error("Failed to store game and result", "game", game, "error", err)
 			continue
 		}
 
-		slog.Debug("Successfully stored game", "season", season, "week", week, "favorite", game.FavoriteTeam, "underdog", game.UnderdogTeam)
+		slog.Debug("Successfully stored game", "season", season, "week", week, "home", game.HomeTeam, "away", game.AwayTeam)
 		processedCount++
 	}
 
@@ -306,6 +321,123 @@ func (s *SyncService) getCurrentSeasonAndWeek() (int, int) {
 func (s *SyncService) SyncNow(ctx context.Context) error {
 	s.syncData(ctx)
 	return nil
+}
+
+// CheckAndUpdateSpreads checks games for the current and past week and updates spreads if needed.
+func (s *SyncService) CheckAndUpdateSpreads(ctx context.Context) {
+	slog.Info("Checking and updating spreads for current and past week")
+
+	currentSeason, currentWeek := s.getCurrentSeasonAndWeek()
+
+	// Check current week and previous week
+	for week := currentWeek - 1; week <= currentWeek; week++ {
+		if week < 1 {
+			continue
+		}
+
+		// Check if all spreads are 0 for this week
+		allSpreadsZero, err := s.allSpreadsZero(currentSeason, week)
+		if err != nil {
+			slog.Error("Failed to check spreads", "season", currentSeason, "week", week, "error", err)
+			continue
+		}
+
+		if allSpreadsZero {
+			slog.Info("Updating spreads for week", "season", currentSeason, "week", week)
+			if err := s.oddsService.UpdateGameSpreads(ctx, currentSeason, week); err != nil {
+				slog.Error("Failed to update spreads", "season", currentSeason, "week", week, "error", err)
+			}
+		} else {
+			slog.Info("Spreads already exist for week", "season", currentSeason, "week", week)
+		}
+	}
+}
+
+// allSpreadsZero checks if all games in a week have spread = 0.
+func (s *SyncService) allSpreadsZero(season, week int) (bool, error) {
+	var games []database.Game
+	if err := s.db.GetDB().Where("season = ? AND week = ?", season, week).Find(&games).Error; err != nil {
+		return false, err
+	}
+
+	if len(games) == 0 {
+		return false, nil // No games to check
+	}
+
+	for _, game := range games {
+		if game.Spread != 0 {
+			return false, nil // Found a game with non-zero spread
+		}
+	}
+
+	return true, nil // All spreads are 0
+}
+
+// StartWeeklySpreadUpdates starts a background process that updates spreads every Monday at 11pm EST.
+func (s *SyncService) StartWeeklySpreadUpdates(ctx context.Context) {
+	slog.Info("Starting weekly spread updates (Monday 11pm EST)")
+
+	for {
+		select {
+		case <-ctx.Done():
+			slog.Info("Stopping weekly spread updates")
+			return
+		default:
+			// Calculate next Monday 11pm EST
+			nextUpdate := s.nextMonday11pmEST()
+			durationUntilNextUpdate := time.Until(nextUpdate)
+
+			slog.Info("Next spread update scheduled", "time", nextUpdate, "duration", durationUntilNextUpdate)
+
+			// Wait until next Monday 11pm EST
+			timer := time.NewTimer(durationUntilNextUpdate)
+			select {
+			case <-ctx.Done():
+				timer.Stop()
+				return
+			case <-timer.C:
+				// Update spreads for upcoming week
+				currentSeason, currentWeek := s.getCurrentSeasonAndWeek()
+				upcomingWeek := currentWeek + 1
+
+				// Only update if upcoming week is within the season (1-18)
+				if upcomingWeek >= 1 && upcomingWeek <= 18 {
+					slog.Info("Updating spreads for upcoming week", "season", currentSeason, "week", upcomingWeek)
+					if err := s.oddsService.UpdateGameSpreads(ctx, currentSeason, upcomingWeek); err != nil {
+						slog.Error("Failed to update spreads for upcoming week", "season", currentSeason, "week", upcomingWeek, "error", err)
+					}
+				} else {
+					slog.Info("Upcoming week is outside season range, skipping spread update", "week", upcomingWeek)
+				}
+			}
+		}
+	}
+}
+
+// nextMonday11pmEST calculates the next Monday at 11pm EST.
+func (s *SyncService) nextMonday11pmEST() time.Time {
+	now := s.timeProvider.Now()
+
+	// Convert to EST (UTC-5)
+	estLocation, err := time.LoadLocation("America/New_York")
+	if err != nil {
+		slog.Warn("Failed to load EST timezone, using UTC", "error", err)
+		estLocation = time.UTC
+	}
+
+	nowEST := now.In(estLocation)
+
+	// Find next Monday
+	daysUntilMonday := (1 - int(nowEST.Weekday()) + 7) % 7
+	if daysUntilMonday == 0 && nowEST.Hour() >= 23 {
+		// If it's already Monday after 11pm, schedule for next Monday
+		daysUntilMonday = 7
+	}
+
+	nextMonday := nowEST.AddDate(0, 0, daysUntilMonday)
+	nextMonday11pm := time.Date(nextMonday.Year(), nextMonday.Month(), nextMonday.Day(), 23, 0, 0, 0, estLocation)
+
+	return nextMonday11pm
 }
 
 // GetSyncStatus returns the current status of the sync service.

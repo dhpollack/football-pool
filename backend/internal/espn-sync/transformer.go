@@ -30,7 +30,7 @@ func (t *Transformer) TransformEvent(event apiespn.Event, season, week int) (*da
 	competition := (*event.Competitions)[0]
 
 	// Extract teams from competition
-	favoriteTeam, underdogTeam, err := t.extractTeams(competition)
+	homeTeam, awayTeam, err := t.extractTeams(competition)
 	if err != nil {
 		return nil, nil, err
 	}
@@ -43,12 +43,14 @@ func (t *Transformer) TransformEvent(event apiespn.Event, season, week int) (*da
 
 	// Create Game model
 	game := &database.Game{
-		Week:         week,
-		Season:       season,
-		FavoriteTeam: favoriteTeam,
-		UnderdogTeam: underdogTeam,
-		Spread:       0.0, // ESPN API doesn't provide spread information
-		StartTime:    startTime,
+		Week:      week,
+		Season:    season,
+		HomeTeam:  homeTeam,
+		AwayTeam:  awayTeam,
+		Favorite:  nil,
+		Underdog:  nil,
+		Spread:    0.0, // ESPN API doesn't provide spread information
+		StartTime: startTime,
 	}
 
 	// Create Result model if scores are available
@@ -60,9 +62,7 @@ func (t *Transformer) TransformEvent(event apiespn.Event, season, week int) (*da
 	return game, result, nil
 }
 
-// extractTeams extracts favorite and underdog teams from a competition.
-// Note: ESPN API doesn't explicitly state which team is favorite/underdog.
-// This implementation assumes the home team is the favorite.
+// extractTeams extracts home and away teams from a competition.
 func (t *Transformer) extractTeams(competition apiespn.Competition) (string, string, error) {
 	if competition.Competitors == nil || len(*competition.Competitors) != 2 {
 		return "", "", fmt.Errorf("invalid competition: expected 2 competitors, got %d", len(*competition.Competitors))
@@ -88,11 +88,7 @@ func (t *Transformer) extractTeams(competition apiespn.Competition) (string, str
 		return "", "", fmt.Errorf("missing team names: home='%s', away='%s'", homeTeam, awayTeam)
 	}
 
-	// Use home team as favorite (this is an assumption)
-	favoriteTeam := homeTeam
-	underdogTeam := awayTeam
-
-	return favoriteTeam, underdogTeam, nil
+	return homeTeam, awayTeam, nil
 }
 
 // extractStartTime extracts the game start time from competition and event data.
@@ -180,9 +176,9 @@ func (t *Transformer) StoreGameAndResult(game *database.Game, result *database.R
 	// Check if game already exists
 	var existingGame database.Game
 	err := t.db.GetDB().Where("season = ? AND week = ? AND favorite_team = ? AND underdog_team = ?",
-		game.Season, game.Week, game.FavoriteTeam, game.UnderdogTeam).First(&existingGame).Error
+		game.Season, game.Week, game.HomeTeam, game.AwayTeam).First(&existingGame).Error
 
-	slog.Debug("StoreGameAndResult: checking for existing game", "season", game.Season, "week", game.Week, "favorite", game.FavoriteTeam, "underdog", game.UnderdogTeam, "error", err, "existing_game_id", existingGame.ID)
+	slog.Debug("StoreGameAndResult: checking for existing game", "season", game.Season, "week", game.Week, "home", game.HomeTeam, "away", game.AwayTeam, "error", err, "existing_game_id", existingGame.ID)
 
 	if err != nil {
 		// Game doesn't exist, create it

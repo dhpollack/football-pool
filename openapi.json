@@ -1637,6 +1637,10 @@
           }
         }
       },
+      "TeamDesignation": {
+        "type": "string",
+        "enum": ["Home", "Away"]
+      },
       "GameListResponse": {
         "type": "object",
         "required": ["games", "pagination"],
@@ -1737,7 +1741,7 @@
       },
       "GameResponse": {
         "type": "object",
-        "required": ["id", "week", "season", "favorite_team", "underdog_team", "spread", "start_time", "created_at", "updated_at"],
+        "required": ["id", "week", "season", "home_team", "away_team", "spread", "start_time", "created_at", "updated_at"],
         "properties": {
           "id": {
             "type": "integer",
@@ -1749,11 +1753,17 @@
           "season": {
             "type": "integer"
           },
-          "favorite_team": {
+          "home_team": {
             "type": "string"
           },
-          "underdog_team": {
+          "away_team": {
             "type": "string"
+          },
+          "favorite": {
+            "$ref": "#/components/schemas/TeamDesignation"
+          },
+          "underdog": {
+            "$ref": "#/components/schemas/TeamDesignation"
           },
           "spread": {
             "type": "number",
@@ -1775,7 +1785,7 @@
       },
       "GameRequest": {
         "type": "object",
-        "required": ["week", "season", "favorite_team", "underdog_team", "spread", "start_time"],
+        "required": ["week", "season", "home_team", "away_team", "spread", "start_time"],
         "properties": {
           "week": {
             "type": "integer"
@@ -1783,11 +1793,17 @@
           "season": {
             "type": "integer"
           },
-          "favorite_team": {
+          "home_team": {
             "type": "string"
           },
-          "underdog_team": {
+          "away_team": {
             "type": "string"
+          },
+          "favorite": {
+            "$ref": "#/components/schemas/TeamDesignation"
+          },
+          "underdog": {
+            "$ref": "#/components/schemas/TeamDesignation"
           },
           "spread": {
             "type": "number",

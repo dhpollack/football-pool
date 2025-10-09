@@ -16,126 +16,64 @@ import (
 	"github.com/oapi-codegen/runtime"
 )
 
-// Defines values for GetV4HistoricalSportsSportEventsParamsDateFormat.
+// Defines values for GetHistoricalOddsParamsRegions.
 const (
-	GetV4HistoricalSportsSportEventsParamsDateFormatIso  GetV4HistoricalSportsSportEventsParamsDateFormat = "iso"
-	GetV4HistoricalSportsSportEventsParamsDateFormatUnix GetV4HistoricalSportsSportEventsParamsDateFormat = "unix"
+	GetHistoricalOddsParamsRegionsAu    GetHistoricalOddsParamsRegions = "au"
+	GetHistoricalOddsParamsRegionsEu    GetHistoricalOddsParamsRegions = "eu"
+	GetHistoricalOddsParamsRegionsUk    GetHistoricalOddsParamsRegions = "uk"
+	GetHistoricalOddsParamsRegionsUs    GetHistoricalOddsParamsRegions = "us"
+	GetHistoricalOddsParamsRegionsUs2   GetHistoricalOddsParamsRegions = "us2"
+	GetHistoricalOddsParamsRegionsUsDfs GetHistoricalOddsParamsRegions = "us_dfs"
 )
 
-// Defines values for GetV4HistoricalSportsSportEventsEventIdOddsParamsRegions.
+// Defines values for GetHistoricalOddsParamsMarkets.
 const (
-	GetV4HistoricalSportsSportEventsEventIdOddsParamsRegionsAu    GetV4HistoricalSportsSportEventsEventIdOddsParamsRegions = "au"
-	GetV4HistoricalSportsSportEventsEventIdOddsParamsRegionsEu    GetV4HistoricalSportsSportEventsEventIdOddsParamsRegions = "eu"
-	GetV4HistoricalSportsSportEventsEventIdOddsParamsRegionsUk    GetV4HistoricalSportsSportEventsEventIdOddsParamsRegions = "uk"
-	GetV4HistoricalSportsSportEventsEventIdOddsParamsRegionsUs    GetV4HistoricalSportsSportEventsEventIdOddsParamsRegions = "us"
-	GetV4HistoricalSportsSportEventsEventIdOddsParamsRegionsUs2   GetV4HistoricalSportsSportEventsEventIdOddsParamsRegions = "us2"
-	GetV4HistoricalSportsSportEventsEventIdOddsParamsRegionsUsDfs GetV4HistoricalSportsSportEventsEventIdOddsParamsRegions = "us_dfs"
+	GetHistoricalOddsParamsMarketsH2h       GetHistoricalOddsParamsMarkets = "h2h"
+	GetHistoricalOddsParamsMarketsOutrights GetHistoricalOddsParamsMarkets = "outrights"
+	GetHistoricalOddsParamsMarketsSpreads   GetHistoricalOddsParamsMarkets = "spreads"
+	GetHistoricalOddsParamsMarketsTotals    GetHistoricalOddsParamsMarkets = "totals"
 )
 
-// Defines values for GetV4HistoricalSportsSportEventsEventIdOddsParamsDateFormat.
+// Defines values for GetHistoricalOddsParamsDateFormat.
 const (
-	GetV4HistoricalSportsSportEventsEventIdOddsParamsDateFormatIso  GetV4HistoricalSportsSportEventsEventIdOddsParamsDateFormat = "iso"
-	GetV4HistoricalSportsSportEventsEventIdOddsParamsDateFormatUnix GetV4HistoricalSportsSportEventsEventIdOddsParamsDateFormat = "unix"
+	GetHistoricalOddsParamsDateFormatIso  GetHistoricalOddsParamsDateFormat = "iso"
+	GetHistoricalOddsParamsDateFormatUnix GetHistoricalOddsParamsDateFormat = "unix"
 )
 
-// Defines values for GetV4HistoricalSportsSportEventsEventIdOddsParamsOddsFormat.
+// Defines values for GetHistoricalOddsParamsOddsFormat.
 const (
-	GetV4HistoricalSportsSportEventsEventIdOddsParamsOddsFormatAmerican GetV4HistoricalSportsSportEventsEventIdOddsParamsOddsFormat = "american"
-	GetV4HistoricalSportsSportEventsEventIdOddsParamsOddsFormatDecimal  GetV4HistoricalSportsSportEventsEventIdOddsParamsOddsFormat = "decimal"
+	GetHistoricalOddsParamsOddsFormatAmerican GetHistoricalOddsParamsOddsFormat = "american"
+	GetHistoricalOddsParamsOddsFormatDecimal  GetHistoricalOddsParamsOddsFormat = "decimal"
 )
 
-// Defines values for GetV4HistoricalSportsSportOddsParamsRegions.
+// Defines values for GetOddsParamsRegions.
 const (
-	GetV4HistoricalSportsSportOddsParamsRegionsAu    GetV4HistoricalSportsSportOddsParamsRegions = "au"
-	GetV4HistoricalSportsSportOddsParamsRegionsEu    GetV4HistoricalSportsSportOddsParamsRegions = "eu"
-	GetV4HistoricalSportsSportOddsParamsRegionsUk    GetV4HistoricalSportsSportOddsParamsRegions = "uk"
-	GetV4HistoricalSportsSportOddsParamsRegionsUs    GetV4HistoricalSportsSportOddsParamsRegions = "us"
-	GetV4HistoricalSportsSportOddsParamsRegionsUs2   GetV4HistoricalSportsSportOddsParamsRegions = "us2"
-	GetV4HistoricalSportsSportOddsParamsRegionsUsDfs GetV4HistoricalSportsSportOddsParamsRegions = "us_dfs"
+	GetOddsParamsRegionsAu    GetOddsParamsRegions = "au"
+	GetOddsParamsRegionsEu    GetOddsParamsRegions = "eu"
+	GetOddsParamsRegionsUk    GetOddsParamsRegions = "uk"
+	GetOddsParamsRegionsUs    GetOddsParamsRegions = "us"
+	GetOddsParamsRegionsUs2   GetOddsParamsRegions = "us2"
+	GetOddsParamsRegionsUsDfs GetOddsParamsRegions = "us_dfs"
 )
 
-// Defines values for GetV4HistoricalSportsSportOddsParamsMarkets.
+// Defines values for GetOddsParamsMarkets.
 const (
-	GetV4HistoricalSportsSportOddsParamsMarketsH2h       GetV4HistoricalSportsSportOddsParamsMarkets = "h2h"
-	GetV4HistoricalSportsSportOddsParamsMarketsOutrights GetV4HistoricalSportsSportOddsParamsMarkets = "outrights"
-	GetV4HistoricalSportsSportOddsParamsMarketsSpreads   GetV4HistoricalSportsSportOddsParamsMarkets = "spreads"
-	GetV4HistoricalSportsSportOddsParamsMarketsTotals    GetV4HistoricalSportsSportOddsParamsMarkets = "totals"
+	GetOddsParamsMarketsH2h       GetOddsParamsMarkets = "h2h"
+	GetOddsParamsMarketsOutrights GetOddsParamsMarkets = "outrights"
+	GetOddsParamsMarketsSpreads   GetOddsParamsMarkets = "spreads"
+	GetOddsParamsMarketsTotals    GetOddsParamsMarkets = "totals"
 )
 
-// Defines values for GetV4HistoricalSportsSportOddsParamsDateFormat.
+// Defines values for GetOddsParamsDateFormat.
 const (
-	GetV4HistoricalSportsSportOddsParamsDateFormatIso  GetV4HistoricalSportsSportOddsParamsDateFormat = "iso"
-	GetV4HistoricalSportsSportOddsParamsDateFormatUnix GetV4HistoricalSportsSportOddsParamsDateFormat = "unix"
+	GetOddsParamsDateFormatIso  GetOddsParamsDateFormat = "iso"
+	GetOddsParamsDateFormatUnix GetOddsParamsDateFormat = "unix"
 )
 
-// Defines values for GetV4HistoricalSportsSportOddsParamsOddsFormat.
+// Defines values for GetOddsParamsOddsFormat.
 const (
-	GetV4HistoricalSportsSportOddsParamsOddsFormatAmerican GetV4HistoricalSportsSportOddsParamsOddsFormat = "american"
-	GetV4HistoricalSportsSportOddsParamsOddsFormatDecimal  GetV4HistoricalSportsSportOddsParamsOddsFormat = "decimal"
-)
-
-// Defines values for GetV4SportsSportEventsParamsDateFormat.
-const (
-	GetV4SportsSportEventsParamsDateFormatIso  GetV4SportsSportEventsParamsDateFormat = "iso"
-	GetV4SportsSportEventsParamsDateFormatUnix GetV4SportsSportEventsParamsDateFormat = "unix"
-)
-
-// Defines values for GetV4SportsSportEventsEventIdOddsParamsRegions.
-const (
-	GetV4SportsSportEventsEventIdOddsParamsRegionsAu    GetV4SportsSportEventsEventIdOddsParamsRegions = "au"
-	GetV4SportsSportEventsEventIdOddsParamsRegionsEu    GetV4SportsSportEventsEventIdOddsParamsRegions = "eu"
-	GetV4SportsSportEventsEventIdOddsParamsRegionsUk    GetV4SportsSportEventsEventIdOddsParamsRegions = "uk"
-	GetV4SportsSportEventsEventIdOddsParamsRegionsUs    GetV4SportsSportEventsEventIdOddsParamsRegions = "us"
-	GetV4SportsSportEventsEventIdOddsParamsRegionsUs2   GetV4SportsSportEventsEventIdOddsParamsRegions = "us2"
-	GetV4SportsSportEventsEventIdOddsParamsRegionsUsDfs GetV4SportsSportEventsEventIdOddsParamsRegions = "us_dfs"
-)
-
-// Defines values for GetV4SportsSportEventsEventIdOddsParamsDateFormat.
-const (
-	GetV4SportsSportEventsEventIdOddsParamsDateFormatIso  GetV4SportsSportEventsEventIdOddsParamsDateFormat = "iso"
-	GetV4SportsSportEventsEventIdOddsParamsDateFormatUnix GetV4SportsSportEventsEventIdOddsParamsDateFormat = "unix"
-)
-
-// Defines values for GetV4SportsSportEventsEventIdOddsParamsOddsFormat.
-const (
-	GetV4SportsSportEventsEventIdOddsParamsOddsFormatAmerican GetV4SportsSportEventsEventIdOddsParamsOddsFormat = "american"
-	GetV4SportsSportEventsEventIdOddsParamsOddsFormatDecimal  GetV4SportsSportEventsEventIdOddsParamsOddsFormat = "decimal"
-)
-
-// Defines values for GetV4SportsSportOddsParamsRegions.
-const (
-	GetV4SportsSportOddsParamsRegionsAu    GetV4SportsSportOddsParamsRegions = "au"
-	GetV4SportsSportOddsParamsRegionsEu    GetV4SportsSportOddsParamsRegions = "eu"
-	GetV4SportsSportOddsParamsRegionsUk    GetV4SportsSportOddsParamsRegions = "uk"
-	GetV4SportsSportOddsParamsRegionsUs    GetV4SportsSportOddsParamsRegions = "us"
-	GetV4SportsSportOddsParamsRegionsUs2   GetV4SportsSportOddsParamsRegions = "us2"
-	GetV4SportsSportOddsParamsRegionsUsDfs GetV4SportsSportOddsParamsRegions = "us_dfs"
-)
-
-// Defines values for GetV4SportsSportOddsParamsMarkets.
-const (
-	GetV4SportsSportOddsParamsMarketsH2h       GetV4SportsSportOddsParamsMarkets = "h2h"
-	GetV4SportsSportOddsParamsMarketsOutrights GetV4SportsSportOddsParamsMarkets = "outrights"
-	GetV4SportsSportOddsParamsMarketsSpreads   GetV4SportsSportOddsParamsMarkets = "spreads"
-	GetV4SportsSportOddsParamsMarketsTotals    GetV4SportsSportOddsParamsMarkets = "totals"
-)
-
-// Defines values for GetV4SportsSportOddsParamsDateFormat.
-const (
-	GetV4SportsSportOddsParamsDateFormatIso  GetV4SportsSportOddsParamsDateFormat = "iso"
-	GetV4SportsSportOddsParamsDateFormatUnix GetV4SportsSportOddsParamsDateFormat = "unix"
-)
-
-// Defines values for GetV4SportsSportOddsParamsOddsFormat.
-const (
-	GetV4SportsSportOddsParamsOddsFormatAmerican GetV4SportsSportOddsParamsOddsFormat = "american"
-	GetV4SportsSportOddsParamsOddsFormatDecimal  GetV4SportsSportOddsParamsOddsFormat = "decimal"
-)
-
-// Defines values for GetV4SportsSportScoresParamsDateFormat.
-const (
-	Iso  GetV4SportsSportScoresParamsDateFormat = "iso"
-	Unix GetV4SportsSportScoresParamsDateFormat = "unix"
+	GetOddsParamsOddsFormatAmerican GetOddsParamsOddsFormat = "american"
+	GetOddsParamsOddsFormatDecimal  GetOddsParamsOddsFormat = "decimal"
 )
 
 // AwayTeam The away team. If home/away is not applicable for the sport (such as MMA and Tennis), it will be one of the participants. Null for outrights (futures) events.
@@ -174,94 +112,28 @@ type Outcome struct {
 	Sid *string `json:"sid"`
 }
 
-// ScoreModel defines model for ScoreModel.
-type ScoreModel struct {
-	// Name The participant name
-	Name *string `json:"name,omitempty"`
-
-	// Score The most recent score for the participant
-	Score *string `json:"score,omitempty"`
-}
-
 // SportKey A unique slug for the sport. Use this as the "sport" param in /odds requests
 type SportKey = string
 
 // SportTitle A presentable title of the sport. Occassionally this value can change, for example if a league undergoes a name change or change in sponsorship.
 type SportTitle = string
 
-// GetV4HistoricalSportsSportEventsParams defines parameters for GetV4HistoricalSportsSportEvents.
-type GetV4HistoricalSportsSportEventsParams struct {
-	// ApiKey Access key (40 characters). Get an API key at https://the-odds-api.com/#get-access
-	ApiKey string `form:"apiKey" json:"apiKey"`
-
-	// DateFormat Format of returned timestamps. Can be iso (ISO8601) or unix timestamp (seconds since epoch)
-	DateFormat *GetV4HistoricalSportsSportEventsParamsDateFormat `form:"dateFormat,omitempty" json:"dateFormat,omitempty"`
-
-	// EventIds Comma-separated event ids. Filters the response to only return events for the specified ids, provided those events have not expired
-	EventIds *string `form:"eventIds,omitempty" json:"eventIds,omitempty"`
-
-	// CommenceTimeFrom Filters the response to show events that commence on and after this parameter. Values are in ISO8601 format
-	CommenceTimeFrom *string `form:"commenceTimeFrom,omitempty" json:"commenceTimeFrom,omitempty"`
-
-	// CommenceTimeTo Filters the response to show events that commence on and before this parameter. Values are in ISO8601 format
-	CommenceTimeTo *string `form:"commenceTimeTo,omitempty" json:"commenceTimeTo,omitempty"`
-
-	// Date The timestamp of the data snapshot to be returned, specified in ISO8601 format. The API will return the closest snapshot equal to or earlier than the provided date parameter
-	Date string `form:"date" json:"date"`
-}
-
-// GetV4HistoricalSportsSportEventsParamsDateFormat defines parameters for GetV4HistoricalSportsSportEvents.
-type GetV4HistoricalSportsSportEventsParamsDateFormat string
-
-// GetV4HistoricalSportsSportEventsEventIdOddsParams defines parameters for GetV4HistoricalSportsSportEventsEventIdOdds.
-type GetV4HistoricalSportsSportEventsEventIdOddsParams struct {
-	// ApiKey Access key (40 characters). Get an API key at https://the-odds-api.com/#get-access
-	ApiKey string `form:"apiKey" json:"apiKey"`
-
-	// Regions Determines which bookmakers appear in the response. Multiple regions can be specified if comma delimited. Most use cases will only need to specify one region. See [the full list of bookmakers by region](https://the-odds-api.com/sports-odds-data/bookmaker-apis.html)
-	Regions GetV4HistoricalSportsSportEventsEventIdOddsParamsRegions `form:"regions" json:"regions"`
-
-	// Markets The odds markets to return. Multiple markets can be specified if comma delimited. Defaults to h2h (head to head / moneyline). Outrights only avaialable for select sports. See [the full list of supported market keys](https://the-odds-api.com/sports-odds-data/betting-markets.html)
-	Markets *string `form:"markets,omitempty" json:"markets,omitempty"`
-
-	// DateFormat Format of returned timestamps. Can be iso (ISO8601) or unix timestamp (seconds since epoch)
-	DateFormat *GetV4HistoricalSportsSportEventsEventIdOddsParamsDateFormat `form:"dateFormat,omitempty" json:"dateFormat,omitempty"`
-
-	// OddsFormat Format of returned odds
-	OddsFormat *GetV4HistoricalSportsSportEventsEventIdOddsParamsOddsFormat `form:"oddsFormat,omitempty" json:"oddsFormat,omitempty"`
-
-	// Bookmakers Comma-separated list of bookmakers to be returned. If both `bookmakers` and `regions` are specified, `bookmakers` takes precendence. Bookmakers can be from any region. Every group of 10 bookmakers counts as 1 request. For example for a single market, specifying up to 10 bookmakers counts as 1 request. Specifying between 11 and 20 bookmakers counts as 2 requests
-	Bookmakers *string `form:"bookmakers,omitempty" json:"bookmakers,omitempty"`
-
-	// Date The timestamp of the data snapshot to be returned, specified in ISO8601 format. The API will return the closest snapshot equal to or earlier than the provided date parameter
-	Date string `form:"date" json:"date"`
-}
-
-// GetV4HistoricalSportsSportEventsEventIdOddsParamsRegions defines parameters for GetV4HistoricalSportsSportEventsEventIdOdds.
-type GetV4HistoricalSportsSportEventsEventIdOddsParamsRegions string
-
-// GetV4HistoricalSportsSportEventsEventIdOddsParamsDateFormat defines parameters for GetV4HistoricalSportsSportEventsEventIdOdds.
-type GetV4HistoricalSportsSportEventsEventIdOddsParamsDateFormat string
-
-// GetV4HistoricalSportsSportEventsEventIdOddsParamsOddsFormat defines parameters for GetV4HistoricalSportsSportEventsEventIdOdds.
-type GetV4HistoricalSportsSportEventsEventIdOddsParamsOddsFormat string
-
-// GetV4HistoricalSportsSportOddsParams defines parameters for GetV4HistoricalSportsSportOdds.
-type GetV4HistoricalSportsSportOddsParams struct {
+// GetHistoricalOddsParams defines parameters for GetHistoricalOdds.
+type GetHistoricalOddsParams struct {
 	// ApiKey Access key (40 characters). Get an API key at https://the-odds-api.com/#get-access
 	ApiKey string `form:"apiKey" json:"apiKey"`
 
 	// Regions Determines which bookmakers appear in the response. Multiple regions can be specified if comma delimited. Most use cases will only need to specify one region. For a list of bookmakers by region, see https://the-odds-api.com/sports-odds-data/bookmaker-apis.html
-	Regions GetV4HistoricalSportsSportOddsParamsRegions `form:"regions" json:"regions"`
+	Regions GetHistoricalOddsParamsRegions `form:"regions" json:"regions"`
 
 	// Markets The odds market to return. Multiple markets can be specified if comma delimited. Defaults to h2h (head to head / moneyline). Outrights are only avaialable for select sports, such as golf.
-	Markets *GetV4HistoricalSportsSportOddsParamsMarkets `form:"markets,omitempty" json:"markets,omitempty"`
+	Markets *GetHistoricalOddsParamsMarkets `form:"markets,omitempty" json:"markets,omitempty"`
 
 	// DateFormat Format of returned timestamps. Can be iso (ISO8601) or unix timestamp (seconds since epoch)
-	DateFormat *GetV4HistoricalSportsSportOddsParamsDateFormat `form:"dateFormat,omitempty" json:"dateFormat,omitempty"`
+	DateFormat *GetHistoricalOddsParamsDateFormat `form:"dateFormat,omitempty" json:"dateFormat,omitempty"`
 
 	// OddsFormat Format of returned odds
-	OddsFormat *GetV4HistoricalSportsSportOddsParamsOddsFormat `form:"oddsFormat,omitempty" json:"oddsFormat,omitempty"`
+	OddsFormat *GetHistoricalOddsParamsOddsFormat `form:"oddsFormat,omitempty" json:"oddsFormat,omitempty"`
 
 	// EventIds Comma-separated event ids. Filters the response to only return events for the specified ids, provided those events have not expired
 	EventIds *string `form:"eventIds,omitempty" json:"eventIds,omitempty"`
@@ -273,103 +145,34 @@ type GetV4HistoricalSportsSportOddsParams struct {
 	Date string `form:"date" json:"date"`
 }
 
-// GetV4HistoricalSportsSportOddsParamsRegions defines parameters for GetV4HistoricalSportsSportOdds.
-type GetV4HistoricalSportsSportOddsParamsRegions string
+// GetHistoricalOddsParamsRegions defines parameters for GetHistoricalOdds.
+type GetHistoricalOddsParamsRegions string
 
-// GetV4HistoricalSportsSportOddsParamsMarkets defines parameters for GetV4HistoricalSportsSportOdds.
-type GetV4HistoricalSportsSportOddsParamsMarkets string
+// GetHistoricalOddsParamsMarkets defines parameters for GetHistoricalOdds.
+type GetHistoricalOddsParamsMarkets string
 
-// GetV4HistoricalSportsSportOddsParamsDateFormat defines parameters for GetV4HistoricalSportsSportOdds.
-type GetV4HistoricalSportsSportOddsParamsDateFormat string
+// GetHistoricalOddsParamsDateFormat defines parameters for GetHistoricalOdds.
+type GetHistoricalOddsParamsDateFormat string
 
-// GetV4HistoricalSportsSportOddsParamsOddsFormat defines parameters for GetV4HistoricalSportsSportOdds.
-type GetV4HistoricalSportsSportOddsParamsOddsFormat string
+// GetHistoricalOddsParamsOddsFormat defines parameters for GetHistoricalOdds.
+type GetHistoricalOddsParamsOddsFormat string
 
-// GetV4SportsParams defines parameters for GetV4Sports.
-type GetV4SportsParams struct {
-	// ApiKey Get an API key at https://the-odds-api.com/#get-access
-	ApiKey string `form:"apiKey" json:"apiKey"`
-
-	// All When excluded, only recently updated (in-season) sports appear. Include this paramter to see all available sports
-	All *bool `form:"all,omitempty" json:"all,omitempty"`
-}
-
-// GetV4SportsSportEventsParams defines parameters for GetV4SportsSportEvents.
-type GetV4SportsSportEventsParams struct {
-	// ApiKey Access key (40 characters). Get an API key at https://the-odds-api.com/#get-access
-	ApiKey string `form:"apiKey" json:"apiKey"`
-
-	// DateFormat Format of returned timestamps. Can be iso (ISO8601) or unix timestamp (seconds since epoch)
-	DateFormat *GetV4SportsSportEventsParamsDateFormat `form:"dateFormat,omitempty" json:"dateFormat,omitempty"`
-
-	// EventIds Comma-separated event ids. Filters the response to only return events for the specified ids, provided those events have not expired
-	EventIds *string `form:"eventIds,omitempty" json:"eventIds,omitempty"`
-
-	// CommenceTimeFrom Filters the response to show events that commence on and after this parameter. Values are in ISO8601 format
-	CommenceTimeFrom *string `form:"commenceTimeFrom,omitempty" json:"commenceTimeFrom,omitempty"`
-
-	// CommenceTimeTo Filters the response to show events that commence on and before this parameter. Values are in ISO8601 format
-	CommenceTimeTo *string `form:"commenceTimeTo,omitempty" json:"commenceTimeTo,omitempty"`
-}
-
-// GetV4SportsSportEventsParamsDateFormat defines parameters for GetV4SportsSportEvents.
-type GetV4SportsSportEventsParamsDateFormat string
-
-// GetV4SportsSportEventsEventIdOddsParams defines parameters for GetV4SportsSportEventsEventIdOdds.
-type GetV4SportsSportEventsEventIdOddsParams struct {
-	// ApiKey Access key (40 characters). Get an API key at https://the-odds-api.com/#get-access
-	ApiKey string `form:"apiKey" json:"apiKey"`
-
-	// Regions Determines which bookmakers appear in the response. Multiple regions can be specified if comma delimited. Each region will count as 1 request against the usage quota for each market. Most use cases will only need to specify one region. See [the full list of bookmakers by region](https://the-odds-api.com/sports-odds-data/bookmaker-apis.html)
-	Regions GetV4SportsSportEventsEventIdOddsParamsRegions `form:"regions" json:"regions"`
-
-	// Markets The odds markets to return. Multiple markets can be specified if comma delimited. Defaults to h2h (head to head / moneyline). Outrights only avaialable for select sports. See [the full list of supported market keys](https://the-odds-api.com/sports-odds-data/betting-markets.html)
-	Markets *string `form:"markets,omitempty" json:"markets,omitempty"`
-
-	// DateFormat Format of returned timestamps. Can be iso (ISO8601) or unix timestamp (seconds since epoch)
-	DateFormat *GetV4SportsSportEventsEventIdOddsParamsDateFormat `form:"dateFormat,omitempty" json:"dateFormat,omitempty"`
-
-	// OddsFormat Format of returned odds
-	OddsFormat *GetV4SportsSportEventsEventIdOddsParamsOddsFormat `form:"oddsFormat,omitempty" json:"oddsFormat,omitempty"`
-
-	// Bookmakers Comma-separated list of bookmakers to be returned. If both `bookmakers` and `regions` are specified, `bookmakers` takes precendence. Bookmakers can be from any region. Every group of 10 bookmakers counts as 1 request. For example for a single market, specifying up to 10 bookmakers counts as 1 request. Specifying between 11 and 20 bookmakers counts as 2 requests
-	Bookmakers *string `form:"bookmakers,omitempty" json:"bookmakers,omitempty"`
-
-	// IncludeLinks The response will include bookmaker links to events, markets, and betslips if available.
-	IncludeLinks *bool `form:"includeLinks,omitempty" json:"includeLinks,omitempty"`
-
-	// IncludeSids The response will include source ids (bookmaker ids) for events, markets, and outcomes if available.
-	IncludeSids *bool `form:"includeSids,omitempty" json:"includeSids,omitempty"`
-
-	// IncludeBetLimits The response will include the bet limit of each betting option, mainly available for betting exchanges.
-	IncludeBetLimits *bool `form:"includeBetLimits,omitempty" json:"includeBetLimits,omitempty"`
-}
-
-// GetV4SportsSportEventsEventIdOddsParamsRegions defines parameters for GetV4SportsSportEventsEventIdOdds.
-type GetV4SportsSportEventsEventIdOddsParamsRegions string
-
-// GetV4SportsSportEventsEventIdOddsParamsDateFormat defines parameters for GetV4SportsSportEventsEventIdOdds.
-type GetV4SportsSportEventsEventIdOddsParamsDateFormat string
-
-// GetV4SportsSportEventsEventIdOddsParamsOddsFormat defines parameters for GetV4SportsSportEventsEventIdOdds.
-type GetV4SportsSportEventsEventIdOddsParamsOddsFormat string
-
-// GetV4SportsSportOddsParams defines parameters for GetV4SportsSportOdds.
-type GetV4SportsSportOddsParams struct {
+// GetOddsParams defines parameters for GetOdds.
+type GetOddsParams struct {
 	// ApiKey Access key (40 characters). Get an API key at https://the-odds-api.com/#get-access
 	ApiKey string `form:"apiKey" json:"apiKey"`
 
 	// Regions Determines which bookmakers appear in the response. Multiple regions can be specified if comma delimited. Each region will count as 1 request against the usage quota for each market. Most use cases will only need to specify one region. For a list of bookmakers by region, see https://the-odds-api.com/sports-odds-data/bookmaker-apis.html
-	Regions GetV4SportsSportOddsParamsRegions `form:"regions" json:"regions"`
+	Regions GetOddsParamsRegions `form:"regions" json:"regions"`
 
 	// Markets The odds market to return. Multiple markets can be specified if comma delimited. Defaults to h2h (head to head / moneyline). Outrights are only avaialable for select sports, such as golf.
-	Markets *GetV4SportsSportOddsParamsMarkets `form:"markets,omitempty" json:"markets,omitempty"`
+	Markets *GetOddsParamsMarkets `form:"markets,omitempty" json:"markets,omitempty"`
 
 	// DateFormat Format of returned timestamps. Can be iso (ISO8601) or unix timestamp (seconds since epoch)
-	DateFormat *GetV4SportsSportOddsParamsDateFormat `form:"dateFormat,omitempty" json:"dateFormat,omitempty"`
+	DateFormat *GetOddsParamsDateFormat `form:"dateFormat,omitempty" json:"dateFormat,omitempty"`
 
 	// OddsFormat Format of returned odds
-	OddsFormat *GetV4SportsSportOddsParamsOddsFormat `form:"oddsFormat,omitempty" json:"oddsFormat,omitempty"`
+	OddsFormat *GetOddsParamsOddsFormat `form:"oddsFormat,omitempty" json:"oddsFormat,omitempty"`
 
 	// EventIds Comma-separated event ids. Filters the response to only return events for the specified ids, provided those events have not expired
 	EventIds *string `form:"eventIds,omitempty" json:"eventIds,omitempty"`
@@ -393,41 +196,17 @@ type GetV4SportsSportOddsParams struct {
 	IncludeBetLimits *bool `form:"includeBetLimits,omitempty" json:"includeBetLimits,omitempty"`
 }
 
-// GetV4SportsSportOddsParamsRegions defines parameters for GetV4SportsSportOdds.
-type GetV4SportsSportOddsParamsRegions string
+// GetOddsParamsRegions defines parameters for GetOdds.
+type GetOddsParamsRegions string
 
-// GetV4SportsSportOddsParamsMarkets defines parameters for GetV4SportsSportOdds.
-type GetV4SportsSportOddsParamsMarkets string
+// GetOddsParamsMarkets defines parameters for GetOdds.
+type GetOddsParamsMarkets string
 
-// GetV4SportsSportOddsParamsDateFormat defines parameters for GetV4SportsSportOdds.
-type GetV4SportsSportOddsParamsDateFormat string
+// GetOddsParamsDateFormat defines parameters for GetOdds.
+type GetOddsParamsDateFormat string
 
-// GetV4SportsSportOddsParamsOddsFormat defines parameters for GetV4SportsSportOdds.
-type GetV4SportsSportOddsParamsOddsFormat string
-
-// GetV4SportsSportParticipantsParams defines parameters for GetV4SportsSportParticipants.
-type GetV4SportsSportParticipantsParams struct {
-	// ApiKey Access key (40 characters). Get an API key at https://the-odds-api.com/#get-access
-	ApiKey string `form:"apiKey" json:"apiKey"`
-}
-
-// GetV4SportsSportScoresParams defines parameters for GetV4SportsSportScores.
-type GetV4SportsSportScoresParams struct {
-	// ApiKey Access key (40 characters). Get an API key at https://the-odds-api.com/#get-access
-	ApiKey string `form:"apiKey" json:"apiKey"`
-
-	// DaysFrom The number of days in the past from which to return completed events. Valid values are integers from `1` to `3`. If this field is missing, only live and upcoming events are returned.
-	DaysFrom *int `form:"daysFrom,omitempty" json:"daysFrom,omitempty"`
-
-	// DateFormat Format of returned timestamps. Can be iso (ISO8601) or unix timestamp (seconds since epoch)
-	DateFormat *GetV4SportsSportScoresParamsDateFormat `form:"dateFormat,omitempty" json:"dateFormat,omitempty"`
-
-	// EventIds Comma-separated event ids. Filters the response to only return events for the specified ids, provided those events have not expired
-	EventIds *string `form:"eventIds,omitempty" json:"eventIds,omitempty"`
-}
-
-// GetV4SportsSportScoresParamsDateFormat defines parameters for GetV4SportsSportScores.
-type GetV4SportsSportScoresParamsDateFormat string
+// GetOddsParamsOddsFormat defines parameters for GetOdds.
+type GetOddsParamsOddsFormat string
 
 // RequestEditorFn  is the function signature for the RequestEditor callback function
 type RequestEditorFn func(ctx context.Context, req *http.Request) error
@@ -502,36 +281,15 @@ func WithRequestEditorFn(fn RequestEditorFn) ClientOption {
 
 // The interface specification for the client above.
 type ClientInterface interface {
-	// GetV4HistoricalSportsSportEvents request
-	GetV4HistoricalSportsSportEvents(ctx context.Context, sport string, params *GetV4HistoricalSportsSportEventsParams, reqEditors ...RequestEditorFn) (*http.Response, error)
+	// GetHistoricalOdds request
+	GetHistoricalOdds(ctx context.Context, sport string, params *GetHistoricalOddsParams, reqEditors ...RequestEditorFn) (*http.Response, error)
 
-	// GetV4HistoricalSportsSportEventsEventIdOdds request
-	GetV4HistoricalSportsSportEventsEventIdOdds(ctx context.Context, sport string, eventId string, params *GetV4HistoricalSportsSportEventsEventIdOddsParams, reqEditors ...RequestEditorFn) (*http.Response, error)
-
-	// GetV4HistoricalSportsSportOdds request
-	GetV4HistoricalSportsSportOdds(ctx context.Context, sport string, params *GetV4HistoricalSportsSportOddsParams, reqEditors ...RequestEditorFn) (*http.Response, error)
-
-	// GetV4Sports request
-	GetV4Sports(ctx context.Context, params *GetV4SportsParams, reqEditors ...RequestEditorFn) (*http.Response, error)
-
-	// GetV4SportsSportEvents request
-	GetV4SportsSportEvents(ctx context.Context, sport string, params *GetV4SportsSportEventsParams, reqEditors ...RequestEditorFn) (*http.Response, error)
-
-	// GetV4SportsSportEventsEventIdOdds request
-	GetV4SportsSportEventsEventIdOdds(ctx context.Context, sport string, eventId string, params *GetV4SportsSportEventsEventIdOddsParams, reqEditors ...RequestEditorFn) (*http.Response, error)
-
-	// GetV4SportsSportOdds request
-	GetV4SportsSportOdds(ctx context.Context, sport string, params *GetV4SportsSportOddsParams, reqEditors ...RequestEditorFn) (*http.Response, error)
-
-	// GetV4SportsSportParticipants request
-	GetV4SportsSportParticipants(ctx context.Context, sport string, params *GetV4SportsSportParticipantsParams, reqEditors ...RequestEditorFn) (*http.Response, error)
-
-	// GetV4SportsSportScores request
-	GetV4SportsSportScores(ctx context.Context, sport string, params *GetV4SportsSportScoresParams, reqEditors ...RequestEditorFn) (*http.Response, error)
+	// GetOdds request
+	GetOdds(ctx context.Context, sport string, params *GetOddsParams, reqEditors ...RequestEditorFn) (*http.Response, error)
 }
 
-func (c *Client) GetV4HistoricalSportsSportEvents(ctx context.Context, sport string, params *GetV4HistoricalSportsSportEventsParams, reqEditors ...RequestEditorFn) (*http.Response, error) {
-	req, err := NewGetV4HistoricalSportsSportEventsRequest(c.Server, sport, params)
+func (c *Client) GetHistoricalOdds(ctx context.Context, sport string, params *GetHistoricalOddsParams, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewGetHistoricalOddsRequest(c.Server, sport, params)
 	if err != nil {
 		return nil, err
 	}
@@ -542,8 +300,8 @@ func (c *Client) GetV4HistoricalSportsSportEvents(ctx context.Context, sport str
 	return c.Client.Do(req)
 }
 
-func (c *Client) GetV4HistoricalSportsSportEventsEventIdOdds(ctx context.Context, sport string, eventId string, params *GetV4HistoricalSportsSportEventsEventIdOddsParams, reqEditors ...RequestEditorFn) (*http.Response, error) {
-	req, err := NewGetV4HistoricalSportsSportEventsEventIdOddsRequest(c.Server, sport, eventId, params)
+func (c *Client) GetOdds(ctx context.Context, sport string, params *GetOddsParams, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewGetOddsRequest(c.Server, sport, params)
 	if err != nil {
 		return nil, err
 	}
@@ -554,367 +312,8 @@ func (c *Client) GetV4HistoricalSportsSportEventsEventIdOdds(ctx context.Context
 	return c.Client.Do(req)
 }
 
-func (c *Client) GetV4HistoricalSportsSportOdds(ctx context.Context, sport string, params *GetV4HistoricalSportsSportOddsParams, reqEditors ...RequestEditorFn) (*http.Response, error) {
-	req, err := NewGetV4HistoricalSportsSportOddsRequest(c.Server, sport, params)
-	if err != nil {
-		return nil, err
-	}
-	req = req.WithContext(ctx)
-	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
-		return nil, err
-	}
-	return c.Client.Do(req)
-}
-
-func (c *Client) GetV4Sports(ctx context.Context, params *GetV4SportsParams, reqEditors ...RequestEditorFn) (*http.Response, error) {
-	req, err := NewGetV4SportsRequest(c.Server, params)
-	if err != nil {
-		return nil, err
-	}
-	req = req.WithContext(ctx)
-	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
-		return nil, err
-	}
-	return c.Client.Do(req)
-}
-
-func (c *Client) GetV4SportsSportEvents(ctx context.Context, sport string, params *GetV4SportsSportEventsParams, reqEditors ...RequestEditorFn) (*http.Response, error) {
-	req, err := NewGetV4SportsSportEventsRequest(c.Server, sport, params)
-	if err != nil {
-		return nil, err
-	}
-	req = req.WithContext(ctx)
-	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
-		return nil, err
-	}
-	return c.Client.Do(req)
-}
-
-func (c *Client) GetV4SportsSportEventsEventIdOdds(ctx context.Context, sport string, eventId string, params *GetV4SportsSportEventsEventIdOddsParams, reqEditors ...RequestEditorFn) (*http.Response, error) {
-	req, err := NewGetV4SportsSportEventsEventIdOddsRequest(c.Server, sport, eventId, params)
-	if err != nil {
-		return nil, err
-	}
-	req = req.WithContext(ctx)
-	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
-		return nil, err
-	}
-	return c.Client.Do(req)
-}
-
-func (c *Client) GetV4SportsSportOdds(ctx context.Context, sport string, params *GetV4SportsSportOddsParams, reqEditors ...RequestEditorFn) (*http.Response, error) {
-	req, err := NewGetV4SportsSportOddsRequest(c.Server, sport, params)
-	if err != nil {
-		return nil, err
-	}
-	req = req.WithContext(ctx)
-	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
-		return nil, err
-	}
-	return c.Client.Do(req)
-}
-
-func (c *Client) GetV4SportsSportParticipants(ctx context.Context, sport string, params *GetV4SportsSportParticipantsParams, reqEditors ...RequestEditorFn) (*http.Response, error) {
-	req, err := NewGetV4SportsSportParticipantsRequest(c.Server, sport, params)
-	if err != nil {
-		return nil, err
-	}
-	req = req.WithContext(ctx)
-	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
-		return nil, err
-	}
-	return c.Client.Do(req)
-}
-
-func (c *Client) GetV4SportsSportScores(ctx context.Context, sport string, params *GetV4SportsSportScoresParams, reqEditors ...RequestEditorFn) (*http.Response, error) {
-	req, err := NewGetV4SportsSportScoresRequest(c.Server, sport, params)
-	if err != nil {
-		return nil, err
-	}
-	req = req.WithContext(ctx)
-	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
-		return nil, err
-	}
-	return c.Client.Do(req)
-}
-
-// NewGetV4HistoricalSportsSportEventsRequest generates requests for GetV4HistoricalSportsSportEvents
-func NewGetV4HistoricalSportsSportEventsRequest(server string, sport string, params *GetV4HistoricalSportsSportEventsParams) (*http.Request, error) {
-	var err error
-
-	var pathParam0 string
-
-	pathParam0, err = runtime.StyleParamWithLocation("simple", false, "sport", runtime.ParamLocationPath, sport)
-	if err != nil {
-		return nil, err
-	}
-
-	serverURL, err := url.Parse(server)
-	if err != nil {
-		return nil, err
-	}
-
-	operationPath := fmt.Sprintf("/v4/historical/sports/%s/events", pathParam0)
-	if operationPath[0] == '/' {
-		operationPath = "." + operationPath
-	}
-
-	queryURL, err := serverURL.Parse(operationPath)
-	if err != nil {
-		return nil, err
-	}
-
-	if params != nil {
-		queryValues := queryURL.Query()
-
-		if queryFrag, err := runtime.StyleParamWithLocation("form", true, "apiKey", runtime.ParamLocationQuery, params.ApiKey); err != nil {
-			return nil, err
-		} else if parsed, err := url.ParseQuery(queryFrag); err != nil {
-			return nil, err
-		} else {
-			for k, v := range parsed {
-				for _, v2 := range v {
-					queryValues.Add(k, v2)
-				}
-			}
-		}
-
-		if params.DateFormat != nil {
-
-			if queryFrag, err := runtime.StyleParamWithLocation("form", true, "dateFormat", runtime.ParamLocationQuery, *params.DateFormat); err != nil {
-				return nil, err
-			} else if parsed, err := url.ParseQuery(queryFrag); err != nil {
-				return nil, err
-			} else {
-				for k, v := range parsed {
-					for _, v2 := range v {
-						queryValues.Add(k, v2)
-					}
-				}
-			}
-
-		}
-
-		if params.EventIds != nil {
-
-			if queryFrag, err := runtime.StyleParamWithLocation("form", true, "eventIds", runtime.ParamLocationQuery, *params.EventIds); err != nil {
-				return nil, err
-			} else if parsed, err := url.ParseQuery(queryFrag); err != nil {
-				return nil, err
-			} else {
-				for k, v := range parsed {
-					for _, v2 := range v {
-						queryValues.Add(k, v2)
-					}
-				}
-			}
-
-		}
-
-		if params.CommenceTimeFrom != nil {
-
-			if queryFrag, err := runtime.StyleParamWithLocation("form", true, "commenceTimeFrom", runtime.ParamLocationQuery, *params.CommenceTimeFrom); err != nil {
-				return nil, err
-			} else if parsed, err := url.ParseQuery(queryFrag); err != nil {
-				return nil, err
-			} else {
-				for k, v := range parsed {
-					for _, v2 := range v {
-						queryValues.Add(k, v2)
-					}
-				}
-			}
-
-		}
-
-		if params.CommenceTimeTo != nil {
-
-			if queryFrag, err := runtime.StyleParamWithLocation("form", true, "commenceTimeTo", runtime.ParamLocationQuery, *params.CommenceTimeTo); err != nil {
-				return nil, err
-			} else if parsed, err := url.ParseQuery(queryFrag); err != nil {
-				return nil, err
-			} else {
-				for k, v := range parsed {
-					for _, v2 := range v {
-						queryValues.Add(k, v2)
-					}
-				}
-			}
-
-		}
-
-		if queryFrag, err := runtime.StyleParamWithLocation("form", true, "date", runtime.ParamLocationQuery, params.Date); err != nil {
-			return nil, err
-		} else if parsed, err := url.ParseQuery(queryFrag); err != nil {
-			return nil, err
-		} else {
-			for k, v := range parsed {
-				for _, v2 := range v {
-					queryValues.Add(k, v2)
-				}
-			}
-		}
-
-		queryURL.RawQuery = queryValues.Encode()
-	}
-
-	req, err := http.NewRequest("GET", queryURL.String(), nil)
-	if err != nil {
-		return nil, err
-	}
-
-	return req, nil
-}
-
-// NewGetV4HistoricalSportsSportEventsEventIdOddsRequest generates requests for GetV4HistoricalSportsSportEventsEventIdOdds
-func NewGetV4HistoricalSportsSportEventsEventIdOddsRequest(server string, sport string, eventId string, params *GetV4HistoricalSportsSportEventsEventIdOddsParams) (*http.Request, error) {
-	var err error
-
-	var pathParam0 string
-
-	pathParam0, err = runtime.StyleParamWithLocation("simple", false, "sport", runtime.ParamLocationPath, sport)
-	if err != nil {
-		return nil, err
-	}
-
-	var pathParam1 string
-
-	pathParam1, err = runtime.StyleParamWithLocation("simple", false, "eventId", runtime.ParamLocationPath, eventId)
-	if err != nil {
-		return nil, err
-	}
-
-	serverURL, err := url.Parse(server)
-	if err != nil {
-		return nil, err
-	}
-
-	operationPath := fmt.Sprintf("/v4/historical/sports/%s/events/%s/odds", pathParam0, pathParam1)
-	if operationPath[0] == '/' {
-		operationPath = "." + operationPath
-	}
-
-	queryURL, err := serverURL.Parse(operationPath)
-	if err != nil {
-		return nil, err
-	}
-
-	if params != nil {
-		queryValues := queryURL.Query()
-
-		if queryFrag, err := runtime.StyleParamWithLocation("form", true, "apiKey", runtime.ParamLocationQuery, params.ApiKey); err != nil {
-			return nil, err
-		} else if parsed, err := url.ParseQuery(queryFrag); err != nil {
-			return nil, err
-		} else {
-			for k, v := range parsed {
-				for _, v2 := range v {
-					queryValues.Add(k, v2)
-				}
-			}
-		}
-
-		if queryFrag, err := runtime.StyleParamWithLocation("form", true, "regions", runtime.ParamLocationQuery, params.Regions); err != nil {
-			return nil, err
-		} else if parsed, err := url.ParseQuery(queryFrag); err != nil {
-			return nil, err
-		} else {
-			for k, v := range parsed {
-				for _, v2 := range v {
-					queryValues.Add(k, v2)
-				}
-			}
-		}
-
-		if params.Markets != nil {
-
-			if queryFrag, err := runtime.StyleParamWithLocation("form", true, "markets", runtime.ParamLocationQuery, *params.Markets); err != nil {
-				return nil, err
-			} else if parsed, err := url.ParseQuery(queryFrag); err != nil {
-				return nil, err
-			} else {
-				for k, v := range parsed {
-					for _, v2 := range v {
-						queryValues.Add(k, v2)
-					}
-				}
-			}
-
-		}
-
-		if params.DateFormat != nil {
-
-			if queryFrag, err := runtime.StyleParamWithLocation("form", true, "dateFormat", runtime.ParamLocationQuery, *params.DateFormat); err != nil {
-				return nil, err
-			} else if parsed, err := url.ParseQuery(queryFrag); err != nil {
-				return nil, err
-			} else {
-				for k, v := range parsed {
-					for _, v2 := range v {
-						queryValues.Add(k, v2)
-					}
-				}
-			}
-
-		}
-
-		if params.OddsFormat != nil {
-
-			if queryFrag, err := runtime.StyleParamWithLocation("form", true, "oddsFormat", runtime.ParamLocationQuery, *params.OddsFormat); err != nil {
-				return nil, err
-			} else if parsed, err := url.ParseQuery(queryFrag); err != nil {
-				return nil, err
-			} else {
-				for k, v := range parsed {
-					for _, v2 := range v {
-						queryValues.Add(k, v2)
-					}
-				}
-			}
-
-		}
-
-		if params.Bookmakers != nil {
-
-			if queryFrag, err := runtime.StyleParamWithLocation("form", true, "bookmakers", runtime.ParamLocationQuery, *params.Bookmakers); err != nil {
-				return nil, err
-			} else if parsed, err := url.ParseQuery(queryFrag); err != nil {
-				return nil, err
-			} else {
-				for k, v := range parsed {
-					for _, v2 := range v {
-						queryValues.Add(k, v2)
-					}
-				}
-			}
-
-		}
-
-		if queryFrag, err := runtime.StyleParamWithLocation("form", true, "date", runtime.ParamLocationQuery, params.Date); err != nil {
-			return nil, err
-		} else if parsed, err := url.ParseQuery(queryFrag); err != nil {
-			return nil, err
-		} else {
-			for k, v := range parsed {
-				for _, v2 := range v {
-					queryValues.Add(k, v2)
-				}
-			}
-		}
-
-		queryURL.RawQuery = queryValues.Encode()
-	}
-
-	req, err := http.NewRequest("GET", queryURL.String(), nil)
-	if err != nil {
-		return nil, err
-	}
-
-	return req, nil
-}
-
-// NewGetV4HistoricalSportsSportOddsRequest generates requests for GetV4HistoricalSportsSportOdds
-func NewGetV4HistoricalSportsSportOddsRequest(server string, sport string, params *GetV4HistoricalSportsSportOddsParams) (*http.Request, error) {
+// NewGetHistoricalOddsRequest generates requests for GetHistoricalOdds
+func NewGetHistoricalOddsRequest(server string, sport string, params *GetHistoricalOddsParams) (*http.Request, error) {
 	var err error
 
 	var pathParam0 string
@@ -1069,368 +468,8 @@ func NewGetV4HistoricalSportsSportOddsRequest(server string, sport string, param
 	return req, nil
 }
 
-// NewGetV4SportsRequest generates requests for GetV4Sports
-func NewGetV4SportsRequest(server string, params *GetV4SportsParams) (*http.Request, error) {
-	var err error
-
-	serverURL, err := url.Parse(server)
-	if err != nil {
-		return nil, err
-	}
-
-	operationPath := fmt.Sprintf("/v4/sports")
-	if operationPath[0] == '/' {
-		operationPath = "." + operationPath
-	}
-
-	queryURL, err := serverURL.Parse(operationPath)
-	if err != nil {
-		return nil, err
-	}
-
-	if params != nil {
-		queryValues := queryURL.Query()
-
-		if queryFrag, err := runtime.StyleParamWithLocation("form", true, "apiKey", runtime.ParamLocationQuery, params.ApiKey); err != nil {
-			return nil, err
-		} else if parsed, err := url.ParseQuery(queryFrag); err != nil {
-			return nil, err
-		} else {
-			for k, v := range parsed {
-				for _, v2 := range v {
-					queryValues.Add(k, v2)
-				}
-			}
-		}
-
-		if params.All != nil {
-
-			if queryFrag, err := runtime.StyleParamWithLocation("form", true, "all", runtime.ParamLocationQuery, *params.All); err != nil {
-				return nil, err
-			} else if parsed, err := url.ParseQuery(queryFrag); err != nil {
-				return nil, err
-			} else {
-				for k, v := range parsed {
-					for _, v2 := range v {
-						queryValues.Add(k, v2)
-					}
-				}
-			}
-
-		}
-
-		queryURL.RawQuery = queryValues.Encode()
-	}
-
-	req, err := http.NewRequest("GET", queryURL.String(), nil)
-	if err != nil {
-		return nil, err
-	}
-
-	return req, nil
-}
-
-// NewGetV4SportsSportEventsRequest generates requests for GetV4SportsSportEvents
-func NewGetV4SportsSportEventsRequest(server string, sport string, params *GetV4SportsSportEventsParams) (*http.Request, error) {
-	var err error
-
-	var pathParam0 string
-
-	pathParam0, err = runtime.StyleParamWithLocation("simple", false, "sport", runtime.ParamLocationPath, sport)
-	if err != nil {
-		return nil, err
-	}
-
-	serverURL, err := url.Parse(server)
-	if err != nil {
-		return nil, err
-	}
-
-	operationPath := fmt.Sprintf("/v4/sports/%s/events", pathParam0)
-	if operationPath[0] == '/' {
-		operationPath = "." + operationPath
-	}
-
-	queryURL, err := serverURL.Parse(operationPath)
-	if err != nil {
-		return nil, err
-	}
-
-	if params != nil {
-		queryValues := queryURL.Query()
-
-		if queryFrag, err := runtime.StyleParamWithLocation("form", true, "apiKey", runtime.ParamLocationQuery, params.ApiKey); err != nil {
-			return nil, err
-		} else if parsed, err := url.ParseQuery(queryFrag); err != nil {
-			return nil, err
-		} else {
-			for k, v := range parsed {
-				for _, v2 := range v {
-					queryValues.Add(k, v2)
-				}
-			}
-		}
-
-		if params.DateFormat != nil {
-
-			if queryFrag, err := runtime.StyleParamWithLocation("form", true, "dateFormat", runtime.ParamLocationQuery, *params.DateFormat); err != nil {
-				return nil, err
-			} else if parsed, err := url.ParseQuery(queryFrag); err != nil {
-				return nil, err
-			} else {
-				for k, v := range parsed {
-					for _, v2 := range v {
-						queryValues.Add(k, v2)
-					}
-				}
-			}
-
-		}
-
-		if params.EventIds != nil {
-
-			if queryFrag, err := runtime.StyleParamWithLocation("form", true, "eventIds", runtime.ParamLocationQuery, *params.EventIds); err != nil {
-				return nil, err
-			} else if parsed, err := url.ParseQuery(queryFrag); err != nil {
-				return nil, err
-			} else {
-				for k, v := range parsed {
-					for _, v2 := range v {
-						queryValues.Add(k, v2)
-					}
-				}
-			}
-
-		}
-
-		if params.CommenceTimeFrom != nil {
-
-			if queryFrag, err := runtime.StyleParamWithLocation("form", true, "commenceTimeFrom", runtime.ParamLocationQuery, *params.CommenceTimeFrom); err != nil {
-				return nil, err
-			} else if parsed, err := url.ParseQuery(queryFrag); err != nil {
-				return nil, err
-			} else {
-				for k, v := range parsed {
-					for _, v2 := range v {
-						queryValues.Add(k, v2)
-					}
-				}
-			}
-
-		}
-
-		if params.CommenceTimeTo != nil {
-
-			if queryFrag, err := runtime.StyleParamWithLocation("form", true, "commenceTimeTo", runtime.ParamLocationQuery, *params.CommenceTimeTo); err != nil {
-				return nil, err
-			} else if parsed, err := url.ParseQuery(queryFrag); err != nil {
-				return nil, err
-			} else {
-				for k, v := range parsed {
-					for _, v2 := range v {
-						queryValues.Add(k, v2)
-					}
-				}
-			}
-
-		}
-
-		queryURL.RawQuery = queryValues.Encode()
-	}
-
-	req, err := http.NewRequest("GET", queryURL.String(), nil)
-	if err != nil {
-		return nil, err
-	}
-
-	return req, nil
-}
-
-// NewGetV4SportsSportEventsEventIdOddsRequest generates requests for GetV4SportsSportEventsEventIdOdds
-func NewGetV4SportsSportEventsEventIdOddsRequest(server string, sport string, eventId string, params *GetV4SportsSportEventsEventIdOddsParams) (*http.Request, error) {
-	var err error
-
-	var pathParam0 string
-
-	pathParam0, err = runtime.StyleParamWithLocation("simple", false, "sport", runtime.ParamLocationPath, sport)
-	if err != nil {
-		return nil, err
-	}
-
-	var pathParam1 string
-
-	pathParam1, err = runtime.StyleParamWithLocation("simple", false, "eventId", runtime.ParamLocationPath, eventId)
-	if err != nil {
-		return nil, err
-	}
-
-	serverURL, err := url.Parse(server)
-	if err != nil {
-		return nil, err
-	}
-
-	operationPath := fmt.Sprintf("/v4/sports/%s/events/%s/odds", pathParam0, pathParam1)
-	if operationPath[0] == '/' {
-		operationPath = "." + operationPath
-	}
-
-	queryURL, err := serverURL.Parse(operationPath)
-	if err != nil {
-		return nil, err
-	}
-
-	if params != nil {
-		queryValues := queryURL.Query()
-
-		if queryFrag, err := runtime.StyleParamWithLocation("form", true, "apiKey", runtime.ParamLocationQuery, params.ApiKey); err != nil {
-			return nil, err
-		} else if parsed, err := url.ParseQuery(queryFrag); err != nil {
-			return nil, err
-		} else {
-			for k, v := range parsed {
-				for _, v2 := range v {
-					queryValues.Add(k, v2)
-				}
-			}
-		}
-
-		if queryFrag, err := runtime.StyleParamWithLocation("form", true, "regions", runtime.ParamLocationQuery, params.Regions); err != nil {
-			return nil, err
-		} else if parsed, err := url.ParseQuery(queryFrag); err != nil {
-			return nil, err
-		} else {
-			for k, v := range parsed {
-				for _, v2 := range v {
-					queryValues.Add(k, v2)
-				}
-			}
-		}
-
-		if params.Markets != nil {
-
-			if queryFrag, err := runtime.StyleParamWithLocation("form", true, "markets", runtime.ParamLocationQuery, *params.Markets); err != nil {
-				return nil, err
-			} else if parsed, err := url.ParseQuery(queryFrag); err != nil {
-				return nil, err
-			} else {
-				for k, v := range parsed {
-					for _, v2 := range v {
-						queryValues.Add(k, v2)
-					}
-				}
-			}
-
-		}
-
-		if params.DateFormat != nil {
-
-			if queryFrag, err := runtime.StyleParamWithLocation("form", true, "dateFormat", runtime.ParamLocationQuery, *params.DateFormat); err != nil {
-				return nil, err
-			} else if parsed, err := url.ParseQuery(queryFrag); err != nil {
-				return nil, err
-			} else {
-				for k, v := range parsed {
-					for _, v2 := range v {
-						queryValues.Add(k, v2)
-					}
-				}
-			}
-
-		}
-
-		if params.OddsFormat != nil {
-
-			if queryFrag, err := runtime.StyleParamWithLocation("form", true, "oddsFormat", runtime.ParamLocationQuery, *params.OddsFormat); err != nil {
-				return nil, err
-			} else if parsed, err := url.ParseQuery(queryFrag); err != nil {
-				return nil, err
-			} else {
-				for k, v := range parsed {
-					for _, v2 := range v {
-						queryValues.Add(k, v2)
-					}
-				}
-			}
-
-		}
-
-		if params.Bookmakers != nil {
-
-			if queryFrag, err := runtime.StyleParamWithLocation("form", true, "bookmakers", runtime.ParamLocationQuery, *params.Bookmakers); err != nil {
-				return nil, err
-			} else if parsed, err := url.ParseQuery(queryFrag); err != nil {
-				return nil, err
-			} else {
-				for k, v := range parsed {
-					for _, v2 := range v {
-						queryValues.Add(k, v2)
-					}
-				}
-			}
-
-		}
-
-		if params.IncludeLinks != nil {
-
-			if queryFrag, err := runtime.StyleParamWithLocation("form", true, "includeLinks", runtime.ParamLocationQuery, *params.IncludeLinks); err != nil {
-				return nil, err
-			} else if parsed, err := url.ParseQuery(queryFrag); err != nil {
-				return nil, err
-			} else {
-				for k, v := range parsed {
-					for _, v2 := range v {
-						queryValues.Add(k, v2)
-					}
-				}
-			}
-
-		}
-
-		if params.IncludeSids != nil {
-
-			if queryFrag, err := runtime.StyleParamWithLocation("form", true, "includeSids", runtime.ParamLocationQuery, *params.IncludeSids); err != nil {
-				return nil, err
-			} else if parsed, err := url.ParseQuery(queryFrag); err != nil {
-				return nil, err
-			} else {
-				for k, v := range parsed {
-					for _, v2 := range v {
-						queryValues.Add(k, v2)
-					}
-				}
-			}
-
-		}
-
-		if params.IncludeBetLimits != nil {
-
-			if queryFrag, err := runtime.StyleParamWithLocation("form", true, "includeBetLimits", runtime.ParamLocationQuery, *params.IncludeBetLimits); err != nil {
-				return nil, err
-			} else if parsed, err := url.ParseQuery(queryFrag); err != nil {
-				return nil, err
-			} else {
-				for k, v := range parsed {
-					for _, v2 := range v {
-						queryValues.Add(k, v2)
-					}
-				}
-			}
-
-		}
-
-		queryURL.RawQuery = queryValues.Encode()
-	}
-
-	req, err := http.NewRequest("GET", queryURL.String(), nil)
-	if err != nil {
-		return nil, err
-	}
-
-	return req, nil
-}
-
-// NewGetV4SportsSportOddsRequest generates requests for GetV4SportsSportOdds
-func NewGetV4SportsSportOddsRequest(server string, sport string, params *GetV4SportsSportOddsParams) (*http.Request, error) {
+// NewGetOddsRequest generates requests for GetOdds
+func NewGetOddsRequest(server string, sport string, params *GetOddsParams) (*http.Request, error) {
 	var err error
 
 	var pathParam0 string
@@ -1653,158 +692,6 @@ func NewGetV4SportsSportOddsRequest(server string, sport string, params *GetV4Sp
 	return req, nil
 }
 
-// NewGetV4SportsSportParticipantsRequest generates requests for GetV4SportsSportParticipants
-func NewGetV4SportsSportParticipantsRequest(server string, sport string, params *GetV4SportsSportParticipantsParams) (*http.Request, error) {
-	var err error
-
-	var pathParam0 string
-
-	pathParam0, err = runtime.StyleParamWithLocation("simple", false, "sport", runtime.ParamLocationPath, sport)
-	if err != nil {
-		return nil, err
-	}
-
-	serverURL, err := url.Parse(server)
-	if err != nil {
-		return nil, err
-	}
-
-	operationPath := fmt.Sprintf("/v4/sports/%s/participants", pathParam0)
-	if operationPath[0] == '/' {
-		operationPath = "." + operationPath
-	}
-
-	queryURL, err := serverURL.Parse(operationPath)
-	if err != nil {
-		return nil, err
-	}
-
-	if params != nil {
-		queryValues := queryURL.Query()
-
-		if queryFrag, err := runtime.StyleParamWithLocation("form", true, "apiKey", runtime.ParamLocationQuery, params.ApiKey); err != nil {
-			return nil, err
-		} else if parsed, err := url.ParseQuery(queryFrag); err != nil {
-			return nil, err
-		} else {
-			for k, v := range parsed {
-				for _, v2 := range v {
-					queryValues.Add(k, v2)
-				}
-			}
-		}
-
-		queryURL.RawQuery = queryValues.Encode()
-	}
-
-	req, err := http.NewRequest("GET", queryURL.String(), nil)
-	if err != nil {
-		return nil, err
-	}
-
-	return req, nil
-}
-
-// NewGetV4SportsSportScoresRequest generates requests for GetV4SportsSportScores
-func NewGetV4SportsSportScoresRequest(server string, sport string, params *GetV4SportsSportScoresParams) (*http.Request, error) {
-	var err error
-
-	var pathParam0 string
-
-	pathParam0, err = runtime.StyleParamWithLocation("simple", false, "sport", runtime.ParamLocationPath, sport)
-	if err != nil {
-		return nil, err
-	}
-
-	serverURL, err := url.Parse(server)
-	if err != nil {
-		return nil, err
-	}
-
-	operationPath := fmt.Sprintf("/v4/sports/%s/scores", pathParam0)
-	if operationPath[0] == '/' {
-		operationPath = "." + operationPath
-	}
-
-	queryURL, err := serverURL.Parse(operationPath)
-	if err != nil {
-		return nil, err
-	}
-
-	if params != nil {
-		queryValues := queryURL.Query()
-
-		if queryFrag, err := runtime.StyleParamWithLocation("form", true, "apiKey", runtime.ParamLocationQuery, params.ApiKey); err != nil {
-			return nil, err
-		} else if parsed, err := url.ParseQuery(queryFrag); err != nil {
-			return nil, err
-		} else {
-			for k, v := range parsed {
-				for _, v2 := range v {
-					queryValues.Add(k, v2)
-				}
-			}
-		}
-
-		if params.DaysFrom != nil {
-
-			if queryFrag, err := runtime.StyleParamWithLocation("form", true, "daysFrom", runtime.ParamLocationQuery, *params.DaysFrom); err != nil {
-				return nil, err
-			} else if parsed, err := url.ParseQuery(queryFrag); err != nil {
-				return nil, err
-			} else {
-				for k, v := range parsed {
-					for _, v2 := range v {
-						queryValues.Add(k, v2)
-					}
-				}
-			}
-
-		}
-
-		if params.DateFormat != nil {
-
-			if queryFrag, err := runtime.StyleParamWithLocation("form", true, "dateFormat", runtime.ParamLocationQuery, *params.DateFormat); err != nil {
-				return nil, err
-			} else if parsed, err := url.ParseQuery(queryFrag); err != nil {
-				return nil, err
-			} else {
-				for k, v := range parsed {
-					for _, v2 := range v {
-						queryValues.Add(k, v2)
-					}
-				}
-			}
-
-		}
-
-		if params.EventIds != nil {
-
-			if queryFrag, err := runtime.StyleParamWithLocation("form", true, "eventIds", runtime.ParamLocationQuery, *params.EventIds); err != nil {
-				return nil, err
-			} else if parsed, err := url.ParseQuery(queryFrag); err != nil {
-				return nil, err
-			} else {
-				for k, v := range parsed {
-					for _, v2 := range v {
-						queryValues.Add(k, v2)
-					}
-				}
-			}
-
-		}
-
-		queryURL.RawQuery = queryValues.Encode()
-	}
-
-	req, err := http.NewRequest("GET", queryURL.String(), nil)
-	if err != nil {
-		return nil, err
-	}
-
-	return req, nil
-}
-
 func (c *Client) applyEditors(ctx context.Context, req *http.Request, additionalEditors []RequestEditorFn) error {
 	for _, r := range c.RequestEditors {
 		if err := r(ctx, req); err != nil {
@@ -1848,155 +735,14 @@ func WithBaseURL(baseURL string) ClientOption {
 
 // ClientWithResponsesInterface is the interface specification for the client with responses above.
 type ClientWithResponsesInterface interface {
-	// GetV4HistoricalSportsSportEventsWithResponse request
-	GetV4HistoricalSportsSportEventsWithResponse(ctx context.Context, sport string, params *GetV4HistoricalSportsSportEventsParams, reqEditors ...RequestEditorFn) (*GetV4HistoricalSportsSportEventsResponse, error)
+	// GetHistoricalOddsWithResponse request
+	GetHistoricalOddsWithResponse(ctx context.Context, sport string, params *GetHistoricalOddsParams, reqEditors ...RequestEditorFn) (*GetHistoricalOddsResponse, error)
 
-	// GetV4HistoricalSportsSportEventsEventIdOddsWithResponse request
-	GetV4HistoricalSportsSportEventsEventIdOddsWithResponse(ctx context.Context, sport string, eventId string, params *GetV4HistoricalSportsSportEventsEventIdOddsParams, reqEditors ...RequestEditorFn) (*GetV4HistoricalSportsSportEventsEventIdOddsResponse, error)
-
-	// GetV4HistoricalSportsSportOddsWithResponse request
-	GetV4HistoricalSportsSportOddsWithResponse(ctx context.Context, sport string, params *GetV4HistoricalSportsSportOddsParams, reqEditors ...RequestEditorFn) (*GetV4HistoricalSportsSportOddsResponse, error)
-
-	// GetV4SportsWithResponse request
-	GetV4SportsWithResponse(ctx context.Context, params *GetV4SportsParams, reqEditors ...RequestEditorFn) (*GetV4SportsResponse, error)
-
-	// GetV4SportsSportEventsWithResponse request
-	GetV4SportsSportEventsWithResponse(ctx context.Context, sport string, params *GetV4SportsSportEventsParams, reqEditors ...RequestEditorFn) (*GetV4SportsSportEventsResponse, error)
-
-	// GetV4SportsSportEventsEventIdOddsWithResponse request
-	GetV4SportsSportEventsEventIdOddsWithResponse(ctx context.Context, sport string, eventId string, params *GetV4SportsSportEventsEventIdOddsParams, reqEditors ...RequestEditorFn) (*GetV4SportsSportEventsEventIdOddsResponse, error)
-
-	// GetV4SportsSportOddsWithResponse request
-	GetV4SportsSportOddsWithResponse(ctx context.Context, sport string, params *GetV4SportsSportOddsParams, reqEditors ...RequestEditorFn) (*GetV4SportsSportOddsResponse, error)
-
-	// GetV4SportsSportParticipantsWithResponse request
-	GetV4SportsSportParticipantsWithResponse(ctx context.Context, sport string, params *GetV4SportsSportParticipantsParams, reqEditors ...RequestEditorFn) (*GetV4SportsSportParticipantsResponse, error)
-
-	// GetV4SportsSportScoresWithResponse request
-	GetV4SportsSportScoresWithResponse(ctx context.Context, sport string, params *GetV4SportsSportScoresParams, reqEditors ...RequestEditorFn) (*GetV4SportsSportScoresResponse, error)
+	// GetOddsWithResponse request
+	GetOddsWithResponse(ctx context.Context, sport string, params *GetOddsParams, reqEditors ...RequestEditorFn) (*GetOddsResponse, error)
 }
 
-type GetV4HistoricalSportsSportEventsResponse struct {
-	Body         []byte
-	HTTPResponse *http.Response
-	JSON200      *struct {
-		// Data A list of live and upcoming events
-		Data *[]struct {
-			// AwayTeam The away team. If home/away is not applicable for the sport (such as MMA and Tennis), it will be one of the participants. Null for outrights (futures) events.
-			AwayTeam *AwayTeam `json:"away_team"`
-
-			// CommenceTime The match start time (ISO 8601 formatted). This will be unix timestamp integer if the dateFormat query param is set to dateFormat=unix.
-			CommenceTime *CommenceTime `json:"commence_time,omitempty"`
-
-			// HomeTeam The home team. If home/away is not applicable for the sport (such as MMA and Tennis), it will be one of the participants. Null for outrights (futures) events.
-			HomeTeam *HomeTeam `json:"home_team"`
-
-			// Id A unique 32 character identifier for the event.
-			Id *MatchId `json:"id,omitempty"`
-
-			// SportKey A unique slug for the sport. Use this as the "sport" param in /odds requests
-			SportKey *SportKey `json:"sport_key,omitempty"`
-
-			// SportTitle A presentable title of the sport. Occassionally this value can change, for example if a league undergoes a name change or change in sponsorship.
-			SportTitle *SportTitle `json:"sport_title,omitempty"`
-		} `json:"data,omitempty"`
-
-		// NextTimestamp The next available timestamp. This can be used as the date parameter in a new request to move forward in time.
-		NextTimestamp *string `json:"next_timestamp,omitempty"`
-
-		// PreviousTimestamp The preceding available timestamp. This can be used as the date parameter in a new request to move back in time.
-		PreviousTimestamp *string `json:"previous_timestamp,omitempty"`
-
-		// Timestamp The timestamp of the snapshot. This will be the closest available timestamp equal to or earlier than the provided date parameter.
-		Timestamp *string `json:"timestamp,omitempty"`
-	}
-}
-
-// Status returns HTTPResponse.Status
-func (r GetV4HistoricalSportsSportEventsResponse) Status() string {
-	if r.HTTPResponse != nil {
-		return r.HTTPResponse.Status
-	}
-	return http.StatusText(0)
-}
-
-// StatusCode returns HTTPResponse.StatusCode
-func (r GetV4HistoricalSportsSportEventsResponse) StatusCode() int {
-	if r.HTTPResponse != nil {
-		return r.HTTPResponse.StatusCode
-	}
-	return 0
-}
-
-type GetV4HistoricalSportsSportEventsEventIdOddsResponse struct {
-	Body         []byte
-	HTTPResponse *http.Response
-	JSON200      *struct {
-		Data *struct {
-			// AwayTeam The away team. If home/away is not applicable for the sport (such as MMA and Tennis), it will be one of the participants. Null for outrights (futures) events.
-			AwayTeam   *AwayTeam `json:"away_team"`
-			Bookmakers *[]struct {
-				// Key A unique slug (key) of the bookmaker
-				Key *string `json:"key,omitempty"`
-
-				// Markets The included market depends on the specified 'markets' GET param.
-				Markets *[]struct {
-					// Key The unique key for the odds market
-					Key *string `json:"key,omitempty"`
-
-					// LastUpdate A timestamp of when the markets's odds were last read. Will be an integer if dateFormat=unix, otherwise it will be a string.
-					LastUpdate *time.Time `json:"last_update,omitempty"`
-					Outcomes   *[]Outcome `json:"outcomes,omitempty"`
-				} `json:"markets,omitempty"`
-
-				// Title A formatted title of the bookmaker
-				Title *string `json:"title,omitempty"`
-			} `json:"bookmakers,omitempty"`
-
-			// CommenceTime The match start time (ISO 8601 formatted). This will be unix timestamp integer if the dateFormat query param is set to dateFormat=unix.
-			CommenceTime *CommenceTime `json:"commence_time,omitempty"`
-
-			// HomeTeam The home team. If home/away is not applicable for the sport (such as MMA and Tennis), it will be one of the participants. Null for outrights (futures) events.
-			HomeTeam *HomeTeam `json:"home_team"`
-
-			// Id A unique 32 character identifier for the event.
-			Id *MatchId `json:"id,omitempty"`
-
-			// SportKey A unique slug for the sport. Use this as the "sport" param in /odds requests
-			SportKey *SportKey `json:"sport_key,omitempty"`
-
-			// SportTitle A presentable title of the sport. Occassionally this value can change, for example if a league undergoes a name change or change in sponsorship.
-			SportTitle *SportTitle `json:"sport_title,omitempty"`
-		} `json:"data,omitempty"`
-
-		// NextTimestamp The next available timestamp. This can be used as the date parameter in a new request to move forward in time.
-		NextTimestamp *string `json:"next_timestamp,omitempty"`
-
-		// PreviousTimestamp The preceding available timestamp. This can be used as the date parameter in a new request to move back in time.
-		PreviousTimestamp *string `json:"previous_timestamp,omitempty"`
-
-		// Timestamp The timestamp of the snapshot. This will be the closest available timestamp equal to or earlier than the provided date parameter.
-		Timestamp *string `json:"timestamp,omitempty"`
-	}
-}
-
-// Status returns HTTPResponse.Status
-func (r GetV4HistoricalSportsSportEventsEventIdOddsResponse) Status() string {
-	if r.HTTPResponse != nil {
-		return r.HTTPResponse.Status
-	}
-	return http.StatusText(0)
-}
-
-// StatusCode returns HTTPResponse.StatusCode
-func (r GetV4HistoricalSportsSportEventsEventIdOddsResponse) StatusCode() int {
-	if r.HTTPResponse != nil {
-		return r.HTTPResponse.StatusCode
-	}
-	return 0
-}
-
-type GetV4HistoricalSportsSportOddsResponse struct {
+type GetHistoricalOddsResponse struct {
 	Body         []byte
 	HTTPResponse *http.Response
 	JSON200      *struct {
@@ -2014,7 +760,7 @@ type GetV4HistoricalSportsSportOddsResponse struct {
 				// Markets The included market depends on the specified 'markets' GET param. NOTE Allow for the addition of new market types in future.
 				Markets *[]struct {
 					// Key The name of the odds market
-					Key *GetV4HistoricalSportsSportOdds200DataBookmakersMarketsKey `json:"key,omitempty"`
+					Key *GetHistoricalOdds200DataBookmakersMarketsKey `json:"key,omitempty"`
 
 					// LastUpdate A timestamp of when the markets's odds were last read. Will be an integer if dateFormat=unix, otherwise it will be a string. To check recency of odds, we recommend using this field instead of the "last_update" field at the bookmaker level.
 					LastUpdate *time.Time `json:"last_update,omitempty"`
@@ -2051,10 +797,10 @@ type GetV4HistoricalSportsSportOddsResponse struct {
 		Timestamp *string `json:"timestamp,omitempty"`
 	}
 }
-type GetV4HistoricalSportsSportOdds200DataBookmakersMarketsKey string
+type GetHistoricalOdds200DataBookmakersMarketsKey string
 
 // Status returns HTTPResponse.Status
-func (r GetV4HistoricalSportsSportOddsResponse) Status() string {
+func (r GetHistoricalOddsResponse) Status() string {
 	if r.HTTPResponse != nil {
 		return r.HTTPResponse.Status
 	}
@@ -2062,163 +808,14 @@ func (r GetV4HistoricalSportsSportOddsResponse) Status() string {
 }
 
 // StatusCode returns HTTPResponse.StatusCode
-func (r GetV4HistoricalSportsSportOddsResponse) StatusCode() int {
+func (r GetHistoricalOddsResponse) StatusCode() int {
 	if r.HTTPResponse != nil {
 		return r.HTTPResponse.StatusCode
 	}
 	return 0
 }
 
-type GetV4SportsResponse struct {
-	Body         []byte
-	HTTPResponse *http.Response
-	JSON200      *[]struct {
-		// Active Indicates if the sport is in season
-		Active *bool `json:"active,omitempty"`
-
-		// Description A brief description of the sport. Subject to change (for example, if sponsors change)
-		Description *string `json:"description,omitempty"`
-
-		// Group A broader grouping
-		Group *string `json:"group,omitempty"`
-
-		// HasOutrights Indicates if the sport has outrights markets.
-		HasOutrights *bool `json:"has_outrights,omitempty"`
-
-		// Key A unique slug for the sport. Use this as the "sport" param in /odds requests
-		Key *SportKey `json:"key,omitempty"`
-
-		// Title A presentable title of the sport. Occassionally this value can change, for example if a league undergoes a name change or change in sponsorship.
-		Title *SportTitle `json:"title,omitempty"`
-	}
-}
-
-// Status returns HTTPResponse.Status
-func (r GetV4SportsResponse) Status() string {
-	if r.HTTPResponse != nil {
-		return r.HTTPResponse.Status
-	}
-	return http.StatusText(0)
-}
-
-// StatusCode returns HTTPResponse.StatusCode
-func (r GetV4SportsResponse) StatusCode() int {
-	if r.HTTPResponse != nil {
-		return r.HTTPResponse.StatusCode
-	}
-	return 0
-}
-
-type GetV4SportsSportEventsResponse struct {
-	Body         []byte
-	HTTPResponse *http.Response
-	JSON200      *[]struct {
-		// AwayTeam The away team. If home/away is not applicable for the sport (such as MMA and Tennis), it will be one of the participants. Null for outrights (futures) events.
-		AwayTeam *AwayTeam `json:"away_team"`
-
-		// CommenceTime The match start time (ISO 8601 formatted). This will be unix timestamp integer if the dateFormat query param is set to dateFormat=unix.
-		CommenceTime *CommenceTime `json:"commence_time,omitempty"`
-
-		// HomeTeam The home team. If home/away is not applicable for the sport (such as MMA and Tennis), it will be one of the participants. Null for outrights (futures) events.
-		HomeTeam *HomeTeam `json:"home_team"`
-
-		// Id A unique 32 character identifier for the event.
-		Id *MatchId `json:"id,omitempty"`
-
-		// SportKey A unique slug for the sport. Use this as the "sport" param in /odds requests
-		SportKey *SportKey `json:"sport_key,omitempty"`
-
-		// SportTitle A presentable title of the sport. Occassionally this value can change, for example if a league undergoes a name change or change in sponsorship.
-		SportTitle *SportTitle `json:"sport_title,omitempty"`
-	}
-}
-
-// Status returns HTTPResponse.Status
-func (r GetV4SportsSportEventsResponse) Status() string {
-	if r.HTTPResponse != nil {
-		return r.HTTPResponse.Status
-	}
-	return http.StatusText(0)
-}
-
-// StatusCode returns HTTPResponse.StatusCode
-func (r GetV4SportsSportEventsResponse) StatusCode() int {
-	if r.HTTPResponse != nil {
-		return r.HTTPResponse.StatusCode
-	}
-	return 0
-}
-
-type GetV4SportsSportEventsEventIdOddsResponse struct {
-	Body         []byte
-	HTTPResponse *http.Response
-	JSON200      *struct {
-		// AwayTeam The away team. If home/away is not applicable for the sport (such as MMA and Tennis), it will be one of the participants. Null for outrights (futures) events.
-		AwayTeam   *AwayTeam `json:"away_team"`
-		Bookmakers *[]struct {
-			// Key A unique slug (key) of the bookmaker
-			Key *string `json:"key,omitempty"`
-
-			// Link Link to the event on the bookmaker's website if available. This field is included when providing the query parameter includeLinks=true
-			Link *string `json:"link"`
-
-			// Markets The included market depends on the specified 'markets' GET param.
-			Markets *[]struct {
-				// Key The unique key for the odds market
-				Key *string `json:"key,omitempty"`
-
-				// LastUpdate A timestamp of when the markets's odds were last read. Will be an integer if dateFormat=unix, otherwise it will be a string.
-				LastUpdate *time.Time `json:"last_update,omitempty"`
-
-				// Link Link to the market on the bookmaker's website if applicable. This field is included when providing the query parameter includeLinks=true
-				Link     *string    `json:"link"`
-				Outcomes *[]Outcome `json:"outcomes,omitempty"`
-
-				// Sid The bookmaker's id of the market if available. This field is included when providing the query parameter includeSids=true
-				Sid *string `json:"sid"`
-			} `json:"markets,omitempty"`
-
-			// Sid The bookmaker's id of the event if available. This field is included when providing the query parameter includeSids=true
-			Sid *string `json:"sid"`
-
-			// Title A formatted title of the bookmaker
-			Title *string `json:"title,omitempty"`
-		} `json:"bookmakers,omitempty"`
-
-		// CommenceTime The match start time (ISO 8601 formatted). This will be unix timestamp integer if the dateFormat query param is set to dateFormat=unix.
-		CommenceTime *CommenceTime `json:"commence_time,omitempty"`
-
-		// HomeTeam The home team. If home/away is not applicable for the sport (such as MMA and Tennis), it will be one of the participants. Null for outrights (futures) events.
-		HomeTeam *HomeTeam `json:"home_team"`
-
-		// Id A unique 32 character identifier for the event.
-		Id *MatchId `json:"id,omitempty"`
-
-		// SportKey A unique slug for the sport. Use this as the "sport" param in /odds requests
-		SportKey *SportKey `json:"sport_key,omitempty"`
-
-		// SportTitle A presentable title of the sport. Occassionally this value can change, for example if a league undergoes a name change or change in sponsorship.
-		SportTitle *SportTitle `json:"sport_title,omitempty"`
-	}
-}
-
-// Status returns HTTPResponse.Status
-func (r GetV4SportsSportEventsEventIdOddsResponse) Status() string {
-	if r.HTTPResponse != nil {
-		return r.HTTPResponse.Status
-	}
-	return http.StatusText(0)
-}
-
-// StatusCode returns HTTPResponse.StatusCode
-func (r GetV4SportsSportEventsEventIdOddsResponse) StatusCode() int {
-	if r.HTTPResponse != nil {
-		return r.HTTPResponse.StatusCode
-	}
-	return 0
-}
-
-type GetV4SportsSportOddsResponse struct {
+type GetOddsResponse struct {
 	Body         []byte
 	HTTPResponse *http.Response
 	JSON200      *[]struct {
@@ -2237,7 +834,7 @@ type GetV4SportsSportOddsResponse struct {
 			// Markets The included market depends on the specified 'markets' GET param. NOTE Allow for the addition of new market types in future.
 			Markets *[]struct {
 				// Key The name of the odds market
-				Key *GetV4SportsSportOdds200BookmakersMarketsKey `json:"key,omitempty"`
+				Key *GetOdds200BookmakersMarketsKey `json:"key,omitempty"`
 
 				// LastUpdate A timestamp of when the markets's odds were last read. Will be an integer if dateFormat=unix, otherwise it will be a string. To check recency of odds, we recommend using this field instead of the "last_update" field at the bookmaker level.
 				LastUpdate *time.Time `json:"last_update,omitempty"`
@@ -2273,10 +870,10 @@ type GetV4SportsSportOddsResponse struct {
 		SportTitle *SportTitle `json:"sport_title,omitempty"`
 	}
 }
-type GetV4SportsSportOdds200BookmakersMarketsKey string
+type GetOdds200BookmakersMarketsKey string
 
 // Status returns HTTPResponse.Status
-func (r GetV4SportsSportOddsResponse) Status() string {
+func (r GetOddsResponse) Status() string {
 	if r.HTTPResponse != nil {
 		return r.HTTPResponse.Status
 	}
@@ -2284,308 +881,40 @@ func (r GetV4SportsSportOddsResponse) Status() string {
 }
 
 // StatusCode returns HTTPResponse.StatusCode
-func (r GetV4SportsSportOddsResponse) StatusCode() int {
+func (r GetOddsResponse) StatusCode() int {
 	if r.HTTPResponse != nil {
 		return r.HTTPResponse.StatusCode
 	}
 	return 0
 }
 
-type GetV4SportsSportParticipantsResponse struct {
-	Body         []byte
-	HTTPResponse *http.Response
-	JSON200      *[]struct {
-		// FullName The participant name. Either a team name, or player name depending on the sport. This endpoint does not return players on a team.
-		FullName *string `json:"full_name,omitempty"`
-
-		// Id A unique id of the participant
-		Id *string `json:"id,omitempty"`
-	}
-}
-
-// Status returns HTTPResponse.Status
-func (r GetV4SportsSportParticipantsResponse) Status() string {
-	if r.HTTPResponse != nil {
-		return r.HTTPResponse.Status
-	}
-	return http.StatusText(0)
-}
-
-// StatusCode returns HTTPResponse.StatusCode
-func (r GetV4SportsSportParticipantsResponse) StatusCode() int {
-	if r.HTTPResponse != nil {
-		return r.HTTPResponse.StatusCode
-	}
-	return 0
-}
-
-type GetV4SportsSportScoresResponse struct {
-	Body         []byte
-	HTTPResponse *http.Response
-	JSON200      *[]struct {
-		// AwayTeam The away team. If home/away is not applicable for the sport (such as MMA and Tennis), it will be one of the participants. Null for outrights (futures) events.
-		AwayTeam *AwayTeam `json:"away_team"`
-
-		// CommenceTime The match start time (ISO 8601 formatted). This will be unix timestamp integer if the dateFormat query param is set to dateFormat=unix.
-		CommenceTime *CommenceTime `json:"commence_time,omitempty"`
-
-		// Completed true if the event has finished, otherwise false
-		Completed *bool `json:"completed,omitempty"`
-
-		// HomeTeam The home team. If home/away is not applicable for the sport (such as MMA and Tennis), it will be one of the participants. Null for outrights (futures) events.
-		HomeTeam *HomeTeam `json:"home_team"`
-
-		// Id A unique 32 character identifier for the event.
-		Id *MatchId `json:"id,omitempty"`
-
-		// LastUpdate ISO8601 datetime of when the scores were last updated. Will be null if event has not started
-		LastUpdate *string `json:"last_update"`
-
-		// Scores A list of teams and their scores. List will be empty if event has not started.
-		Scores *[]ScoreModel `json:"scores,omitempty"`
-
-		// SportKey A unique slug for the sport. Use this as the "sport" param in /odds requests
-		SportKey *SportKey `json:"sport_key,omitempty"`
-
-		// SportTitle A presentable title of the sport. Occassionally this value can change, for example if a league undergoes a name change or change in sponsorship.
-		SportTitle *SportTitle `json:"sport_title,omitempty"`
-	}
-}
-
-// Status returns HTTPResponse.Status
-func (r GetV4SportsSportScoresResponse) Status() string {
-	if r.HTTPResponse != nil {
-		return r.HTTPResponse.Status
-	}
-	return http.StatusText(0)
-}
-
-// StatusCode returns HTTPResponse.StatusCode
-func (r GetV4SportsSportScoresResponse) StatusCode() int {
-	if r.HTTPResponse != nil {
-		return r.HTTPResponse.StatusCode
-	}
-	return 0
-}
-
-// GetV4HistoricalSportsSportEventsWithResponse request returning *GetV4HistoricalSportsSportEventsResponse
-func (c *ClientWithResponses) GetV4HistoricalSportsSportEventsWithResponse(ctx context.Context, sport string, params *GetV4HistoricalSportsSportEventsParams, reqEditors ...RequestEditorFn) (*GetV4HistoricalSportsSportEventsResponse, error) {
-	rsp, err := c.GetV4HistoricalSportsSportEvents(ctx, sport, params, reqEditors...)
+// GetHistoricalOddsWithResponse request returning *GetHistoricalOddsResponse
+func (c *ClientWithResponses) GetHistoricalOddsWithResponse(ctx context.Context, sport string, params *GetHistoricalOddsParams, reqEditors ...RequestEditorFn) (*GetHistoricalOddsResponse, error) {
+	rsp, err := c.GetHistoricalOdds(ctx, sport, params, reqEditors...)
 	if err != nil {
 		return nil, err
 	}
-	return ParseGetV4HistoricalSportsSportEventsResponse(rsp)
+	return ParseGetHistoricalOddsResponse(rsp)
 }
 
-// GetV4HistoricalSportsSportEventsEventIdOddsWithResponse request returning *GetV4HistoricalSportsSportEventsEventIdOddsResponse
-func (c *ClientWithResponses) GetV4HistoricalSportsSportEventsEventIdOddsWithResponse(ctx context.Context, sport string, eventId string, params *GetV4HistoricalSportsSportEventsEventIdOddsParams, reqEditors ...RequestEditorFn) (*GetV4HistoricalSportsSportEventsEventIdOddsResponse, error) {
-	rsp, err := c.GetV4HistoricalSportsSportEventsEventIdOdds(ctx, sport, eventId, params, reqEditors...)
+// GetOddsWithResponse request returning *GetOddsResponse
+func (c *ClientWithResponses) GetOddsWithResponse(ctx context.Context, sport string, params *GetOddsParams, reqEditors ...RequestEditorFn) (*GetOddsResponse, error) {
+	rsp, err := c.GetOdds(ctx, sport, params, reqEditors...)
 	if err != nil {
 		return nil, err
 	}
-	return ParseGetV4HistoricalSportsSportEventsEventIdOddsResponse(rsp)
+	return ParseGetOddsResponse(rsp)
 }
 
-// GetV4HistoricalSportsSportOddsWithResponse request returning *GetV4HistoricalSportsSportOddsResponse
-func (c *ClientWithResponses) GetV4HistoricalSportsSportOddsWithResponse(ctx context.Context, sport string, params *GetV4HistoricalSportsSportOddsParams, reqEditors ...RequestEditorFn) (*GetV4HistoricalSportsSportOddsResponse, error) {
-	rsp, err := c.GetV4HistoricalSportsSportOdds(ctx, sport, params, reqEditors...)
-	if err != nil {
-		return nil, err
-	}
-	return ParseGetV4HistoricalSportsSportOddsResponse(rsp)
-}
-
-// GetV4SportsWithResponse request returning *GetV4SportsResponse
-func (c *ClientWithResponses) GetV4SportsWithResponse(ctx context.Context, params *GetV4SportsParams, reqEditors ...RequestEditorFn) (*GetV4SportsResponse, error) {
-	rsp, err := c.GetV4Sports(ctx, params, reqEditors...)
-	if err != nil {
-		return nil, err
-	}
-	return ParseGetV4SportsResponse(rsp)
-}
-
-// GetV4SportsSportEventsWithResponse request returning *GetV4SportsSportEventsResponse
-func (c *ClientWithResponses) GetV4SportsSportEventsWithResponse(ctx context.Context, sport string, params *GetV4SportsSportEventsParams, reqEditors ...RequestEditorFn) (*GetV4SportsSportEventsResponse, error) {
-	rsp, err := c.GetV4SportsSportEvents(ctx, sport, params, reqEditors...)
-	if err != nil {
-		return nil, err
-	}
-	return ParseGetV4SportsSportEventsResponse(rsp)
-}
-
-// GetV4SportsSportEventsEventIdOddsWithResponse request returning *GetV4SportsSportEventsEventIdOddsResponse
-func (c *ClientWithResponses) GetV4SportsSportEventsEventIdOddsWithResponse(ctx context.Context, sport string, eventId string, params *GetV4SportsSportEventsEventIdOddsParams, reqEditors ...RequestEditorFn) (*GetV4SportsSportEventsEventIdOddsResponse, error) {
-	rsp, err := c.GetV4SportsSportEventsEventIdOdds(ctx, sport, eventId, params, reqEditors...)
-	if err != nil {
-		return nil, err
-	}
-	return ParseGetV4SportsSportEventsEventIdOddsResponse(rsp)
-}
-
-// GetV4SportsSportOddsWithResponse request returning *GetV4SportsSportOddsResponse
-func (c *ClientWithResponses) GetV4SportsSportOddsWithResponse(ctx context.Context, sport string, params *GetV4SportsSportOddsParams, reqEditors ...RequestEditorFn) (*GetV4SportsSportOddsResponse, error) {
-	rsp, err := c.GetV4SportsSportOdds(ctx, sport, params, reqEditors...)
-	if err != nil {
-		return nil, err
-	}
-	return ParseGetV4SportsSportOddsResponse(rsp)
-}
-
-// GetV4SportsSportParticipantsWithResponse request returning *GetV4SportsSportParticipantsResponse
-func (c *ClientWithResponses) GetV4SportsSportParticipantsWithResponse(ctx context.Context, sport string, params *GetV4SportsSportParticipantsParams, reqEditors ...RequestEditorFn) (*GetV4SportsSportParticipantsResponse, error) {
-	rsp, err := c.GetV4SportsSportParticipants(ctx, sport, params, reqEditors...)
-	if err != nil {
-		return nil, err
-	}
-	return ParseGetV4SportsSportParticipantsResponse(rsp)
-}
-
-// GetV4SportsSportScoresWithResponse request returning *GetV4SportsSportScoresResponse
-func (c *ClientWithResponses) GetV4SportsSportScoresWithResponse(ctx context.Context, sport string, params *GetV4SportsSportScoresParams, reqEditors ...RequestEditorFn) (*GetV4SportsSportScoresResponse, error) {
-	rsp, err := c.GetV4SportsSportScores(ctx, sport, params, reqEditors...)
-	if err != nil {
-		return nil, err
-	}
-	return ParseGetV4SportsSportScoresResponse(rsp)
-}
-
-// ParseGetV4HistoricalSportsSportEventsResponse parses an HTTP response from a GetV4HistoricalSportsSportEventsWithResponse call
-func ParseGetV4HistoricalSportsSportEventsResponse(rsp *http.Response) (*GetV4HistoricalSportsSportEventsResponse, error) {
+// ParseGetHistoricalOddsResponse parses an HTTP response from a GetHistoricalOddsWithResponse call
+func ParseGetHistoricalOddsResponse(rsp *http.Response) (*GetHistoricalOddsResponse, error) {
 	bodyBytes, err := io.ReadAll(rsp.Body)
 	defer func() { _ = rsp.Body.Close() }()
 	if err != nil {
 		return nil, err
 	}
 
-	response := &GetV4HistoricalSportsSportEventsResponse{
-		Body:         bodyBytes,
-		HTTPResponse: rsp,
-	}
-
-	switch {
-	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 200:
-		var dest struct {
-			// Data A list of live and upcoming events
-			Data *[]struct {
-				// AwayTeam The away team. If home/away is not applicable for the sport (such as MMA and Tennis), it will be one of the participants. Null for outrights (futures) events.
-				AwayTeam *AwayTeam `json:"away_team"`
-
-				// CommenceTime The match start time (ISO 8601 formatted). This will be unix timestamp integer if the dateFormat query param is set to dateFormat=unix.
-				CommenceTime *CommenceTime `json:"commence_time,omitempty"`
-
-				// HomeTeam The home team. If home/away is not applicable for the sport (such as MMA and Tennis), it will be one of the participants. Null for outrights (futures) events.
-				HomeTeam *HomeTeam `json:"home_team"`
-
-				// Id A unique 32 character identifier for the event.
-				Id *MatchId `json:"id,omitempty"`
-
-				// SportKey A unique slug for the sport. Use this as the "sport" param in /odds requests
-				SportKey *SportKey `json:"sport_key,omitempty"`
-
-				// SportTitle A presentable title of the sport. Occassionally this value can change, for example if a league undergoes a name change or change in sponsorship.
-				SportTitle *SportTitle `json:"sport_title,omitempty"`
-			} `json:"data,omitempty"`
-
-			// NextTimestamp The next available timestamp. This can be used as the date parameter in a new request to move forward in time.
-			NextTimestamp *string `json:"next_timestamp,omitempty"`
-
-			// PreviousTimestamp The preceding available timestamp. This can be used as the date parameter in a new request to move back in time.
-			PreviousTimestamp *string `json:"previous_timestamp,omitempty"`
-
-			// Timestamp The timestamp of the snapshot. This will be the closest available timestamp equal to or earlier than the provided date parameter.
-			Timestamp *string `json:"timestamp,omitempty"`
-		}
-		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
-			return nil, err
-		}
-		response.JSON200 = &dest
-
-	}
-
-	return response, nil
-}
-
-// ParseGetV4HistoricalSportsSportEventsEventIdOddsResponse parses an HTTP response from a GetV4HistoricalSportsSportEventsEventIdOddsWithResponse call
-func ParseGetV4HistoricalSportsSportEventsEventIdOddsResponse(rsp *http.Response) (*GetV4HistoricalSportsSportEventsEventIdOddsResponse, error) {
-	bodyBytes, err := io.ReadAll(rsp.Body)
-	defer func() { _ = rsp.Body.Close() }()
-	if err != nil {
-		return nil, err
-	}
-
-	response := &GetV4HistoricalSportsSportEventsEventIdOddsResponse{
-		Body:         bodyBytes,
-		HTTPResponse: rsp,
-	}
-
-	switch {
-	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 200:
-		var dest struct {
-			Data *struct {
-				// AwayTeam The away team. If home/away is not applicable for the sport (such as MMA and Tennis), it will be one of the participants. Null for outrights (futures) events.
-				AwayTeam   *AwayTeam `json:"away_team"`
-				Bookmakers *[]struct {
-					// Key A unique slug (key) of the bookmaker
-					Key *string `json:"key,omitempty"`
-
-					// Markets The included market depends on the specified 'markets' GET param.
-					Markets *[]struct {
-						// Key The unique key for the odds market
-						Key *string `json:"key,omitempty"`
-
-						// LastUpdate A timestamp of when the markets's odds were last read. Will be an integer if dateFormat=unix, otherwise it will be a string.
-						LastUpdate *time.Time `json:"last_update,omitempty"`
-						Outcomes   *[]Outcome `json:"outcomes,omitempty"`
-					} `json:"markets,omitempty"`
-
-					// Title A formatted title of the bookmaker
-					Title *string `json:"title,omitempty"`
-				} `json:"bookmakers,omitempty"`
-
-				// CommenceTime The match start time (ISO 8601 formatted). This will be unix timestamp integer if the dateFormat query param is set to dateFormat=unix.
-				CommenceTime *CommenceTime `json:"commence_time,omitempty"`
-
-				// HomeTeam The home team. If home/away is not applicable for the sport (such as MMA and Tennis), it will be one of the participants. Null for outrights (futures) events.
-				HomeTeam *HomeTeam `json:"home_team"`
-
-				// Id A unique 32 character identifier for the event.
-				Id *MatchId `json:"id,omitempty"`
-
-				// SportKey A unique slug for the sport. Use this as the "sport" param in /odds requests
-				SportKey *SportKey `json:"sport_key,omitempty"`
-
-				// SportTitle A presentable title of the sport. Occassionally this value can change, for example if a league undergoes a name change or change in sponsorship.
-				SportTitle *SportTitle `json:"sport_title,omitempty"`
-			} `json:"data,omitempty"`
-
-			// NextTimestamp The next available timestamp. This can be used as the date parameter in a new request to move forward in time.
-			NextTimestamp *string `json:"next_timestamp,omitempty"`
-
-			// PreviousTimestamp The preceding available timestamp. This can be used as the date parameter in a new request to move back in time.
-			PreviousTimestamp *string `json:"previous_timestamp,omitempty"`
-
-			// Timestamp The timestamp of the snapshot. This will be the closest available timestamp equal to or earlier than the provided date parameter.
-			Timestamp *string `json:"timestamp,omitempty"`
-		}
-		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
-			return nil, err
-		}
-		response.JSON200 = &dest
-
-	}
-
-	return response, nil
-}
-
-// ParseGetV4HistoricalSportsSportOddsResponse parses an HTTP response from a GetV4HistoricalSportsSportOddsWithResponse call
-func ParseGetV4HistoricalSportsSportOddsResponse(rsp *http.Response) (*GetV4HistoricalSportsSportOddsResponse, error) {
-	bodyBytes, err := io.ReadAll(rsp.Body)
-	defer func() { _ = rsp.Body.Close() }()
-	if err != nil {
-		return nil, err
-	}
-
-	response := &GetV4HistoricalSportsSportOddsResponse{
+	response := &GetHistoricalOddsResponse{
 		Body:         bodyBytes,
 		HTTPResponse: rsp,
 	}
@@ -2607,7 +936,7 @@ func ParseGetV4HistoricalSportsSportOddsResponse(rsp *http.Response) (*GetV4Hist
 					// Markets The included market depends on the specified 'markets' GET param. NOTE Allow for the addition of new market types in future.
 					Markets *[]struct {
 						// Key The name of the odds market
-						Key *GetV4HistoricalSportsSportOdds200DataBookmakersMarketsKey `json:"key,omitempty"`
+						Key *GetHistoricalOdds200DataBookmakersMarketsKey `json:"key,omitempty"`
 
 						// LastUpdate A timestamp of when the markets's odds were last read. Will be an integer if dateFormat=unix, otherwise it will be a string. To check recency of odds, we recommend using this field instead of the "last_update" field at the bookmaker level.
 						LastUpdate *time.Time `json:"last_update,omitempty"`
@@ -2653,176 +982,15 @@ func ParseGetV4HistoricalSportsSportOddsResponse(rsp *http.Response) (*GetV4Hist
 	return response, nil
 }
 
-// ParseGetV4SportsResponse parses an HTTP response from a GetV4SportsWithResponse call
-func ParseGetV4SportsResponse(rsp *http.Response) (*GetV4SportsResponse, error) {
+// ParseGetOddsResponse parses an HTTP response from a GetOddsWithResponse call
+func ParseGetOddsResponse(rsp *http.Response) (*GetOddsResponse, error) {
 	bodyBytes, err := io.ReadAll(rsp.Body)
 	defer func() { _ = rsp.Body.Close() }()
 	if err != nil {
 		return nil, err
 	}
 
-	response := &GetV4SportsResponse{
-		Body:         bodyBytes,
-		HTTPResponse: rsp,
-	}
-
-	switch {
-	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 200:
-		var dest []struct {
-			// Active Indicates if the sport is in season
-			Active *bool `json:"active,omitempty"`
-
-			// Description A brief description of the sport. Subject to change (for example, if sponsors change)
-			Description *string `json:"description,omitempty"`
-
-			// Group A broader grouping
-			Group *string `json:"group,omitempty"`
-
-			// HasOutrights Indicates if the sport has outrights markets.
-			HasOutrights *bool `json:"has_outrights,omitempty"`
-
-			// Key A unique slug for the sport. Use this as the "sport" param in /odds requests
-			Key *SportKey `json:"key,omitempty"`
-
-			// Title A presentable title of the sport. Occassionally this value can change, for example if a league undergoes a name change or change in sponsorship.
-			Title *SportTitle `json:"title,omitempty"`
-		}
-		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
-			return nil, err
-		}
-		response.JSON200 = &dest
-
-	}
-
-	return response, nil
-}
-
-// ParseGetV4SportsSportEventsResponse parses an HTTP response from a GetV4SportsSportEventsWithResponse call
-func ParseGetV4SportsSportEventsResponse(rsp *http.Response) (*GetV4SportsSportEventsResponse, error) {
-	bodyBytes, err := io.ReadAll(rsp.Body)
-	defer func() { _ = rsp.Body.Close() }()
-	if err != nil {
-		return nil, err
-	}
-
-	response := &GetV4SportsSportEventsResponse{
-		Body:         bodyBytes,
-		HTTPResponse: rsp,
-	}
-
-	switch {
-	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 200:
-		var dest []struct {
-			// AwayTeam The away team. If home/away is not applicable for the sport (such as MMA and Tennis), it will be one of the participants. Null for outrights (futures) events.
-			AwayTeam *AwayTeam `json:"away_team"`
-
-			// CommenceTime The match start time (ISO 8601 formatted). This will be unix timestamp integer if the dateFormat query param is set to dateFormat=unix.
-			CommenceTime *CommenceTime `json:"commence_time,omitempty"`
-
-			// HomeTeam The home team. If home/away is not applicable for the sport (such as MMA and Tennis), it will be one of the participants. Null for outrights (futures) events.
-			HomeTeam *HomeTeam `json:"home_team"`
-
-			// Id A unique 32 character identifier for the event.
-			Id *MatchId `json:"id,omitempty"`
-
-			// SportKey A unique slug for the sport. Use this as the "sport" param in /odds requests
-			SportKey *SportKey `json:"sport_key,omitempty"`
-
-			// SportTitle A presentable title of the sport. Occassionally this value can change, for example if a league undergoes a name change or change in sponsorship.
-			SportTitle *SportTitle `json:"sport_title,omitempty"`
-		}
-		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
-			return nil, err
-		}
-		response.JSON200 = &dest
-
-	}
-
-	return response, nil
-}
-
-// ParseGetV4SportsSportEventsEventIdOddsResponse parses an HTTP response from a GetV4SportsSportEventsEventIdOddsWithResponse call
-func ParseGetV4SportsSportEventsEventIdOddsResponse(rsp *http.Response) (*GetV4SportsSportEventsEventIdOddsResponse, error) {
-	bodyBytes, err := io.ReadAll(rsp.Body)
-	defer func() { _ = rsp.Body.Close() }()
-	if err != nil {
-		return nil, err
-	}
-
-	response := &GetV4SportsSportEventsEventIdOddsResponse{
-		Body:         bodyBytes,
-		HTTPResponse: rsp,
-	}
-
-	switch {
-	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 200:
-		var dest struct {
-			// AwayTeam The away team. If home/away is not applicable for the sport (such as MMA and Tennis), it will be one of the participants. Null for outrights (futures) events.
-			AwayTeam   *AwayTeam `json:"away_team"`
-			Bookmakers *[]struct {
-				// Key A unique slug (key) of the bookmaker
-				Key *string `json:"key,omitempty"`
-
-				// Link Link to the event on the bookmaker's website if available. This field is included when providing the query parameter includeLinks=true
-				Link *string `json:"link"`
-
-				// Markets The included market depends on the specified 'markets' GET param.
-				Markets *[]struct {
-					// Key The unique key for the odds market
-					Key *string `json:"key,omitempty"`
-
-					// LastUpdate A timestamp of when the markets's odds were last read. Will be an integer if dateFormat=unix, otherwise it will be a string.
-					LastUpdate *time.Time `json:"last_update,omitempty"`
-
-					// Link Link to the market on the bookmaker's website if applicable. This field is included when providing the query parameter includeLinks=true
-					Link     *string    `json:"link"`
-					Outcomes *[]Outcome `json:"outcomes,omitempty"`
-
-					// Sid The bookmaker's id of the market if available. This field is included when providing the query parameter includeSids=true
-					Sid *string `json:"sid"`
-				} `json:"markets,omitempty"`
-
-				// Sid The bookmaker's id of the event if available. This field is included when providing the query parameter includeSids=true
-				Sid *string `json:"sid"`
-
-				// Title A formatted title of the bookmaker
-				Title *string `json:"title,omitempty"`
-			} `json:"bookmakers,omitempty"`
-
-			// CommenceTime The match start time (ISO 8601 formatted). This will be unix timestamp integer if the dateFormat query param is set to dateFormat=unix.
-			CommenceTime *CommenceTime `json:"commence_time,omitempty"`
-
-			// HomeTeam The home team. If home/away is not applicable for the sport (such as MMA and Tennis), it will be one of the participants. Null for outrights (futures) events.
-			HomeTeam *HomeTeam `json:"home_team"`
-
-			// Id A unique 32 character identifier for the event.
-			Id *MatchId `json:"id,omitempty"`
-
-			// SportKey A unique slug for the sport. Use this as the "sport" param in /odds requests
-			SportKey *SportKey `json:"sport_key,omitempty"`
-
-			// SportTitle A presentable title of the sport. Occassionally this value can change, for example if a league undergoes a name change or change in sponsorship.
-			SportTitle *SportTitle `json:"sport_title,omitempty"`
-		}
-		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
-			return nil, err
-		}
-		response.JSON200 = &dest
-
-	}
-
-	return response, nil
-}
-
-// ParseGetV4SportsSportOddsResponse parses an HTTP response from a GetV4SportsSportOddsWithResponse call
-func ParseGetV4SportsSportOddsResponse(rsp *http.Response) (*GetV4SportsSportOddsResponse, error) {
-	bodyBytes, err := io.ReadAll(rsp.Body)
-	defer func() { _ = rsp.Body.Close() }()
-	if err != nil {
-		return nil, err
-	}
-
-	response := &GetV4SportsSportOddsResponse{
+	response := &GetOddsResponse{
 		Body:         bodyBytes,
 		HTTPResponse: rsp,
 	}
@@ -2845,7 +1013,7 @@ func ParseGetV4SportsSportOddsResponse(rsp *http.Response) (*GetV4SportsSportOdd
 				// Markets The included market depends on the specified 'markets' GET param. NOTE Allow for the addition of new market types in future.
 				Markets *[]struct {
 					// Key The name of the odds market
-					Key *GetV4SportsSportOdds200BookmakersMarketsKey `json:"key,omitempty"`
+					Key *GetOdds200BookmakersMarketsKey `json:"key,omitempty"`
 
 					// LastUpdate A timestamp of when the markets's odds were last read. Will be an integer if dateFormat=unix, otherwise it will be a string. To check recency of odds, we recommend using this field instead of the "last_update" field at the bookmaker level.
 					LastUpdate *time.Time `json:"last_update,omitempty"`
@@ -2873,91 +1041,6 @@ func ParseGetV4SportsSportOddsResponse(rsp *http.Response) (*GetV4SportsSportOdd
 
 			// Id A unique 32 character identifier for the event.
 			Id *MatchId `json:"id,omitempty"`
-
-			// SportKey A unique slug for the sport. Use this as the "sport" param in /odds requests
-			SportKey *SportKey `json:"sport_key,omitempty"`
-
-			// SportTitle A presentable title of the sport. Occassionally this value can change, for example if a league undergoes a name change or change in sponsorship.
-			SportTitle *SportTitle `json:"sport_title,omitempty"`
-		}
-		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
-			return nil, err
-		}
-		response.JSON200 = &dest
-
-	}
-
-	return response, nil
-}
-
-// ParseGetV4SportsSportParticipantsResponse parses an HTTP response from a GetV4SportsSportParticipantsWithResponse call
-func ParseGetV4SportsSportParticipantsResponse(rsp *http.Response) (*GetV4SportsSportParticipantsResponse, error) {
-	bodyBytes, err := io.ReadAll(rsp.Body)
-	defer func() { _ = rsp.Body.Close() }()
-	if err != nil {
-		return nil, err
-	}
-
-	response := &GetV4SportsSportParticipantsResponse{
-		Body:         bodyBytes,
-		HTTPResponse: rsp,
-	}
-
-	switch {
-	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 200:
-		var dest []struct {
-			// FullName The participant name. Either a team name, or player name depending on the sport. This endpoint does not return players on a team.
-			FullName *string `json:"full_name,omitempty"`
-
-			// Id A unique id of the participant
-			Id *string `json:"id,omitempty"`
-		}
-		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
-			return nil, err
-		}
-		response.JSON200 = &dest
-
-	}
-
-	return response, nil
-}
-
-// ParseGetV4SportsSportScoresResponse parses an HTTP response from a GetV4SportsSportScoresWithResponse call
-func ParseGetV4SportsSportScoresResponse(rsp *http.Response) (*GetV4SportsSportScoresResponse, error) {
-	bodyBytes, err := io.ReadAll(rsp.Body)
-	defer func() { _ = rsp.Body.Close() }()
-	if err != nil {
-		return nil, err
-	}
-
-	response := &GetV4SportsSportScoresResponse{
-		Body:         bodyBytes,
-		HTTPResponse: rsp,
-	}
-
-	switch {
-	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 200:
-		var dest []struct {
-			// AwayTeam The away team. If home/away is not applicable for the sport (such as MMA and Tennis), it will be one of the participants. Null for outrights (futures) events.
-			AwayTeam *AwayTeam `json:"away_team"`
-
-			// CommenceTime The match start time (ISO 8601 formatted). This will be unix timestamp integer if the dateFormat query param is set to dateFormat=unix.
-			CommenceTime *CommenceTime `json:"commence_time,omitempty"`
-
-			// Completed true if the event has finished, otherwise false
-			Completed *bool `json:"completed,omitempty"`
-
-			// HomeTeam The home team. If home/away is not applicable for the sport (such as MMA and Tennis), it will be one of the participants. Null for outrights (futures) events.
-			HomeTeam *HomeTeam `json:"home_team"`
-
-			// Id A unique 32 character identifier for the event.
-			Id *MatchId `json:"id,omitempty"`
-
-			// LastUpdate ISO8601 datetime of when the scores were last updated. Will be null if event has not started
-			LastUpdate *string `json:"last_update"`
-
-			// Scores A list of teams and their scores. List will be empty if event has not started.
-			Scores *[]ScoreModel `json:"scores,omitempty"`
 
 			// SportKey A unique slug for the sport. Use this as the "sport" param in /odds requests
 			SportKey *SportKey `json:"sport_key,omitempty"`

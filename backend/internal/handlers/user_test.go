@@ -374,7 +374,7 @@ func TestAdminListUsers(t *testing.T) {
 		t.Fatalf("Failed to connect to database: %v", err)
 	}
 	gormDB := db.GetDB()
-
+	home, away := homeAndAway()
 	// Seed data
 	user1 := database.User{Name: "Admin User", Email: "admin@test.com", Role: "admin"}
 	user2 := database.User{Name: "Player User", Email: "player@test.com", Role: "user"}
@@ -390,8 +390,8 @@ func TestAdminListUsers(t *testing.T) {
 	gormDB.Create(&player2)
 
 	// Create games and picks for stats calculation
-	game1 := database.Game{Week: 1, Season: 2024, FavoriteTeam: "Lions", UnderdogTeam: "Chiefs"}
-	game2 := database.Game{Week: 2, Season: 2024, FavoriteTeam: "Packers", UnderdogTeam: "Bears"}
+	game1 := database.Game{Week: 1, Season: 2024, HomeTeam: "Lions", AwayTeam: "Chiefs", Favorite: &home, Underdog: &away}
+	game2 := database.Game{Week: 2, Season: 2024, HomeTeam: "Packers", AwayTeam: "Bears", Favorite: &home, Underdog: &away}
 	gormDB.Create(&game1)
 	gormDB.Create(&game2)
 

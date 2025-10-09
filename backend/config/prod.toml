@@ -22,3 +22,8 @@ cache_expiry = "1000h"
 
 [e2e]
 test = false
+
+[theoddsapi]
+base_url = "https://api.the-odds-api.com/v4"
+region = "us"
+api_key = ""

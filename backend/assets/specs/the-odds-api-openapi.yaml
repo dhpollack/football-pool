@@ -109,6 +109,7 @@ paths:
 
   /v4/sports/{sport}/odds:
     get:
+      operationId: GetOdds
       tags:
         - current events
       description: Returns list of live and upcoming events for a given sport, showing bookmaker odds for the specified region and markets
@@ -893,6 +894,7 @@ paths:
 
   /v4/historical/sports/{sport}/odds:
     get:
+      operationId: GetHistoricalOdds
       tags:
         - historical events
       description: Returns list of live and upcoming events at a point in time for a given sport, including bookmaker odds for the specified region and markets. This endpoint will only return featured markets (moneyline, match winner, 1x2, head-to-head, spreads, totals, over/under, outrights etc.), using the market keys `h2h`, `spreads`, `totals`. This endpoint was previously `/v4/sports/{sport}/odds-history`, which has been deprecated.
