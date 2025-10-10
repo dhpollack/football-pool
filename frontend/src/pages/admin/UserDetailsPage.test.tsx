@@ -51,7 +51,7 @@ vi.mock("../../components/admin/AdminDataTable", () => ({
             <div key={pick.id} data-testid="pick-row">
               <span data-testid="pick-game">
                 {pick.game
-                  ? `${pick.game.favorite_team} vs ${pick.game.underdog_team}`
+                  ? `${pick.game.home_team} vs ${pick.game.away_team}`
                   : "Unknown"}
               </span>
               <span data-testid="pick-choice">{pick.picked}</span>
@@ -187,8 +187,8 @@ describe("UserDetailsPage", () => {
           },
           game: {
             id: 1,
-            favorite_team: "Team A",
-            underdog_team: "Team B",
+            home_team: "Team A",
+            away_team: "Team B",
             week: 1,
             season: 2023,
           },

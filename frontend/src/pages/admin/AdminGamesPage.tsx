@@ -106,7 +106,7 @@ const AdminGamesPage = () => {
       id: "matchup",
       label: "Matchup",
       format: (game: GameResponse) =>
-        `${game.favorite_team} vs ${game.underdog_team}`,
+        `${game.home_team} vs ${game.away_team}`,
     },
     {
       id: "spread",
@@ -158,8 +158,8 @@ const AdminGamesPage = () => {
   // Apply simple client-side filtering for now
   const filteredGames = games.filter((game) => {
     const matchesSearch = searchTerm
-      ? game.favorite_team.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        game.underdog_team.toLowerCase().includes(searchTerm.toLowerCase())
+      ? game.home_team.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        game.away_team.toLowerCase().includes(searchTerm.toLowerCase())
       : true;
 
     const matchesWeek = filters.week
@@ -227,7 +227,7 @@ const AdminGamesPage = () => {
         onClose={handleDeleteCancel}
         onConfirm={handleDeleteConfirm}
         title="Delete Game"
-        message={`Are you sure you want to delete the game between ${selectedGame?.favorite_team} and ${selectedGame?.underdog_team}? This action cannot be undone.`}
+        message={`Are you sure you want to delete the game between ${selectedGame?.home_team} and ${selectedGame?.away_team}? This action cannot be undone.`}
         confirmLabel="Delete"
         severity="error"
       />

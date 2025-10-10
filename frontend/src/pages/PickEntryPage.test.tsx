@@ -11,8 +11,22 @@ const mockWeeksData = {
 
 const mockGamesData = {
   games: [
-    { id: 1, favorite_team: "Team A", underdog_team: "Team B", spread: 3 },
-    { id: 2, favorite_team: "Team C", underdog_team: "Team D", spread: 7 },
+    {
+      id: 1,
+      home_team: "Team A",
+      away_team: "Team B",
+      spread: 3,
+      favorite: "Home",
+      underdog: "Away"
+    },
+    {
+      id: 2,
+      home_team: "Team C",
+      away_team: "Team D",
+      spread: 7,
+      favorite: "Away",
+      underdog: "Home"
+    },
   ],
 };
 

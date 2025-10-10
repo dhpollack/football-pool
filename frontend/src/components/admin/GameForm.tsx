@@ -24,8 +24,8 @@ const GameForm = ({ open, onClose, onSuccess, game }: GameFormProps) => {
   const [formData, setFormData] = useState<GameRequest>({
     week: 1,
     season: new Date().getFullYear(),
-    favorite_team: "",
-    underdog_team: "",
+    home_team: "",
+    away_team: "",
     spread: 0,
     start_time: "",
   });
@@ -46,8 +46,8 @@ const GameForm = ({ open, onClose, onSuccess, game }: GameFormProps) => {
       setFormData({
         week: game.week,
         season: game.season,
-        favorite_team: game.favorite_team,
-        underdog_team: game.underdog_team,
+        home_team: game.home_team,
+        away_team: game.away_team,
         spread: game.spread,
         start_time: localStartTime,
       });
@@ -55,8 +55,8 @@ const GameForm = ({ open, onClose, onSuccess, game }: GameFormProps) => {
       setFormData({
         week: 1,
         season: new Date().getFullYear(),
-        favorite_team: "",
-        underdog_team: "",
+        home_team: "",
+        away_team: "",
         spread: 0,
         start_time: "",
       });
@@ -75,14 +75,14 @@ const GameForm = ({ open, onClose, onSuccess, game }: GameFormProps) => {
       newErrors.season = "Season must be a valid year";
     }
 
-    if (!formData.favorite_team.trim()) {
-      newErrors.favorite_team = "Favorite team is required";
+    if (!formData.home_team.trim()) {
+      newErrors.home_team = "Favorite team is required";
     }
 
-    if (!formData.underdog_team.trim()) {
-      newErrors.underdog_team = "Underdog team is required";
-    } else if (formData.favorite_team === formData.underdog_team) {
-      newErrors.underdog_team = "Teams cannot be the same";
+    if (!formData.away_team.trim()) {
+      newErrors.away_team = "Underdog team is required";
+    } else if (formData.home_team === formData.away_team) {
+      newErrors.away_team = "Teams cannot be the same";
     }
 
     if (formData.spread === undefined || formData.spread === null) {
@@ -202,12 +202,12 @@ const GameForm = ({ open, onClose, onSuccess, game }: GameFormProps) => {
             <Box display="flex" gap={2}>
               <TextField
                 label="Favorite Team"
-                value={formData.favorite_team}
+                value={formData.home_team}
                 onChange={(e) =>
-                  handleInputChange("favorite_team", e.target.value)
+                  handleInputChange("home_team", e.target.value)
                 }
-                error={!!errors.favorite_team}
-                helperText={errors.favorite_team}
+                error={!!errors.home_team}
+                helperText={errors.home_team}
                 fullWidth
                 inputProps={{
                   "data-testid": "favorite-team-input",
@@ -215,12 +215,12 @@ const GameForm = ({ open, onClose, onSuccess, game }: GameFormProps) => {
               />
               <TextField
                 label="Underdog Team"
-                value={formData.underdog_team}
+                value={formData.away_team}
                 onChange={(e) =>
-                  handleInputChange("underdog_team", e.target.value)
+                  handleInputChange("away_team", e.target.value)
                 }
-                error={!!errors.underdog_team}
-                helperText={errors.underdog_team}
+                error={!!errors.away_team}
+                helperText={errors.away_team}
                 fullWidth
                 inputProps={{
                   "data-testid": "underdog-team-input",
@@ -267,9 +267,9 @@ const GameForm = ({ open, onClose, onSuccess, game }: GameFormProps) => {
 
             {formData.spread !== 0 && (
               <Typography variant="body2" color="text.secondary">
-                Spread: {formData.favorite_team}{" "}
+                Spread: {formData.home_team}{" "}
                 {formData.spread > 0 ? "-" : "+"} {Math.abs(formData.spread)} vs{" "}
-                {formData.underdog_team}
+                {formData.away_team}
               </Typography>
             )}
           </Box>

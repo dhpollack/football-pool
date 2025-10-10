@@ -140,7 +140,7 @@ const GameResultForm = ({
   return (
     <Dialog open={open} onClose={onClose} maxWidth="md" fullWidth>
       <DialogTitle>
-        Add Game Result - {game.favorite_team} vs {game.underdog_team}
+        Add Game Result - {game.home_team} vs {game.away_team}
       </DialogTitle>
       <form onSubmit={handleSubmit}>
         <DialogContent>
@@ -156,13 +156,13 @@ const GameResultForm = ({
               Week {game.week}, Season {game.season}
             </Typography>
             <Typography variant="body2" color="text.secondary">
-              Spread: {game.favorite_team} {game.spread > 0 ? "-" : "+"}{" "}
+              Spread: {game.home_team} {game.spread > 0 ? "-" : "+"}{" "}
               {Math.abs(game.spread)}
             </Typography>
 
             <Box display="flex" gap={2}>
               <TextField
-                label={`${game.favorite_team} Score`}
+                label={`${game.home_team} Score`}
                 type="number"
                 value={formData.favorite_score}
                 onChange={(e) =>
@@ -179,7 +179,7 @@ const GameResultForm = ({
                 }}
               />
               <TextField
-                label={`${game.underdog_team} Score`}
+                label={`${game.away_team} Score`}
                 type="number"
                 value={formData.underdog_score}
                 onChange={(e) =>
@@ -201,9 +201,9 @@ const GameResultForm = ({
               <Alert severity="info">
                 Calculated Outcome: {calculatedOutcome}
                 {calculatedOutcome === "FAVORITE" &&
-                  ` (${game.favorite_team} covers)`}
+                  ` (${game.home_team} covers)`}
                 {calculatedOutcome === "UNDERDOG" &&
-                  ` (${game.underdog_team} covers)`}
+                  ` (${game.away_team} covers)`}
                 {calculatedOutcome === "PUSH" && " (Spread exactly matches)"}
                 {calculatedOutcome === "TIE" && " (Scores are tied)"}
               </Alert>
@@ -229,8 +229,8 @@ const GameResultForm = ({
             </FormControl>
 
             <Typography variant="body2" color="text.secondary">
-              Final Score: {game.favorite_team} {formData.favorite_score} -{" "}
-              {game.underdog_team} {formData.underdog_score}
+              Final Score: {game.home_team} {formData.favorite_score} -{" "}
+              {game.away_team} {formData.underdog_score}
             </Typography>
           </Box>
         </DialogContent>

@@ -74,7 +74,7 @@ const UserDetailsPage = () => {
       label: "Game",
       format: (pick: PickResponse) =>
         pick.game
-          ? `${pick.game.favorite_team} vs ${pick.game.underdog_team}`
+          ? `${pick.game.home_team} vs ${pick.game.away_team}`
           : "Unknown",
     },
     {

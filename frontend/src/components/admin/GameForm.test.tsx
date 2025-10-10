@@ -45,8 +45,8 @@ describe("GameForm", () => {
       id: 1,
       week: 1,
       season: 2023,
-      favorite_team: "Team A",
-      underdog_team: "Team B",
+      home_team: "Team A",
+      away_team: "Team B",
       spread: 3.5,
       start_time: "2023-09-10T12:00:00Z",
     };
