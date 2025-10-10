@@ -506,10 +506,24 @@ func TestGameFromRequestValidation(t *testing.T) {
 				AwayTeam: "Chiefs",
 				Favorite: &favoriteHome,
 				Underdog: &underdogAway,
-				Spread:   3.5,
 			},
 			expectError: true,
 			errorMsg:    "StartTime",
+		},
+		{
+			name: "Negative spread",
+			request: GameRequest{
+				Week:      1,
+				Season:    2023,
+				HomeTeam:  "Lions",
+				AwayTeam:  "Chiefs",
+				Favorite:  &favoriteHome,
+				Underdog:  &underdogAway,
+				Spread:    -3.5,
+				StartTime: time.Now(),
+			},
+			expectError: true,
+			errorMsg:    "Spread",
 		},
 	}
 

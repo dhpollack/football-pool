@@ -26,8 +26,8 @@ describe("GameResultForm", () => {
     id: 1,
     week: 1,
     season: 2023,
-    home_team: "Team A",
-    away_team: "Team B",
+    home_team: "Kansas City Chiefs",
+    away_team: "Philadelphia Eagles",
     spread: -3.5,
     start_time: "2023-09-10T12:00:00Z",
   };
@@ -42,21 +42,25 @@ describe("GameResultForm", () => {
   it("renders the form with the correct title and game information", () => {
     render(<GameResultForm {...props} />);
     expect(
-      screen.getByText("Add Game Result - Team A vs Team B"),
+      screen.getByText(
+        "Add Game Result - Kansas City Chiefs vs Philadelphia Eagles",
+      ),
     ).toBeInTheDocument();
     expect(screen.getByText("Week 1, Season 2023")).toBeInTheDocument();
   });
 
   it("calculates and displays the outcome of the game based on the scores", () => {
     render(<GameResultForm {...props} />);
-    const favoriteScoreInput = screen.getByLabelText("Team A Score");
-    const underdogScoreInput = screen.getByLabelText("Team B Score");
+    const homeScoreInput = screen.getByLabelText("Kansas City Chiefs Score");
+    const awayScoreInput = screen.getByLabelText("Philadelphia Eagles Score");
 
-    fireEvent.change(favoriteScoreInput, { target: { value: "24" } });
-    fireEvent.change(underdogScoreInput, { target: { value: "20" } });
+    fireEvent.change(homeScoreInput, { target: { value: "24" } });
+    fireEvent.change(awayScoreInput, { target: { value: "20" } });
 
     expect(
-      screen.getByText("Calculated Outcome: FAVORITE (Team A covers)"),
+      screen.getByText(
+        "Calculated Outcome: FAVORITE (Kansas City Chiefs covers)",
+      ),
     ).toBeInTheDocument();
   });
 
@@ -70,11 +74,11 @@ describe("GameResultForm", () => {
 
   it("calls the useSubmitResult mutation when the form is submitted", async () => {
     render(<GameResultForm {...props} />);
-    const favoriteScoreInput = screen.getByLabelText("Team A Score");
-    const underdogScoreInput = screen.getByLabelText("Team B Score");
+    const homeScoreInput = screen.getByLabelText("Kansas City Chiefs Score");
+    const awayScoreInput = screen.getByLabelText("Philadelphia Eagles Score");
 
-    fireEvent.change(favoriteScoreInput, { target: { value: "24" } });
-    fireEvent.change(underdogScoreInput, { target: { value: "20" } });
+    fireEvent.change(homeScoreInput, { target: { value: "24" } });
+    fireEvent.change(awayScoreInput, { target: { value: "20" } });
 
     const outcomeSelect = screen.getByRole("combobox");
     fireEvent.mouseDown(outcomeSelect);

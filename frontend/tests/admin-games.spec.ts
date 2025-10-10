@@ -88,10 +88,10 @@ test.describe("Admin Game Management", () => {
       page.locator(E2E_CONFIG.SELECTORS.ADMIN.GAME_FORM.SEASON),
     ).toBeVisible();
     await expect(
-      page.locator(E2E_CONFIG.SELECTORS.ADMIN.GAME_FORM.FAVORITE_TEAM),
+      page.locator(E2E_CONFIG.SELECTORS.ADMIN.GAME_FORM.HOME_TEAM),
     ).toBeVisible();
     await expect(
-      page.locator(E2E_CONFIG.SELECTORS.ADMIN.GAME_FORM.UNDERDOG_TEAM),
+      page.locator(E2E_CONFIG.SELECTORS.ADMIN.GAME_FORM.AWAY_TEAM),
     ).toBeVisible();
     await expect(
       page.locator(E2E_CONFIG.SELECTORS.ADMIN.GAME_FORM.SPREAD),

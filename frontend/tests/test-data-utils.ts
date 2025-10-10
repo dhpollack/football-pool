@@ -92,8 +92,8 @@ export const createStandardTestGame = async (page: Page): Promise<number> => {
   const testGame: GameRequest = {
     week: 1,
     season: new Date().getFullYear(),
-    home_team: "Test Favorite Team",
-    away_team: "Test Underdog Team",
+    home_team: "Test Home Team",
+    away_team: "Test Away Team",
     spread: 3.5,
     start_time: new Date(Date.now() + 24 * 60 * 60 * 1000).toISOString(), // Tomorrow
   };
@@ -114,8 +114,8 @@ export const createMultipleTestGames = async (
     const testGame: GameRequest = {
       week: i + 1,
       season: new Date().getFullYear(),
-      home_team: `Test Favorite ${i + 1}`,
-      away_team: `Test Underdog ${i + 1}`,
+      home_team: `Test Home ${i + 1}`,
+      away_team: `Test Away ${i + 1}`,
       spread: 2.5 + i,
       start_time: new Date(
         Date.now() + (i + 1) * 24 * 60 * 60 * 1000,

@@ -105,8 +105,7 @@ const AdminGamesPage = () => {
     {
       id: "matchup",
       label: "Matchup",
-      format: (game: GameResponse) =>
-        `${game.home_team} vs ${game.away_team}`,
+      format: (game: GameResponse) => `${game.home_team} vs ${game.away_team}`,
     },
     {
       id: "spread",

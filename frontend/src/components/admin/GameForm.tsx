@@ -76,17 +76,19 @@ const GameForm = ({ open, onClose, onSuccess, game }: GameFormProps) => {
     }
 
     if (!formData.home_team.trim()) {
-      newErrors.home_team = "Favorite team is required";
+      newErrors.home_team = "Home team is required";
     }
 
     if (!formData.away_team.trim()) {
-      newErrors.away_team = "Underdog team is required";
+      newErrors.away_team = "Away team is required";
     } else if (formData.home_team === formData.away_team) {
       newErrors.away_team = "Teams cannot be the same";
     }
 
     if (formData.spread === undefined || formData.spread === null) {
       newErrors.spread = "Spread is required";
+    } else if (formData.spread < 0) {
+      newErrors.spread = "Spread must be greater than or equal to 0";
     }
 
     if (!formData.start_time) {
@@ -201,29 +203,25 @@ const GameForm = ({ open, onClose, onSuccess, game }: GameFormProps) => {
 
             <Box display="flex" gap={2}>
               <TextField
-                label="Favorite Team"
+                label="Home Team"
                 value={formData.home_team}
-                onChange={(e) =>
-                  handleInputChange("home_team", e.target.value)
-                }
+                onChange={(e) => handleInputChange("home_team", e.target.value)}
                 error={!!errors.home_team}
                 helperText={errors.home_team}
                 fullWidth
                 inputProps={{
-                  "data-testid": "favorite-team-input",
+                  "data-testid": "home-team-input",
                 }}
               />
               <TextField
-                label="Underdog Team"
+                label="Away Team"
                 value={formData.away_team}
-                onChange={(e) =>
-                  handleInputChange("away_team", e.target.value)
-                }
+                onChange={(e) => handleInputChange("away_team", e.target.value)}
                 error={!!errors.away_team}
                 helperText={errors.away_team}
                 fullWidth
                 inputProps={{
-                  "data-testid": "underdog-team-input",
+                  "data-testid": "away-team-input",
                 }}
               />
             </Box>
@@ -238,7 +236,7 @@ const GameForm = ({ open, onClose, onSuccess, game }: GameFormProps) => {
                 }
                 error={!!errors.spread}
                 helperText={
-                  errors.spread || "Positive number means favorite is favored"
+                  errors.spread || "Positive number means home team is favored"
                 }
                 fullWidth
                 inputProps={{
@@ -267,9 +265,8 @@ const GameForm = ({ open, onClose, onSuccess, game }: GameFormProps) => {
 
             {formData.spread !== 0 && (
               <Typography variant="body2" color="text.secondary">
-                Spread: {formData.home_team}{" "}
-                {formData.spread > 0 ? "-" : "+"} {Math.abs(formData.spread)} vs{" "}
-                {formData.away_team}
+                Spread: {formData.home_team} {formData.spread > 0 ? "-" : "+"}{" "}
+                {Math.abs(formData.spread)} vs {formData.away_team}
               </Typography>
             )}
           </Box>

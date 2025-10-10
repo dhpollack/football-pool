@@ -17,7 +17,7 @@ const mockGamesData = {
       away_team: "Team B",
       spread: 3,
       favorite: "Home",
-      underdog: "Away"
+      underdog: "Away",
     },
     {
       id: 2,
@@ -25,7 +25,7 @@ const mockGamesData = {
       away_team: "Team D",
       spread: 7,
       favorite: "Away",
-      underdog: "Home"
+      underdog: "Home",
     },
   ],
 };
