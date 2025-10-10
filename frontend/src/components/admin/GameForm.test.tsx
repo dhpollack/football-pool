@@ -45,15 +45,15 @@ describe("GameForm", () => {
       id: 1,
       week: 1,
       season: 2023,
-      favorite_team: "Team A",
-      underdog_team: "Team B",
+      home_team: "Team A",
+      away_team: "Team B",
       spread: 3.5,
       start_time: "2023-09-10T12:00:00Z",
     };
     render(<GameForm {...props} game={game} />);
     expect(screen.getByText("Edit Game")).toBeInTheDocument();
     expect(screen.getByLabelText("Week")).toHaveValue(1);
-    expect(screen.getByLabelText("Favorite Team")).toHaveValue("Team A");
+    expect(screen.getByLabelText("Home Team")).toHaveValue("Team A");
   });
 
   it("shows validation errors for invalid input", async () => {
@@ -69,15 +69,15 @@ describe("GameForm", () => {
     render(<GameForm {...props} />);
     const weekInput = screen.getByLabelText("Week");
     const seasonInput = screen.getByLabelText("Season");
-    const favoriteTeamInput = screen.getByLabelText("Favorite Team");
-    const underdogTeamInput = screen.getByLabelText("Underdog Team");
+    const homeTeamInput = screen.getByLabelText("Home Team");
+    const awayTeamInput = screen.getByLabelText("Away Team");
     const spreadInput = screen.getByLabelText("Spread");
     const startTimeInput = screen.getByLabelText("Start Time");
 
     fireEvent.change(weekInput, { target: { value: "1" } });
     fireEvent.change(seasonInput, { target: { value: "2023" } });
-    fireEvent.change(favoriteTeamInput, { target: { value: "Team A" } });
-    fireEvent.change(underdogTeamInput, { target: { value: "Team B" } });
+    fireEvent.change(homeTeamInput, { target: { value: "Team A" } });
+    fireEvent.change(awayTeamInput, { target: { value: "Team B" } });
     fireEvent.change(spreadInput, { target: { value: "3.5" } });
     fireEvent.change(startTimeInput, { target: { value: "2023-09-10T12:00" } });
 

@@ -170,12 +170,12 @@ func TestPostgreSQLCRUD(t *testing.T) {
 
 	// Test Game creation
 	game := Game{
-		Week:         1,
-		Season:       2023,
-		FavoriteTeam: "Team A",
-		UnderdogTeam: "Team B",
-		Spread:       3.5,
-		StartTime:    time.Now(),
+		Week:      1,
+		Season:    2023,
+		HomeTeam:  "Team A",
+		AwayTeam:  "Team B",
+		Spread:    3.5,
+		StartTime: time.Now(),
 	}
 	err = db.GetDB().Create(&game).Error
 	require.NoError(t, err)
@@ -253,8 +253,10 @@ func TestPostgreSQLComplexQueries(t *testing.T) {
 	db.GetDB().Create(&user1)
 	db.GetDB().Create(&user2)
 
-	game1 := Game{Week: 1, Season: 2023, FavoriteTeam: "Team A", UnderdogTeam: "Team B", Spread: 3.5, StartTime: time.Now()}
-	game2 := Game{Week: 1, Season: 2023, FavoriteTeam: "Team C", UnderdogTeam: "Team D", Spread: 7.0, StartTime: time.Now()}
+	home := "Home"
+	away := "Away"
+	game1 := Game{Week: 1, Season: 2023, HomeTeam: "Team A", AwayTeam: "Team B", Spread: 3.5, StartTime: time.Now(), Favorite: &home, Underdog: &away}
+	game2 := Game{Week: 1, Season: 2023, HomeTeam: "Team C", AwayTeam: "Team D", Spread: 7.0, StartTime: time.Now(), Favorite: &home, Underdog: &away}
 	db.GetDB().Create(&game1)
 	db.GetDB().Create(&game2)
 

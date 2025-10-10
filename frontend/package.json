@@ -7,7 +7,7 @@
     "dev": "vite",
     "dev:msw": "vite --mode msw",
     "generate": "orval --config orval.config.cjs",
-    "build": "tsc --noEmit && vite build",
+    "build": "tsc --noEmit --project tsconfig.app.json && vite build",
     "lint": "biome lint .",
     "format": "biome format --write .",
     "biome-migrate": "biome migrate",
@@ -23,6 +23,9 @@
     "test:e2e:debug": "playwright test --debug",
     "test:e2e:report": "playwright test --reporter=html",
     "playwright:install": "playwright install",
+    "playwright:install:chromium": "playwright install chromium chromium-headless-shell",
+    "playwright:install:firefox": "playwright install firefox",
+    "playwright:install:webkit": "playwright install webkit",
     "playwright:show-report": "playwright show-report",
     "msw:init": "msw init public/"
   },

@@ -98,8 +98,8 @@ export const E2E_CONFIG = {
         DELETE_BUTTON: "button svg[data-testid='DeleteIcon']",
       },
       GAME_FORM: {
-        FAVORITE_TEAM: "input[data-testid='favorite-team-input']",
-        UNDERDOG_TEAM: "input[data-testid='underdog-team-input']",
+        HOME_TEAM: "input[data-testid='home-team-input']",
+        AWAY_TEAM: "input[data-testid='away-team-input']",
         SPREAD: "input[data-testid='spread-input']",
         WEEK: "input[data-testid='week-input']",
         SEASON: "input[data-testid='season-input']",

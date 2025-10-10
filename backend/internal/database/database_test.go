@@ -53,7 +53,7 @@ func TestWeekHasGames(t *testing.T) {
 	}
 
 	// Add a game for the week
-	game := &Game{Season: season, Week: week, FavoriteTeam: "Team A", UnderdogTeam: "Team B"}
+	game := &Game{Season: season, Week: week, HomeTeam: "Team A", AwayTeam: "Team B"}
 	if err := db.GetDB().Create(game).Error; err != nil {
 		t.Fatalf("failed to create game: %v", err)
 	}

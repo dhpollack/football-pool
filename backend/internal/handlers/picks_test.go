@@ -27,11 +27,12 @@ func TestGetPicks(t *testing.T) {
 		t.Fatalf("Failed to connect to database: %v", err)
 	}
 	gormDB := db.GetDB()
+	home, away := homeAndAway()
 
 	// Create a user and a game
 	user := database.User{Email: "test@test.com", Password: "password"}
 	gormDB.Create(&user)
-	game := database.Game{Week: 1, Season: 2023, FavoriteTeam: "Lions", UnderdogTeam: "Chiefs"}
+	game := database.Game{Week: 1, Season: 2023, HomeTeam: "Lions", AwayTeam: "Chiefs", Favorite: &home, Underdog: &away}
 	gormDB.Create(&game)
 
 	// Create a pick for the user
@@ -83,11 +84,12 @@ func TestSubmitPicks(t *testing.T) {
 		t.Fatalf("Failed to connect to database: %v", err)
 	}
 	gormDB := db.GetDB()
+	home, away := homeAndAway()
 
 	// Create a user and a game
 	user := database.User{Name: "testuser", Email: "test2@test.com", Password: "password", Role: "user"}
 	gormDB.Create(&user)
-	game := database.Game{Week: 1, Season: 2023, FavoriteTeam: "Packers", UnderdogTeam: "Bears", Spread: 3.5, StartTime: time.Now()}
+	game := database.Game{Week: 1, Season: 2023, HomeTeam: "Packers", AwayTeam: "Bears", Favorite: &home, Underdog: &away, Spread: 3.5, StartTime: time.Now()}
 	gormDB.Create(&game)
 
 	// Create the picks to submit
@@ -238,6 +240,7 @@ func TestAdminListPicks(t *testing.T) {
 		t.Fatalf("Failed to connect to database: %v", err)
 	}
 	gormDB := db.GetDB()
+	home, away := homeAndAway()
 
 	// Create test data
 	user1 := database.User{Email: "user1@test.com", Password: "password"}
@@ -245,8 +248,8 @@ func TestAdminListPicks(t *testing.T) {
 	gormDB.Create(&user1)
 	gormDB.Create(&user2)
 
-	game1 := database.Game{Week: 1, Season: 2024, FavoriteTeam: "Lions", UnderdogTeam: "Chiefs"}
-	game2 := database.Game{Week: 2, Season: 2024, FavoriteTeam: "Packers", UnderdogTeam: "Bears"}
+	game1 := database.Game{Week: 1, Season: 2024, HomeTeam: "Lions", AwayTeam: "Chiefs", Favorite: &home, Underdog: &away}
+	game2 := database.Game{Week: 2, Season: 2024, HomeTeam: "Packers", AwayTeam: "Bears", Favorite: &home, Underdog: &away}
 	gormDB.Create(&game1)
 	gormDB.Create(&game2)
 
@@ -335,12 +338,13 @@ func TestAdminDeletePick(t *testing.T) {
 		t.Fatalf("Failed to connect to database: %v", err)
 	}
 	gormDB := db.GetDB()
+	home, away := homeAndAway()
 
 	// Create test data
 	user := database.User{Email: "user@test.com", Password: "password"}
 	gormDB.Create(&user)
 
-	game := database.Game{Week: 1, Season: 2024, FavoriteTeam: "Lions", UnderdogTeam: "Chiefs"}
+	game := database.Game{Week: 1, Season: 2024, HomeTeam: "Lions", AwayTeam: "Chiefs", Favorite: &home, Underdog: &away}
 	gormDB.Create(&game)
 
 	pick := database.Pick{UserID: user.ID, GameID: game.ID, Picked: "favorite", Rank: 1}
@@ -375,11 +379,12 @@ func TestAdminSubmitPicks(t *testing.T) {
 		t.Fatalf("Failed to connect to database: %v", err)
 	}
 	gormDB := db.GetDB()
+	home, away := homeAndAway()
 
 	// Create a user and a game
 	user := database.User{Name: "testuser", Email: "test2@test.com", Password: "password", Role: "user"}
 	gormDB.Create(&user)
-	game := database.Game{Week: 1, Season: 2023, FavoriteTeam: "Packers", UnderdogTeam: "Bears", Spread: 3.5, StartTime: time.Now()}
+	game := database.Game{Week: 1, Season: 2023, HomeTeam: "Packers", AwayTeam: "Bears", Favorite: &home, Underdog: &away, Spread: 3.5, StartTime: time.Now()}
 	gormDB.Create(&game)
 
 	// Create the picks to submit
@@ -433,13 +438,14 @@ func TestAdminGetPicksByWeek(t *testing.T) {
 		t.Fatalf("Failed to connect to database: %v", err)
 	}
 	gormDB := db.GetDB()
+	home, away := homeAndAway()
 
 	// Create test data
 	user1 := database.User{Email: "user1@test.com", Password: "password"}
 	gormDB.Create(&user1)
 
-	game1 := database.Game{Week: 1, Season: 2024, FavoriteTeam: "Lions", UnderdogTeam: "Chiefs"}
-	game2 := database.Game{Week: 2, Season: 2024, FavoriteTeam: "Packers", UnderdogTeam: "Bears"}
+	game1 := database.Game{Week: 1, Season: 2024, HomeTeam: "Lions", AwayTeam: "Chiefs", Favorite: &home, Underdog: &away}
+	game2 := database.Game{Week: 2, Season: 2024, HomeTeam: "Packers", AwayTeam: "Bears", Favorite: &home, Underdog: &away}
 	gormDB.Create(&game1)
 	gormDB.Create(&game2)
 
@@ -526,6 +532,7 @@ func TestAdminGetPicksByUser(t *testing.T) {
 		t.Fatalf("Failed to connect to database: %v", err)
 	}
 	gormDB := db.GetDB()
+	home, away := homeAndAway()
 
 	// Create test data
 	user1 := database.User{Email: "user1@test.com", Password: "password"}
@@ -533,7 +540,7 @@ func TestAdminGetPicksByUser(t *testing.T) {
 	gormDB.Create(&user1)
 	gormDB.Create(&user2)
 
-	game1 := database.Game{Week: 1, Season: 2024, FavoriteTeam: "Lions", UnderdogTeam: "Chiefs"}
+	game1 := database.Game{Week: 1, Season: 2024, HomeTeam: "Lions", AwayTeam: "Chiefs", Favorite: &home, Underdog: &away}
 	gormDB.Create(&game1)
 
 	pick1 := database.Pick{UserID: user1.ID, GameID: game1.ID, Picked: "favorite", Rank: 1}

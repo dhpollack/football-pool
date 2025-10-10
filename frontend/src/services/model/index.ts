@@ -29,6 +29,7 @@ export * from "./resultResponse";
 export * from "./seasonResult";
 export * from "./survivorPickRequest";
 export * from "./survivorPickResponse";
+export * from "./teamDesignation";
 export * from "./userListResponse";
 export * from "./userRequest";
 export * from "./userResponse";

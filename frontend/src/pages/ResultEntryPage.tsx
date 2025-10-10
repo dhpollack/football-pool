@@ -179,9 +179,9 @@ const ResultEntryPage = () => {
                   sx={{ "&:last-child td, &:last-child th": { border: 0 } }}
                 >
                   <TableCell component="th" scope="row">
-                    {game.favorite_team}
+                    {game.home_team}
                   </TableCell>
-                  <TableCell>{game.underdog_team}</TableCell>
+                  <TableCell>{game.away_team}</TableCell>
                   <TableCell>{game.spread}</TableCell>
                   <TableCell>
                     <TextField

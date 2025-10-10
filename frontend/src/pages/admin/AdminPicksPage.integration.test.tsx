@@ -29,8 +29,8 @@ describe("AdminPicksPage (Integration)", () => {
       },
       game: {
         id: 1,
-        favorite_team: "Team A",
-        underdog_team: "Team B",
+        home_team: "Team A",
+        away_team: "Team B",
         week: 1,
         season: 2023,
         spread: 3.5,
@@ -54,8 +54,8 @@ describe("AdminPicksPage (Integration)", () => {
       },
       game: {
         id: 2,
-        favorite_team: "Team C",
-        underdog_team: "Team D",
+        home_team: "Team C",
+        away_team: "Team D",
         week: 1,
         season: 2023,
         spread: 7,

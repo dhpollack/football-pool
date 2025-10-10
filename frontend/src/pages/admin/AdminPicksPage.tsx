@@ -55,8 +55,8 @@ const AdminPicksPage = () => {
         const searchLower = searchTerm.toLowerCase();
         return (
           pick.user?.email?.toLowerCase().includes(searchLower) ||
-          pick.game?.favorite_team?.toLowerCase().includes(searchLower) ||
-          pick.game?.underdog_team?.toLowerCase().includes(searchLower) ||
+          pick.game?.home_team?.toLowerCase().includes(searchLower) ||
+          pick.game?.away_team?.toLowerCase().includes(searchLower) ||
           pick.picked?.toLowerCase().includes(searchLower)
         );
       })
@@ -133,7 +133,7 @@ const AdminPicksPage = () => {
       label: "Game",
       format: (pick: PickResponse) =>
         pick.game
-          ? `${pick.game.favorite_team} vs ${pick.game.underdog_team}`
+          ? `${pick.game.home_team} vs ${pick.game.away_team}`
           : "Unknown",
     },
     {

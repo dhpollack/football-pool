@@ -97,7 +97,10 @@ async function _registerUser(
           }
         })
         .catch((error) => {
-          console.log("Register response: Could not access body -", error.message);
+          console.log(
+            "Register response: Could not access body -",
+            error.message,
+          );
         });
     }
   });
