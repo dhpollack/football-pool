@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.4.0](https://github.com/dhpollack/football-pool/compare/frontend-v0.3.2...frontend-v0.4.0) (2025-10-13)
+
+
+### Features
+
+* add The Odds API integration and spread validation ([#82](https://github.com/dhpollack/football-pool/issues/82)) ([d38b71d](https://github.com/dhpollack/football-pool/commit/d38b71ddc64008eeb353987f1a60059611b3d57e))
+
 ## [0.3.2](https://github.com/dhpollack/football-pool/compare/frontend-v0.3.1...frontend-v0.3.2) (2025-10-08)
 
 

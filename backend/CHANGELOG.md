@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.2.0](https://github.com/dhpollack/football-pool/compare/v1.1.2...v1.2.0) (2025-10-13)
+
+
+### Features
+
+* add The Odds API integration and spread validation ([#82](https://github.com/dhpollack/football-pool/issues/82)) ([d38b71d](https://github.com/dhpollack/football-pool/commit/d38b71ddc64008eeb353987f1a60059611b3d57e))
+
 ## [1.1.2](https://github.com/dhpollack/football-pool/compare/v1.1.1...v1.1.2) (2025-10-08)
 
 
