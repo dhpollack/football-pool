@@ -214,8 +214,12 @@ describe("WeekForm", () => {
           data: {
             week_number: 5,
             season: 2025,
-            week_start_time: expect.stringMatching(/^2025-10-05T\d{2}:00:00\.000Z$/),
-            week_end_time: expect.stringMatching(/^2025-10-05T\d{2}:00:00\.000Z$/),
+            week_start_time: expect.stringMatching(
+              /^2025-10-05T\d{2}:00:00\.000Z$/,
+            ),
+            week_end_time: expect.stringMatching(
+              /^2025-10-05T\d{2}:00:00\.000Z$/,
+            ),
             is_active: false,
           },
         });
@@ -323,8 +327,12 @@ describe("WeekForm", () => {
           data: {
             week_number: 4,
             season: 2024,
-            week_start_time: expect.stringMatching(/^2024-09-05T\d{2}:00:00\.000Z$/),
-            week_end_time: expect.stringMatching(/^2024-09-09T\d{2}:59:00\.000Z$/),
+            week_start_time: expect.stringMatching(
+              /^2024-09-05T\d{2}:00:00\.000Z$/,
+            ),
+            week_end_time: expect.stringMatching(
+              /^2024-09-09T\d{2}:59:00\.000Z$/,
+            ),
             is_active: true,
           },
         });

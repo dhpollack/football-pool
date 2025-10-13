@@ -4,13 +4,16 @@
  * Football Pool API
  * OpenAPI spec version: 1.0.0
  */
+import type { TeamDesignation } from "./teamDesignation";
 
 export interface GameResponse {
   id: number;
   week: number;
   season: number;
-  favorite_team: string;
-  underdog_team: string;
+  home_team: string;
+  away_team: string;
+  favorite?: TeamDesignation;
+  underdog?: TeamDesignation;
   spread: number;
   start_time: string;
   created_at: string;

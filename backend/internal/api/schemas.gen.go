@@ -11,6 +11,12 @@ const (
 	BearerAuthScopes = "bearerAuth.Scopes"
 )
 
+// Defines values for TeamDesignation.
+const (
+	Away TeamDesignation = "Away"
+	Home TeamDesignation = "Home"
+)
+
 // ErrorResponse defines model for ErrorResponse.
 type ErrorResponse struct {
 	Error   string  `json:"error"`
@@ -25,25 +31,29 @@ type GameListResponse struct {
 
 // GameRequest defines model for GameRequest.
 type GameRequest struct {
-	FavoriteTeam string    `json:"favorite_team"`
-	Season       int       `json:"season"`
-	Spread       float32   `json:"spread"`
-	StartTime    time.Time `json:"start_time"`
-	UnderdogTeam string    `json:"underdog_team"`
-	Week         int       `json:"week"`
+	AwayTeam  string           `json:"away_team"`
+	Favorite  *TeamDesignation `json:"favorite,omitempty"`
+	HomeTeam  string           `json:"home_team"`
+	Season    int              `json:"season"`
+	Spread    float32          `json:"spread"`
+	StartTime time.Time        `json:"start_time"`
+	Underdog  *TeamDesignation `json:"underdog,omitempty"`
+	Week      int              `json:"week"`
 }
 
 // GameResponse defines model for GameResponse.
 type GameResponse struct {
-	CreatedAt    time.Time `json:"created_at"`
-	FavoriteTeam string    `json:"favorite_team"`
-	Id           uint      `json:"id"`
-	Season       int       `json:"season"`
-	Spread       float32   `json:"spread"`
-	StartTime    time.Time `json:"start_time"`
-	UnderdogTeam string    `json:"underdog_team"`
-	UpdatedAt    time.Time `json:"updated_at"`
-	Week         int       `json:"week"`
+	AwayTeam  string           `json:"away_team"`
+	CreatedAt time.Time        `json:"created_at"`
+	Favorite  *TeamDesignation `json:"favorite,omitempty"`
+	HomeTeam  string           `json:"home_team"`
+	Id        uint             `json:"id"`
+	Season    int              `json:"season"`
+	Spread    float32          `json:"spread"`
+	StartTime time.Time        `json:"start_time"`
+	Underdog  *TeamDesignation `json:"underdog,omitempty"`
+	UpdatedAt time.Time        `json:"updated_at"`
+	Week      int              `json:"week"`
 }
 
 // LoginRequest defines model for LoginRequest.
@@ -166,6 +176,9 @@ type SurvivorPickResponse struct {
 	UserId    uint          `json:"user_id"`
 	Week      int           `json:"week"`
 }
+
+// TeamDesignation defines model for TeamDesignation.
+type TeamDesignation string
 
 // UserListResponse defines model for UserListResponse.
 type UserListResponse struct {

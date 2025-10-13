@@ -10,6 +10,24 @@ import (
 
 var validate = validator.New()
 
+// ConvertStringPointerToTeamDesignationPointer converts a string pointer to a TeamDesignation pointer.
+func ConvertStringPointerToTeamDesignationPointer(s *string) *TeamDesignation {
+	if s == nil {
+		return nil
+	}
+	t := TeamDesignation(*s)
+	return &t
+}
+
+// ConvertTeamDesignationPointerToStringPointer converts a TeamDesignation pointer to a string pointer.
+func ConvertTeamDesignationPointerToStringPointer(t *TeamDesignation) *string {
+	if t == nil {
+		return nil
+	}
+	s := string(*t)
+	return &s
+}
+
 // UserToResponse converts a database User to a UserResponse.
 func UserToResponse(user database.User) UserResponse {
 	response := UserResponse{
@@ -82,28 +100,34 @@ func UserFromRequest(req UserRequest) (database.User, error) {
 
 // GameToResponse converts a database Game to a GameResponse.
 func GameToResponse(game database.Game) GameResponse {
-	return GameResponse{
-		Id:           game.ID,
-		Week:         game.Week,
-		Season:       game.Season,
-		FavoriteTeam: game.FavoriteTeam,
-		UnderdogTeam: game.UnderdogTeam,
-		Spread:       game.Spread,
-		StartTime:    game.StartTime,
-		CreatedAt:    game.CreatedAt,
-		UpdatedAt:    game.UpdatedAt,
+	response := GameResponse{
+		Id:        game.ID,
+		Week:      game.Week,
+		Season:    game.Season,
+		HomeTeam:  game.HomeTeam,
+		AwayTeam:  game.AwayTeam,
+		Spread:    game.Spread,
+		Favorite:  ConvertStringPointerToTeamDesignationPointer(game.Favorite),
+		Underdog:  ConvertStringPointerToTeamDesignationPointer(game.Underdog),
+		StartTime: game.StartTime,
+		CreatedAt: game.CreatedAt,
+		UpdatedAt: game.UpdatedAt,
 	}
+
+	return response
 }
 
 // GameFromRequest converts a GameRequest to a database Game.
 func GameFromRequest(req GameRequest) (database.Game, error) {
 	game := database.Game{
-		Week:         req.Week,
-		Season:       req.Season,
-		FavoriteTeam: req.FavoriteTeam,
-		UnderdogTeam: req.UnderdogTeam,
-		Spread:       req.Spread,
-		StartTime:    req.StartTime,
+		Week:      req.Week,
+		Season:    req.Season,
+		HomeTeam:  req.HomeTeam,
+		AwayTeam:  req.AwayTeam,
+		Spread:    req.Spread,
+		Favorite:  ConvertTeamDesignationPointerToStringPointer(req.Favorite),
+		Underdog:  ConvertTeamDesignationPointerToStringPointer(req.Underdog),
+		StartTime: req.StartTime,
 	}
 
 	if err := validate.Struct(game); err != nil {

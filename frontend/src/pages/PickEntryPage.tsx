@@ -221,9 +221,11 @@ const PickEntryPage = () => {
                 sx={{ "&:last-child td, &:last-child th": { border: 0 } }}
               >
                 <TableCell component="th" scope="row">
-                  {game.favorite_team}
+                  {game.favorite === "Home" ? game.home_team : game.away_team}
                 </TableCell>
-                <TableCell>{game.underdog_team}</TableCell>
+                <TableCell>
+                  {game.underdog === "Home" ? game.home_team : game.away_team}
+                </TableCell>
                 <TableCell>{game.spread}</TableCell>
                 <TableCell>
                   <FormControl fullWidth>
@@ -236,8 +238,16 @@ const PickEntryPage = () => {
                       }
                       data-testid={`pick-select-${game.id}`}
                     >
-                      <MenuItem value="favorite">{game.favorite_team}</MenuItem>
-                      <MenuItem value="underdog">{game.underdog_team}</MenuItem>
+                      <MenuItem value="favorite">
+                        {game.favorite === "Home"
+                          ? game.home_team
+                          : game.away_team}
+                      </MenuItem>
+                      <MenuItem value="underdog">
+                        {game.underdog === "Home"
+                          ? game.home_team
+                          : game.away_team}
+                      </MenuItem>
                     </Select>
                   </FormControl>
                 </TableCell>

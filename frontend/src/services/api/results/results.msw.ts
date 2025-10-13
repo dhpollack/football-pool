@@ -9,6 +9,7 @@ import { faker } from "@faker-js/faker";
 import { HttpResponse, delay, http } from "msw";
 import type { RequestHandlerOptions } from "msw";
 
+import { TeamDesignation } from "../../model";
 import type {
   ErrorResponse,
   ResultResponse,
@@ -88,8 +89,16 @@ export const getSubmitResultResponseMock = (
       id: faker.number.int({ min: undefined, max: undefined }),
       week: faker.number.int({ min: undefined, max: undefined }),
       season: faker.number.int({ min: undefined, max: undefined }),
-      favorite_team: faker.string.alpha({ length: { min: 10, max: 20 } }),
-      underdog_team: faker.string.alpha({ length: { min: 10, max: 20 } }),
+      home_team: faker.string.alpha({ length: { min: 10, max: 20 } }),
+      away_team: faker.string.alpha({ length: { min: 10, max: 20 } }),
+      favorite: faker.helpers.arrayElement([
+        faker.helpers.arrayElement(Object.values(TeamDesignation)),
+        undefined,
+      ]),
+      underdog: faker.helpers.arrayElement([
+        faker.helpers.arrayElement(Object.values(TeamDesignation)),
+        undefined,
+      ]),
       spread: faker.number.float({
         min: undefined,
         max: undefined,
@@ -119,8 +128,16 @@ export const getSubmitResultResponseMock201 = (
       id: faker.number.int({ min: undefined, max: undefined }),
       week: faker.number.int({ min: undefined, max: undefined }),
       season: faker.number.int({ min: undefined, max: undefined }),
-      favorite_team: faker.string.alpha({ length: { min: 10, max: 20 } }),
-      underdog_team: faker.string.alpha({ length: { min: 10, max: 20 } }),
+      home_team: faker.string.alpha({ length: { min: 10, max: 20 } }),
+      away_team: faker.string.alpha({ length: { min: 10, max: 20 } }),
+      favorite: faker.helpers.arrayElement([
+        faker.helpers.arrayElement(Object.values(TeamDesignation)),
+        undefined,
+      ]),
+      underdog: faker.helpers.arrayElement([
+        faker.helpers.arrayElement(Object.values(TeamDesignation)),
+        undefined,
+      ]),
       spread: faker.number.float({
         min: undefined,
         max: undefined,

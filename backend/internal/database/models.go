@@ -31,12 +31,14 @@ type Player struct {
 // swagger:model
 type Game struct {
 	gorm.Model
-	Week         int    `gorm:"index:idx_game_week_season" validate:"required,ne=0"`
-	Season       int    `gorm:"index:idx_game_week_season" validate:"required,ne=0"`
-	FavoriteTeam string `validate:"required"`
-	UnderdogTeam string `validate:"required"`
-	Spread       float32
-	StartTime    time.Time `validate:"required"`
+	Week      int       `gorm:"index:idx_game_week_season" validate:"required,ne=0"`
+	Season    int       `gorm:"index:idx_game_week_season" validate:"required,ne=0"`
+	HomeTeam  string    `gorm:"column:favorite_team" validate:"required"`
+	AwayTeam  string    `gorm:"column:underdog_team" validate:"required"`
+	Favorite  *string   `validate:"omitempty,oneof=Home Away"`
+	Underdog  *string   `validate:"omitempty,oneof=Home Away"`
+	Spread    float32   `validate:"gte=0"`
+	StartTime time.Time `validate:"required"`
 }
 
 // Pick represents a user's pick for a game

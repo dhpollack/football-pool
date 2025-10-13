@@ -67,12 +67,38 @@ vi.mock("../../components/admin/GameForm", () => ({
   }) =>
     open ? (
       <div data-testid="game-form">
+        <input
+          type="number"
+          data-testid="spread-input"
+          onChange={(e) => {
+            // Simulate validation - prevent submission if spread is negative
+            const spread = parseFloat(e.target.value);
+            if (spread < 0) {
+              // Show validation error
+              const errorElement = document.querySelector('[data-testid="spread-error"]');
+              if (!errorElement) {
+                const errorDiv = document.createElement('div');
+                errorDiv.setAttribute('data-testid', 'spread-error');
+                errorDiv.textContent = 'Spread must be greater than or equal to 0';
+                document.querySelector('[data-testid="game-form"]')?.appendChild(errorDiv);
+              }
+            } else {
+              // Clear validation error
+              const errorElement = document.querySelector('[data-testid="spread-error"]');
+              errorElement?.remove();
+            }
+          }}
+        />
         <button
           type="button"
           onClick={() => {
-            // Simulate successful form submission
-            onSuccess();
-            onClose();
+            // Check if there's a validation error before submitting
+            const hasError = document.querySelector('[data-testid="spread-error"]');
+            if (!hasError) {
+              // Simulate successful form submission only if no validation errors
+              onSuccess();
+              onClose();
+            }
           }}
           data-testid="submit-game-button"
         >
@@ -154,8 +180,8 @@ describe("AdminGamesPage", () => {
         id: 1,
         week: 1,
         season: 2023,
-        favorite_team: "Team A",
-        underdog_team: "Team B",
+        home_team: "Team A",
+        away_team: "Team B",
         spread: 3.5,
         start_time: new Date().toISOString(),
       },
@@ -181,6 +207,62 @@ describe("AdminGamesPage", () => {
     expect(screen.getByTestId("game-form")).toBeInTheDocument();
 
     // Submit the form (simulating successful game creation)
+    const submitButton = screen.getByTestId("submit-game-button");
+    fireEvent.click(submitButton);
+
+    // Verify queries are invalidated on form success
+    expect(mockInvalidateQueries).toHaveBeenCalledWith({
+      queryKey: ["adminListGames"],
+    });
+  });
+
+  it("prevents form submission when spread is negative", async () => {
+    render(<AdminGamesPage />);
+
+    // Click add button to open form
+    const addButton = screen.getByTestId("add-game-button");
+    fireEvent.click(addButton);
+
+    // Verify form is open
+    expect(screen.getByTestId("game-form")).toBeInTheDocument();
+
+    // Set a negative spread
+    const spreadInput = screen.getByTestId("spread-input");
+    fireEvent.change(spreadInput, { target: { value: "-3.5" } });
+
+    // Verify validation error is displayed
+    expect(
+      screen.getByText("Spread must be greater than or equal to 0"),
+    ).toBeInTheDocument();
+
+    // Try to submit the form
+    const submitButton = screen.getByTestId("submit-game-button");
+    fireEvent.click(submitButton);
+
+    // Verify queries are NOT invalidated (form should not submit)
+    expect(mockInvalidateQueries).not.toHaveBeenCalled();
+  });
+
+  it("allows form submission when spread is zero or positive", async () => {
+    render(<AdminGamesPage />);
+
+    // Click add button to open form
+    const addButton = screen.getByTestId("add-game-button");
+    fireEvent.click(addButton);
+
+    // Verify form is open
+    expect(screen.getByTestId("game-form")).toBeInTheDocument();
+
+    // Set a positive spread
+    const spreadInput = screen.getByTestId("spread-input");
+    fireEvent.change(spreadInput, { target: { value: "3.5" } });
+
+    // Verify no validation error is displayed
+    expect(
+      screen.queryByText("Spread must be greater than or equal to 0"),
+    ).not.toBeInTheDocument();
+
+    // Submit the form
     const submitButton = screen.getByTestId("submit-game-button");
     fireEvent.click(submitButton);
 

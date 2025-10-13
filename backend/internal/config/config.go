@@ -91,6 +91,13 @@ type Config struct {
 	E2E struct {
 		Test bool `mapstructure:"test"`
 	} `mapstructure:"e2e"`
+
+	// TheOddsAPI configuration
+	TheOddsAPI struct {
+		BaseURL string `mapstructure:"base_url"`
+		APIKey  string `mapstructure:"api_key"`
+		Region  string `mapstructure:"region"`
+	} `mapstructure:"theoddsapi"`
 }
 
 // LoadConfig loads configuration from environment variables and config file.
@@ -154,6 +161,11 @@ func setDefaults() {
 
 	// E2E testing defaults
 	viper.SetDefault("e2e.test", false)
+
+	// TheOddsAPI defaults
+	viper.SetDefault("theoddsapi.base_url", "https://api.the-odds-api.com/v4")
+	viper.SetDefault("theoddsapi.region", "us")
+	viper.SetDefault("theoddsapi.api_key", "")
 }
 
 func bindEnvVars() {
@@ -185,6 +197,11 @@ func bindEnvVars() {
 
 	// E2E testing environment variables
 	viper.BindEnv("e2e.test", "E2E_TEST")
+
+	// TheOddsAPI environment variables
+	viper.BindEnv("theoddsapi.base_url", "THEODDSAPI_BASE_URL")
+	viper.BindEnv("theoddsapi.api_key", "THEODDSAPI_API_KEY")
+	viper.BindEnv("theoddsapi.region", "THEODDSAPI_REGION")
 }
 
 func databaseDecodeHook() mapstructure.DecodeHookFunc {

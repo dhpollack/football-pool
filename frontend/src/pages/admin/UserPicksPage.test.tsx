@@ -51,7 +51,7 @@ vi.mock("../../components/admin/AdminDataTable", () => ({
             <div key={pick.id} data-testid="pick-row">
               <span data-testid="pick-game">
                 {pick.game
-                  ? `${pick.game.favorite_team} vs ${pick.game.underdog_team}`
+                  ? `${pick.game.home_team} vs ${pick.game.away_team}`
                   : "Unknown"}
               </span>
               <span data-testid="pick-choice">{pick.picked}</span>
@@ -189,8 +189,10 @@ describe("UserPicksPage", () => {
           },
           game: {
             id: 1,
-            favorite_team: "Team A",
-            underdog_team: "Team B",
+            home_team: "Team A",
+            away_team: "Team B",
+            favorite: "Home",
+            underdog: "Away",
             week: 1,
             season: 2023,
             spread: 3.5,
@@ -296,8 +298,10 @@ describe("UserPicksPage", () => {
           },
           game: {
             id: 1,
-            favorite_team: "Team A",
-            underdog_team: "Team B",
+            home_team: "Team A",
+            away_team: "Team B",
+            favorite: "Home",
+            underdog: "Away",
             week: 1,
             season: 2023,
           },
@@ -315,8 +319,10 @@ describe("UserPicksPage", () => {
           },
           game: {
             id: 2,
-            favorite_team: "Team C",
-            underdog_team: "Team D",
+            home_team: "Team C",
+            away_team: "Team D",
+            favorite: "Away",
+            underdog: "Home",
             week: 2,
             season: 2023,
           },
@@ -407,8 +413,10 @@ describe("UserPicksPage", () => {
           },
           game: {
             id: 1,
-            favorite_team: "Team A",
-            underdog_team: "Team B",
+            home_team: "Team A",
+            away_team: "Team B",
+            favorite: "Home",
+            underdog: "Away",
             week: 1,
             season: 2023,
           },
@@ -457,5 +465,112 @@ describe("UserPicksPage", () => {
 
     // Note: The actual disabled logic is: disabled={picksLoading || userId === 0}
     // Since input validation prevents userId from being 0, this test is more theoretical
+  });
+
+  it("handles picks with proper team designation mapping", () => {
+    const mockUser = getGetProfileResponseMock({
+      id: 1,
+      email: "test@example.com",
+      name: "Test User",
+      role: "user",
+    });
+
+    // Test both scenarios: Home team as favorite and Away team as favorite
+    const mockPicks = getGetPicksResponseMock({
+      picks: [
+        {
+          id: 1,
+          user: {
+            id: 1,
+            email: "test@example.com",
+            name: "Test User",
+            role: "user",
+            created_at: "2023-09-10T12:00:00Z",
+            updated_at: "2023-09-10T12:00:00Z",
+          },
+          game: {
+            id: 1,
+            home_team: "Chiefs",
+            away_team: "Packers",
+            favorite: "Home",
+            underdog: "Away",
+            week: 1,
+            season: 2023,
+            spread: 3.5,
+            start_time: "2023-09-10T12:00:00Z",
+            created_at: "2023-09-10T12:00:00Z",
+            updated_at: "2023-09-10T12:00:00Z",
+          },
+          picked: "favorite",
+          created_at: "2023-09-10T12:00:00Z",
+          updated_at: "2023-09-10T12:00:00Z",
+        },
+        {
+          id: 2,
+          user: {
+            id: 1,
+            email: "test@example.com",
+            name: "Test User",
+            role: "user",
+            created_at: "2023-09-10T12:00:00Z",
+            updated_at: "2023-09-10T12:00:00Z",
+          },
+          game: {
+            id: 2,
+            home_team: "Bears",
+            away_team: "Lions",
+            favorite: "Away",
+            underdog: "Home",
+            week: 2,
+            season: 2023,
+            spread: -2.5,
+            start_time: "2023-09-10T12:00:00Z",
+            created_at: "2023-09-10T12:00:00Z",
+            updated_at: "2023-09-10T12:00:00Z",
+          },
+          picked: "underdog",
+          created_at: "2023-09-10T12:00:00Z",
+          updated_at: "2023-09-10T12:00:00Z",
+        },
+      ],
+      pagination: {
+        page: 1,
+        limit: 20,
+        total: 2,
+      },
+    });
+
+    mockUseAdminGetUser.mockReturnValue({
+      data: mockUser,
+      error: null,
+      isLoading: false,
+    });
+
+    mockUseAdminGetPicksByUser.mockReturnValue({
+      data: mockPicks,
+      error: null,
+      isLoading: false,
+      refetch: mockRefetch,
+    });
+
+    renderWithRouter();
+
+    // Verify both picks are rendered with their pick choices
+    const pickRows = screen.getAllByTestId("pick-row");
+    expect(pickRows).toHaveLength(2);
+
+    const pickChoices = screen.getAllByTestId("pick-choice");
+    expect(pickChoices[0]).toHaveTextContent("favorite");
+    expect(pickChoices[1]).toHaveTextContent("underdog");
+
+    // Verify the games are displayed correctly
+    const gameDisplays = screen.getAllByTestId("pick-game");
+    expect(gameDisplays[0]).toHaveTextContent("Chiefs vs Packers");
+    expect(gameDisplays[1]).toHaveTextContent("Bears vs Lions");
+
+    // Verify the summary statistics show correct counts
+    // Note: The component shows summary stats when picks.length > 0
+    // We can't easily test the exact numbers due to how the stats are rendered
+    // but we can verify the component renders without errors
   });
 });

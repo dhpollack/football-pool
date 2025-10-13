@@ -19,11 +19,12 @@ func TestSubmitResult(t *testing.T) {
 		t.Fatalf("Failed to connect to database: %v", err)
 	}
 	gormDB := db.GetDB()
+	home, away := homeAndAway()
 
 	// Create an admin user and a game
 	admin := database.User{Email: "admin@test.com", Password: "password", Role: "admin"}
 	gormDB.Create(&admin)
-	game := database.Game{Week: 1, Season: 2023, FavoriteTeam: "Lions", UnderdogTeam: "Chiefs", Spread: 3.5}
+	game := database.Game{Week: 1, Season: 2023, HomeTeam: "Lions", AwayTeam: "Chiefs", Spread: 3.5, Favorite: &home, Underdog: &away}
 	gormDB.Create(&game)
 
 	// Create the result to submit
@@ -67,6 +68,7 @@ func TestGetWeeklyResults(t *testing.T) {
 		t.Fatalf("Failed to connect to database: %v", err)
 	}
 	gormDB := db.GetDB()
+	home, away := homeAndAway()
 
 	// Create users, games, picks, and results
 	user1 := database.User{Name: "User 1", Email: "user1@test.com", Password: "password"}
@@ -74,9 +76,9 @@ func TestGetWeeklyResults(t *testing.T) {
 	user2 := database.User{Name: "User 2", Email: "user2@test.com", Password: "password"}
 	gormDB.Create(&user2)
 
-	game1 := database.Game{Week: 1, Season: 2023, FavoriteTeam: "Lions", UnderdogTeam: "Chiefs", Spread: 3.5}
+	game1 := database.Game{Week: 1, Season: 2023, HomeTeam: "Lions", AwayTeam: "Chiefs", Spread: 3.5, Favorite: &home, Underdog: &away}
 	gormDB.Create(&game1)
-	game2 := database.Game{Week: 1, Season: 2023, FavoriteTeam: "Eagles", UnderdogTeam: "Patriots", Spread: 7.5}
+	game2 := database.Game{Week: 1, Season: 2023, HomeTeam: "Eagles", AwayTeam: "Patriots", Spread: 7.5, Favorite: &home, Underdog: &away}
 	gormDB.Create(&game2)
 
 	pick1 := database.Pick{UserID: user1.ID, GameID: game1.ID, Picked: "favorite", Rank: 16}
@@ -153,6 +155,7 @@ func TestGetSeasonResults(t *testing.T) {
 		t.Fatalf("Failed to connect to database: %v", err)
 	}
 	gormDB := db.GetDB()
+	home, away := homeAndAway()
 
 	// Create users, games, picks, and results
 	user1 := database.User{Name: "User 1", Email: "user3@test.com", Password: "password"}
@@ -160,9 +163,9 @@ func TestGetSeasonResults(t *testing.T) {
 	user2 := database.User{Name: "User 2", Email: "user4@test.com", Password: "password"}
 	gormDB.Create(&user2)
 
-	game1 := database.Game{Week: 1, Season: 2024, FavoriteTeam: "Lions", UnderdogTeam: "Chiefs", Spread: 3.5}
+	game1 := database.Game{Week: 1, Season: 2024, HomeTeam: "Lions", AwayTeam: "Chiefs", Spread: 3.5, Favorite: &home, Underdog: &away}
 	gormDB.Create(&game1)
-	game2 := database.Game{Week: 2, Season: 2024, FavoriteTeam: "Eagles", UnderdogTeam: "Patriots", Spread: 7.5}
+	game2 := database.Game{Week: 2, Season: 2024, HomeTeam: "Eagles", AwayTeam: "Patriots", Spread: 7.5, Favorite: &home, Underdog: &away}
 	gormDB.Create(&game2)
 
 	pick1 := database.Pick{UserID: user1.ID, GameID: game1.ID, Picked: "favorite", Rank: 16}

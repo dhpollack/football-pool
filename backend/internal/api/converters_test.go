@@ -9,6 +9,11 @@ import (
 	"gorm.io/gorm"
 )
 
+const (
+	HomeConst string = "Home"
+	AwayConst string = "Away"
+)
+
 func TestUserToResponse(t *testing.T) {
 	now := time.Now()
 	user := database.User{
@@ -88,49 +93,65 @@ func TestUserFromRequest(t *testing.T) {
 
 func TestGameToResponse(t *testing.T) {
 	now := time.Now()
+	home := "Home"
+	away := "Away"
 	game := database.Game{
 		Model: gorm.Model{
 			ID:        1,
 			CreatedAt: now,
 			UpdatedAt: now,
 		},
-		Week:         1,
-		Season:       2023,
-		FavoriteTeam: "Lions",
-		UnderdogTeam: "Chiefs",
-		Spread:       3.5,
-		StartTime:    now,
+		Week:      1,
+		Season:    2023,
+		HomeTeam:  "Lions",
+		AwayTeam:  "Chiefs",
+		Favorite:  &home,
+		Underdog:  &away,
+		Spread:    3.5,
+		StartTime: now,
 	}
 
 	response := GameToResponse(game)
+	expectedFav := ConvertStringPointerToTeamDesignationPointer(game.Favorite)
+	expectedUnd := ConvertStringPointerToTeamDesignationPointer(game.Underdog)
 
 	assert.Equal(t, game.ID, response.Id)
 	assert.Equal(t, game.Week, response.Week)
 	assert.Equal(t, game.Season, response.Season)
-	assert.Equal(t, game.FavoriteTeam, response.FavoriteTeam)
-	assert.Equal(t, game.UnderdogTeam, response.UnderdogTeam)
+	assert.Equal(t, game.HomeTeam, response.HomeTeam)
+	assert.Equal(t, game.AwayTeam, response.AwayTeam)
+	assert.Equal(t, expectedFav, response.Favorite)
+	assert.Equal(t, expectedUnd, response.Underdog)
 	assert.Equal(t, game.Spread, response.Spread)
 	assert.Equal(t, game.StartTime, response.StartTime)
 }
 
 func TestGameFromRequest(t *testing.T) {
 	now := time.Now()
+	favoriteHome := Home
+	underdogAway := Away
 	req := GameRequest{
-		Week:         1,
-		Season:       2023,
-		FavoriteTeam: "Lions",
-		UnderdogTeam: "Chiefs",
-		Spread:       3.5,
-		StartTime:    now,
+		Week:      1,
+		Season:    2023,
+		HomeTeam:  "Lions",
+		AwayTeam:  "Chiefs",
+		Favorite:  &favoriteHome,
+		Underdog:  &underdogAway,
+		Spread:    3.5,
+		StartTime: now,
 	}
 
 	game, err := GameFromRequest(req)
+	expectedFav := ConvertTeamDesignationPointerToStringPointer(req.Favorite)
+	expectedUnd := ConvertTeamDesignationPointerToStringPointer(req.Underdog)
 
 	assert.NoError(t, err)
 	assert.Equal(t, req.Week, game.Week)
 	assert.Equal(t, req.Season, game.Season)
-	assert.Equal(t, req.FavoriteTeam, game.FavoriteTeam)
-	assert.Equal(t, req.UnderdogTeam, game.UnderdogTeam)
+	assert.Equal(t, req.HomeTeam, game.HomeTeam)
+	assert.Equal(t, req.AwayTeam, game.AwayTeam)
+	assert.Equal(t, expectedFav, game.Favorite)
+	assert.Equal(t, expectedUnd, game.Underdog)
 	assert.Equal(t, req.Spread, game.Spread)
 	assert.Equal(t, req.StartTime, game.StartTime)
 }
@@ -395,6 +416,9 @@ func TestUserFromRequestValidation(t *testing.T) {
 }
 
 func TestGameFromRequestValidation(t *testing.T) {
+	favoriteHome := Home
+	underdogAway := Away
+
 	tests := []struct {
 		name        string
 		request     GameRequest
@@ -404,23 +428,28 @@ func TestGameFromRequestValidation(t *testing.T) {
 		{
 			name: "Valid request",
 			request: GameRequest{
-				Week:         1,
-				Season:       2023,
-				FavoriteTeam: "Lions",
-				UnderdogTeam: "Chiefs",
-				Spread:       3.5,
-				StartTime:    time.Now(),
+				Week:      1,
+				Season:    2023,
+				HomeTeam:  "Lions",
+				AwayTeam:  "Chiefs",
+				Favorite:  &favoriteHome,
+				Underdog:  &underdogAway,
+				Spread:    3.5,
+				StartTime: time.Now(),
 			},
 			expectError: false,
 		},
 		{
 			name: "Zero week",
 			request: GameRequest{
-				Week:         0,
-				Season:       2023,
-				FavoriteTeam: "Lions",
-				UnderdogTeam: "Chiefs",
-				StartTime:    time.Now(),
+				Week:      0,
+				Season:    2023,
+				HomeTeam:  "Lions",
+				AwayTeam:  "Chiefs",
+				Favorite:  &favoriteHome,
+				Underdog:  &underdogAway,
+				Spread:    3.5,
+				StartTime: time.Now(),
 			},
 			expectError: true,
 			errorMsg:    "Week",
@@ -428,47 +457,73 @@ func TestGameFromRequestValidation(t *testing.T) {
 		{
 			name: "Zero season",
 			request: GameRequest{
-				Week:         1,
-				Season:       0,
-				FavoriteTeam: "Lions",
-				UnderdogTeam: "Chiefs",
-				StartTime:    time.Now(),
+				Week:      1,
+				Season:    0,
+				HomeTeam:  "Lions",
+				AwayTeam:  "Chiefs",
+				Favorite:  &favoriteHome,
+				Underdog:  &underdogAway,
+				Spread:    3.5,
+				StartTime: time.Now(),
 			},
 			expectError: true,
 			errorMsg:    "Season",
 		},
 		{
-			name: "Missing favorite team",
+			name: "Missing home team",
 			request: GameRequest{
-				Week:         1,
-				Season:       2023,
-				UnderdogTeam: "Chiefs",
-				StartTime:    time.Now(),
+				Week:      1,
+				Season:    2023,
+				AwayTeam:  "Chiefs",
+				Favorite:  &favoriteHome,
+				Underdog:  &underdogAway,
+				Spread:    3.5,
+				StartTime: time.Now(),
 			},
 			expectError: true,
-			errorMsg:    "FavoriteTeam",
+			errorMsg:    "HomeTeam",
 		},
 		{
-			name: "Missing underdog team",
+			name: "Missing away team",
 			request: GameRequest{
-				Week:         1,
-				Season:       2023,
-				FavoriteTeam: "Lions",
-				StartTime:    time.Now(),
+				Week:      1,
+				Season:    2023,
+				HomeTeam:  "Lions",
+				Favorite:  &favoriteHome,
+				Underdog:  &underdogAway,
+				Spread:    3.5,
+				StartTime: time.Now(),
 			},
 			expectError: true,
-			errorMsg:    "UnderdogTeam",
+			errorMsg:    "AwayTeam",
 		},
 		{
 			name: "Missing start time",
 			request: GameRequest{
-				Week:         1,
-				Season:       2023,
-				FavoriteTeam: "Lions",
-				UnderdogTeam: "Chiefs",
+				Week:     1,
+				Season:   2023,
+				HomeTeam: "Lions",
+				AwayTeam: "Chiefs",
+				Favorite: &favoriteHome,
+				Underdog: &underdogAway,
 			},
 			expectError: true,
 			errorMsg:    "StartTime",
+		},
+		{
+			name: "Negative spread",
+			request: GameRequest{
+				Week:      1,
+				Season:    2023,
+				HomeTeam:  "Lions",
+				AwayTeam:  "Chiefs",
+				Favorite:  &favoriteHome,
+				Underdog:  &underdogAway,
+				Spread:    -3.5,
+				StartTime: time.Now(),
+			},
+			expectError: true,
+			errorMsg:    "Spread",
 		},
 	}
 
@@ -485,8 +540,8 @@ func TestGameFromRequestValidation(t *testing.T) {
 				assert.NoError(t, err)
 				assert.Equal(t, tt.request.Week, game.Week)
 				assert.Equal(t, tt.request.Season, game.Season)
-				assert.Equal(t, tt.request.FavoriteTeam, game.FavoriteTeam)
-				assert.Equal(t, tt.request.UnderdogTeam, game.UnderdogTeam)
+				assert.Equal(t, tt.request.HomeTeam, game.HomeTeam)
+				assert.Equal(t, tt.request.AwayTeam, game.AwayTeam)
 				assert.Equal(t, tt.request.Spread, game.Spread)
 				assert.Equal(t, tt.request.StartTime, game.StartTime)
 			}
