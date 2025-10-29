@@ -1,9 +1,10 @@
 module github.com/dhpollack/football-pool
 
 // renovate: datasource=github-releases depName=golang/go versioning=semver allowedVersions=1.x
-go 1.25.3
+go 1.25
 
 // version: 0.1.0
+toolchain go1.25.3
 
 require (
 	github.com/go-playground/validator/v10 v10.28.0
@@ -108,7 +109,6 @@ require (
 	go.opentelemetry.io/otel/trace v1.37.0 // indirect
 	go.yaml.in/yaml/v3 v3.0.4 // indirect
 	golang.org/x/mod v0.28.0 // indirect
-	golang.org/x/net v0.45.0 // indirect
 	golang.org/x/sync v0.17.0 // indirect
 	golang.org/x/sys v0.37.0 // indirect
 	golang.org/x/text v0.30.0 // indirect
