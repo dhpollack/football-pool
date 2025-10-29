@@ -1,10 +1,7 @@
 module github.com/dhpollack/football-pool
 
 // renovate: datasource=github-releases depName=golang/go versioning=semver allowedVersions=1.x
-go 1.25
-
-// version: 0.1.0
-toolchain go1.25.3
+go 1.25.3
 
 require (
 	github.com/go-playground/validator/v10 v10.28.0
