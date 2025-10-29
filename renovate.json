@@ -7,6 +7,10 @@
   "packageRules": [
     {
       "matchManagers": ["gomod"],
+      "matchDepNames": ["go"],
+      "matchDepTypes": ["golang"],
+      "rangeStrategy": "bump",
+      "postUpdateOptions": ["gomodTidy"],
       "groupName": "backend dependencies",
       "groupSlug": "backend",
       "automerge": true,
