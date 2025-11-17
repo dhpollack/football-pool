@@ -23,7 +23,7 @@ jobs:
     services:
       # Docker-in-Docker service for Testcontainers
       docker:
-        image: docker:28.5
+        image: docker:29.0
         options: --privileged
 
     defaults:
