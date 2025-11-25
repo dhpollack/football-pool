@@ -28,7 +28,7 @@ jobs:
         target: ["chrome", "firefox"]
 
     steps: &steps
-      - uses: actions/checkout@v5
+      - uses: actions/checkout@v6
 
       # Setup
       - name: Set up Node.js

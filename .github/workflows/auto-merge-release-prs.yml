@@ -12,7 +12,7 @@ jobs:
     runs-on: ubuntu-latest
     if: startsWith(github.head_ref, 'release-please--branches')
     steps:
-      - uses: actions/checkout@v5
+      - uses: actions/checkout@v6
       - name: Auto-Merge Release PR
         run: |
           echo "Auto-merging release-please PR #${{ github.event.pull_request.number }}"
