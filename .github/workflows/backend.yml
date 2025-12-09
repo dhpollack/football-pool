@@ -23,7 +23,7 @@ jobs:
     services:
       # Docker-in-Docker service for Testcontainers
       docker:
-        image: docker:29.0
+        image: docker:29.1
         options: --privileged
 
     defaults:
@@ -36,7 +36,7 @@ jobs:
       - name: Set up Go
         uses: actions/setup-go@v6
         with:
-          go-version: "1.25.4"
+          go-version: "1.25.5"
           cache-dependency-path: "**/*.sum"
 
       - name: Set up Docker Buildx
