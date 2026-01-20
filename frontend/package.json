@@ -64,7 +64,7 @@
     "globals": "^17.0.0",
     "jsdom": "^27.4.0",
     "msw": "^2.12.7",
-    "orval": "^7.18.0",
+    "orval": "^8.0.2",
     "postcss": "^8.5.6",
     "tailwindcss": "^4.1.18",
     "typescript": "^5.9.3",
