@@ -4,7 +4,7 @@ module github.com/dhpollack/football-pool
 go 1.25
 
 // version: 0.1.0
-toolchain go1.25.6
+toolchain go1.25.7
 
 require (
 	github.com/go-playground/validator/v10 v10.28.0
