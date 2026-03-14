@@ -8,7 +8,7 @@ toolchain go1.26.0
 
 require (
 	github.com/go-playground/validator/v10 v10.28.0
-	github.com/golang-jwt/jwt/v5 v5.3.0
+	github.com/golang-jwt/jwt/v5 v5.3.1
 	github.com/mitchellh/mapstructure v1.5.0
 	github.com/oapi-codegen/runtime v1.1.2
 	github.com/rs/cors v1.11.1
