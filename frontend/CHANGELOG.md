@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.4.16](https://github.com/dhpollack/football-pool/compare/frontend-v0.4.15...frontend-v0.4.16) (2026-04-04)
+
+
+### Bug Fixes
+
+* **deps:** update frontend dependencies ([#172](https://github.com/dhpollack/football-pool/issues/172)) ([21b5667](https://github.com/dhpollack/football-pool/commit/21b566761c7f6ab064fc6b627c213312a0834468))
+
 ## [0.4.15](https://github.com/dhpollack/football-pool/compare/frontend-v0.4.14...frontend-v0.4.15) (2026-03-27)
 
 
