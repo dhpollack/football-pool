@@ -10,7 +10,7 @@ jobs:
     runs-on: ubuntu-latest
     if: contains(github.head_ref, 'release-please')
     steps:
-      - uses: actions/checkout@v6
+      - uses: actions/checkout@v7
 
       - name: Run dummy test
         run: |
